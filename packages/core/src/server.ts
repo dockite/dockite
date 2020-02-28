@@ -6,6 +6,7 @@ import debug from 'debug';
 import express from 'express';
 
 import { rootModule } from './modules';
+import { GRAPHQL_PATH } from './common/constants/core';
 
 const log = debug('dockite:core');
 
@@ -18,12 +19,13 @@ export const start = async (port = process.env.PORT || 3000): Promise<Server> =>
   const app = express();
 
   app.use(express.json());
+
   const server = new ApolloServer({
     schema: rootModule.schema,
     context: rootModule.context,
   });
 
-  server.applyMiddleware({ app });
+  server.applyMiddleware({ app, path: GRAPHQL_PATH });
 
   return app.listen(port, () => log(`server now listening on ${port}`));
 };
