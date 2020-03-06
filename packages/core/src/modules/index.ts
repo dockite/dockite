@@ -1,25 +1,25 @@
 import { GraphQLModule } from '@graphql-modules/core';
+import debug from 'debug';
 
-import { SessionContext, UserContext, RootContext } from '../common/types';
-import { getenv } from '../utils';
-import { verify } from '../utils/jwt-verify';
+import { GlobalContext } from '../common/types';
 
+import { AuthenticationGraphQLModule } from './authentication';
 import { ExternalGraphQLModule } from './external';
 import { InternalGraphQLModule } from './internal';
 
-export const rootModule = new GraphQLModule({
-  imports: [InternalGraphQLModule, ExternalGraphQLModule],
-  context(session: SessionContext, _: any, { injector }): RootContext {
-    try {
-      const authorization = session.req.headers.authorization || '';
-      const bearerSplit = authorization.split('Bearer');
-      const token = bearerSplit[bearerSplit.length - 1].trim();
+const log = debug('dockite:core:root');
 
-      const user = verify<UserContext>(token, getenv('APP_SECRET', 'secret'));
+export const RootModule = async (): Promise<GraphQLModule> => {
+  log('retrieving internal and external graphql modules');
+  const [internal, external, authentication] = await Promise.all([
+    InternalGraphQLModule(),
+    ExternalGraphQLModule(),
+    AuthenticationGraphQLModule(),
+  ]);
 
-      return { user };
-    } catch {
-      return {};
-    }
-  },
-});
+  log('creating root module');
+  return new GraphQLModule({
+    imports: [internal, external, authentication],
+    context: (ctx): GlobalContext => ctx,
+  });
+};
