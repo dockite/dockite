@@ -111,3 +111,6 @@ lib/
 
 # Stores VSCode versions used for testing VSCode extensions
 .vscode-test
+
+# We only use type-graphql in the core but allow it to emit schema files for debugging
+schema.gql
