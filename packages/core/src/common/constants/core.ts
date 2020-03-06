@@ -1,1 +1,1 @@
-export const GRAPHQL_PATH = '/dockite/graphql';
+export const GRAPHQL_PATH = 'dockite/graphql';

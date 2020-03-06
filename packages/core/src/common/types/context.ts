@@ -7,8 +7,8 @@ export interface SessionContext {
   res: Response;
 }
 
-export interface RootContext {
+export interface GlobalContext extends SessionContext {
   user?: UserContext;
 }
 
-export type UserContext = Exclude<User, 'password'>;
+export type UserContext = Omit<User, 'password'>;
