@@ -1,23 +1,39 @@
+import path from 'path';
+
 import { GraphQLModule } from '@graphql-modules/core';
+import debug from 'debug';
+import { buildTypeDefsAndResolvers } from 'type-graphql';
 
-import { AppError } from '../../common/errors';
-import { AppErrorCode, RootContext, SessionContext } from '../../common/types';
+import { authChecker } from '../../common/authorizers';
 import { getModules } from '../../utils';
+import { GlobalContext } from '../../common/types';
 
-import { InternalModuleContext } from './types/context';
+import * as resolvers from './resolvers';
+
+const log = debug('dockite:core:internal');
 
 // eslint-disable-next-line
 export const getRegisteredInternalModules = (): any[] => {
   return getModules('internal');
 };
 
-export const InternalGraphQLModule = new GraphQLModule({
-  // eslint-disable-next-line
-  context(_: SessionContext, currentContext: RootContext, { injector }): InternalModuleContext {
-    if (currentContext.user) {
-      return { user: currentContext.user };
-    }
+export const InternalGraphQLModule = async (): Promise<GraphQLModule> => {
+  log('building type-definitions and resolvers');
+  const typeDefsAndResolvers = await buildTypeDefsAndResolvers({
+    authChecker,
+    authMode: 'null',
+    resolvers: await Promise.all(Object.values(resolvers).map(r => Promise.resolve(r))),
+    emitSchemaFile: path.join(__dirname, './schema.gql'),
+  });
 
-    throw new AppError('Not Authorized', AppErrorCode.NotAuthorizedError);
-  },
-});
+  log('collecting registered modules');
+  const modules = await Promise.all(getRegisteredInternalModules());
+
+  log('creating graphql module');
+  return new GraphQLModule({
+    typeDefs: typeDefsAndResolvers.typeDefs,
+    resolvers: typeDefsAndResolvers.resolvers,
+    imports: modules,
+    context: (ctx): GlobalContext => ctx,
+  });
+};
