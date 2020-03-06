@@ -37,7 +37,7 @@ export class User {
   @GraphQLField()
   public updatedAt!: Date;
 
-  @Column()
+  @Column({ default: false })
   @GraphQLField()
   public verified!: boolean;
 }

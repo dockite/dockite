@@ -1,5 +1,5 @@
 import GraphQLJSON from 'graphql-type-json';
-import { Field, ObjectType } from 'type-graphql';
+import { Field as GraphQLField, ObjectType } from 'type-graphql';
 import {
   Column,
   CreateDateColumn,
@@ -15,31 +15,31 @@ import { WebhookCall } from './WebhookCall';
 @ObjectType()
 export class Webhook {
   @PrimaryGeneratedColumn('uuid')
-  @Field()
+  @GraphQLField()
   public id!: string;
 
   @Column()
-  @Field()
+  @GraphQLField()
   public name!: string;
 
   @Column()
-  @Field()
+  @GraphQLField()
   public url!: string;
 
   @Column({ default: 'POST' })
-  @Field()
+  @GraphQLField()
   public method!: string;
 
   @Column({ type: 'jsonb', default: {} })
-  @Field(_type => GraphQLJSON)
+  @GraphQLField(_type => GraphQLJSON)
   public options!: any; // eslint-disable-line
 
   @CreateDateColumn()
-  @Field()
+  @GraphQLField()
   public createdAt!: Date;
 
   @UpdateDateColumn()
-  @Field()
+  @GraphQLField()
   public updatedAt!: Date;
 
   @OneToMany(
