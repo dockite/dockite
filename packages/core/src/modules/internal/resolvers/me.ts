@@ -8,7 +8,6 @@ export class MeResolver {
   @Authorized()
   @Query(_returns => Me, { nullable: true })
   me(@Ctx() ctx: GlobalContext): UserContext {
-    console.log(ctx.user);
     return ctx.user!; // eslint-disable-line
   }
 }

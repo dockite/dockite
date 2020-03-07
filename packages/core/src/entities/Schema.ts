@@ -25,7 +25,7 @@ export class Schema {
   @GraphQLField()
   public id!: string;
 
-  @Column()
+  @Column({ unique: true })
   @GraphQLField()
   public name!: string;
 
@@ -68,7 +68,7 @@ export class Schema {
   @GraphQLField()
   public updatedAt!: Date;
 
-  @Column()
+  @Column({ nullable: true, default: null })
   @GraphQLField()
   public deletedAt!: Date;
 }
