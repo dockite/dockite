@@ -20,7 +20,7 @@ export class Document {
   @GraphQLField()
   public id!: string;
 
-  @Column({ default: 'en-US' })
+  @Column()
   @GraphQLField()
   public locale!: string;
 
@@ -60,7 +60,7 @@ export class Document {
 
   @Column({ nullable: true })
   @GraphQLField({ nullable: true })
-  public releaseId?: string;
+  public releaseId?: string | null;
 
   @ManyToOne(
     _type => Release,
@@ -74,7 +74,7 @@ export class Document {
 
   @Column({ nullable: true })
   @GraphQLField({ nullable: true })
-  public userId?: string;
+  public userId?: string | null;
 
   @ManyToOne(_type => User, { nullable: true, onDelete: 'SET NULL' })
   public user!: User;

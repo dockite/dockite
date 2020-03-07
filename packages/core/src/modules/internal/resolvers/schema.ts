@@ -24,11 +24,11 @@ export class SchemaResolver {
   @Authorized()
   @Query(_returns => [Schema])
   async allSchemas(): Promise<Schema[] | null> {
-    const schema = await repository.find({
+    const schemas = await repository.find({
       where: { deletedAt: null },
     });
 
-    return schema ?? null;
+    return schemas ?? null;
   }
 
   /**
