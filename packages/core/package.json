@@ -4,7 +4,8 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "dev": "DEBUG=dockite* ts-node-dev --transpileOnly --no-notify src/"
+    "dev": "DEBUG=dockite* ts-node-dev --transpileOnly --no-notify src/",
+    "lint": "eslint src --ext .js,.jsx,.ts,.tsx --quiet"
   },
   "dependencies": {
     "@graphql-modules/core": "^0.7.14",
