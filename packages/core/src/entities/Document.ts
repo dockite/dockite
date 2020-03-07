@@ -59,7 +59,7 @@ export class Document {
   public schema!: Schema;
 
   @Column({ nullable: true })
-  @GraphQLField({ nullable: true })
+  @GraphQLField(_type => String, { nullable: true })
   public releaseId?: string | null;
 
   @ManyToOne(
@@ -73,7 +73,7 @@ export class Document {
   public release!: Release;
 
   @Column({ nullable: true })
-  @GraphQLField({ nullable: true })
+  @GraphQLField(_type => String, { nullable: true })
   public userId?: string | null;
 
   @ManyToOne(_type => User, { nullable: true, onDelete: 'SET NULL' })

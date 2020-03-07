@@ -3,13 +3,13 @@ import { getRepository } from 'typeorm';
 
 import { WebhookCall } from '../../../entities';
 
-const repository = getRepository(WebhookCall);
-
 @Resolver(_of => WebhookCall)
 export class WebhookCallResolver {
   @Authorized()
   @Query(_returns => WebhookCall, { nullable: true })
   async getWebhookCall(@Arg('id') id: string): Promise<WebhookCall | null> {
+    const repository = getRepository(WebhookCall);
+
     const webhookCall = await repository.findOne({ where: { id } });
 
     return webhookCall ?? null;
@@ -21,6 +21,8 @@ export class WebhookCallResolver {
   @Authorized()
   @Query(_returns => [WebhookCall])
   async allWebhookCalls(): Promise<WebhookCall[] | null> {
+    const repository = getRepository(WebhookCall);
+
     const webhookCalls = await repository.find();
 
     return webhookCalls ?? null;
@@ -29,6 +31,8 @@ export class WebhookCallResolver {
   @Authorized()
   @Mutation(_returns => Boolean)
   async removeWebhookCall(@Arg('id') id: string): Promise<boolean> {
+    const repository = getRepository(WebhookCall);
+
     try {
       const webhookCall = await repository.findOneOrFail({ where: { id } });
 

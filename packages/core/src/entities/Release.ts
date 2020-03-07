@@ -36,17 +36,21 @@ export class Release {
   @ManyToOne(_type => User)
   public user!: User;
 
-  @Column({ nullable: true })
-  @GraphQLField({ nullable: true })
-  public scheduledFor!: Date;
+  @Column()
+  @GraphQLField()
+  public userId!: string;
 
-  @Column({ nullable: true })
-  @GraphQLField({ nullable: true })
-  public publishedAt!: Date;
+  @Column({ type: 'timestamp', nullable: true })
+  @GraphQLField(_type => Date, { nullable: true })
+  public scheduledFor?: Date | null;
 
-  @Column({ nullable: true })
-  @GraphQLField({ nullable: true })
-  public publishedBy!: string;
+  @Column({ type: 'timestamp', nullable: true })
+  @GraphQLField(_type => Date, { nullable: true })
+  public publishedAt?: Date | null;
+
+  @Column({ type: 'varchar', nullable: true })
+  @GraphQLField(_type => String, { nullable: true })
+  public publishedBy?: string | null;
 
   @CreateDateColumn()
   @GraphQLField()

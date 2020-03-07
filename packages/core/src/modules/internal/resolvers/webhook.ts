@@ -1,16 +1,17 @@
 import { Arg, Authorized, Mutation, Query, Resolver } from 'type-graphql';
 import { getRepository } from 'typeorm';
+import GraphQLJSON from 'graphql-type-json';
 
 import { Webhook } from '../../../entities';
 import { RequestMethods } from '../../../common/types';
-
-const repository = getRepository(Webhook);
 
 @Resolver(_of => Webhook)
 export class WebhookResolver {
   @Authorized()
   @Query(_returns => Webhook, { nullable: true })
   async getWebhook(@Arg('id') id: string): Promise<Webhook | null> {
+    const repository = getRepository(Webhook);
+
     const webhook = await repository.findOne({ where: { id } });
 
     return webhook ?? null;
@@ -22,6 +23,8 @@ export class WebhookResolver {
   @Authorized()
   @Query(_returns => [Webhook])
   async allWebhooks(): Promise<Webhook[] | null> {
+    const repository = getRepository(Webhook);
+
     const webhooks = await repository.find();
 
     return webhooks ?? null;
@@ -32,10 +35,12 @@ export class WebhookResolver {
   async createWebhook(
     @Arg('name') name: string,
     @Arg('url') url: string,
-    @Arg('method') method: RequestMethods, // eslint-disable-line
-    @Arg('options') options: any, // eslint-disable-line
+    @Arg('method', _type => String) method: string, // eslint-disable-line
+    @Arg('options', _type => GraphQLJSON) options: any, // eslint-disable-line
   ): Promise<Webhook | null> {
-    if (!Object.values(RequestMethods).includes(method)) {
+    const repository = getRepository(Webhook);
+
+    if (!Object.values(RequestMethods).includes(method as RequestMethods)) {
       throw new Error('Method provided is invalid');
     }
 
@@ -54,6 +59,8 @@ export class WebhookResolver {
   @Authorized()
   @Mutation(_returns => Boolean)
   async removeWebhook(@Arg('id') id: string): Promise<boolean> {
+    const repository = getRepository(Webhook);
+
     try {
       const webhook = await repository.findOneOrFail({ where: { id } });
 
