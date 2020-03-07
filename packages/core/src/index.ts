@@ -7,8 +7,6 @@ dotenv.config();
 
 import 'reflect-metadata';
 
-const x = 'y';
-
 import { getConfig } from './config';
 import { connect } from './database';
 import { start } from './server';
