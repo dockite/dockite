@@ -3,7 +3,10 @@ import debug from 'debug';
 
 import { CoreConfiguration } from './common/types/config';
 
-let config: CoreConfiguration = {};
+let config: CoreConfiguration = {
+  fields: ['@dockite/string-field'],
+};
+
 let hasLoadedConfig = false;
 
 const log = debug('dockite:core:config');
@@ -16,7 +19,7 @@ export const getConfig = (): CoreConfiguration => {
     if (result) {
       log('loaded config');
 
-      config = result.config;
+      config = { ...config, ...result.config };
     } else {
       log('no config files found');
     }

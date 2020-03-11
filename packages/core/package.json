@@ -1,7 +1,7 @@
 {
   "name": "@dockite/core",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
     "dev": "DEBUG=dockite* ts-node-dev --transpileOnly --no-notify src/",
@@ -9,6 +9,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@dockite/types": "1.0.0",
+    "@dockite/field": "1.0.0",
     "@graphql-modules/core": "^0.7.14",
     "@typescript-eslint/eslint-plugin": "^2.20.0",
     "@typescript-eslint/parser": "^2.20.0",

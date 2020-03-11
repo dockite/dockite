@@ -1,6 +1,7 @@
 export interface CoreConfiguration {
   entities?: string[];
   modules?: ModuleConfiguration[];
+  fields?: string[];
 }
 
 export interface ModuleConfiguration {

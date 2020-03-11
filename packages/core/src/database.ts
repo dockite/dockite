@@ -8,7 +8,7 @@ import { getenv } from './utils';
 const log = debug('dockite:core:db');
 
 const useSSL = (): boolean => {
-  return getenv('PG_SSL', 'false').toLowerCase() === 'true';
+  return ['t', 'true'].includes(getenv('PG_SSL', 'false').toLowerCase());
 };
 
 const config = getConfig();
