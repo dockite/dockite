@@ -1,4 +1,6 @@
-import { Schema, Release, User } from '.';
+import { Schema } from './schema';
+import { Release } from './release';
+import { User } from './user';
 
 export interface Document {
   id: string;

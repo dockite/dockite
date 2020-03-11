@@ -1,6 +1,7 @@
 import { SchemaType } from '../enum';
 
-import { Field, User } from '.';
+import { Field } from './field';
+import { User } from './user';
 
 export interface Schema {
   id: string;

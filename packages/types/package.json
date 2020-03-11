@@ -6,5 +6,12 @@
   "scripts": {
     "lint": "echo \"No linting added\" && exit 0",
     "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "graphql": "^14.6.0",
+    "typescript": "^3.8.3"
+  },
+  "devDependencies": {
+    "typescript": "^3.8.3"
   }
 }

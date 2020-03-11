@@ -1,4 +1,6 @@
-import { Schema } from '.';
+import { DockiteField } from '../common';
+
+import { Schema } from './schema';
 
 export interface Field {
   id: string;
@@ -9,4 +11,5 @@ export interface Field {
   settings: any; // eslint-disable-line
   schemaId: string;
   schema: Schema;
+  dockiteField?: DockiteField;
 }

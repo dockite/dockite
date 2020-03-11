@@ -1,4 +1,5 @@
-import { User, Document } from '.';
+import { Document } from './document';
+import { User } from './user';
 
 export interface Release {
   id: string;
