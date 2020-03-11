@@ -6,10 +6,11 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { User as BaseUser } from '@dockite/types';
 
 @Entity()
 @ObjectType()
-export class User {
+export class User implements BaseUser {
   @PrimaryGeneratedColumn('uuid')
   @GraphQLField()
   public id!: string;

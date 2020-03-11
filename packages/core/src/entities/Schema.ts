@@ -9,6 +9,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Schema as BaseSchema } from '@dockite/types';
 
 import { SchemaType } from '../common/types/schema-type';
 
@@ -20,7 +21,7 @@ registerEnumType(SchemaType, { name: 'SchemaType' });
 
 @Entity()
 @ObjectType()
-export class Schema {
+export class Schema implements BaseSchema {
   @PrimaryGeneratedColumn('uuid')
   @GraphQLField()
   public id!: string;

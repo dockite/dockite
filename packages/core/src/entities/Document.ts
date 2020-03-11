@@ -8,6 +8,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import GraphQLJSON from 'graphql-type-json';
+import { Document as BaseDocument } from '@dockite/types';
 
 import { Schema } from './Schema';
 import { Release } from './Release';
@@ -15,7 +16,7 @@ import { User } from './User';
 
 @Entity()
 @ObjectType()
-export class Document {
+export class Document implements BaseDocument {
   @PrimaryGeneratedColumn('uuid')
   @GraphQLField()
   public id!: string;

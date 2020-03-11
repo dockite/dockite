@@ -1,12 +1,26 @@
 import GraphQLJSON from 'graphql-type-json';
 import { Field as GraphQLField, ObjectType } from 'type-graphql';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  AfterLoad,
+  getRepository,
+  Repository,
+} from 'typeorm';
+import { Field as BaseField } from '@dockite/types';
+import { DockiteField } from '@dockite/field';
+
+import { dockiteFields } from '../fields';
 
 import { Schema } from './Schema';
 
+import * as Entities from '.';
+
 @Entity()
 @ObjectType()
-export class Field {
+export class Field implements BaseField {
   @PrimaryGeneratedColumn('uuid')
   @GraphQLField()
   public id!: string;
@@ -41,4 +55,23 @@ export class Field {
     { persistence: true },
   )
   public schema!: Schema;
+
+  public dockiteField?: DockiteField;
+
+  @AfterLoad()
+  public setDockiteField(): void {
+    if (!this.dockiteField) {
+      const FieldClass = Object.values(dockiteFields).find(field => field.type === this.type);
+
+      if (FieldClass && typeof FieldClass === 'function') {
+        const entities: { [id: string]: Repository<any> } = {};
+
+        Object.entries(Entities).forEach(([key, val]) => {
+          entities[key] = getRepository(val);
+        });
+
+        this.dockiteField = new FieldClass(this, entities);
+      }
+    }
+  }
 }
