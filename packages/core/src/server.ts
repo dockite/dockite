@@ -4,11 +4,14 @@ import { Server } from 'http';
 import { ApolloServer } from 'apollo-server-express';
 import debug from 'debug';
 import express from 'express';
+import { DockiteFieldStatic } from '@dockite/field';
 
 import { RootModule } from './modules';
 import { GRAPHQL_PATH } from './common/constants/core';
 import { UserContext, SessionContext, GlobalContext } from './common/types';
 import { verify, getenv } from './utils';
+import { getConfig } from './config';
+import { registerField } from './fields';
 
 const log = debug('dockite:core');
 
@@ -20,6 +23,18 @@ export const start = async (port = process.env.PORT || 3000): Promise<Server> =>
   // const worker = new Worker('./workers/release-bot.ts', {
   //   env: worker_threads.SHARE_ENV,
   // });
+
+  log('loading fields');
+  const config = getConfig();
+  if (config.fields) {
+    const importedFields = await Promise.all(config.fields.map(entry => import(entry)));
+
+    importedFields.forEach(field => {
+      Object.entries<DockiteFieldStatic>(field).forEach(([key, val]) => {
+        registerField(key, val);
+      });
+    });
+  }
 
   const app = express();
 

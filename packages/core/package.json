@@ -11,6 +11,8 @@
   "dependencies": {
     "@dockite/types": "1.0.0",
     "@dockite/field": "1.0.0",
+    "@dockite/field-string": "1.0.0",
+    "@dockite/transformer": "1.0.0",
     "@graphql-modules/core": "^0.7.14",
     "@typescript-eslint/eslint-plugin": "^2.20.0",
     "@typescript-eslint/parser": "^2.20.0",

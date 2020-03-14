@@ -9,7 +9,7 @@ export interface DockiteFieldManager {
 
 export const dockiteFields: DockiteFieldManager = {};
 
-export const registerField = (id: string, field: any): void => {
+export const registerField = (id: string, field: DockiteFieldStatic): void => {
   if (!dockiteFields[id]) {
     log(`registering field ${id}`);
     dockiteFields[id] = field;

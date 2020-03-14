@@ -4,7 +4,7 @@ import debug from 'debug';
 import { CoreConfiguration } from './common/types/config';
 
 let config: CoreConfiguration = {
-  fields: ['@dockite/string-field'],
+  fields: ['@dockite/field-string'],
 };
 
 let hasLoadedConfig = false;
