@@ -44,7 +44,6 @@ export class SchemaResolver {
     @Arg('type') type: number,
     @Arg('groups', _type => GraphQLJSON) groups: any, // eslint-disable-line
     @Arg('settings', _type => GraphQLJSON) settings: any, // eslint-disable-line
-    @Arg('fields', _type => GraphQLJSON) fields: any, // eslint-disable-line
   ): Promise<Schema | null> {
     const repository = getRepository(Schema);
 
@@ -57,7 +56,6 @@ export class SchemaResolver {
       type,
       groups,
       settings,
-      fields,
     });
 
     const savedSchema = await repository.save(schema);
