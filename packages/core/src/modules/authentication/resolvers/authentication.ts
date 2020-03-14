@@ -69,7 +69,7 @@ export class Authentication {
 
     delete user.password;
 
-    const token = sign(user, getenv('APP_SECRET', 'secret'));
+    const token = sign({ ...user }, getenv('APP_SECRET', 'secret'));
 
     ctx.res.setHeader('authorization', `Bearer ${token}`);
 
