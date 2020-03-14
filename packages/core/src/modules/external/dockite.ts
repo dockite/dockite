@@ -17,7 +17,7 @@ export const createGraphQLSchemas = async (): Promise<GraphQLSchema[]> => {
       .map(
         async e =>
           new GraphQLSchema({
-            query: await createSchemaForEntity(e, documentRepository),
+            query: await createSchemaForEntity<Document>(e, documentRepository),
           }),
       ),
   );
