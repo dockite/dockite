@@ -28,13 +28,13 @@ export abstract class DockiteField {
     this.repositories = repositories;
   }
 
-  public abstract inputType(): Promise<GraphQLInputFieldConfig | null>;
+  public abstract inputType(): Promise<GraphQLInputFieldConfig>;
 
-  public abstract processInput<Input, Output>(data: Input): Promise<Output>;
+  // public abstract processInput<Input, Output>(data: Input): Promise<Output>;
 
-  public abstract where(): Promise<GraphQLInputFieldConfig | null>;
+  public abstract where(): Promise<GraphQLInputFieldConfig>;
 
   public abstract outputType<Source, Context>(): Promise<GraphQLFieldConfig<Source, Context>>;
 
-  public abstract processOutput<Input, Output>(data: Input): Promise<Output>;
+  // public abstract processOutput<Input, Output>(data: Input): Promise<Output>;
 }
