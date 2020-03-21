@@ -1,4 +1,4 @@
-import { GlobalContext, Field, Schema } from '@dockite/types';
+import { GlobalContext, Field, Document, Schema } from '@dockite/types';
 import debug from 'debug';
 import {
   GraphQLFieldConfigMap,
@@ -12,10 +12,11 @@ import {
 import { camelCase } from 'lodash';
 import { Repository } from 'typeorm';
 
-// const log = debug('dockite:transformer');
+const log = debug('dockite:transformer');
 
 const createObjectType = async (entity: Schema): Promise<GraphQLObjectType> => {
   // Build our empty field map
+  log(`Building object type for ${entity.name}`);
   const typeFields: GraphQLFieldConfigMap<Source, GlobalContext> = {};
 
   // Retrieve our field configs from the registered dockite-fields
@@ -44,9 +45,9 @@ const createObjectType = async (entity: Schema): Promise<GraphQLObjectType> => {
   });
 };
 
-export const createSchemaForEntity = async (
+export const createSchemaForEntity = async <T extends Document>(
   entity: Schema,
-  documentRepository: Repository<any>,
+  repository: Repository<T>,
 ): Promise<GraphQLObjectType> => {
   const objectType = await createObjectType(entity);
 
@@ -63,13 +64,13 @@ export const createSchemaForEntity = async (
           name: { type: GraphQLString },
         },
         // eslint-disable-next-line
-        resolve(_context, { id, name }): Promise<any> {
+        resolve(_context, { id, name }): Promise<object> {
           if (id) {
-            return documentRepository.findOneOrFail(id);
+            return repository.findOneOrFail(id);
           }
 
           if (name) {
-            return documentRepository.findOneOrFail({ where: { name } });
+            return repository.findOneOrFail({ where: { name } });
           }
 
           throw new Error(`${entity.name} not found`);
@@ -78,19 +79,23 @@ export const createSchemaForEntity = async (
 
       [allQuery]: {
         type: new GraphQLList(objectType),
-        description: entity.settings.description ?? `Retrieves a given ${entity.name}`,
+        description: entity.settings.description ?? `Retrieves all ${entity.name}`,
         args: {
           page: { type: GraphQLInt, defaultValue: 1 },
           perPage: { type: GraphQLInt, defaultValue: 25 },
         },
-        resolve(_context, { page, perPage }): Promise<Document[]> {
-          return documentRepository.find({
-            where: {
-              deletedAt: null,
-            },
-            take: perPage,
-            skip: page * perPage,
-          });
+        async resolve(_context, { page, perPage }): Promise<object[]> {
+          const qb = await repository
+            .createQueryBuilder('document')
+            .where('document.schemaId = :schemaId', { schemaId: entity.id })
+            .take(perPage)
+            .skip(perPage * (page - 1))
+            .getMany();
+
+          const documents = qb.map(x => JSON.parse(x.data));
+
+          console.log(documents);
+          return documents;
         },
       },
     },
