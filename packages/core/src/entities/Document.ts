@@ -29,9 +29,9 @@ export class Document implements BaseDocument {
   @GraphQLField(_type => GraphQLJSON)
   public data!: any; // eslint-disable-line
 
-  @Column()
-  @GraphQLField()
-  public publishedAt!: Date;
+  @Column({ type: 'timestamp', nullable: true, default: null })
+  @GraphQLField(_type => Date, { nullable: true })
+  public publishedAt?: Date | null;
 
   @CreateDateColumn()
   @GraphQLField()
@@ -41,9 +41,9 @@ export class Document implements BaseDocument {
   @GraphQLField()
   public updatedAt!: Date;
 
-  @Column()
-  @GraphQLField()
-  public deletedAt!: Date;
+  @Column({ type: 'timestamp', nullable: true, default: null })
+  @GraphQLField(_type => Date, { nullable: true })
+  public deletedAt?: Date | null;
 
   @Column()
   @GraphQLField()
@@ -57,6 +57,7 @@ export class Document implements BaseDocument {
       nullable: true,
     },
   )
+  @GraphQLField(_type => Schema)
   public schema!: Schema;
 
   @Column({ nullable: true })

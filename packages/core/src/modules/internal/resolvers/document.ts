@@ -9,12 +9,37 @@ import { Document } from '../../../entities';
 export class DocumentResolver {
   @Authorized()
   @Query(_returns => Document, { nullable: true })
-  async getDocument(@Arg('id') id: string): Promise<Document | null> {
+  async getDocument(
+    @Arg('id')
+    id: string,
+  ): Promise<Document | null> {
     const repository = getRepository(Document);
 
-    const document = await repository.findOne({ where: { id } });
+    const document = await repository.findOne({
+      where: { id },
+      relations: ['schema', 'schema.fields'],
+    });
 
     return document ?? null;
+  }
+
+  @Authorized()
+  @Query(_returns => [Document], { nullable: true })
+  async findDocuments(
+    @Arg('schemaId', _type => String, { nullable: true })
+    schemaId: string | null,
+  ): Promise<Document[] | null> {
+    const repository = getRepository(Document);
+
+    const qb = repository.createQueryBuilder('document').where('document.deletedAt IS NULL');
+
+    if (schemaId) {
+      qb.andWhere('document.schemaId = :schemaId', { schemaId });
+    }
+
+    const documents = await qb.getMany();
+
+    return documents ?? null;
   }
 
   /**

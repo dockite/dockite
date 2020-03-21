@@ -56,6 +56,7 @@ export class Schema implements BaseSchema {
       persistence: false,
     },
   )
+  @GraphQLField(_type => [Field], { nullable: true })
   public fields!: Field[];
 
   @ManyToOne(_type => User)

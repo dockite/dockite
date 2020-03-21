@@ -31,6 +31,8 @@ export const connect = async (): Promise<Connection> => {
     ssl: useSSL(),
     synchronize: true,
     entities: [...Object.values(entities), ...externalEntities],
+    logging: ['query', 'error'],
+    logger: 'debug',
   });
 
   return connection;
