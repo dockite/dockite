@@ -1,0 +1,137 @@
+<template>
+  <a-table class="schema-table-view" :columns="columns" :data-source="source" :row-key="getRowKey">
+    <router-link slot="id" slot-scope="text" :to="`/document/${text}`">
+      {{ text }}
+    </router-link>
+
+    <span slot="updatedAt" slot-scope="updatedAt">
+      {{ moment(updatedAt).format('YYYY-MM-DD HH:mm:ss') }}
+    </span>
+  </a-table>
+</template>
+
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator';
+import { gql } from 'apollo-boost';
+import { Schema, Document } from '@dockite/types';
+import { startCase } from 'lodash';
+import moment from 'moment';
+
+@Component({
+  apollo: {
+    schema: {
+      query: gql`
+        query GetSchema($name: String) {
+          schema: getSchema(name: $name) {
+            id
+            name
+            groups
+            settings
+            fields {
+              id
+              name
+            }
+          }
+        }
+      `,
+
+      variables() {
+        return {
+          name: this.$route.params.schema,
+        };
+      },
+    },
+
+    documents: {
+      query: gql`
+        query FindDocumentsForSchema($schemaId: String) {
+          documents: findDocuments(schemaId: $schemaId) {
+            id
+            createdAt
+            updatedAt
+            data
+          }
+        }
+      `,
+
+      variables() {
+        const schemaId = this.schema?.id ?? '';
+
+        return {
+          schemaId,
+        };
+      },
+    },
+  },
+})
+export class SchemaTableView extends Vue {
+  public schema!: Partial<Schema>;
+
+  public moment = moment;
+
+  public documents!: Partial<Document>[];
+
+  get columns(): object[] {
+    console.log(this.schema);
+
+    if (this.schema && this.schema.fields) {
+      const slice = this.schema.fields.slice(0, 5).map(x => ({
+        title: startCase(x.name),
+        dataIndex: x.name,
+        scopedSlots: { customRender: x.name },
+      }));
+
+      return [
+        {
+          title: 'ID',
+          dataIndex: 'id',
+          scopedSlots: { customRender: 'id' },
+        },
+        ...slice,
+        {
+          title: 'Updated At',
+          dataIndex: 'updatedAt',
+          scopedSlots: { customRender: 'updatedAt' },
+        },
+      ];
+    }
+
+    return [
+      {
+        title: 'ID',
+        dataIndex: 'id',
+        scopedSlots: { customRender: 'id' },
+      },
+      {
+        title: 'Updated At',
+        dataIndex: 'updatedAt',
+        scopedSlots: { customRender: 'updatedAt' },
+      },
+    ];
+  }
+
+  get source() {
+    if (this.documents && this.documents.length > 0) {
+      return this.documents.map(doc => {
+        const data = doc.data ?? '{}';
+
+        return { ...doc, ...JSON.parse(data) };
+      });
+    }
+
+    return [];
+  }
+
+  public getRowKey(row: Partial<Document>) {
+    return row.id;
+  }
+}
+
+export default SchemaTableView;
+</script>
+
+<style lang="scss">
+.schema-table-view ul.ant-table-pagination {
+  padding: 0 16px;
+}
+</style>
