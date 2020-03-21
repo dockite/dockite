@@ -6,10 +6,10 @@ export interface Document {
   id: string;
   locale: string;
   data: any; // eslint-disable-line
-  publishedAt: Date;
+  publishedAt?: Date | null;
   createdAt: Date;
   updatedAt: Date;
-  deletedAt: Date;
+  deletedAt?: Date | null;
   schemaId: string;
   schema: Schema;
   releaseId?: string | null;
