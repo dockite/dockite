@@ -12,9 +12,12 @@ const cwd = process.cwd();
 
 module.exports = {
   mode: isDev ? 'development' : 'production',
-  entry: './src',
+  entry: {
+    main: './src/ui/index.ts',
+  },
   output: {
-    path: path.resolve(cwd, 'dist'),
+    filename: 'index.js',
+    path: path.resolve(cwd, 'lib', 'ui'),
   },
   module: {
     rules: [
@@ -34,7 +37,7 @@ module.exports = {
         },
       },
       {
-        test: /\.jsx?$/,
+        test: /\.m?jsx?$/,
         include: [path.join(cwd, 'src')],
         exclude: /node_modules/,
         loader: 'babel-loader',
@@ -50,7 +53,7 @@ module.exports = {
     ],
   },
   resolve: {
-    extensions: ['.js', '.jsx', '.ts', '.tsx', '.vue'],
+    extensions: ['.tsx', '.ts', '.mjs', '.js', '.jsx', '.vue', '.json', '.wasm'],
   },
   plugins: [new VueLoaderPlugin()],
 };
