@@ -1,5 +1,5 @@
 <template>
-  <a-layout id="components-layout-demo-side" style="min-height: 100vh">
+  <a-layout v-if="loaded" id="components-layout-demo-side" style="min-height: 100vh">
     <base-side-menu />
     <a-layout>
       <a-layout-header style="background: #fff; padding: 0 16px;">
@@ -52,6 +52,8 @@ import BaseRouterView from './components/base/RouterView.vue';
   },
 })
 export class App extends Vue {
+  public loaded = false;
+
   get breadcrumbs() {
     const crumbs = this.$route.path
       .split('/')
@@ -64,6 +66,11 @@ export class App extends Vue {
     crumbs.unshift({ name: 'Home', path: '/' });
 
     return crumbs;
+  }
+
+  async mounted() {
+    await Promise.all((window as any).resolveFields);
+    this.loaded = true;
   }
 }
 

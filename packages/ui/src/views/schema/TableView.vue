@@ -125,6 +125,10 @@ export class SchemaTableView extends Vue {
   public getRowKey(row: Partial<Document>) {
     return row.id;
   }
+
+  created(): void {
+    console.log('window-dockite', (window as any).dockite);
+  }
 }
 
 export default SchemaTableView;
