@@ -2,6 +2,7 @@
 const path = require('path');
 
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const isDev =
   String(process.env.NODE_ENV)
@@ -18,6 +19,10 @@ module.exports = {
   output: {
     filename: 'index.js',
     path: path.resolve(cwd, 'lib', 'ui'),
+  },
+  externals: {
+    vue: 'Vue',
+    'ant-design-vue': 'antDesignVue',
   },
   module: {
     rules: [
@@ -55,5 +60,5 @@ module.exports = {
   resolve: {
     extensions: ['.tsx', '.ts', '.mjs', '.js', '.jsx', '.vue', '.json', '.wasm'],
   },
-  plugins: [new VueLoaderPlugin()],
+  plugins: [new VueLoaderPlugin(), new BundleAnalyzerPlugin({analyzerMode: 'static'})],
 };
