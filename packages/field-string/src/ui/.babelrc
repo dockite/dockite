@@ -11,8 +11,8 @@
     [
       "import",
       {
-        "libraryName": "antd",
-        "style": "css"
+        "libraryName": "ant-design-vue",
+        // "style": "css"
       }
     ]
   ]

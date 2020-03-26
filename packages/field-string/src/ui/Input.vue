@@ -1,30 +1,45 @@
 <template>
-  <a-input :defaultValue="fieldData" size="large" />
+  <a-form-item :label="fieldConfig.title" :colon="true">
+    <a-input v-model="fieldData" size="large" />
+    <p slot="extra">
+      {{ fieldConfig.description }}
+    </p>
+  </a-form-item>
 </template>
 
 <script>
-import Vue from 'vue';
-
-import Input from 'ant-design-vue/lib/input';
-import 'ant-design-vue/lib/input/css';
-
-Vue.use(Input);
-
 export default {
   name: 'StringField',
+
   props: {
-    fieldData: {
+    value: {
+      type: String,
       required: true,
-    }
+    },
+    formData: {
+      type: Object,
+      required: true,
+    },
+    fieldConfig: {
+      type: Object,
+      required: true,
+    },
   },
+
   data() {
     return {};
   },
+
   computed: {
-    nice() {
-      return 'nice'
-    }
-  }
+    fieldData: {
+      get() {
+        return this.value;
+      },
+      set(value) {
+        this.$emit('input', value);
+      },
+    },
+  },
 };
 </script>
 
