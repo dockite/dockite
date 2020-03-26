@@ -50,7 +50,10 @@ export class DocumentResolver {
   async allDocuments(): Promise<Document[] | null> {
     const repository = getRepository(Document);
 
-    const documents = await repository.find();
+    const documents = await repository.find({
+      where: { deletedAt: null },
+      relations: ['schema'],
+    });
 
     return documents ?? null;
   }
@@ -75,6 +78,38 @@ export class DocumentResolver {
       releaseId,
       userId,
     });
+
+    const savedDocument = await repository.save(document);
+
+    return savedDocument;
+  }
+
+  @Authorized()
+  @Mutation(_returns => Document, { nullable: true })
+  async updateDocument(
+    @Arg('id', _type => String, { nullable: true })
+    id: string | null,
+    // @Arg('locale', _type => String, { nullable: true })
+    // locale: string | null,
+    @Arg('data', _type => GraphQLJSON, { nullable: true })
+    data: any | null, // eslint-disable-line
+    @Ctx() _ctx: GlobalContext,
+  ): Promise<Document | null> {
+    const repository = getRepository(Document);
+
+    // const { id: userId } = ctx.user!; // eslint-disable-line
+
+    const document = await repository.findOne({
+      where: { id, deletedAt: null },
+    });
+
+    if (!document) {
+      return null;
+    }
+
+    if (data) {
+      document.data = data;
+    }
 
     const savedDocument = await repository.save(document);
 
