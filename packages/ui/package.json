@@ -17,6 +17,7 @@
     "graphql": "^14.6.0",
     "lodash": "^4.17.15",
     "moment": "^2.24.0",
+    "portal-vue": "^2.1.7",
     "tailwindcss": "^1.2.0",
     "vue": "^2.6.11",
     "vue-apollo": "^3.0.3",

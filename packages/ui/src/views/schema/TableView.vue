@@ -1,13 +1,23 @@
 <template>
-  <a-table class="schema-table-view" :columns="columns" :data-source="source" :row-key="getRowKey">
-    <router-link slot="id" slot-scope="text" :to="`/document/${text}`">
-      {{ text }}
-    </router-link>
+  <div class="schema-table">
+    <portal to="title">
+      <h1>{{ schema ? schema.name : 'Loading...' }}</h1>
+    </portal>
+    <a-table
+      class="schema-table-view"
+      :columns="columns"
+      :data-source="source"
+      :row-key="getRowKey"
+    >
+      <router-link slot="id" slot-scope="text" :to="`/documents/${text}`">
+        {{ text }}
+      </router-link>
 
-    <span slot="updatedAt" slot-scope="updatedAt">
-      {{ moment(updatedAt).format('YYYY-MM-DD HH:mm:ss') }}
-    </span>
-  </a-table>
+      <span slot="updatedAt" slot-scope="updatedAt">
+        {{ moment(updatedAt).format('YYYY-MM-DD HH:mm:ss') }}
+      </span>
+    </a-table>
+  </div>
 </template>
 
 <script lang="ts">
@@ -113,9 +123,9 @@ export class SchemaTableView extends Vue {
   get source() {
     if (this.documents && this.documents.length > 0) {
       return this.documents.map(doc => {
-        const data = doc.data ?? '{}';
+        const data = doc.data ?? {};
 
-        return { ...doc, ...JSON.parse(data) };
+        return { ...doc, ...data };
       });
     }
 

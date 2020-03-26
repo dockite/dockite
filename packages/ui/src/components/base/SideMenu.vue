@@ -1,12 +1,7 @@
 <template>
   <a-layout-sider v-model="collapsed" class="side-menu" collapsible>
     <div class="logo" />
-    <a-menu
-      theme="dark"
-      mode="inline"
-      :default-open-keys="deafultKeys"
-      :default-selected-keys="deafultKeys"
-    >
+    <a-menu theme="dark" mode="inline" :open-keys.sync="openKeys" :selected-keys.sync="openKeys">
       <a-menu-item key="home">
         <a-icon type="home" />
         <router-link to="/">
@@ -64,8 +59,14 @@ export class BaseSideMenu extends Vue {
 
   collapsed = false;
 
-  get deafultKeys() {
-    console.log(this.$route.path);
+  public openKeys: string[] = [];
+
+  @Watch('allSchemas')
+  handleChange() {
+    console.log(this.allSchemas);
+  }
+
+  public calculateKeysFromRoute(): string[] {
     return this.$route.path
       .split('/')
       .filter(x => x !== '')
@@ -74,9 +75,14 @@ export class BaseSideMenu extends Vue {
       });
   }
 
-  @Watch('allSchemas')
-  handleChange() {
-    console.log(this.allSchemas);
+  @Watch('$route', { deep: true })
+  handleRouteChange() {
+    console.log('Route change');
+    this.openKeys = this.calculateKeysFromRoute();
+  }
+
+  beforeMount() {
+    this.openKeys = this.calculateKeysFromRoute();
   }
 }
 

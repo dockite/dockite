@@ -13,12 +13,22 @@ const routes = [
     component: Home,
   },
   {
+    path: '/schema',
+    name: 'AllSchemaView',
+    component: () => import('../views/schema/All.vue'),
+  },
+  {
     path: '/schema/:schema',
-    name: 'SchemaView',
+    name: 'SingleSchemaView',
     component: SchemaTableView,
   },
   {
-    path: '/document/:id',
+    path: '/documents',
+    name: 'AllDocumentsView',
+    component: () => import('../views/document/All.vue'),
+  },
+  {
+    path: '/documents/:id',
     name: 'DocumentEdit',
     component: DocumentEditView,
   },

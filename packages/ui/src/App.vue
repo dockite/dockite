@@ -3,7 +3,9 @@
     <base-side-menu />
     <a-layout>
       <a-layout-header style="background: #fff; padding: 0 16px;">
-        <h1>{{ title || 'Hullo' }}</h1>
+        <portal-target name="title">
+          No title portal
+        </portal-target>
       </a-layout-header>
       <a-layout-content style="margin: 0 16px">
         <a-breadcrumb style="margin: 16px 0">
