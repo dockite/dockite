@@ -13,7 +13,7 @@ export default {
 
   props: {
     value: {
-      type: String,
+      validator: value => typeof value === 'string' || value === null,
       required: true,
     },
     formData: {
@@ -33,12 +33,24 @@ export default {
   computed: {
     fieldData: {
       get() {
-        return this.value;
+        if (this.value !== null) {
+          return this.value;
+        }
+
+        return '';
       },
       set(value) {
         this.$emit('input', value);
       },
     },
+  },
+
+  mounted() {
+    console.log('value', this.value);
+
+    if (this.value === null) {
+      this.$emit('input', '');
+    }
   },
 };
 </script>
