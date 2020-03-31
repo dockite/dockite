@@ -1,7 +1,15 @@
 <template>
-  <div class="schema-table">
+  <div class="schema-table bg-white">
     <portal to="title">
-      <h1>All Schemas</h1>
+      <a-row type="flex" align="middle" justify="space-between" class="title-row">
+        <h1>All Schemas</h1>
+        <router-link :to="`/schema/create`">
+          <a-button type="primary" size="large">
+            Create
+            <a-icon type="plus" />
+          </a-button>
+        </router-link>
+      </a-row>
     </portal>
     <a-table
       class="schema-table-view"
@@ -94,6 +102,10 @@ export default SchemaTableView;
 </script>
 
 <style lang="scss">
+.schema-table {
+  background: #fff;
+}
+
 .schema-table-view ul.ant-table-pagination {
   padding: 0 16px;
 }

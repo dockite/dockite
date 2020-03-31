@@ -18,6 +18,12 @@
 
       <a-sub-menu key="schema">
         <span slot="title"><a-icon type="database" /><span>Schemas</span></span>
+        <a-menu-item :key="`schema/create`">
+          <router-link :to="`/schema/create`">
+            Add
+            <a-icon type="plus" />
+          </router-link>
+        </a-menu-item>
         <a-menu-item v-for="schema in allSchemas" :key="`schema/${schema.name}`">
           <router-link :to="`/schema/${schema.name}`">
             {{ schema.name }}

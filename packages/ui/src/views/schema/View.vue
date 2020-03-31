@@ -1,7 +1,15 @@
 <template>
-  <div class="schema-table">
+  <div class="schema-table bg-white">
     <portal to="title">
-      <h1>{{ schema ? schema.name : 'Loading...' }}</h1>
+      <a-row style="height:64px;" type="flex" align="middle" justify="space-between">
+        <h1 style="margin: 0;">{{ schema && schema.name ? schema.name : 'Loading...' }}</h1>
+        <router-link v-if="schema && schema.name" :to="`/schema/${schema.name}/create`">
+          <a-button type="primary" size="large">
+            Create
+            <a-icon type="plus" />
+          </a-button>
+        </router-link>
+      </a-row>
     </portal>
     <a-table
       class="schema-table-view"

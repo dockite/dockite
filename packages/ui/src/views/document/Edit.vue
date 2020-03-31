@@ -1,5 +1,12 @@
 <template>
-  <div class="document-edit">
+  <div class="document-edit bg-white">
+    <portal to="title">
+      <a-row type="flex" align="middle" class="title-row">
+        <h1 style="margin: 0; padding: 0;">
+          {{ document && document.id ? `Update ${document.id}` : 'Loading...' }}
+        </h1>
+      </a-row>
+    </portal>
     <a-form layout="vertical" @submit.prevent="handleSubmit">
       <a-tabs class="form-tabs" :tab-bar-gutter="0" tab-position="top">
         <a-tab-pane key="1" class="form-tab-pane" tab="Default">
@@ -72,7 +79,7 @@ type DockiteFormField = Omit<Field, 'schemaId' | 'dockiteField'>;
     },
   },
 })
-export class DocumentEditPage extends Vue {
+export class EditDocumentPage extends Vue {
   public document!: Document;
 
   public startCase = startCase;
@@ -144,7 +151,7 @@ export class DocumentEditPage extends Vue {
   }
 }
 
-export default DocumentEditPage;
+export default EditDocumentPage;
 </script>
 
 <style lang="scss">

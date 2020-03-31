@@ -2,7 +2,7 @@
   <a-layout v-if="loaded" id="components-layout-demo-side" style="min-height: 100vh">
     <base-side-menu />
     <a-layout>
-      <a-layout-header style="background: #fff; padding: 0 16px;">
+      <a-layout-header style="background: #fff; padding: 0 16px; line-height: 1.5;">
         <portal-target name="title">
           No title portal
         </portal-target>
@@ -82,7 +82,16 @@ export default App;
 <style lang="scss">
 @import '~ant-design-vue/dist/antd.css';
 
-.dockite-view {
+.title-row {
+  height: 64px;
+
+  h1 {
+    margin: 0;
+    padding: 0;
+  }
+}
+
+.bg-white {
   background: #ffffff;
 }
 </style>

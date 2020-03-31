@@ -1,7 +1,9 @@
 <template>
-  <div class="schema-table">
+  <div class="schema-table bg-white">
     <portal to="title">
-      <h1>All Documents</h1>
+      <a-row type="flex" align="middle" class="title-row">
+        <h1>All Documents</h1>
+      </a-row>
     </portal>
     <a-table
       class="schema-table-view"
@@ -53,7 +55,7 @@ import moment from 'moment';
     },
   },
 })
-export class SchemaTableView extends Vue {
+export class AllDocumentPage extends Vue {
   public moment = moment;
 
   public documents!: Partial<Document>[];
@@ -108,7 +110,7 @@ export class SchemaTableView extends Vue {
   }
 }
 
-export default SchemaTableView;
+export default AllDocumentPage;
 </script>
 
 <style lang="scss">

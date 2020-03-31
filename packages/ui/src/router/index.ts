@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import Home from '../views/Home.vue';
-import SchemaTableView from '../views/schema/TableView.vue';
+import View from '../views/schema/View.vue';
 import DocumentEditView from '../views/document/Edit.vue';
 
 Vue.use(VueRouter);
@@ -18,9 +18,19 @@ const routes = [
     component: () => import('../views/schema/All.vue'),
   },
   {
+    path: '/schema/create',
+    name: 'CreateSchema',
+    component: () => import('../views/schema/Create.vue'),
+  },
+  {
     path: '/schema/:schema',
     name: 'SingleSchemaView',
-    component: SchemaTableView,
+    component: View,
+  },
+  {
+    path: '/schema/:schema/create',
+    name: 'CreateSchemaDocument',
+    component: () => import('../views/document/Create.vue'),
   },
   {
     path: '/documents',
