@@ -37,6 +37,8 @@ export class DocumentResolver {
       qb.andWhere('document.schemaId = :schemaId', { schemaId });
     }
 
+    qb.orderBy('document.updatedAt', 'DESC');
+
     const documents = await qb.getMany();
 
     return documents ?? null;
@@ -53,6 +55,7 @@ export class DocumentResolver {
     const documents = await repository.find({
       where: { deletedAt: null },
       relations: ['schema'],
+      order: { updatedAt: 'DESC' },
     });
 
     return documents ?? null;
@@ -65,18 +68,18 @@ export class DocumentResolver {
     @Arg('data', _type => GraphQLJSON) data: any, // eslint-disable-line
     @Arg('schemaId') schemaId: string,
     @Arg('releaseId', _type => String, { nullable: true }) releaseId: string | null = null,
-    @Ctx() ctx: GlobalContext,
+    @Ctx() _ctx: GlobalContext,
   ): Promise<Document | null> {
     const repository = getRepository(Document);
 
-    const { id: userId } = ctx.user!; // eslint-disable-line
+    // const { id: userId } = ctx.user!; // eslint-disable-line
 
     const document = repository.create({
       locale,
       data,
       schemaId,
       releaseId,
-      userId,
+      userId: '1131d289-e842-41d5-abda-05d9548f2169',
     });
 
     const savedDocument = await repository.save(document);
