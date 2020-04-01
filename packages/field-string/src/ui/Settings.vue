@@ -28,6 +28,11 @@ export default {
       type: Object,
       required: true,
     },
+
+    rules: {
+      type: Object,
+      required: true,
+    }
   },
 
   computed: {
