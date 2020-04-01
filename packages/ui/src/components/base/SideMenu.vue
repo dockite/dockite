@@ -20,7 +20,7 @@
         <span slot="title"><a-icon type="database" /><span>Schemas</span></span>
         <a-menu-item :key="`schema/create`">
           <router-link :to="`/schema/create`">
-            Add
+            Create
             <a-icon type="plus" />
           </router-link>
         </a-menu-item>

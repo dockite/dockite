@@ -14,6 +14,15 @@
     </portal>
 
     <a-modal
+      :visible="!schemaNameEntered"
+      title="Name schema"
+      @ok="schemaNameEntered = schemaName.length > 0"
+      @cancel="$router.push('/schema')"
+    >
+      <a-input v-model="schemaName" placeholder="Schema Name.." />
+    </a-modal>
+
+    <a-modal
       v-model="groupsModalVisible"
       title="Add Group"
       centered
@@ -33,6 +42,11 @@
       :fields="fields"
       @field:submit="handleFieldSubmit"
     />
+
+    <a-row style="margin-bottom: 1rem;" type="flex" align="middle">
+      <h2 v-if="schemaName !== ''">{{ schemaName }}</h2>
+      <h2 v-else contenteditable="">Enter Schema Name..</h2>
+    </a-row>
 
     <a-form
       v-if="!$apollo.loading"
@@ -85,13 +99,12 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator';
-import { Schema, Field } from '@dockite/types';
-import { startCase, has, omitBy } from 'lodash';
+import { Component, Vue } from 'vue-property-decorator';
+import { Field, SchemaType } from '@dockite/types';
+import { omitBy } from 'lodash';
 import VueCountryFlag from 'vue-country-flag';
 import { Draggable, Container } from 'vue-smooth-dnd';
 import { gql } from 'apollo-boost';
-import { fieldManager } from '../../dockite';
 import AddFieldModal from '../../components/schema/AddField.vue';
 
 type DockiteFormField = Omit<Field, 'schemaId' | 'dockiteField'>;
@@ -105,13 +118,15 @@ type DockiteFormField = Omit<Field, 'schemaId' | 'dockiteField'>;
   },
 })
 export class CreateSchemaPage extends Vue {
-  public form: Record<string, any> = {};
+  public schemaName = '';
+
+  public schemaNameEntered = false;
+
+  public fields: Omit<Field, 'id' | 'schemaId' | 'dockiteField' | 'schema'>[] = [];
 
   public groups: Record<string, string[]> = {
     Default: [],
   };
-
-  public fields: Omit<Field, 'id' | 'schemaId' | 'dockiteField' | 'schema'>[] = [];
 
   public selectedGroup: string = Object.keys(this.groups)[0];
 
@@ -161,16 +176,57 @@ export class CreateSchemaPage extends Vue {
 
   public async handleSubmit() {
     try {
-      await this.$apollo.mutate({
+      const { data } = await this.$apollo.mutate({
         mutation: gql`
-          mutation CreateSchemaMutation($data: JSON!, $locale: String!) {
-            createSchema(data: $data, locale: $locale) {
+          mutation CreateSchemaMutation(
+            $name: String!
+            $type: SchemaType!
+            $groups: JSON!
+            $settings: JSON!
+          ) {
+            createSchema(name: $name, type: $type, groups: $groups, settings: $settings) {
               id
             }
           }
         `,
-        variables: { data: this.form, locale: 'en-AU' },
+        variables: {
+          name: this.schemaName,
+          type: SchemaType.Default,
+          groups: this.groups,
+          settings: {},
+        },
       });
+
+      const schemaId = data.createSchema?.id ?? '';
+
+      const fieldMutations = this.fields.map(field =>
+        this.$apollo.mutate({
+          mutation: gql`
+            mutation CreateSchemaField(
+              $schemaId: String!
+              $name: String!
+              $type: String!
+              $title: String!
+              $description: String!
+              $settings: JSON!
+            ) {
+              createField(
+                schemaId: $schemaId
+                name: $name
+                type: $type
+                title: $title
+                description: $description
+                settings: $settings
+              ) {
+                id
+              }
+            }
+          `,
+          variables: { schemaId, ...field },
+        }),
+      );
+
+      await Promise.all(fieldMutations);
 
       this.$message.success('Schema created successfully!');
     } catch {
@@ -187,6 +243,7 @@ export default CreateSchemaPage;
   .ant-tabs-tab {
     padding-left: 1.5rem;
     padding-right: 1.5rem;
+    margin: 0;
   }
 
   .ant-tabs-tab-active {

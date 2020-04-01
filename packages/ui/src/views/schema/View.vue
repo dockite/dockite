@@ -3,12 +3,19 @@
     <portal to="title">
       <a-row style="height:64px;" type="flex" align="middle" justify="space-between">
         <h1 style="margin: 0;">{{ schema && schema.name ? schema.name : 'Loading...' }}</h1>
-        <router-link v-if="schema && schema.name" :to="`/schema/${schema.name}/create`">
-          <a-button type="primary" size="large">
-            Create
-            <a-icon type="plus" />
-          </a-button>
-        </router-link>
+        <div>
+          <router-link v-if="schema && schema.name" :to="`/schema/${schema.name}/edit`">
+            <a-button size="large">
+              Edit
+            </a-button>
+          </router-link>
+          <router-link v-if="schema && schema.name" :to="`/schema/${schema.name}/create`">
+            <a-button style="margin-left: 1rem;" type="primary" size="large">
+              Create
+              <a-icon type="plus" />
+            </a-button>
+          </router-link>
+        </div>
       </a-row>
     </portal>
     <a-table

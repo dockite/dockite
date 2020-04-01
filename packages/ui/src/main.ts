@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Antd from 'ant-design-vue';
 import PortalVue from 'portal-vue';
+import Fragment from 'vue-fragment';
 
 import { startCase, kebabCase, camelCase, snakeCase } from 'lodash';
 
@@ -18,6 +19,7 @@ Vue.config.productionTip = false;
 
 Vue.use(Antd);
 Vue.use(PortalVue);
+Vue.use(Fragment.Plugin);
 
 Vue.filter('startCase', startCase);
 Vue.filter('camelCase', camelCase);

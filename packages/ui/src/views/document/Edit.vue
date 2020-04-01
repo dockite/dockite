@@ -7,21 +7,25 @@
         </h1>
       </a-row>
     </portal>
-    <a-form layout="vertical" @submit.prevent="handleSubmit">
+    <a-form v-if="!$apollo.loading" layout="vertical" @submit.prevent="handleSubmit">
       <a-tabs class="form-tabs" :tab-bar-gutter="0" tab-position="top">
-        <a-tab-pane key="1" class="form-tab-pane" tab="Default">
-          <template v-for="key in Object.keys(documentData)">
+        <a-tab-pane
+          v-for="group in Object.keys(groups)"
+          :key="group"
+          class="form-tab-pane"
+          :tab="group"
+        >
+          <template v-for="key in Object.keys(documentData).filter(filterBySelectedGroup)">
             <component
               :is="getInputField(key)"
               :key="key"
               v-model="form[key]"
               :form-data="form"
               :field-config="getFieldByKey('name', key)"
+              @update:rules="handleRulesMerge"
             />
           </template>
         </a-tab-pane>
-        <a-tab-pane key="2" class="form-tab-pane" tab="Tab 2">Content of Tab Pane 2</a-tab-pane>
-        <a-tab-pane key="3" class="form-tab-pane" tab="Tab 3">Content of Tab Pane 3</a-tab-pane>
       </a-tabs>
       <section class="form-submit-section">
         <a-button html-type="submit" type="primary" size="large">Update</a-button>
@@ -58,6 +62,7 @@ type DockiteFormField = Omit<Field, 'schemaId' | 'dockiteField'>;
             schema {
               id
               name
+              groups
               fields {
                 id
                 name
@@ -80,11 +85,15 @@ type DockiteFormField = Omit<Field, 'schemaId' | 'dockiteField'>;
   },
 })
 export class EditDocumentPage extends Vue {
-  public document!: Document;
+  public document: Document | null = null;
 
   public startCase = startCase;
 
   public form: Record<string, any> = {};
+
+  public formRules = {};
+
+  public selectedGroup = '';
 
   public getInputField(name: string) {
     const field = this.getFieldByKey('name', name);
@@ -118,6 +127,29 @@ export class EditDocumentPage extends Vue {
     return {};
   }
 
+  get groups(): Record<string, string[]> {
+    if (this.document?.schema?.groups) {
+      return this.document?.schema?.groups;
+    }
+
+    return {};
+  }
+
+  @Watch('groups', { immediate: true })
+  handleGroupsChange() {
+    if (Object.keys(this.groups).length > 0) {
+      [this.selectedGroup] = Object.keys(this.groups);
+    }
+  }
+
+  public filterBySelectedGroup(field: string): boolean {
+    if (this.groups[this.selectedGroup]) {
+      return this.groups[this.selectedGroup].includes(field);
+    }
+
+    return true;
+  }
+
   get fields(): DockiteFormField[] {
     if (this.document?.schema?.fields) {
       return this.document.schema.fields;
@@ -128,7 +160,7 @@ export class EditDocumentPage extends Vue {
 
   @Watch('documentData')
   handleDocumentDataChange() {
-    this.form = { ...this.documentData, ...this.form };
+    this.form = { ...this.form, ...this.documentData };
   }
 
   public async handleSubmit() {
