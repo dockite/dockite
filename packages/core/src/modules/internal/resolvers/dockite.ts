@@ -7,13 +7,13 @@ import { dockiteFields } from '../../../fields';
 @ObjectType()
 class DockiteFieldStatic {
   @Field(_type => String)
-  public type: string;
+  public type!: string;
 
   @Field(_type => String)
-  public title: string;
+  public title!: string;
 
   @Field(_type => String)
-  public description: string;
+  public description!: string;
 
   @Field(_type => GraphQLJSON)
   public defaultOptions = {};
