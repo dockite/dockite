@@ -1,0 +1,27 @@
+query GetDocumentById($id: String!) {
+  document: getDocument(id: $id) {
+    id
+    locale
+    data
+    publishedAt
+    createdAt
+    updatedAt
+    deletedAt
+    schemaId
+    releaseId
+    userId
+    schema {
+      id
+      name
+      groups
+      fields {
+        id
+        name
+        title
+        description
+        type
+        settings
+      }
+    }
+  }
+}

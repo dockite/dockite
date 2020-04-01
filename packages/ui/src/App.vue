@@ -1,30 +1,39 @@
 <template>
-  <a-layout id="components-layout-demo-side" style="min-height: 100vh">
-    <base-side-menu />
-    <a-layout>
-      <a-layout-header style="background: #fff; padding: 0 16px;">
-        <h1>{{ title || 'Hullo' }}</h1>
-      </a-layout-header>
-      <a-layout-content style="margin: 0 16px">
-        <a-breadcrumb style="margin: 16px 0">
-          <a-breadcrumb-item v-for="crumb in breadcrumbs" :key="crumb.name">
-            <span v-if="$route.path === crumb.path">
-              {{ crumb.name | startCase }}
-            </span>
-            <router-link v-else :to="crumb.path">
-              {{ crumb.name | startCase }}
-            </router-link>
-          </a-breadcrumb-item>
-        </a-breadcrumb>
-        <main class="dockite-view">
-          <router-view />
-        </main>
-      </a-layout-content>
-      <a-layout-footer style="text-align: center">
-        Dockite | Made with ❤
-      </a-layout-footer>
+  <fragment>
+    <a-layout v-if="loaded" id="components-layout-demo-side" style="min-height: 100vh">
+      <base-side-menu />
+      <a-layout>
+        <a-layout-header style="background: #fff; padding: 0 16px; line-height: 1.5;">
+          <portal-target name="title">
+            No title portal
+          </portal-target>
+        </a-layout-header>
+        <a-layout-content style="margin: 0 16px">
+          <a-breadcrumb style="margin: 16px 0">
+            <a-breadcrumb-item v-for="crumb in breadcrumbs" :key="crumb.name">
+              <span v-if="$route.path === crumb.path">
+                {{ crumb.name | startCase }}
+              </span>
+              <router-link v-else :to="crumb.path">
+                {{ crumb.name | startCase }}
+              </router-link>
+            </a-breadcrumb-item>
+          </a-breadcrumb>
+          <main class="dockite-view">
+            <router-view />
+          </main>
+        </a-layout-content>
+        <a-layout-footer style="text-align: center">
+          Dockite | Made with ❤
+        </a-layout-footer>
+      </a-layout>
     </a-layout>
-  </a-layout>
+    <a-layout class="authentication-layout">
+      <a-layout-content>
+        <authentication-form />
+      </a-layout-content>
+    </a-layout>
+  </fragment>
 </template>
 
 <script lang="ts">
@@ -33,9 +42,11 @@ import { startCase } from 'lodash';
 
 import BaseSideMenu from './components/base/SideMenu.vue';
 import BaseRouterView from './components/base/RouterView.vue';
+import AuthenticationForm from './components/authentication/form.vue';
 
 @Component({
   components: {
+    AuthenticationForm,
     BaseSideMenu,
     BaseRouterView,
   },
@@ -52,6 +63,8 @@ import BaseRouterView from './components/base/RouterView.vue';
   },
 })
 export class App extends Vue {
+  public loaded = false;
+
   get breadcrumbs() {
     const crumbs = this.$route.path
       .split('/')
@@ -65,6 +78,11 @@ export class App extends Vue {
 
     return crumbs;
   }
+
+  async mounted() {
+    await Promise.all((window as any).resolveFields);
+    this.loaded = true;
+  }
 }
 
 export default App;
@@ -73,7 +91,26 @@ export default App;
 <style lang="scss">
 @import '~ant-design-vue/dist/antd.css';
 
-.dockite-view {
+.title-row {
+  height: 64px;
+
+  h1 {
+    margin: 0;
+    padding: 0;
+  }
+}
+
+.authentication-layout {
+  min-height: 100vh;
+
+  .ant-layout-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+.bg-white {
   background: #ffffff;
 }
 </style>

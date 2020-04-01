@@ -1,6 +1,7 @@
 import { GraphQLFieldConfig, GraphQLInputFieldConfig } from 'graphql';
 import { Field } from '@dockite/types';
 import { Repository } from 'typeorm';
+import { Component } from 'vue';
 
 export interface DockiteFieldStatic {
   type: string;
@@ -38,3 +39,20 @@ export abstract class DockiteField {
 
   // public abstract processOutput<Input, Output>(data: Input): Promise<Output>;
 }
+
+export const registerField = (
+  name: string,
+  inputComponent: Component,
+  settingsComponent: Component,
+): void => {
+  if (typeof window === 'undefined') {
+    throw new Error('registerField called in non-browser environment');
+  }
+
+  // eslint-disable-next-line
+  const w = window as any;
+
+  if (w.dockite && w.dockite.registerField) {
+    w.dockite.registerField(name, inputComponent, settingsComponent);
+  }
+};

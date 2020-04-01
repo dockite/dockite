@@ -64,7 +64,7 @@ export class SchemaResolver {
   @Mutation(_returns => Schema)
   async createSchema(
     @Arg('name') name: string,
-    @Arg('type') type: number,
+    @Arg('type', _type => SchemaType) type: SchemaType,
     @Arg('groups', _type => GraphQLJSON) groups: any, // eslint-disable-line
     @Arg('settings', _type => GraphQLJSON) settings: any, // eslint-disable-line
   ): Promise<Schema | null> {

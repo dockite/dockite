@@ -1,0 +1,11 @@
+query FetchAllDocuments {
+  allDocuments {
+    id
+    data
+    updatedAt
+    createdAt
+    schema {
+      name
+    }
+  }
+}

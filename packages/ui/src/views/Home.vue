@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <div v-if="!$user" class="w-1/2">
+    <div v-if="!true" class="w-1/2">
       Hullo
     </div>
     <div v-else>

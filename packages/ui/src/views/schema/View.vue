@@ -1,13 +1,38 @@
 <template>
-  <a-table class="schema-table-view" :columns="columns" :data-source="source" :row-key="getRowKey">
-    <router-link slot="id" slot-scope="text" :to="`/document/${text}`">
-      {{ text }}
-    </router-link>
+  <div class="schema-table bg-white">
+    <portal to="title">
+      <a-row style="height:64px;" type="flex" align="middle" justify="space-between">
+        <h1 style="margin: 0;">{{ schema && schema.name ? schema.name : 'Loading...' }}</h1>
+        <div>
+          <router-link v-if="schema && schema.name" :to="`/schema/${schema.name}/edit`">
+            <a-button size="large">
+              Edit
+            </a-button>
+          </router-link>
+          <router-link v-if="schema && schema.name" :to="`/schema/${schema.name}/create`">
+            <a-button style="margin-left: 1rem;" type="primary" size="large">
+              Create
+              <a-icon type="plus" />
+            </a-button>
+          </router-link>
+        </div>
+      </a-row>
+    </portal>
+    <a-table
+      class="schema-table-view"
+      :columns="columns"
+      :data-source="source"
+      :row-key="getRowKey"
+    >
+      <router-link slot="id" slot-scope="text" :to="`/documents/${text}`">
+        {{ text }}
+      </router-link>
 
-    <span slot="updatedAt" slot-scope="updatedAt">
-      {{ moment(updatedAt).format('YYYY-MM-DD HH:mm:ss') }}
-    </span>
-  </a-table>
+      <span slot="updatedAt" slot-scope="updatedAt">
+        {{ moment(updatedAt).format('YYYY-MM-DD HH:mm:ss') }}
+      </span>
+    </a-table>
+  </div>
 </template>
 
 <script lang="ts">
@@ -113,9 +138,9 @@ export class SchemaTableView extends Vue {
   get source() {
     if (this.documents && this.documents.length > 0) {
       return this.documents.map(doc => {
-        const data = doc.data ?? '{}';
+        const data = doc.data ?? {};
 
-        return { ...doc, ...JSON.parse(data) };
+        return { ...doc, ...data };
       });
     }
 
@@ -124,6 +149,10 @@ export class SchemaTableView extends Vue {
 
   public getRowKey(row: Partial<Document>) {
     return row.id;
+  }
+
+  created(): void {
+    console.log('window-dockite', (window as any).dockite);
   }
 }
 

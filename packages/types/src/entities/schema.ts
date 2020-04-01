@@ -7,8 +7,8 @@ export interface Schema {
   id: string;
   name: string;
   type: SchemaType;
-  groups: any; // eslint-disable-line
-  settings: any; // eslint-disable-line
+  groups: Record<string, string[]>; // eslint-disable-line
+  settings: Record<string, any>; // eslint-disable-line
   fields: Field[];
   user: User;
   createdAt: Date;
