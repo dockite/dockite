@@ -173,7 +173,7 @@ export class EditDocumentPage extends Vue {
             }
           }
         `,
-        variables: { id: this.document.id, data: this.form },
+        variables: { id: this.document?.id ?? '', data: this.form },
       });
 
       this.$message.success('Document updated successfully!');

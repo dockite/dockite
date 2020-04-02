@@ -1,6 +1,6 @@
 <template>
   <fragment>
-    <a-layout v-if="loaded" id="components-layout-demo-side" style="min-height: 100vh">
+    <a-layout v-if="!loaded" id="components-layout-demo-side" style="min-height: 100vh">
       <base-side-menu />
       <a-layout>
         <a-layout-header style="background: #fff; padding: 0 16px; line-height: 1.5;">
@@ -42,7 +42,7 @@ import { startCase } from 'lodash';
 
 import BaseSideMenu from './components/base/SideMenu.vue';
 import BaseRouterView from './components/base/RouterView.vue';
-import AuthenticationForm from './components/authentication/form.vue';
+import AuthenticationForm from './components/authentication/Form.vue';
 
 @Component({
   components: {
@@ -105,6 +105,7 @@ export default App;
 
   .ant-layout-content {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
   }

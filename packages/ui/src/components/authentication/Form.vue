@@ -1,29 +1,42 @@
 <template>
   <fragment>
     <a-card v-show="view === viewTypes.Login" style="width: 450px">
-      <h1>Dockite - Login</h1>
-      <a-form-model :model="loginForm" :rules="loginRules">
-        <a-form-model-item label="Email" prop="email">
-          <a-input v-model="loginForm.email" placeholder="john@example.com" />
+      <h1>Dockite - Sign in</h1>
+      <a-form-model :model="loginForm" :rules="loginRules" @submit="handleLogin" ref="loginForm">
+        <a-form-model-item prop="email">
+          <a-input v-model="loginForm.email" placeholder="john@example.com">
+            <a-icon slot="prefix" type="user" style="color:rgba(0,0,0,.25)" />
+          </a-input>
         </a-form-model-item>
-        <a-form-model-item label="Password" prop="password">
-          <a-input v-model="loginForm.password" />
+        <a-form-model-item prop="password">
+          <a-input placeholder="Password" v-model="loginForm.password">
+            <a-icon slot="prefix" type="lock" style="color:rgba(0,0,0,.25)" />
+          </a-input>
         </a-form-model-item>
-        <a-form-model-item style="margin-top: 1rem;">
-          <a-button type="primary" size="large" html-type="submit">
-            Login
+        <a-form-model-item>
+          <a-button type="primary" htmlType="submit" block>
+            Sign in
+          </a-button>
+        </a-form-model-item>
+        <a-form-model-item>
+          <a-button type="link" @click="view = viewTypes.Register" block>
+            Dont have an account? Register
           </a-button>
         </a-form-model-item>
       </a-form-model>
     </a-card>
     <a-card v-show="view === viewTypes.Register" style="width: 600px">
       <h1>Dockite - Register</h1>
-      <a-form-model :model="loginForm" :rules="loginRules">
-        <a-form-model-item label="Email" prop="email">
-          <a-input v-model="loginForm.email" placeholder="john@example.com" />
+      <a-form-model :model="loginForm" :rules="loginRules" @submit="handleLogin">
+        <a-form-model-item prop="email">
+          <a-input v-model="loginForm.email" placeholder="john@example.com">
+            <a-icon slot="prefix" type="user" style="color:rgba(0,0,0,.25)" />
+          </a-input>
         </a-form-model-item>
-        <a-form-model-item label="Password" prop="password">
-          <a-input v-model="loginForm.password" />
+        <a-form-model-item prop="password">
+          <a-input v-model="loginForm.password">
+            <a-icon slot="prefix" type="lock" style="color:rgba(0,0,0,.25)" />
+          </a-input>
         </a-form-model-item>
       </a-form-model>
     </a-card>
@@ -69,6 +82,10 @@ export class AuthenticationForm extends Vue {
 
   public async handleLogin() {
     try {
+      await new Promise((resolve, reject) => {
+        (this.$refs.loginForm as any).validate((valid: boolean) => (valid ? resolve() : reject()));
+      });
+
       const { data } = await this.$apollo.mutate({
         mutation: gql`
           mutation LoginUser($email: String!, $password: String!) {
@@ -81,8 +98,10 @@ export class AuthenticationForm extends Vue {
       });
 
       const { token } = data.login;
+
+      window.localStorage.setItem('auth_token', token);
     } catch (err) {
-      this.$message.error('Error creating account');
+      this.$message.error('Error signing into account');
     }
   }
 }
