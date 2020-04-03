@@ -1,1 +1,3 @@
-export interface SchemaState {}
+export interface SchemaState {
+  schemaId: string | null;
+}

@@ -23,11 +23,13 @@ module.exports = {
         groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
         'newlines-between': 'always',
         alphabetize: {
-          order: 'asc', /* sort in ascending order. Options: ['ignore', 'asc', 'desc'] */
-          caseInsensitive: true /* ignore case. Options: [true, false] */
-        }
+          order: 'asc' /* sort in ascending order. Options: ['ignore', 'asc', 'desc'] */,
+          caseInsensitive: true /* ignore case. Options: [true, false] */,
+        },
       },
     ],
+    'import/prefer-default-export': 'warn',
+    'import/no-cycle': 'warn',
   },
   overrides: [
     {

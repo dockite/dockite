@@ -3,7 +3,6 @@ const path = require('path');
 
 const { cosmiconfigSync } = require('cosmiconfig');
 const { union } = require('lodash');
-
 const { default: InjectablePlugin, ENTRY_ORDER } = require('webpack-inject-plugin');
 
 let fields = ['@dockite/field-string'];

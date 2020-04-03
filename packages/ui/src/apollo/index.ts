@@ -1,5 +1,5 @@
-import Vue from 'vue';
 import ApolloClient from 'apollo-boost';
+import Vue from 'vue';
 import VueApollo from 'vue-apollo';
 
 Vue.use(VueApollo);

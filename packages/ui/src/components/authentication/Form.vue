@@ -80,8 +80,8 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
 import { gql } from 'apollo-boost';
+import { Component, Vue } from 'vue-property-decorator';
 
 enum ViewTypes {
   Login = 'login',

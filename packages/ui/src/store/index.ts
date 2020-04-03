@@ -17,7 +17,7 @@ export const store: StoreOptions<RootState> = {
   actions: {
     restoreFromLocal() {
       this.dispatch('account/restoreFromLocal');
-    }
+    },
   },
   modules: {
     account,

@@ -36,11 +36,12 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator';
 import { Schema, Field } from '@dockite/types';
 import { gql } from 'apollo-boost';
 import { startCase, has } from 'lodash';
 import VueCountryFlag from 'vue-country-flag';
+import { Component, Vue, Watch } from 'vue-property-decorator';
+
 import { fieldManager } from '../../dockite';
 import { DocumentState } from '../../store/document/types';
 

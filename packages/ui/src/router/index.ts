@@ -1,8 +1,9 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
+
+import DocumentEditView from '../views/document/Edit.vue';
 import Home from '../views/Home.vue';
 import View from '../views/schema/View.vue';
-import DocumentEditView from '../views/document/Edit.vue';
 
 Vue.use(VueRouter);
 

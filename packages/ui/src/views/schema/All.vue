@@ -32,10 +32,10 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-import { gql } from 'apollo-boost';
 import { Schema } from '@dockite/types';
+import { gql } from 'apollo-boost';
 import moment from 'moment';
+import { Component, Vue } from 'vue-property-decorator';
 
 @Component({
   apollo: {

@@ -1,5 +1,5 @@
 export interface DocumentState {
-    documentId: string | null;
+  documentId: string | null;
 }
 
 export interface CreateDocumentPayload {

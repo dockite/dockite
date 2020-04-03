@@ -1,5 +1,7 @@
 import { ActionTree } from 'vuex';
-import { RootState } from '..';
+
 import { SchemaState } from './types';
+
+import { RootState } from '..';
 
 export const actions: ActionTree<SchemaState, RootState> = {};

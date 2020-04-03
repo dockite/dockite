@@ -51,9 +51,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator';
-import { gql } from 'apollo-boost';
 import { Schema } from '@dockite/types';
+import { gql } from 'apollo-boost';
+import { Component, Vue, Watch } from 'vue-property-decorator';
 
 @Component({
   apollo: {

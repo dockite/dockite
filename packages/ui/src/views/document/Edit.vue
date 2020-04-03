@@ -38,6 +38,7 @@
 
 <script lang="ts">
 import { Document, Field } from '@dockite/types';
+import gql from 'graphql-tag';
 import { startCase } from 'lodash';
 import { Component, Vue, Watch } from 'vue-property-decorator';
 

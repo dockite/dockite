@@ -99,12 +99,12 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-import { omitBy } from 'lodash';
 import { Field, SchemaType } from '@dockite/types';
-import VueCountryFlag from 'vue-country-flag';
-import { Draggable, Container } from 'vue-smooth-dnd';
 import { gql } from 'apollo-boost';
+import { omitBy } from 'lodash';
+import VueCountryFlag from 'vue-country-flag';
+import { Component, Vue } from 'vue-property-decorator';
+import { Draggable, Container } from 'vue-smooth-dnd';
 
 import AddFieldModal from '../../components/schema/AddField.vue';
 

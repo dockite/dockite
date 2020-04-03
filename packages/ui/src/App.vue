@@ -41,12 +41,12 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
 import { startCase } from 'lodash';
+import { Vue, Component } from 'vue-property-decorator';
 
-import BaseSideMenu from './components/base/SideMenu.vue';
-import BaseRouterView from './components/base/RouterView.vue';
 import AuthenticationForm from './components/authentication/Form.vue';
+import BaseRouterView from './components/base/RouterView.vue';
+import BaseSideMenu from './components/base/SideMenu.vue';
 import { AccountState } from './store/account/types';
 
 @Component({

@@ -1,9 +1,12 @@
-import { ActionTree } from 'vuex';
-import { AccountState, LoginPayload, RegisterPayload } from './types';
-import { RootState } from '..';
-import { apolloClient } from '@/apollo';
 import { User } from '@dockite/types';
 import { gql } from 'apollo-boost';
+import { ActionTree } from 'vuex';
+
+import { apolloClient } from '@/apollo';
+
+import { AccountState, LoginPayload, RegisterPayload } from './types';
+
+import { RootState } from '..';
 
 export const actions: ActionTree<AccountState, RootState> = {
   async restoreFromLocal({ commit }) {
@@ -11,7 +14,6 @@ export const actions: ActionTree<AccountState, RootState> = {
 
     if (!token) return;
 
-    
     const { data: meData } = await apolloClient.query<{ me: User }>({
       query: gql`
         query MeQuery {
@@ -27,9 +29,9 @@ export const actions: ActionTree<AccountState, RootState> = {
         }
       `,
     });
-    
+
     if (!meData) return;
-    
+
     commit('setUser', meData.me);
     commit('setAuthenticated', true);
   },
@@ -118,5 +120,5 @@ export const actions: ActionTree<AccountState, RootState> = {
   logout({ commit }) {
     commit('setAuthenticated', false);
     commit('setUser', null);
-  }
+  },
 };

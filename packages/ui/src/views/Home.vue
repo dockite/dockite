@@ -10,6 +10,7 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
+
 import { AccountState } from '../store/account/types';
 
 @Component

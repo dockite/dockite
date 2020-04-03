@@ -57,9 +57,10 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop, Watch } from 'vue-property-decorator';
-import { gql } from 'apollo-boost';
 import { Field } from '@dockite/types';
+import { gql } from 'apollo-boost';
+import { Component, Vue, Prop, Watch } from 'vue-property-decorator';
+
 import { fieldManager } from '../../dockite';
 
 @Component({

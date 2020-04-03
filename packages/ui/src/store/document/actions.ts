@@ -1,8 +1,11 @@
-import { ActionTree } from 'vuex';
-import { RootState } from '..';
-import { DocumentState, CreateDocumentPayload } from './types';
-import { apolloClient } from '@/apollo';
 import { gql } from 'apollo-boost';
+import { ActionTree } from 'vuex';
+
+import { apolloClient } from '@/apollo';
+
+import { DocumentState, CreateDocumentPayload } from './types';
+
+import { RootState } from '..';
 
 export const actions: ActionTree<DocumentState, RootState> = {
   async create({ commit }, payload: CreateDocumentPayload) {

@@ -1,8 +1,10 @@
 import { Module } from 'vuex';
-import { RootState } from '..';
+
 import { actions } from './actions';
 import { mutations } from './mutations';
 import { DocumentState } from './types';
+
+import { RootState } from '..';
 
 export const namespace = 'document';
 
