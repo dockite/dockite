@@ -42,6 +42,7 @@ import { gql } from 'apollo-boost';
 import { startCase, has } from 'lodash';
 import VueCountryFlag from 'vue-country-flag';
 import { fieldManager } from '../../dockite';
+import { DocumentState } from '../../store/document/types';
 
 type DockiteFormField = Omit<Field, 'schemaId' | 'dockiteField'>;
 
@@ -133,18 +134,16 @@ export class CreateDocumentPage extends Vue {
 
   public async handleSubmit() {
     try {
-      await this.$apollo.mutate({
-        mutation: gql`
-          mutation CreateDocumentMutation($schemaId: String!, $data: JSON!, $locale: String!) {
-            createDocument(schemaId: $schemaId, data: $data, locale: $locale) {
-              id
-            }
-          }
-        `,
-        variables: { schemaId: this.schema.id, data: this.form, locale: 'en-AU' },
+      await this.$store.dispatch('document/create', {
+        schemaId: this.schema.id,
+        data: this.form,
+        locale: 'en-AU',
       });
 
+      const { documentId } = this.$store.state.document as DocumentState;
+
       this.$message.success('Document created successfully!');
+      this.$router.push(`/documents/${documentId}`);
     } catch {
       this.$message.error('Unable to create document!');
     }

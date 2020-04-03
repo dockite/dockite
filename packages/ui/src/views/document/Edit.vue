@@ -7,75 +7,49 @@
         </h1>
       </a-row>
     </portal>
-    <a-form v-if="!$apollo.loading" layout="vertical" @submit.prevent="handleSubmit">
-      <a-tabs class="form-tabs" :tab-bar-gutter="0" tab-position="top">
-        <a-tab-pane
-          v-for="group in Object.keys(groups)"
-          :key="group"
-          class="form-tab-pane"
-          :tab="group"
-        >
-          <template v-for="key in Object.keys(documentData).filter(filterBySelectedGroup)">
-            <component
-              :is="getInputField(key)"
-              :key="key"
-              v-model="form[key]"
-              :form-data="form"
-              :field-config="getFieldByKey('name', key)"
-              @update:rules="handleRulesMerge"
-            />
-          </template>
-        </a-tab-pane>
-      </a-tabs>
-      <section class="form-submit-section">
-        <a-button html-type="submit" type="primary" size="large">Update</a-button>
-      </section>
-    </a-form>
+    <div v-if="!$apollo.loading">
+      <a-form layout="vertical" @submit.prevent="handleSubmit">
+        <a-tabs class="form-tabs" :tab-bar-gutter="0" tab-position="top">
+          <a-tab-pane
+            v-for="group in Object.keys(groups)"
+            :key="group"
+            class="form-tab-pane"
+            :tab="group"
+          >
+            <template v-for="key in Object.keys(documentData).filter(filterBySelectedGroup)">
+              <component
+                :is="getInputField(key)"
+                :key="key"
+                v-model="form[key]"
+                :form-data="form"
+                :field-config="getFieldByKey('name', key)"
+                @update:rules="handleRulesMerge"
+              />
+            </template>
+          </a-tab-pane>
+        </a-tabs>
+        <section class="form-submit-section">
+          <a-button html-type="submit" type="primary" size="large">Update</a-button>
+        </section>
+      </a-form>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator';
 import { Document, Field } from '@dockite/types';
-import { gql } from 'apollo-boost';
 import { startCase } from 'lodash';
-import { fieldManager } from '../../dockite';
+import { Component, Vue, Watch } from 'vue-property-decorator';
+
+import { fieldManager } from '@/dockite';
+import GetDocumentById from '@/queries/GetDocumentById.gql';
 
 type DockiteFormField = Omit<Field, 'schemaId' | 'dockiteField'>;
 
 @Component({
   apollo: {
     document: {
-      query: gql`
-        query GetDocumentById($id: String!) {
-          document: getDocument(id: $id) {
-            id
-            locale
-            data
-            publishedAt
-            createdAt
-            updatedAt
-            deletedAt
-            schemaId
-            releaseId
-            userId
-            schema {
-              id
-              name
-              groups
-              fields {
-                id
-                name
-                title
-                description
-                type
-                settings
-              }
-            }
-          }
-        }
-      `,
-
+      query: GetDocumentById,
       variables() {
         return {
           id: this.$route.params.id,
@@ -91,7 +65,7 @@ export class EditDocumentPage extends Vue {
 
   public form: Record<string, any> = {};
 
-  public formRules = {};
+  public formRules: Record<string, object[]> = {};
 
   public selectedGroup = '';
 
@@ -117,6 +91,13 @@ export class EditDocumentPage extends Vue {
     }
 
     return null;
+  }
+
+  public handleRulesMerge(rules: Record<string, object[]>): void {
+    this.formRules = {
+      ...this.formRules,
+      ...rules,
+    };
   }
 
   get documentData(): Record<string, any> {
@@ -158,7 +139,7 @@ export class EditDocumentPage extends Vue {
     return [];
   }
 
-  @Watch('documentData')
+  @Watch('documentData', { immediate: true })
   handleDocumentDataChange() {
     this.form = { ...this.form, ...this.documentData };
   }

@@ -41,6 +41,11 @@
         <a-icon type="file" />
         <span>File</span>
       </a-menu-item>
+
+      <a-menu-item @click="handleLogout">
+        <a-icon type="logout" />
+        <span>Logout</span>
+      </a-menu-item>
     </a-menu>
   </a-layout-sider>
 </template>
@@ -48,6 +53,7 @@
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import { gql } from 'apollo-boost';
+import { Schema } from '@dockite/types';
 
 @Component({
   apollo: {
@@ -61,16 +67,11 @@ import { gql } from 'apollo-boost';
   },
 })
 export class BaseSideMenu extends Vue {
-  readonly allSchemas!: any; // eslint-disable-line
+  readonly allSchemas: Pick<Schema, 'name'>[] = [];
 
-  collapsed = false;
+  public collapsed = false;
 
   public openKeys: string[] = [];
-
-  @Watch('allSchemas')
-  handleChange() {
-    console.log(this.allSchemas);
-  }
 
   public calculateKeysFromRoute(): string[] {
     return this.$route.path
@@ -81,13 +82,12 @@ export class BaseSideMenu extends Vue {
       });
   }
 
-  @Watch('$route', { deep: true })
-  handleRouteChange() {
-    console.log('Route change');
-    this.openKeys = this.calculateKeysFromRoute();
+  public handleLogout(): void {
+    this.$store.dispatch('account/logout');
   }
 
-  beforeMount() {
+  @Watch('$route', { deep: true, immediate: true })
+  handleRouteChange(): void {
     this.openKeys = this.calculateKeysFromRoute();
   }
 }

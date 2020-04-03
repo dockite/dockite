@@ -1,6 +1,10 @@
 <template>
   <fragment>
-    <a-layout v-if="!loaded" id="components-layout-demo-side" style="min-height: 100vh">
+    <a-layout
+      v-if="loaded && authenticated"
+      id="components-layout-demo-side"
+      style="min-height: 100vh"
+    >
       <base-side-menu />
       <a-layout>
         <a-layout-header style="background: #fff; padding: 0 16px; line-height: 1.5;">
@@ -28,7 +32,7 @@
         </a-layout-footer>
       </a-layout>
     </a-layout>
-    <a-layout class="authentication-layout">
+    <a-layout v-else class="authentication-layout">
       <a-layout-content>
         <authentication-form />
       </a-layout-content>
@@ -43,6 +47,7 @@ import { startCase } from 'lodash';
 import BaseSideMenu from './components/base/SideMenu.vue';
 import BaseRouterView from './components/base/RouterView.vue';
 import AuthenticationForm from './components/authentication/Form.vue';
+import { AccountState } from './store/account/types';
 
 @Component({
   components: {
@@ -77,6 +82,14 @@ export class App extends Vue {
     crumbs.unshift({ name: 'Home', path: '/' });
 
     return crumbs;
+  }
+
+  get authenticated() {
+    return (this.$store.state.account as AccountState).authenticated;
+  }
+
+  created() {
+    this.$store.dispatch('restoreFromLocal');
   }
 
   async mounted() {

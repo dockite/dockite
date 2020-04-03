@@ -78,7 +78,7 @@
                 {{ item.type }}
               </span>
               <a slot="actions" style="color:rgba(0,0,0,0.65);" @click="fields.splice(index, 1)">
-                <a-icon type="cross" />
+                <a-icon type="close" />
               </a>
             </a-list-item>
           </a-list>
@@ -100,11 +100,12 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { Field, SchemaType } from '@dockite/types';
 import { omitBy } from 'lodash';
+import { Field, SchemaType } from '@dockite/types';
 import VueCountryFlag from 'vue-country-flag';
 import { Draggable, Container } from 'vue-smooth-dnd';
 import { gql } from 'apollo-boost';
+
 import AddFieldModal from '../../components/schema/AddField.vue';
 
 type DockiteFormField = Omit<Field, 'schemaId' | 'dockiteField'>;

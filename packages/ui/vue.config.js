@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
+const path = require('path');
+
 const { cosmiconfigSync } = require('cosmiconfig');
 const { union } = require('lodash');
-const path = require('path');
+
 const { default: InjectablePlugin, ENTRY_ORDER } = require('webpack-inject-plugin');
 
 let fields = ['@dockite/field-string'];
@@ -43,5 +45,12 @@ module.exports = {
       },
       { entryOrder: ENTRY_ORDER.First },
     ]);
+
+    config.module
+      .rule('graphql')
+      .test(/\.(graphql|gql)$/)
+      .use('graphql-tag/loader')
+      .loader('graphql-tag/loader')
+      .end();
   },
 };

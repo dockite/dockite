@@ -4,14 +4,14 @@ import VueApollo from 'vue-apollo';
 
 Vue.use(VueApollo);
 
-const Client = new ApolloClient({
+export const apolloClient = new ApolloClient({
   // You should use an absolute URL here
   uri: '/dockite/graphql',
   request(operation) {
     if (window.localStorage.getItem('auth_token')) {
       operation.setContext({
         headers: {
-          Authorization: `Bearer ${window.localStorage.getItem('auth_token')}`,
+          authorization: `Bearer ${window.localStorage.getItem('auth_token')}`,
         },
       });
     }
@@ -19,5 +19,5 @@ const Client = new ApolloClient({
 });
 
 export default new VueApollo({
-  defaultClient: Client,
+  defaultClient: apolloClient,
 });

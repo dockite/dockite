@@ -5,6 +5,7 @@ query FetchAllDocuments {
     updatedAt
     createdAt
     schema {
+      id
       name
     }
   }

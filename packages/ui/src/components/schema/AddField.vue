@@ -121,7 +121,7 @@ export class AddField extends Vue {
       },
       {
         message: 'The field name is already used, please use a unique identifier',
-        validator: (_rule: any, value: string, callback: Function) => {
+        validator: (_rule: never, value: string, callback: Function) => {
           if (this.fields.filter(field => field.name === value).length > 0) {
             return callback(false);
           }
