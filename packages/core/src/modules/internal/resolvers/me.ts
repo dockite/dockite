@@ -7,7 +7,13 @@ import { Me } from '../types/me';
 export class MeResolver {
   @Authorized()
   @Query(_returns => Me, { nullable: true })
-  me(@Ctx() ctx: GlobalContext): UserContext {
-    return ctx.user!; // eslint-disable-line
+  me(@Ctx() ctx: GlobalContext): UserContext | null {
+    if (!ctx.user) return null;
+
+    return {
+      ...ctx.user,
+      createdAt: new Date(ctx.user.createdAt),
+      updatedAt: new Date(ctx.user.updatedAt),
+    };
   }
 }

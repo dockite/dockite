@@ -68,18 +68,18 @@ export class DocumentResolver {
     @Arg('data', _type => GraphQLJSON) data: any, // eslint-disable-line
     @Arg('schemaId') schemaId: string,
     @Arg('releaseId', _type => String, { nullable: true }) releaseId: string | null = null,
-    @Ctx() _ctx: GlobalContext,
+    @Ctx() ctx: GlobalContext,
   ): Promise<Document | null> {
     const repository = getRepository(Document);
 
-    // const { id: userId } = ctx.user!; // eslint-disable-line
+    const { id: userId } = ctx.user!; // eslint-disable-line
 
     const document = repository.create({
       locale,
       data,
       schemaId,
       releaseId,
-      userId: '1131d289-e842-41d5-abda-05d9548f2169',
+      userId,
     });
 
     const savedDocument = await repository.save(document);

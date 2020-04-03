@@ -52,6 +52,7 @@ export const start = async (port = process.env.PORT || 3000): Promise<Server> =>
 
         const user = verify<UserContext>(token, getenv('APP_SECRET', 'secret'));
 
+        console.log('User', user);
         return { req, res, user };
       } catch {
         return { req, res, user: undefined };
