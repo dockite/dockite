@@ -85,16 +85,14 @@ export const createSchemaForEntity = async <T extends Document>(
           perPage: { type: GraphQLInt, defaultValue: 25 },
         },
         async resolve(_context, { page, perPage }): Promise<object[]> {
-          const qb = await repository
+          const qb = repository
             .createQueryBuilder('document')
             .where('document.schemaId = :schemaId', { schemaId: entity.id })
             .take(perPage)
-            .skip(perPage * (page - 1))
-            .getMany();
+            .skip(perPage * (page - 1));
 
-          const documents = qb.map(x => JSON.parse(x.data));
+          const documents = await qb.getMany();
 
-          console.log(documents);
           return documents;
         },
       },
