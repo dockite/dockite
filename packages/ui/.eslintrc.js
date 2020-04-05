@@ -28,7 +28,7 @@ module.exports = {
         },
       },
     ],
-    'import/prefer-default-export': 'warn',
+    'import/prefer-default-export': 'off',
     'import/no-cycle': 'warn',
   },
   overrides: [

@@ -10,6 +10,7 @@ let fields = ['@dockite/field-string'];
 module.exports = {
   lintOnSave: false,
   devServer: {
+    host: '0.0.0.0',
     proxy: {
       '^/dockite': {
         target: 'http://localhost:3000/',

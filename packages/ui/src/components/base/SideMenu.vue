@@ -17,30 +17,16 @@
       </a-menu-item>
 
       <a-sub-menu key="schema">
-        <span slot="title"><a-icon type="database" /><span>Schemas</span></span>
-        <a-menu-item :key="`schema/create`">
-          <router-link :to="`/schema/create`">
-            Create
-            <a-icon type="plus" />
-          </router-link>
-        </a-menu-item>
+        <router-link slot="title" to="/schema">
+          <a-icon type="database" />
+          Schemas
+        </router-link>
         <a-menu-item v-for="schema in allSchemas" :key="`schema/${schema.name}`">
           <router-link :to="`/schema/${schema.name}`">
             {{ schema.name }}
           </router-link>
         </a-menu-item>
       </a-sub-menu>
-
-      <a-sub-menu>
-        <span slot="title"><a-icon type="team" /><span>Team</span></span>
-        <a-menu-item>Team 1</a-menu-item>
-        <a-menu-item>Team 2</a-menu-item>
-      </a-sub-menu>
-
-      <a-menu-item>
-        <a-icon type="file" />
-        <span>File</span>
-      </a-menu-item>
 
       <a-menu-item @click="handleLogout">
         <a-icon type="logout" />
@@ -57,13 +43,16 @@ import { Component, Vue, Watch } from 'vue-property-decorator';
 
 @Component({
   apollo: {
-    allSchemas: gql`
-      {
-        allSchemas {
-          name
+    allSchemas: {
+      query: gql`
+        {
+          allSchemas {
+            name
+          }
         }
-      }
-    `,
+      `,
+      // pollInterval: 30000,
+    },
   },
 })
 export class BaseSideMenu extends Vue {
@@ -98,5 +87,11 @@ export default BaseSideMenu;
 <style lang="scss" scoped>
 .ant-menu-inline a {
   display: inline-block;
+}
+
+.ant-menu-submenu-title {
+  > a {
+    color: rgba(255, 255, 255, 0.65);
+  }
 }
 </style>

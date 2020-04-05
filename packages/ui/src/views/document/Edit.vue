@@ -3,20 +3,20 @@
     <portal to="title">
       <a-row type="flex" align="middle" class="title-row">
         <h1 style="margin: 0; padding: 0;">
-          {{ document && document.id ? `Update ${document.id}` : 'Loading...' }}
+          {{ getDocument && getDocument.id ? `Update ${getDocument.id}` : 'Loading...' }}
         </h1>
       </a-row>
     </portal>
     <div v-if="!$apollo.loading">
       <a-form layout="vertical" @submit.prevent="handleSubmit">
-        <a-tabs class="form-tabs" :tab-bar-gutter="0" tab-position="top">
+        <a-tabs v-model="selectedGroup" class="form-tabs" :tab-bar-gutter="0" tab-position="top">
           <a-tab-pane
             v-for="group in Object.keys(groups)"
             :key="group"
             class="form-tab-pane"
             :tab="group"
           >
-            <template v-for="key in Object.keys(documentData).filter(filterBySelectedGroup)">
+            <template v-for="key in Object.keys(form).filter(filterBySelectedGroup)">
               <component
                 :is="getInputField(key)"
                 :key="key"
@@ -42,14 +42,13 @@ import gql from 'graphql-tag';
 import { startCase } from 'lodash';
 import { Component, Vue, Watch } from 'vue-property-decorator';
 
-import { fieldManager } from '@/dockite';
-import GetDocumentById from '@/queries/GetDocumentById.gql';
-
-type DockiteFormField = Omit<Field, 'schemaId' | 'dockiteField'>;
+import { DockiteFormField } from '../../common/types';
+import { fieldManager } from '../../dockite';
+import GetDocumentById from '../../queries/GetDocumentById.gql';
 
 @Component({
   apollo: {
-    document: {
+    getDocument: {
       query: GetDocumentById,
       variables() {
         return {
@@ -60,7 +59,7 @@ type DockiteFormField = Omit<Field, 'schemaId' | 'dockiteField'>;
   },
 })
 export class EditDocumentPage extends Vue {
-  public document: Document | null = null;
+  public getDocument: Document | null = null;
 
   public startCase = startCase;
 
@@ -102,16 +101,16 @@ export class EditDocumentPage extends Vue {
   }
 
   get documentData(): Record<string, any> {
-    if (this.document?.data) {
-      return this.document.data;
+    if (this.getDocument?.data) {
+      return this.getDocument.data;
     }
 
     return {};
   }
 
   get groups(): Record<string, string[]> {
-    if (this.document?.schema?.groups) {
-      return this.document?.schema?.groups;
+    if (this.getDocument?.schema?.groups) {
+      return this.getDocument.schema.groups;
     }
 
     return {};
@@ -129,15 +128,24 @@ export class EditDocumentPage extends Vue {
       return this.groups[this.selectedGroup].includes(field);
     }
 
-    return true;
+    return false;
   }
 
   get fields(): DockiteFormField[] {
-    if (this.document?.schema?.fields) {
-      return this.document.schema.fields;
+    if (this.getDocument?.schema?.fields) {
+      return this.getDocument.schema.fields;
     }
 
     return [];
+  }
+
+  @Watch('fields', { immediate: true })
+  handleFieldsChange() {
+    this.fields.forEach(field => {
+      if (!this.form[field.name]) {
+        Vue.set(this.form, field.name, null);
+      }
+    });
   }
 
   @Watch('documentData', { immediate: true })
@@ -147,6 +155,8 @@ export class EditDocumentPage extends Vue {
 
   public async handleSubmit() {
     try {
+      if (!this.getDocument.id) return;
+
       await this.$apollo.mutate({
         mutation: gql`
           mutation($id: String!, $data: JSON!) {
@@ -155,10 +165,11 @@ export class EditDocumentPage extends Vue {
             }
           }
         `,
-        variables: { id: this.document?.id ?? '', data: this.form },
+        variables: { id: this.getDocument.id, data: this.form },
       });
 
       this.$message.success('Document updated successfully!');
+      this.$router.push('/documents');
     } catch {
       this.$message.error('Unable to save document!');
     }

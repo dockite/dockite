@@ -110,9 +110,9 @@ export class AddField extends Vue {
         trigger: 'change',
       },
       {
-        min: 5,
+        min: 2,
         max: 26,
-        message: 'The field name must contain atleast 5 and no more than 26 characters',
+        message: 'The field name must contain atleast 2 and no more than 26 characters',
         trigger: 'change',
       },
       {
@@ -138,9 +138,9 @@ export class AddField extends Vue {
         trigger: 'change',
       },
       {
-        min: 5,
+        min: 2,
         max: 26,
-        message: 'The field title must contain atleast 5 and no more than 26 characters',
+        message: 'The field title must contain atleast 2 and no more than 26 characters',
         trigger: 'change',
       },
     ],

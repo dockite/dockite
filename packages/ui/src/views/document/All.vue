@@ -19,19 +19,29 @@
         {{ schema }}
       </router-link>
 
-      <span slot="updatedAt" slot-scope="updatedAt">
+      <template slot="updatedAt" slot-scope="updatedAt">
         {{ moment(updatedAt).format('YYYY-MM-DD HH:mm:ss') }}
-      </span>
-      <span slot="createdAt" slot-scope="createdAt">
+      </template>
+      <template slot="createdAt" slot-scope="createdAt">
         {{ moment(createdAt).format('YYYY-MM-DD HH:mm:ss') }}
-      </span>
+      </template>
+
+      <template slot="actions" slot-scope="data">
+        <a-row type="flex" align="middle" justify="center">
+          <router-link title="Edit" style="padding: 0 0.25rem;" :to="`/documents/${data.id}`">
+            <a-icon type="edit" />
+          </router-link>
+          <a style="padding: 0 0.25rem;" title="Delete" @click="handleDelete(data.id)">
+            <a-icon type="delete" />
+          </a>
+        </a-row>
+      </template>
     </a-table>
   </div>
 </template>
 
 <script lang="ts">
 import { Schema, Document } from '@dockite/types';
-import { startCase } from 'lodash';
 import moment from 'moment';
 import { Component, Vue } from 'vue-property-decorator';
 
@@ -50,24 +60,12 @@ export class AllDocumentPage extends Vue {
   public allDocuments: Partial<Document>[] = [];
 
   get columns(): object[] {
-    let slice: object[] = [];
-
-    if (this.allDocuments && this.allDocuments.length > 0) {
-      slice = Object.keys(this.allDocuments[0].data)
-        .slice(0, 2)
-        .map(x => ({
-          title: startCase(x),
-          dataIndex: `data.${x}`,
-        }));
-    }
-
     return [
       {
         title: 'ID',
         dataIndex: 'id',
         scopedSlots: { customRender: 'id' },
       },
-      ...slice,
       {
         title: 'Schema',
         dataIndex: 'schema.name',
@@ -83,6 +81,10 @@ export class AllDocumentPage extends Vue {
         dataIndex: 'createdAt',
         scopedSlots: { customRender: 'createdAt' },
       },
+      {
+        title: 'Actions',
+        scopedSlots: { customRender: 'actions' },
+      },
     ];
   }
 
@@ -96,6 +98,12 @@ export class AllDocumentPage extends Vue {
 
   public getRowKey(row: Partial<Schema>) {
     return row.id;
+  }
+
+  public async handleDelete(documentId: string) {
+    await this.$store.dispatch('document/delete', documentId);
+
+    this.$apollo.queries.allDocuments.refetch();
   }
 }
 

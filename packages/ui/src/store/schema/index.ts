@@ -12,7 +12,7 @@ export const state: SchemaState = {
   schemaId: null,
 };
 
-export const account: Module<SchemaState, RootState> = {
+export const schema: Module<SchemaState, RootState> = {
   namespaced: true,
   state,
   actions,

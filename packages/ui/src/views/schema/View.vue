@@ -97,8 +97,6 @@ export class SchemaTableView extends Vue {
   public documents!: Partial<Document>[];
 
   get columns(): object[] {
-    console.log(this.schema);
-
     if (this.schema && this.schema.fields) {
       const slice = this.schema.fields.slice(0, 5).map(x => ({
         title: startCase(x.name),
@@ -149,10 +147,6 @@ export class SchemaTableView extends Vue {
 
   public getRowKey(row: Partial<Document>) {
     return row.id;
-  }
-
-  created(): void {
-    console.log('window-dockite', (window as any).dockite);
   }
 }
 

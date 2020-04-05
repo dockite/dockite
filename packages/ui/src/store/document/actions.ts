@@ -3,7 +3,7 @@ import { ActionTree } from 'vuex';
 
 import { apolloClient } from '@/apollo';
 
-import { DocumentState, CreateDocumentPayload } from './types';
+import { DocumentState, CreateDocumentPayload, UpdateDocumentPayload } from './types';
 
 import { RootState } from '..';
 
@@ -23,5 +23,36 @@ export const actions: ActionTree<DocumentState, RootState> = {
     if (!data) throw Error('Mutation failed');
 
     commit('setDocumentId', data.createDocument.id);
+  },
+
+  async update({ commit }, payload: UpdateDocumentPayload) {
+    const { data } = await apolloClient.mutate<{ updateDocument: { id: string } }>({
+      mutation: gql`
+        mutation($id: String!, $data: JSON!) {
+          updateDocument(id: $id, data: $data) {
+            id
+          }
+        }
+      `,
+      variables: { id: payload.id ?? '', data: payload.data },
+    });
+
+    if (!data) throw Error('Mutation failed');
+
+    commit('setDocumentId', data.updateDocument.id);
+  },
+
+  async delete({ commit }, documentId: string) {
+    await apolloClient.mutate({
+      mutation: gql`
+        mutation($id: String!) {
+          removeDocument(id: $id)
+        }
+      `,
+
+      variables: { id: documentId },
+    });
+
+    commit('setDocumentId', null);
   },
 };

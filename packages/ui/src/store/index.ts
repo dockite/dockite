@@ -3,6 +3,7 @@ import Vuex, { StoreOptions } from 'vuex';
 
 import { account } from './account';
 import { document } from './document';
+import { schema } from './schema';
 
 Vue.use(Vuex);
 
@@ -22,6 +23,7 @@ export const store: StoreOptions<RootState> = {
   modules: {
     account,
     document,
+    schema,
   },
 };
 

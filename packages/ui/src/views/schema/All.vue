@@ -17,16 +17,33 @@
       :data-source="source"
       :row-key="getRowKey"
     >
-      <router-link slot="id" slot-scope="id" :to="`/schema/${id}`">
-        {{ id }}
+      <template slot="id" slot-scope="data">
+        <router-link :to="`/schema/${data.name}`">
+          {{ data.id }}
+        </router-link>
+      </template>
+
+      <router-link slot="name" slot-scope="name" :to="`/schema/${name}`">
+        {{ name }}
       </router-link>
 
-      <span slot="updatedAt" slot-scope="updatedAt">
+      <template slot="updatedAt" slot-scope="updatedAt">
         {{ moment(updatedAt).format('YYYY-MM-DD HH:mm:ss') }}
-      </span>
-      <span slot="createdAt" slot-scope="createdAt">
+      </template>
+      <template slot="createdAt" slot-scope="createdAt">
         {{ moment(createdAt).format('YYYY-MM-DD HH:mm:ss') }}
-      </span>
+      </template>
+
+      <template slot="actions" slot-scope="data">
+        <a-row type="flex" align="middle" justify="center">
+          <router-link style="padding: 0 0.25rem;" :to="`/schema/${data.name}/edit`">
+            <a-icon type="edit" />
+          </router-link>
+          <a style="padding: 0 0.25rem;" title="Delete" @click.prevent="handleDelete(data.id)">
+            <a-icon type="delete" />
+          </a>
+        </a-row>
+      </template>
     </a-table>
   </div>
 </template>
@@ -64,7 +81,7 @@ export class SchemaTableView extends Vue {
     return [
       {
         title: 'ID',
-        dataIndex: 'id',
+        // dataIndex: 'id',
         scopedSlots: { customRender: 'id' },
       },
       {
@@ -82,6 +99,10 @@ export class SchemaTableView extends Vue {
         dataIndex: 'createdAt',
         scopedSlots: { customRender: 'createdAt' },
       },
+      {
+        title: 'Actions',
+        scopedSlots: { customRender: 'actions' },
+      },
     ];
   }
 
@@ -95,6 +116,12 @@ export class SchemaTableView extends Vue {
 
   public getRowKey(row: Partial<Schema>) {
     return row.id;
+  }
+
+  public async handleDelete(schemaId: string) {
+    await this.$store.dispatch('schema/delete', schemaId);
+
+    this.$apollo.queries.schemas.refetch();
   }
 }
 

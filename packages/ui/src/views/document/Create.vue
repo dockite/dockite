@@ -3,7 +3,7 @@
     <portal to="title">
       <a-row type="flex" align="middle" justify="space-between" class="title-row">
         <h1>
-          {{ schema && schema.name ? `Create ${schema.name}` : 'Loading...' }}
+          {{ getSchema && getSchema.name ? `Create ${getSchema.name}` : 'Loading...' }}
         </h1>
         <a-select default-value="en-AU" class="locale-selector">
           <a-select-option value="en-AU" class="locale-selector">
@@ -12,6 +12,7 @@
         </a-select>
       </a-row>
     </portal>
+
     <a-form v-if="!$apollo.loading" layout="vertical" @submit.prevent="handleSubmit">
       <a-tabs class="form-tabs" :tab-bar-gutter="0" tab-position="top">
         <a-tab-pane v-for="group in groups" :key="group" class="form-tab-pane" :tab="group">
@@ -36,39 +37,23 @@
 </template>
 
 <script lang="ts">
-import { Schema, Field } from '@dockite/types';
-import { gql } from 'apollo-boost';
-import { startCase, has } from 'lodash';
+import { Schema } from '@dockite/types';
+import { has } from 'lodash';
 import VueCountryFlag from 'vue-country-flag';
 import { Component, Vue, Watch } from 'vue-property-decorator';
 
+import { DockiteFormField } from '../../common/types';
 import { fieldManager } from '../../dockite';
+import GetSchemaByName from '../../queries/GetSchemaByName.gql';
 import { DocumentState } from '../../store/document/types';
-
-type DockiteFormField = Omit<Field, 'schemaId' | 'dockiteField'>;
 
 @Component({
   components: {
     VueCountryFlag,
   },
   apollo: {
-    schema: {
-      query: gql`
-        query GetSchemaByName($name: String!) {
-          schema: getSchema(name: $name) {
-            id
-            name
-            fields {
-              id
-              name
-              title
-              description
-              type
-              settings
-            }
-          }
-        }
-      `,
+    getSchema: {
+      query: GetSchemaByName,
 
       variables() {
         return {
@@ -79,7 +64,7 @@ type DockiteFormField = Omit<Field, 'schemaId' | 'dockiteField'>;
   },
 })
 export class CreateDocumentPage extends Vue {
-  public schema!: Partial<Schema>;
+  public getSchema!: Partial<Schema>;
 
   public form: Record<string, any> = {};
 
@@ -110,8 +95,8 @@ export class CreateDocumentPage extends Vue {
   }
 
   get fields(): DockiteFormField[] {
-    if (this.schema?.fields) {
-      return this.schema.fields;
+    if (this.getSchema?.fields) {
+      return this.getSchema.fields;
     }
 
     return [];
@@ -121,7 +106,6 @@ export class CreateDocumentPage extends Vue {
     if (this.fields.length > 0) {
       this.fields.forEach(field => {
         if (!has(this.form, field.name)) {
-          console.log('Adding field');
           Vue.set(this.form, field.name, null);
         }
       });
@@ -136,7 +120,7 @@ export class CreateDocumentPage extends Vue {
   public async handleSubmit() {
     try {
       await this.$store.dispatch('document/create', {
-        schemaId: this.schema.id,
+        schemaId: this.getSchema.id,
         data: this.form,
         locale: 'en-AU',
       });

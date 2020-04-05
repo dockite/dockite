@@ -1,10 +1,8 @@
 <template>
-  <div class="document-edit">
+  <div v-if="!$apollo.loading" class="document-edit">
     <portal to="title">
       <a-row type="flex" align="middle" justify="space-between" class="title-row">
-        <h1>
-          Create Schema
-        </h1>
+        <h1>Edit Schema - {{ getSchema.name }}</h1>
         <a-select default-value="en-AU" class="locale-selector">
           <a-select-option value="en-AU" class="locale-selector">
             <vue-country-flag country="au" size="normal" style="transform: scale(0.4);" />
@@ -12,15 +10,6 @@
         </a-select>
       </a-row>
     </portal>
-
-    <a-modal
-      :visible="!schemaNameEntered"
-      title="Name schema"
-      @ok="schemaNameEntered = schemaName.length > 0"
-      @cancel="$router.push('/schema')"
-    >
-      <a-input v-model="schemaName" placeholder="Schema Name.." />
-    </a-modal>
 
     <a-modal
       v-model="groupsModalVisible"
@@ -43,11 +32,6 @@
       @field:submit="handleFieldSubmit"
     />
 
-    <a-row style="margin-bottom: 1rem;" type="flex" align="middle">
-      <h2 v-if="schemaName !== ''">{{ schemaName }}</h2>
-      <h2 v-else contenteditable="">Enter Schema Name..</h2>
-    </a-row>
-
     <a-form
       v-if="!$apollo.loading"
       class="bg-white"
@@ -61,11 +45,20 @@
           </a-button>
         </div>
         <a-tab-pane
-          v-for="group in Object.keys(groups)"
+          v-for="(group, index) in Object.keys(groups)"
           :key="group"
           class="form-tab-pane"
-          :tab="group"
         >
+          <template slot="tab">
+            {{ group }}
+            <span
+              v-if="index !== 0"
+              style="font-size: 0.75rem; padding-left: 0.25rem; color: rgba(0,0,0, 0.50)"
+              @click="handleGroupRemove(group)"
+            >
+              <a-icon style="margin: 0;" type="close"></a-icon>
+            </span>
+          </template>
           <a-list
             size="small"
             item-layout="horizontal"
@@ -77,7 +70,7 @@
               <span slot="actions" class="field-list-item-type">
                 {{ item.type }}
               </span>
-              <a slot="actions" style="color:rgba(0,0,0,0.65);" @click="fields.splice(index, 1)">
+              <a slot="actions" style="color:rgba(0,0,0,0.65);" @click="handleFieldRemove(index)">
                 <a-icon type="close" />
               </a>
             </a-list-item>
@@ -91,7 +84,7 @@
 
       <section class="form-submit-section">
         <a-button html-type="submit" type="primary" size="large">
-          Create
+          Update
         </a-button>
       </section>
     </a-form>
@@ -99,15 +92,15 @@
 </template>
 
 <script lang="ts">
-import { Field, SchemaType } from '@dockite/types';
-import { gql } from 'apollo-boost';
-import { omitBy } from 'lodash';
+import { Schema } from '@dockite/types';
+import { omitBy, union, cloneDeep } from 'lodash';
 import VueCountryFlag from 'vue-country-flag';
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Vue, Watch } from 'vue-property-decorator';
 import { Draggable, Container } from 'vue-smooth-dnd';
 
 import { DockiteFormField } from '../../common/types';
 import AddFieldModal from '../../components/schema/AddField.vue';
+import GetSchemaByName from '../../queries/GetSchemaByName.gql';
 
 @Component({
   components: {
@@ -116,13 +109,21 @@ import AddFieldModal from '../../components/schema/AddField.vue';
     Draggable,
     VueCountryFlag,
   },
+  apollo: {
+    getSchema: {
+      query: GetSchemaByName,
+      variables() {
+        return { name: this.$route.params.schema };
+      },
+    },
+  },
 })
-export class CreateSchemaPage extends Vue {
-  public schemaName = '';
-
-  public schemaNameEntered = false;
+export class EditSchemaPage extends Vue {
+  public getSchema: Schema | null = null;
 
   public fields: DockiteFormField[] = [];
+
+  public deletedFields: DockiteFormField[] = [];
 
   public groups: Record<string, string[]> = {
     Default: [],
@@ -172,73 +173,64 @@ export class CreateSchemaPage extends Vue {
     this.groups[this.selectedGroup].push(field.name);
   }
 
+  public handleFieldRemove(index: number): void {
+    const deletedFields = this.fields.splice(index, 1);
+
+    this.deletedFields.push(...deletedFields);
+
+    Object.keys(this.groups).forEach(group => {
+      this.groups[group] = this.groups[group].filter(
+        field => !deletedFields.map(x => x.name).includes(field),
+      );
+    });
+  }
+
+  public handleGroupRemove(group: string): void {
+    [this.selectedGroup] = Object.keys(this.groups);
+
+    this.deletedFields.push(
+      ...this.fields.filter(field => this.groups[group].includes(field.name) && field.id),
+    );
+
+    this.fields = this.fields.filter(field => !this.groups[group].includes(field.name));
+
+    Vue.delete(this.groups, group);
+  }
+
   public async handleSubmit(): Promise<void> {
     try {
       if (this.fields.length === 0) {
-        this.$message.error('Cannot create schema with no fields');
+        this.$message.error('Cannot remove all fields from a Schema');
         return;
       }
 
-      const { data } = await this.$apollo.mutate({
-        mutation: gql`
-          mutation CreateSchemaMutation(
-            $name: String!
-            $type: SchemaType!
-            $groups: JSON!
-            $settings: JSON!
-          ) {
-            createSchema(name: $name, type: $type, groups: $groups, settings: $settings) {
-              id
-            }
-          }
-        `,
-        variables: {
-          name: this.schemaName,
-          type: SchemaType.Default,
-          groups: this.groups,
-          settings: {},
-        },
+      await this.$store.dispatch('schema/update', {
+        id: this.getSchema.id,
+        groups: this.groups,
+        settings: {},
+        fields: this.fields,
+        deletedFields: this.deletedFields,
       });
 
-      const schemaId = data.createSchema?.id ?? '';
-
-      const fieldMutations = this.fields.map(field =>
-        this.$apollo.mutate({
-          mutation: gql`
-            mutation CreateSchemaField(
-              $schemaId: String!
-              $name: String!
-              $type: String!
-              $title: String!
-              $description: String!
-              $settings: JSON!
-            ) {
-              createField(
-                schemaId: $schemaId
-                name: $name
-                type: $type
-                title: $title
-                description: $description
-                settings: $settings
-              ) {
-                id
-              }
-            }
-          `,
-          variables: { schemaId, ...field },
-        }),
-      );
-
-      await Promise.all(fieldMutations);
-
-      this.$message.success('Schema created successfully!');
-    } catch {
-      this.$message.error('Unable to create schema!');
+      this.$message.success('Schema updated successfully!');
+      this.$router.push('/schema');
+    } catch (err) {
+      this.$message.error('Unable to update schema!');
     }
+  }
+
+  @Watch('getSchema', { deep: true, immediate: true })
+  public handleSchemaUpdate(): void {
+    if (!this.getSchema) return;
+
+    this.fields = union(this.fields, cloneDeep<DockiteFormField[]>(this.getSchema.fields));
+    this.groups = { ...this.groups, ...cloneDeep<Record<string, string[]>>(this.getSchema.groups) };
+
+    [this.selectedGroup] = Object.keys(this.groups);
   }
 }
 
-export default CreateSchemaPage;
+export default EditSchemaPage;
 </script>
 
 <style lang="scss">

@@ -29,6 +29,11 @@ const routes = [
     component: View,
   },
   {
+    path: '/schema/:schema/edit',
+    name: 'EditSchema',
+    component: () => import('../views/schema/Edit.vue'),
+  },
+  {
     path: '/schema/:schema/create',
     name: 'CreateSchemaDocument',
     component: () => import('../views/document/Create.vue'),

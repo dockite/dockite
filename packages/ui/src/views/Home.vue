@@ -1,10 +1,11 @@
 <template>
   <div class="home">
     <portal to="title">
-      <a-row type="flex" align="middle" class="title-row">
+      <a-row v-if="!$apollo.loading" type="flex" align="middle" class="title-row">
         <h1>Welcome back, {{ user.firstName }} {{ user.lastName }}</h1>
       </a-row>
     </portal>
+    hullo
   </div>
 </template>
 
