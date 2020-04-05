@@ -46,8 +46,6 @@ export default {
   },
 
   mounted() {
-    console.log('value', this.value);
-
     if (this.value === null) {
       this.$emit('input', '');
     }
