@@ -1,12 +1,13 @@
-import { Arg, Authorized, Mutation, Query, Resolver } from 'type-graphql';
+import { Arg, Mutation, Query, Resolver } from 'type-graphql';
 import { getRepository } from 'typeorm';
 import GraphQLJSON from 'graphql-type-json';
 
+import { Authenticated } from '../../../common/authorizers';
 import { Field } from '../../../entities';
 
 @Resolver(_of => Field)
 export class FieldResolver {
-  @Authorized()
+  @Authenticated()
   @Query(_returns => Field, { nullable: true })
   async getField(@Arg('id') id: string): Promise<Field | null> {
     const repository = getRepository(Field);
@@ -21,7 +22,7 @@ export class FieldResolver {
   /**
    * TODO: Move this to and Connection/Edge model
    */
-  @Authorized()
+  @Authenticated()
   @Query(_returns => [Field])
   async allFields(): Promise<Field[] | null> {
     const repository = getRepository(Field);
@@ -36,7 +37,7 @@ export class FieldResolver {
   /**
    * TODO: Perform light validation on fields, settings, groups
    */
-  @Authorized()
+  @Authenticated()
   @Mutation(_returns => Field)
   async createField(
     @Arg('name') name: string,
@@ -65,7 +66,7 @@ export class FieldResolver {
   /**
    * TODO: Possibly add a check for if the Field exists and throw
    */
-  @Authorized()
+  @Authenticated()
   @Mutation(_returns => Boolean)
   async removeField(@Arg('id') id: string): Promise<boolean> {
     const repository = getRepository(Field);

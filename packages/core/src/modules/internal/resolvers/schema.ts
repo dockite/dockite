@@ -1,8 +1,9 @@
-import { Arg, Authorized, Mutation, Query, Resolver } from 'type-graphql';
+import { Arg, Mutation, Query, Resolver } from 'type-graphql';
 import { getRepository } from 'typeorm';
 import GraphQLJSON from 'graphql-type-json';
 import debug from 'debug';
 
+import { Authenticated } from '../../../common/authorizers';
 import { SchemaType } from '../../../common/types';
 import { Document, Schema } from '../../../entities';
 
@@ -10,7 +11,7 @@ const log = debug('dockite:core:resolvers');
 
 @Resolver(_of => Schema)
 export class SchemaResolver {
-  @Authorized()
+  @Authenticated()
   @Query(_returns => Schema, { nullable: true })
   async getSchema(
     @Arg('id', _type => String, { nullable: true }) id: string | null,
@@ -42,7 +43,7 @@ export class SchemaResolver {
   /**
    * TODO: Move this to and Connection/Edge model
    */
-  @Authorized()
+  @Authenticated()
   @Query(_returns => [Schema])
   async allSchemas(): Promise<Schema[] | null> {
     const repository = getRepository(Schema);
@@ -57,7 +58,7 @@ export class SchemaResolver {
   /**
    * TODO: Perform light validation on fields, settings, groups
    */
-  @Authorized()
+  @Authenticated()
   @Mutation(_returns => Schema)
   async createSchema(
     @Arg('name')
@@ -90,7 +91,7 @@ export class SchemaResolver {
   /**
    * TODO: Perform light validation on fields, settings, groups
    */
-  @Authorized()
+  @Authenticated()
   @Mutation(_returns => Schema)
   async updateSchema(
     @Arg('id')
@@ -116,7 +117,7 @@ export class SchemaResolver {
   /**
    * TODO: Possibly add a check for if the Schema exists and throw
    */
-  @Authorized()
+  @Authenticated()
   @Mutation(_returns => Boolean)
   async removeSchema(
     @Arg('id')

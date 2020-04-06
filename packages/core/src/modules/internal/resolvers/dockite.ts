@@ -1,7 +1,8 @@
 /* eslint-disable max-classes-per-file */
-import { ObjectType, Field, Authorized, Query, Resolver } from 'type-graphql';
+import { ObjectType, Field, Query, Resolver } from 'type-graphql';
 import { GraphQLJSON } from 'graphql-type-json';
 
+import { Authenticated } from '../../../common/authorizers';
 import { dockiteFields } from '../../../fields';
 
 @ObjectType()
@@ -21,7 +22,7 @@ class DockiteFieldStatic {
 
 @Resolver()
 export class Dockite {
-  @Authorized()
+  @Authenticated()
   @Query(_returns => DockiteFieldStatic)
   availableFields(): DockiteFieldStatic[] {
     return Object.values(dockiteFields);

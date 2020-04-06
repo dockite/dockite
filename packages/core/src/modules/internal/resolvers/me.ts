@@ -1,11 +1,12 @@
-import { Authorized, Ctx, Query, Resolver } from 'type-graphql';
+import { Ctx, Query, Resolver } from 'type-graphql';
 
+import { Authenticated } from '../../../common/authorizers';
 import { GlobalContext, UserContext } from '../../../common/types';
 import { Me } from '../types/me';
 
 @Resolver()
 export class MeResolver {
-  @Authorized()
+  @Authenticated()
   @Query(_returns => Me, { nullable: true })
   me(@Ctx() ctx: GlobalContext): UserContext | null {
     if (!ctx.user) return null;

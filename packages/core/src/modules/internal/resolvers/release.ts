@@ -1,12 +1,13 @@
-import { Arg, Authorized, Mutation, Query, Resolver, Ctx } from 'type-graphql';
+import { Arg, Mutation, Query, Resolver, Ctx } from 'type-graphql';
 import { getRepository } from 'typeorm';
 
+import { Authenticated } from '../../../common/authorizers';
 import { GlobalContext } from '../../../common/types';
 import { Document, Release } from '../../../entities';
 
 @Resolver(_of => Release)
 export class ReleaseResolver {
-  @Authorized()
+  @Authenticated()
   @Query(_returns => Release, { nullable: true })
   async getRelease(@Arg('id') id: string): Promise<Release | null> {
     const repository = getRepository(Release);
@@ -19,7 +20,7 @@ export class ReleaseResolver {
   /**
    * TODO: Move this to and Connection/Edge model
    */
-  @Authorized()
+  @Authenticated()
   @Query(_returns => [Release])
   async allReleases(): Promise<Release[] | null> {
     const repository = getRepository(Release);
@@ -29,7 +30,7 @@ export class ReleaseResolver {
     return releases ?? null;
   }
 
-  @Authorized()
+  @Authenticated()
   @Mutation(_returns => Release)
   async createRelease(
     @Arg('name') name: string,
@@ -54,7 +55,7 @@ export class ReleaseResolver {
     return savedRelease;
   }
 
-  @Authorized()
+  @Authenticated()
   @Mutation(_returns => Boolean)
   async publishRelease(@Arg('id') id: string, @Ctx() ctx: GlobalContext): Promise<boolean> {
     const repository = getRepository(Release);
@@ -83,7 +84,7 @@ export class ReleaseResolver {
     }
   }
 
-  @Authorized()
+  @Authenticated()
   @Mutation(_returns => Boolean)
   async removeRelease(@Arg('id') id: string): Promise<boolean> {
     const repository = getRepository(Release);

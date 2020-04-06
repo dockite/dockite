@@ -1,13 +1,14 @@
-import { Arg, Authorized, Ctx, Mutation, Query, Resolver } from 'type-graphql';
+import { Arg, Ctx, Mutation, Query, Resolver } from 'type-graphql';
 import { getRepository } from 'typeorm';
 import GraphQLJSON from 'graphql-type-json';
 
+import { Authenticated } from '../../../common/authorizers';
 import { GlobalContext } from '../../../common/types';
 import { Document } from '../../../entities';
 
 @Resolver(_of => Document)
 export class DocumentResolver {
-  @Authorized()
+  @Authenticated()
   @Query(_returns => Document, { nullable: true })
   async getDocument(
     @Arg('id')
@@ -23,7 +24,7 @@ export class DocumentResolver {
     return document ?? null;
   }
 
-  @Authorized()
+  @Authenticated()
   @Query(_returns => [Document], { nullable: true })
   async findDocuments(
     @Arg('schemaId', _type => String, { nullable: true })
@@ -47,7 +48,7 @@ export class DocumentResolver {
   /**
    * TODO: Move this to and Connection/Edge model
    */
-  @Authorized()
+  @Authenticated()
   @Query(_returns => [Document])
   async allDocuments(): Promise<Document[] | null> {
     const repository = getRepository(Document);
@@ -61,7 +62,7 @@ export class DocumentResolver {
     return documents ?? null;
   }
 
-  @Authorized()
+  @Authenticated()
   @Mutation(_returns => Document)
   async createDocument(
     @Arg('locale') locale: string,
@@ -87,7 +88,7 @@ export class DocumentResolver {
     return savedDocument;
   }
 
-  @Authorized()
+  @Authenticated()
   @Mutation(_returns => Document, { nullable: true })
   async updateDocument(
     @Arg('id', _type => String, { nullable: true })
@@ -119,7 +120,7 @@ export class DocumentResolver {
     return savedDocument;
   }
 
-  @Authorized()
+  @Authenticated()
   @Mutation(_returns => Boolean)
   async removeDocument(@Arg('id') id: string): Promise<boolean> {
     const repository = getRepository(Document);
