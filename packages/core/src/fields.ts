@@ -1,7 +1,7 @@
 import { DockiteFieldStatic } from '@dockite/field';
 import debug from 'debug';
 
-const log = debug('prime:core:fields');
+const log = debug('dockite:core:fields');
 
 export interface DockiteFieldManager {
   [id: string]: DockiteFieldStatic;
