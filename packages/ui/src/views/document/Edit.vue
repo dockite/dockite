@@ -8,7 +8,12 @@
       </a-row>
     </portal>
     <div v-if="!$apollo.loading">
-      <a-form layout="vertical" @submit.prevent="handleSubmit">
+      <a-form-model
+        layout="vertical"
+        :model="form"
+        :rules="formRules"
+        @submit.prevent="handleSubmit"
+      >
         <a-tabs v-model="selectedGroup" class="form-tabs" :tab-bar-gutter="0" tab-position="top">
           <a-tab-pane
             v-for="group in Object.keys(groups)"
@@ -21,6 +26,7 @@
                 :is="getInputField(key)"
                 :key="key"
                 v-model="form[key]"
+                :name="key"
                 :form-data="form"
                 :field-config="getFieldByKey('name', key)"
                 @update:rules="handleRulesMerge"
@@ -31,7 +37,7 @@
         <section class="form-submit-section">
           <a-button html-type="submit" type="primary" size="large">Update</a-button>
         </section>
-      </a-form>
+      </a-form-model>
     </div>
   </div>
 </template>
@@ -155,7 +161,7 @@ export class EditDocumentPage extends Vue {
 
   public async handleSubmit() {
     try {
-      if (!this.getDocument.id) return;
+      if (!this.getDocument?.id) return;
 
       await this.$apollo.mutate({
         mutation: gql`

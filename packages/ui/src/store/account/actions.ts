@@ -1,8 +1,7 @@
+import { apolloClient } from '@/apollo';
 import { User } from '@dockite/types';
 import { gql } from 'apollo-boost';
 import { ActionTree } from 'vuex';
-
-import { apolloClient } from '@/apollo';
 
 import { AccountState, LoginPayload, RegisterPayload } from './types';
 
@@ -50,8 +49,7 @@ export const actions: ActionTree<AccountState, RootState> = {
 
     if (!loginData) return;
 
-    commit('setAuthenticated', true);
-    window.localStorage.setItem('auth_token', loginData.login.token);
+    commit('setToken', loginData.login.token);
 
     const { data: meData } = await apolloClient.query<{ me: User }>({
       query: gql`
@@ -72,6 +70,7 @@ export const actions: ActionTree<AccountState, RootState> = {
     if (!meData) return;
 
     commit('setUser', meData.me);
+    commit('setAuthenticated', true);
   },
 
   async register({ commit }, registerPayload: RegisterPayload): Promise<void> {
@@ -93,8 +92,7 @@ export const actions: ActionTree<AccountState, RootState> = {
 
     if (!registerData) return;
 
-    commit('setAuthenticated', true);
-    window.localStorage.setItem('auth_token', registerData.register.token);
+    commit('setToken', registerData.register.token);
 
     const { data: meData } = await apolloClient.query<{ me: User }>({
       query: gql`
@@ -115,6 +113,7 @@ export const actions: ActionTree<AccountState, RootState> = {
     if (!meData) return;
 
     commit('setUser', meData.me);
+    commit('setAuthenticated', true);
   },
 
   logout({ commit }) {

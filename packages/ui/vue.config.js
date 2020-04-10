@@ -5,7 +5,7 @@ const { cosmiconfigSync } = require('cosmiconfig');
 const { union } = require('lodash');
 const { default: InjectablePlugin, ENTRY_ORDER } = require('webpack-inject-plugin');
 
-let fields = ['@dockite/field-string'];
+let fields = ['@dockite/field-string', '@dockite/field-boolean', '@dockite/field-number'];
 
 module.exports = {
   lintOnSave: false,
@@ -34,7 +34,6 @@ module.exports = {
       const abs = path.resolve(ui);
 
       config.module.rule('js').include.add(abs);
-      config.module.rule('js').include.add(`${abs}`);
 
       injectImports.push(`import('${abs}')`);
     });

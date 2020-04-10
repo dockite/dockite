@@ -11,4 +11,12 @@ export const mutations: MutationTree<AccountState> = {
   setUser(state, user: User) {
     state.user = user;
   },
+
+  setToken(_, token: string) {
+    window.localStorage.setItem('auth_token', token);
+  },
+
+  removeToken() {
+    window.localStorage.removeItem('auth_token');
+  },
 };

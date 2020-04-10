@@ -224,4 +224,8 @@ export default AddField;
     width: 33%;
   }
 }
+
+.add-field-selector-button {
+  margin-bottom: 1rem;
+}
 </style>

@@ -13,7 +13,13 @@
       </a-row>
     </portal>
 
-    <a-form v-if="!$apollo.loading" layout="vertical" @submit.prevent="handleSubmit">
+    <a-form-model
+      v-if="!$apollo.loading"
+      layout="vertical"
+      :model="form"
+      :rules="formRules"
+      @submit.prevent="handleSubmit"
+    >
       <a-tabs class="form-tabs" :tab-bar-gutter="0" tab-position="top">
         <a-tab-pane v-for="group in groups" :key="group" class="form-tab-pane" :tab="group">
           <template v-for="field in Object.keys(form)">
@@ -21,8 +27,10 @@
               :is="getInputField(field)"
               :key="field"
               v-model="form[field]"
+              :name="field"
               :form-data="form"
               :field-config="getFieldByKey('name', field)"
+              @update:rules="handleRulesMerge"
             />
           </template>
         </a-tab-pane>
@@ -32,7 +40,7 @@
           Create
         </a-button>
       </section>
-    </a-form>
+    </a-form-model>
   </div>
 </template>
 
@@ -67,6 +75,8 @@ export class CreateDocumentPage extends Vue {
   public getSchema!: Partial<Schema>;
 
   public form: Record<string, any> = {};
+
+  public formRules: Record<string, object[]> = {};
 
   public groups: string[] = ['Default'];
 
@@ -119,6 +129,8 @@ export class CreateDocumentPage extends Vue {
 
   public async handleSubmit() {
     try {
+      if (!this.getSchema.id) return;
+
       await this.$store.dispatch('document/create', {
         schemaId: this.getSchema.id,
         data: this.form,
@@ -132,6 +144,13 @@ export class CreateDocumentPage extends Vue {
     } catch {
       this.$message.error('Unable to create document!');
     }
+  }
+
+  public handleRulesMerge(rules: Record<string, object[]>): void {
+    this.formRules = {
+      ...this.formRules,
+      ...rules,
+    };
   }
 
   mounted() {

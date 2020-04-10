@@ -204,6 +204,8 @@ export class EditSchemaPage extends Vue {
         return;
       }
 
+      if (!this.getSchema || !this.getSchema.id) return;
+
       await this.$store.dispatch('schema/update', {
         id: this.getSchema.id,
         groups: this.groups,
