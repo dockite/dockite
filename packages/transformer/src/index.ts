@@ -93,7 +93,7 @@ export const createSchemaForEntity = async <T extends Document>(
 
           const documents = await qb.getMany();
 
-          return documents;
+          return documents.map(document => document.data);
         },
       },
     },
