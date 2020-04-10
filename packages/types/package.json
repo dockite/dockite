@@ -9,9 +9,9 @@
   },
   "dependencies": {
     "graphql": "^14.6.0",
-    "typescript": "^3.8.3"
+    "typescript": "~3.7.5"
   },
   "devDependencies": {
-    "typescript": "^3.8.3"
+    "typescript": "~3.7.5"
   }
 }

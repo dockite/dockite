@@ -31,7 +31,7 @@
     "ts-node-dev": "^1.0.0-pre.44",
     "type-graphql": "^0.17.6",
     "typeorm": "^0.2.22",
-    "typescript": "^3.8.2"
+    "typescript": "~3.7.5"
   },
   "devDependencies": {
     "@types/bcrypt": "^3.0.0",
