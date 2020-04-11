@@ -13,7 +13,12 @@ const log = debug('dockite:core:authentication');
 
 const Module: GraphQLModule | null = null;
 
-export const AuthenticationGraphQLModule = async (): Promise<GraphQLModule> => {
+export const AuthenticationGraphQLModule = async (): Promise<GraphQLModule<
+  any,
+  any,
+  GlobalContext,
+  any
+>> => {
   if (Module) {
     return Module;
   }
@@ -21,7 +26,6 @@ export const AuthenticationGraphQLModule = async (): Promise<GraphQLModule> => {
   log('building type-definitions and resolvers');
   const typeDefsAndResolvers = await buildTypeDefsAndResolvers({
     resolvers: await Promise.all(Object.values(resolvers).map(r => Promise.resolve(r))),
-    authMode: 'null',
     authChecker,
     emitSchemaFile: path.join(__dirname, './schema.gql'),
   });

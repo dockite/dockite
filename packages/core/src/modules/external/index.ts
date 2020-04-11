@@ -18,11 +18,15 @@ export const getRegisteredExternalModules = (): any[] => {
   return getModules('external');
 };
 
-export const ExternalGraphQLModule = async (): Promise<GraphQLModule> => {
+export const ExternalGraphQLModule = async (): Promise<GraphQLModule<
+  any,
+  any,
+  GlobalContext,
+  any
+>> => {
   log('building type-definitions and resolvers');
   const resolversAndTypeDefs = await buildTypeDefsAndResolvers({
     resolvers: await Promise.all(Object.values(resolvers).map(r => Promise.resolve(r))),
-    authMode: 'null',
     authChecker,
     emitSchemaFile: path.join(__dirname, './schema.gql'),
   });
