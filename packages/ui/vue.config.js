@@ -5,7 +5,12 @@ const { cosmiconfigSync } = require('cosmiconfig');
 const { union } = require('lodash');
 const { default: InjectablePlugin, ENTRY_ORDER } = require('webpack-inject-plugin');
 
-let fields = ['@dockite/field-string', '@dockite/field-boolean', '@dockite/field-number'];
+let fields = [
+  '@dockite/field-string',
+  '@dockite/field-boolean',
+  '@dockite/field-number',
+  '@dockite/field-datetime',
+];
 
 module.exports = {
   lintOnSave: false,
