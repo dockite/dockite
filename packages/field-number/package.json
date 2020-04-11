@@ -4,7 +4,8 @@
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
-    "build": "tsc && webpack --config ../webpack/webpack.config.js"
+    "build": "tsc && webpack --config ../webpack/webpack.config.js",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@dockite/field": "1.0.0",

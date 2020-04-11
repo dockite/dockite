@@ -4,7 +4,8 @@
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
-    "lint": "echo \"No linting added\" && exit 0",
+    "lint": "exit 0",
+    "build": "tsc",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

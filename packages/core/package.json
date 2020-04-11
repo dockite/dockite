@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "DEBUG=dockite* ts-node-dev --transpileOnly --no-notify src/",
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx --quiet",
+    "build": "tsc",
     "typecheck": "tsc --noEmit"
+
   },
   "dependencies": {
     "@dockite/types": "1.0.0",
