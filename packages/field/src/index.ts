@@ -1,4 +1,4 @@
-import { GraphQLFieldConfig, GraphQLInputFieldConfig } from 'graphql';
+import { GraphQLFieldConfig, GraphQLInputFieldConfig, GraphQLScalarType } from 'graphql';
 import { Field } from '@dockite/types';
 import { Repository } from 'typeorm';
 import { Component } from 'vue';
@@ -29,15 +29,17 @@ export abstract class DockiteField {
     this.repositories = repositories;
   }
 
-  public abstract inputType(): Promise<GraphQLInputFieldConfig>;
+  public abstract inputType(): Promise<GraphQLScalarType>;
 
   // public abstract processInput<Input, Output>(data: Input): Promise<Output>;
 
-  public abstract where(): Promise<GraphQLInputFieldConfig>;
+  public abstract where(): Promise<GraphQLScalarType>;
 
-  public abstract outputType<Source, Context>(): Promise<GraphQLFieldConfig<Source, Context>>;
+  public abstract outputType(): Promise<GraphQLScalarType>;
 
-  // public abstract processOutput<Input, Output>(data: Input): Promise<Output>;
+  public async processOutput<T>(data: any): Promise<T> {
+    return data[this.schemaField.name] as T;
+  }
 }
 
 export const registerField = (

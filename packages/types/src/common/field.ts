@@ -1,13 +1,13 @@
-import { GraphQLInputFieldConfig, GraphQLFieldConfig } from 'graphql';
+import { GraphQLScalarType } from 'graphql';
 
 export interface DockiteField {
-  inputType(): Promise<GraphQLInputFieldConfig | null>;
+  inputType(): Promise<GraphQLScalarType>;
 
   // processInput<Input, Output>(data: Input): Promise<Output>;
 
-  where(): Promise<GraphQLInputFieldConfig | null>;
+  where(): Promise<GraphQLScalarType>;
 
-  outputType<Source, Context>(): Promise<GraphQLFieldConfig<Source, Context>>;
+  outputType(): Promise<GraphQLScalarType>;
 
-  // processOutput<Input, Output>(data: Input): Promise<Output>;
+  processOutput<T>(data: any): Promise<T>;
 }

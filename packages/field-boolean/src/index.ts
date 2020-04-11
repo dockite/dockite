@@ -1,7 +1,7 @@
 import { DockiteField } from '@dockite/field';
-import { GraphQLBoolean, GraphQLFieldConfig, GraphQLInputFieldConfig } from 'graphql';
+import { GraphQLBoolean, GraphQLScalarType } from 'graphql';
 
-export class DociteFieldBoolean extends DockiteField {
+export class DockiteFieldBoolean extends DockiteField {
   public static type = 'boolean';
 
   public static title = 'Boolean';
@@ -10,27 +10,21 @@ export class DociteFieldBoolean extends DockiteField {
 
   public static defaultOptions = {};
 
-  public async inputType(): Promise<GraphQLInputFieldConfig> {
-    return {
-      type: GraphQLBoolean,
-    };
+  public async inputType(): Promise<GraphQLScalarType> {
+    return GraphQLBoolean;
   }
 
   // public async processInput<Input, Output>(data: Input): Promise<Output> {}
 
-  public async where(): Promise<GraphQLInputFieldConfig> {
-    return {
-      type: GraphQLBoolean,
-    };
+  public async where(): Promise<GraphQLScalarType> {
+    return GraphQLBoolean;
   }
 
-  public async outputType<Source, Context>(): Promise<GraphQLFieldConfig<Source, Context>> {
-    return {
-      type: GraphQLBoolean,
-    };
+  public async outputType<Source, Context>(): Promise<GraphQLScalarType> {
+    return GraphQLBoolean;
   }
 
-  // public async processOutput<Input, Output>(data: Input): Promise<Output> {
-  //   return data;
-  // }
+  public async processOutput<T>(data: any): Promise<T> {
+    return data[this.schemaField.name] as T;
+  }
 }

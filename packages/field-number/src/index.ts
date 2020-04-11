@@ -1,7 +1,7 @@
 import { DockiteField } from '@dockite/field';
-import { GraphQLFieldConfig, GraphQLFloat, GraphQLInputFieldConfig, GraphQLInt } from 'graphql';
+import { GraphQLFloat, GraphQLInt, GraphQLScalarType } from 'graphql';
 
-export class DociteFieldNumber extends DockiteField {
+export class DockiteFieldNumber extends DockiteField {
   public static type = 'number';
 
   public static title = 'Number';
@@ -14,27 +14,22 @@ export class DociteFieldNumber extends DockiteField {
     return this.schemaField.settings.float ? GraphQLFloat : GraphQLInt
   }
 
-  public async inputType(): Promise<GraphQLInputFieldConfig> {
-    return {
-      type: this.graphqlType(),
-    };
+  public async inputType(): Promise<GraphQLScalarType> {
+    return this.graphqlType();
   }
 
   // public async processInput<Input, Output>(data: Input): Promise<Output> {}
 
-  public async where(): Promise<GraphQLInputFieldConfig> {
-    return {
-      type: this.graphqlType(),
-    };
+  public async where(): Promise<GraphQLScalarType> {
+    return this.graphqlType();
   }
 
-  public async outputType<Source, Context>(): Promise<GraphQLFieldConfig<Source, Context>> {
-    return {
-      type: this.graphqlType(),
-    };
+  public async outputType<Source, Context>(): Promise<GraphQLScalarType> {
+    return this.graphqlType();
   }
 
-  // public async processOutput<Input, Output>(data: Input): Promise<Output> {
-  //   return data;
-  // }
+  public async processOutput<T>(data: any): Promise<T> {
+    console.log(this);
+    return data[this.schemaField.name] as T;
+  }
 }

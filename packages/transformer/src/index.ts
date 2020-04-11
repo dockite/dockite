@@ -14,27 +14,41 @@ import { Repository } from 'typeorm';
 
 const log = debug('dockite:transformer');
 
+interface FieldConfig<Source, Context> {
+  name: string;
+  config: GraphQLFieldConfig<Source, Context>;
+}
+
 const createObjectType = async (entity: Schema): Promise<GraphQLObjectType> => {
   // Build our empty field map
   log(`Building object type for ${entity.name}`);
   const typeFields: GraphQLFieldConfigMap<Source, GlobalContext> = {};
 
   // Retrieve our field configs from the registered dockite-fields
-  const fieldsMap: {
-    name: string;
-    type: GraphQLFieldConfig<Source, GlobalContext>;
-  }[] = await Promise.all(
-    entity.fields.map(async (field: Field) => ({
-      name: field.name,
-      // eslint-disable-next-line
-      type: await field.dockiteField!.outputType<Source, GlobalContext>(),
-    })),
+  const fieldsMap: FieldConfig<Source, GlobalContext>[] = await Promise.all(
+    entity.fields
+      .filter((field: Field) => field.dockiteField !== undefined)
+      .map(async (field: Field) => {
+        // eslint-disable-next-line
+        const outputType = await field.dockiteField!.outputType();
+
+        return {
+          name: field.name,
+          config: {
+            type: outputType,
+            resolve: async (obj): Promise<any> => {
+              // eslint-disable-next-line
+              return field.dockiteField!.processOutput<typeof outputType>(obj);
+            },
+          },
+        } as FieldConfig<Source, GlobalContext>;
+      }),
   );
 
   // Then add all non-null fields
   fieldsMap.forEach(field => {
-    if (field.type !== null) {
-      typeFields[field.name] = field.type;
+    if (field.config !== null) {
+      typeFields[field.name] = field.config;
     }
   });
 

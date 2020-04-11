@@ -1,8 +1,8 @@
 import { DockiteField } from '@dockite/field';
-import { GraphQLFieldConfig, GraphQLInputFieldConfig } from 'graphql';
+import { GraphQLScalarType } from 'graphql';
 import { GraphQLDate, GraphQLDateTime } from 'graphql-iso-date';
 
-export class DociteFieldDatetime extends DockiteField {
+export class DockiteFieldDatetime extends DockiteField {
   public static type = 'datetime';
 
   public static title = 'Datetime';
@@ -15,27 +15,21 @@ export class DociteFieldDatetime extends DockiteField {
     return this.schemaField.settings.datetime ? GraphQLDate : GraphQLDateTime
   }
 
-  public async inputType(): Promise<GraphQLInputFieldConfig> {
-    return {
-      type: this.graphqlType(),
-    };
+  public async inputType(): Promise<GraphQLScalarType> {
+    return this.graphqlType();
   }
 
   // public async processInput<Input, Output>(data: Input): Promise<Output> {}
 
-  public async where(): Promise<GraphQLInputFieldConfig> {
-    return {
-      type: this.graphqlType(),
-    };
+  public async where(): Promise<GraphQLScalarType> {
+    return this.graphqlType();
   }
 
-  public async outputType<Source, Context>(): Promise<GraphQLFieldConfig<Source, Context>> {
-    return {
-      type: this.graphqlType(),
-    };
+  public async outputType<Source, Context>(): Promise<GraphQLScalarType> {
+    return this.graphqlType();
   }
 
-  // public async processOutput<Input, Output>(data: Input): Promise<Output> {
-  //   return data;
-  // }
+  public async processOutput<T>(data: any): Promise<T> {
+    return data[this.schemaField.name] as T;
+  }
 }
