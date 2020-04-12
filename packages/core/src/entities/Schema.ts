@@ -1,3 +1,4 @@
+import { Schema as BaseSchema } from '@dockite/types';
 import { GraphQLJSON } from 'graphql-type-json';
 import { Field as GraphQLField, ObjectType, registerEnumType } from 'type-graphql';
 import {
@@ -9,7 +10,6 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Schema as BaseSchema } from '@dockite/types';
 
 import { SchemaType } from '../common/types/schema-type';
 

@@ -13,11 +13,11 @@ export const createGraphQLSchemas = async (): Promise<GraphQLSchema[]> => {
 
   const schemas = await Promise.all(
     entities
-      .filter(e => e.fields.length > 0)
+      .filter(schema => schema.fields.length > 0)
       .map(
-        async e =>
+        async schema =>
           new GraphQLSchema({
-            query: await createSchemaForEntity<Document>(e, documentRepository),
+            query: await createSchemaForEntity<Document>(schema, documentRepository),
           }),
       ),
   );

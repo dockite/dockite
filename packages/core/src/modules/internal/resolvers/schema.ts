@@ -6,6 +6,7 @@ import debug from 'debug';
 import { Authenticated } from '../../../common/authorizers';
 import { SchemaType } from '../../../common/types';
 import { Document, Schema } from '../../../entities';
+import { DockiteEvents } from '../../../events';
 
 const log = debug('dockite:core:resolvers');
 
@@ -85,6 +86,8 @@ export class SchemaResolver {
 
     const savedSchema = await repository.save(schema);
 
+    DockiteEvents.emit('reload');
+
     return savedSchema;
   }
 
@@ -111,6 +114,8 @@ export class SchemaResolver {
 
     const savedSchema = await repository.save(schema);
 
+    DockiteEvents.emit('reload');
+
     return savedSchema;
   }
 
@@ -130,6 +135,8 @@ export class SchemaResolver {
 
       await repository.update({ id }, { deletedAt });
       await getRepository(Document).update({ schemaId: id }, { deletedAt });
+
+      DockiteEvents.emit('reload');
 
       return true;
     } catch {

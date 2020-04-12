@@ -3,7 +3,8 @@ import { getRepository } from 'typeorm';
 import GraphQLJSON from 'graphql-type-json';
 
 import { Authenticated } from '../../../common/authorizers';
-import { Field } from '../../../entities';
+import { Field, Document } from '../../../entities';
+import { DockiteEvents } from '../../../events';
 
 @Resolver(_of => Field)
 export class FieldResolver {
@@ -44,7 +45,8 @@ export class FieldResolver {
     @Arg('title') title: string,
     @Arg('description') description: string,
     @Arg('type') type: string,
-    @Arg('settings', _type => GraphQLJSON) settings: any,
+    // eslint-disable-next-line
+    @Arg('settings', _type => GraphQLJSON) settings: Record<string, any>,
     @Arg('schemaId') schemaId: string,
   ): Promise<Field | null> {
     const repository = getRepository(Field);
@@ -60,6 +62,8 @@ export class FieldResolver {
 
     const savedField = await repository.save(field);
 
+    DockiteEvents.emit('reload');
+
     return savedField;
   }
 
@@ -72,7 +76,21 @@ export class FieldResolver {
     const repository = getRepository(Field);
 
     try {
-      await repository.delete(id);
+      const field = await repository.findOneOrFail(id);
+
+      await Promise.all([
+        repository.delete(field.id),
+        getRepository(Document)
+          .createQueryBuilder()
+          .update()
+          .set({
+            data: () => `data - '${field.name}'`,
+          })
+          .where('schemaId = :schemaId', { schemaId: field.schemaId })
+          .execute(),
+      ]);
+
+      DockiteEvents.emit('reload');
 
       return true;
     } catch {

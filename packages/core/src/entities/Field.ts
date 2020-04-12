@@ -1,16 +1,16 @@
+import { DockiteField } from '@dockite/field';
+import { Field as BaseField } from '@dockite/types';
 import GraphQLJSON from 'graphql-type-json';
 import { Field as GraphQLField, ObjectType } from 'type-graphql';
 import {
+  AfterLoad,
   Column,
   Entity,
+  getRepository,
   ManyToOne,
   PrimaryGeneratedColumn,
-  AfterLoad,
-  getRepository,
   Repository,
 } from 'typeorm';
-import { Field as BaseField } from '@dockite/types';
-import { DockiteField } from '@dockite/field';
 
 import { dockiteFields } from '../fields';
 
@@ -64,6 +64,7 @@ export class Field implements BaseField {
       const FieldClass = Object.values(dockiteFields).find(field => field.type === this.type);
 
       if (FieldClass && typeof FieldClass === 'function') {
+        // eslint-disable-next-line
         const entities: { [id: string]: Repository<any> } = {};
 
         Object.entries(Entities).forEach(([key, val]) => {
