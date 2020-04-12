@@ -7,5 +7,10 @@
     "plugin:vue/essential",
     "plugin:vue/recommended",
     "plugin:vue/strongly-recommended"
-  ]
+  ],
+  "rules": {
+    "vue/component-tags-order": ["error", {
+      "order": ["template", "script", "style"]
+    }]
+  }
 }
