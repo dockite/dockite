@@ -10,6 +10,6 @@ export interface Field {
   type: string;
   settings: any; // eslint-disable-line
   schemaId: string;
-  schema: Schema;
+  schema?: Schema;
   dockiteField?: DockiteField;
 }

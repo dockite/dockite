@@ -23,7 +23,7 @@ export default {
       required: true,
     },
     value: {
-      validator: (value) => typeof value === 'date' || typeof value === 'string' || value === null,
+      validator: (value) => (value instanceof Date) || typeof value === 'string' || value === null,
       required: true,
     },
     formData: {

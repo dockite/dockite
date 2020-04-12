@@ -29,7 +29,6 @@ export class DockiteFieldNumber extends DockiteField {
   }
 
   public async processOutput<T>(data: any): Promise<T> {
-    console.log(this);
     return data[this.schemaField.name] as T;
   }
 }
