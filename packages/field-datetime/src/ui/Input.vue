@@ -43,18 +43,18 @@ export default {
   computed: {
     fieldData: {
       get() {
-        if (this.value !== null) {
+        if (this.value !== null && !moment.isMoment(this.value)) {
           return moment(this.value);
+        }
+
+        if (moment.isMoment(this.value)) {
+          return this.value;
         }
 
         return null;
       },
       set(value) {
-        if (moment.isMoment(value)) {
-          this.$emit('input', moment(value).format('YYYY-MM-DD'));
-        } else {
-          this.$emit('input', value);
-        }
+        this.$emit('input', value);
       },
     },
 
