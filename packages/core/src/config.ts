@@ -9,6 +9,8 @@ let config: CoreConfiguration = {
     '@dockite/field-boolean',
     '@dockite/field-number',
     '@dockite/field-datetime',
+    '@dockite/field-json',
+    '@dockite/field-colorpicker',
   ],
 };
 
