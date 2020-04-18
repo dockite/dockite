@@ -1,4 +1,4 @@
-import { Arg, Ctx, Mutation, Query, Resolver } from 'type-graphql';
+import { Arg, Ctx, Mutation, Query, Resolver, Int } from 'type-graphql';
 import { getRepository } from 'typeorm';
 import GraphQLJSON from 'graphql-type-json';
 
@@ -29,16 +29,31 @@ export class DocumentResolver {
   async findDocuments(
     @Arg('schemaId', _type => String, { nullable: true })
     schemaId: string | null,
+    @Arg('schemaIds', _type => [String], { nullable: true })
+    schemaIds: string | null,
+    @Arg('page', _type => Int, { defaultValue: 1 })
+    page: number,
+    @Arg('perPage', _type => Int, { defaultValue: 20 })
+    perPage: number,
   ): Promise<Document[] | null> {
     const repository = getRepository(Document);
 
-    const qb = repository.createQueryBuilder('document').where('document.deletedAt IS NULL');
+    const qb = repository
+      .createQueryBuilder('document')
+      .where('document.deletedAt IS NULL')
+      .leftJoinAndSelect('document.schema', 'schema');
 
     if (schemaId) {
       qb.andWhere('document.schemaId = :schemaId', { schemaId });
     }
 
-    qb.orderBy('document.updatedAt', 'DESC');
+    if (schemaIds) {
+      qb.andWhere('document.schemaId IN (:...schemaIds)', { schemaIds });
+    }
+
+    qb.take(perPage)
+      .skip(perPage * (page - 1))
+      .orderBy('document.updatedAt', 'DESC');
 
     const documents = await qb.getMany();
 
