@@ -30,6 +30,12 @@ module.exports = {
     ],
     'import/prefer-default-export': 'off',
     'import/no-cycle': 'warn',
+    'vue/component-tags-order': [
+      'error',
+      {
+        order: ['template', 'script', 'style'],
+      },
+    ],
   },
   overrides: [
     {

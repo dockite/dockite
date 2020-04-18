@@ -15,6 +15,21 @@
         {{ id }}
       </router-link>
 
+      <template slot="data" slot-scope="data">
+        <span v-if="data.name">
+          {{ data.name }}
+        </span>
+        <span v-else-if="data.title">
+          {{ data.title }}
+        </span>
+        <span v-else-if="data.identifier">
+          {{ data.identifier }}
+        </span>
+        <span v-else>
+          {{ JSON.stringify(data).substr(0, 15) }}
+        </span>
+      </template>
+
       <router-link slot="schema" slot-scope="schema" :to="`/schema/${schema}`">
         {{ schema }}
       </router-link>
@@ -41,11 +56,10 @@
 </template>
 
 <script lang="ts">
+import FetchAllDocuments from '@/queries/AllDocuments.gql';
 import { Schema, Document } from '@dockite/types';
 import moment from 'moment';
 import { Component, Vue } from 'vue-property-decorator';
-
-import FetchAllDocuments from '@/queries/AllDocuments.gql';
 
 @Component({
   apollo: {
@@ -65,6 +79,11 @@ export class AllDocumentPage extends Vue {
         title: 'ID',
         dataIndex: 'id',
         scopedSlots: { customRender: 'id' },
+      },
+      {
+        title: 'Identifier',
+        dataIndex: 'data',
+        scopedSlots: { customRender: 'data' },
       },
       {
         title: 'Schema',

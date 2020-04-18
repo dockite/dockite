@@ -9,6 +9,7 @@
     </portal>
     <div v-if="!$apollo.loading">
       <a-form-model
+        ref="form"
         layout="vertical"
         :model="form"
         :rules="formRules"
@@ -160,8 +161,13 @@ export class EditDocumentPage extends Vue {
   }
 
   public async handleSubmit() {
+    console.log('geting called');
     try {
-      if (!this.getDocument?.id) return;
+      if (!this.getDocument || !this.getDocument.id) throw new Error('No document');
+
+      await new Promise((resolve, reject) =>
+        (this.$refs.form as any).validate((valid: boolean) => (valid ? resolve() : reject())),
+      );
 
       await this.$apollo.mutate({
         mutation: gql`

@@ -15,6 +15,7 @@
 
     <a-form-model
       v-if="!$apollo.loading"
+      ref="form"
       layout="vertical"
       :model="form"
       :rules="formRules"
@@ -130,6 +131,10 @@ export class CreateDocumentPage extends Vue {
   public async handleSubmit() {
     try {
       if (!this.getSchema.id) return;
+
+      await new Promise((resolve, reject) =>
+        (this.$refs.form as any).validate((valid: boolean) => (valid ? resolve() : reject())),
+      );
 
       await this.$store.dispatch('document/create', {
         schemaId: this.getSchema.id,

@@ -12,6 +12,7 @@ let fields = [
   '@dockite/field-datetime',
   '@dockite/field-json',
   '@dockite/field-colorpicker',
+  '@dockite/field-reference',
 ];
 
 module.exports = {
