@@ -1,26 +1,19 @@
-import { createSchemaForEntity } from '@dockite/transformer';
+import { createSchema } from '@dockite/transformer';
 import { GraphQLSchema } from 'graphql';
-import { getRepository } from 'typeorm';
+import { getRepository, Repository } from 'typeorm';
 
 import { Document, Schema } from '../../entities';
 
-export const createGraphQLSchemas = async (): Promise<GraphQLSchema[]> => {
-  const entities = await getRepository(Schema).find({
+export const createExtraGraphQLSchema = async (): Promise<GraphQLSchema> => {
+  const dockiteSchemas = await getRepository(Schema).find({
     relations: ['fields'],
   });
 
   const documentRepository = getRepository(Document);
 
-  const schemas = await Promise.all(
-    entities
-      .filter(schema => schema.fields.length > 0)
-      .map(
-        async schema =>
-          new GraphQLSchema({
-            query: await createSchemaForEntity<Document>(schema, documentRepository),
-          }),
-      ),
-  );
+  const dockiteSchemasFiltered = dockiteSchemas.filter(schema => schema.fields.length > 0);
 
-  return schemas;
+  const schema = await createSchema(dockiteSchemasFiltered, documentRepository);
+
+  return schema;
 };
