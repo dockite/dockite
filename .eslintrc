@@ -25,7 +25,8 @@
       "node": {
         "extensions": [".ts", ".tsx"]
       }
-    }
+    },
+    "import/no-cycle": "warn"
   },
   "rules": {
     "class-methods-use-this": "off",

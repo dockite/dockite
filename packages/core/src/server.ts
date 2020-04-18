@@ -6,6 +6,7 @@ import { ApolloServer } from 'apollo-server-express';
 import debug from 'debug';
 import express from 'express';
 import { set } from 'lodash';
+import { GraphQLSchema } from 'graphql';
 
 import { GRAPHQL_PATH } from './common/constants/core';
 import { GlobalContext, SessionContext, UserContext } from './common/types';
@@ -16,6 +17,10 @@ import { RootModule } from './modules';
 import { getenv, verify } from './utils';
 
 const log = debug('dockite:core');
+
+export const SchemaStore: { schema: null | GraphQLSchema } = {
+  schema: null,
+};
 
 export const start = async (port = process.env.PORT || 3000): Promise<Server> => {
   log('creating server');
@@ -43,6 +48,7 @@ export const start = async (port = process.env.PORT || 3000): Promise<Server> =>
   app.use(express.json());
 
   const root = await RootModule();
+  SchemaStore.schema = root.schema;
 
   const server = new ApolloServer({
     schema: root.schema,
@@ -77,6 +83,8 @@ export const start = async (port = process.env.PORT || 3000): Promise<Server> =>
     // Load the RootModule again which
     // will load and compile all sub-modules.
     const updated = await RootModule();
+
+    SchemaStore.schema = updated.schema;
 
     // eslint-disable-next-line
     // @ts-ignore
