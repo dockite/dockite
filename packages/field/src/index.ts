@@ -1,5 +1,5 @@
-import { GraphQLFieldConfig, GraphQLInputFieldConfig, GraphQLScalarType } from 'graphql';
-import { Field } from '@dockite/types';
+import { Field, Schema } from '@dockite/types';
+import { GraphQLInputType, GraphQLOutputType, GraphQLSchema, GraphQLObjectType } from 'graphql';
 import { Repository } from 'typeorm';
 import { Component } from 'vue';
 
@@ -9,7 +9,11 @@ export interface DockiteFieldStatic {
   description: string;
   defaultOptions: object;
 
-  new (schemaField: Field, repositories: { [id: string]: Repository<any> }): DockiteField;
+  new (
+    schemaField: Field,
+    repositories: { [id: string]: Repository<any> },
+    schema: GraphQLSchema | null,
+  ): DockiteField;
 }
 
 export abstract class DockiteField {
@@ -24,18 +28,23 @@ export abstract class DockiteField {
   constructor(
     protected schemaField: Field,
     protected repositories: { [id: string]: Repository<any> },
+    protected schema: GraphQLSchema | null,
   ) {
     this.schemaField = schemaField;
     this.repositories = repositories;
+    this.schema = schema;
   }
 
-  public abstract inputType(): Promise<GraphQLScalarType>;
+  public abstract inputType(): Promise<GraphQLInputType>;
 
   // public abstract processInput<Input, Output>(data: Input): Promise<Output>;
 
-  public abstract where(): Promise<GraphQLScalarType>;
+  public abstract where(): Promise<GraphQLInputType>;
 
-  public abstract outputType(): Promise<GraphQLScalarType>;
+  public abstract outputType(
+    dockiteSchemas: Schema[],
+    types: Map<string, GraphQLObjectType>,
+  ): Promise<GraphQLOutputType>;
 
   public async processOutput<T>(data: any): Promise<T> {
     return data[this.schemaField.name] as T;

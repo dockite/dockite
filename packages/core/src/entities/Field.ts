@@ -13,6 +13,7 @@ import {
 } from 'typeorm';
 
 import { dockiteFields } from '../fields';
+import { SchemaStore } from '../server';
 
 import { Schema } from './Schema';
 
@@ -65,13 +66,15 @@ export class Field implements BaseField {
 
       if (FieldClass && typeof FieldClass === 'function') {
         // eslint-disable-next-line
-        const entities: { [id: string]: Repository<any> } = {};
+        const Repositories: { [id: string]: Repository<any> } = {};
+
+        const { schema } = SchemaStore;
 
         Object.entries(Entities).forEach(([key, val]) => {
-          entities[key] = getRepository(val);
+          Repositories[key] = getRepository(val);
         });
 
-        this.dockiteField = new FieldClass(this, entities);
+        this.dockiteField = new FieldClass(this, Repositories, schema);
       }
     }
   }

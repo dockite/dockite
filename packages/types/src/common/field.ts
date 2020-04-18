@@ -1,13 +1,18 @@
-import { GraphQLScalarType } from 'graphql';
+import { GraphQLInputType, GraphQLOutputType, GraphQLObjectType } from 'graphql';
+
+import { Schema } from '../entities';
 
 export interface DockiteField {
-  inputType(): Promise<GraphQLScalarType>;
+  inputType(): Promise<GraphQLInputType>;
 
   // processInput<Input, Output>(data: Input): Promise<Output>;
 
-  where(): Promise<GraphQLScalarType>;
+  where(): Promise<GraphQLInputType>;
 
-  outputType(): Promise<GraphQLScalarType>;
+  outputType(
+    dockiteSchemas: Schema[],
+    types: Map<string, GraphQLObjectType>,
+  ): Promise<GraphQLOutputType>;
 
   processOutput<T>(data: any): Promise<T>;
 }
