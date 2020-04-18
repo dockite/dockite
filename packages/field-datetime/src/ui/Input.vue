@@ -23,7 +23,7 @@ export default {
       required: true,
     },
     value: {
-      validator: (value) => (value instanceof Date) || typeof value === 'string' || value === null,
+      validator: (value) => (value instanceof Date) || value === null,
       required: true,
     },
     formData: {
@@ -54,7 +54,11 @@ export default {
         return null;
       },
       set(value) {
-        this.$emit('input', value);
+        if (moment.isMoment(value)) {
+          this.$emit('input', value.toDate());
+        } else {
+          this.$emit('input', value);
+        }
       },
     },
 
@@ -97,11 +101,7 @@ export default {
     getDateRule() {
       return {
         validator(_rule, value, callback) {
-          if (typeof value === 'string' && !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
-            callback(false);
-          }
-
-          if (moment.isMoment(value) && !moment(value).isValid()) {
+          if (!moment(value).isValid()) {
             callback(false);
           }
 
