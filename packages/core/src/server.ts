@@ -1,5 +1,6 @@
 // import { Worker } from 'worker_threads';
 import { Server } from 'http';
+import path from 'path';
 
 import { DockiteFieldStatic } from '@dockite/field';
 import { ApolloServer } from 'apollo-server-express';
@@ -46,6 +47,9 @@ export const start = async (port = process.env.PORT || 3000): Promise<Server> =>
   const app = express();
 
   app.use(express.json());
+
+  app.use('/admin', express.static(path.dirname(require.resolve('@dockite/ui'))));
+  app.all('/admin*', (_req, res) => res.sendFile(require.resolve('@dockite/ui')));
 
   const root = await RootModule();
   SchemaStore.schema = root.schema;
