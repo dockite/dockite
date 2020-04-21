@@ -12,6 +12,7 @@ let config: CoreConfiguration = {
     '@dockite/field-json',
     '@dockite/field-colorpicker',
     '@dockite/field-reference',
+    '@dockite/field-reference-of',
   ],
 };
 

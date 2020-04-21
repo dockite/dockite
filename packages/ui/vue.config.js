@@ -13,10 +13,12 @@ let fields = [
   '@dockite/field-json',
   '@dockite/field-colorpicker',
   '@dockite/field-reference',
+  '@dockite/field-reference-of',
 ];
 
 module.exports = {
   lintOnSave: false,
+  publicPath: process.env.NODE_ENV === 'production' ? './' : '/',
   devServer: {
     host: '0.0.0.0',
     proxy: {
