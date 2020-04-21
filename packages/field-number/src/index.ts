@@ -31,8 +31,4 @@ export class DockiteFieldNumber extends DockiteField {
   ): Promise<GraphQLOutputType> {
     return this.graphqlType();
   }
-
-  public async processOutput<T>(data: any): Promise<T> {
-    return data[this.schemaField.name] as T;
-  }
 }

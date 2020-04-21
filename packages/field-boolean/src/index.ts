@@ -27,8 +27,4 @@ export class DockiteFieldBoolean extends DockiteField {
   ): Promise<GraphQLOutputType> {
     return GraphQLBoolean;
   }
-
-  public async processOutput<T>(data: any): Promise<T> {
-    return data[this.schemaField.name] as T;
-  }
 }

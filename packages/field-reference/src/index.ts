@@ -1,5 +1,5 @@
 import { DockiteField } from '@dockite/field';
-import { Document, Schema } from '@dockite/types';
+import { Document, Schema, FieldContext } from '@dockite/types';
 import {
   GraphQLInputFieldConfigMap,
   GraphQLInputObjectType,
@@ -58,12 +58,12 @@ export class DockiteFieldReference extends DockiteField {
     });
   }
 
-  public async processOutput<T>(data: any): Promise<T> {
-    if (!data[this.schemaField.name]) {
+  public async processOutput<T>({ value }: FieldContext): Promise<T> {
+    if (!value) {
       return (null as any) as T;
     }
 
-    const criteria: { id: string; schemaId: string } = data[this.schemaField.name];
+    const criteria: { id: string; schemaId: string } = value;
 
     const document: Document = await this.repositories.Document.createQueryBuilder('document')
       .leftJoinAndSelect('document.schema', 'schema')

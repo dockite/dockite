@@ -28,8 +28,4 @@ export class DockiteFieldJSON extends DockiteField {
   ): Promise<GraphQLOutputType> {
     return GraphQLJSON;
   }
-
-  public async processOutput<T>(data: any): Promise<T> {
-    return data[this.schemaField.name] as T;
-  }
 }

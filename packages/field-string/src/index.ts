@@ -27,8 +27,4 @@ export class DockiteFieldString extends DockiteField {
   ): Promise<GraphQLOutputType> {
     return GraphQLString;
   }
-
-  public async processOutput<T>(data: any): Promise<T> {
-    return data[this.schemaField.name] as T;
-  }
 }

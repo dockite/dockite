@@ -1,5 +1,11 @@
-import { Field, Schema } from '@dockite/types';
-import { GraphQLInputType, GraphQLOutputType, GraphQLSchema, GraphQLObjectType } from 'graphql';
+import { Field, Schema, FieldContext } from '@dockite/types';
+import {
+  GraphQLInputType,
+  GraphQLOutputType,
+  GraphQLSchema,
+  GraphQLObjectType,
+  GraphQLFieldConfigArgumentMap,
+} from 'graphql';
 import { Repository } from 'typeorm';
 import { Component } from 'vue';
 
@@ -46,8 +52,12 @@ export abstract class DockiteField {
     types: Map<string, GraphQLObjectType>,
   ): Promise<GraphQLOutputType>;
 
-  public async processOutput<T>(data: any): Promise<T> {
-    return data[this.schemaField.name] as T;
+  public outputArgs(): Promise<GraphQLFieldConfigArgumentMap> {
+    return Promise.resolve({});
+  }
+
+  public async processOutput<T>(context: FieldContext): Promise<T> {
+    return context.value as T;
   }
 }
 

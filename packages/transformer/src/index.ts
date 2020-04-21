@@ -38,20 +38,29 @@ const createObjectType = async (
     const fieldsMap: FieldConfig<Source, GlobalContext>[] = await Promise.all(
       entity.fields.map(async (field: Field) => {
         // eslint-disable-next-line
-        const outputType = await field.dockiteField!.outputType(dockiteSchemas, types);
+        const [outputType, outputArgs] = await Promise.all([
+          field.dockiteField!.outputType(dockiteSchemas, types),
+          field.dockiteField!.outputArgs(),
+        ]);
 
         return {
           name: field.name,
           config: {
             type: outputType,
-            resolve: async (obj): Promise<any> => {
+            resolve: async (root: any, args, context): Promise<any> => {
+              const value = root[field.name];
               // eslint-disable-next-line
-              return field.dockiteField!.processOutput<typeof outputType>(obj);
+              return field.dockiteField!.processOutput<typeof outputType>({value, root, args, context});
             },
+            args: outputArgs,
           },
         } as FieldConfig<Source, GlobalContext>;
       }),
     );
+
+    typeFields.id = {
+      type: GraphQLString,
+    };
 
     // Then add all non-null fields
     fieldsMap.forEach(field => {
@@ -88,14 +97,15 @@ export const createQueriesForEntity = async <T extends Document>(
         id: { type: GraphQLString },
         name: { type: GraphQLString },
       },
-      // eslint-disable-next-line
-        resolve(_context: any, { id, name }): Promise<object> {
+      async resolve(context: any, { id, name }): Promise<object> {
         if (id) {
-          return repository.findOneOrFail(id);
+          const document = await repository.findOneOrFail(id);
+          return { id: document.id, ...document.data };
         }
 
         if (name) {
-          return repository.findOneOrFail({ where: { name } });
+          const document = await repository.findOneOrFail({ where: { name } });
+          return { id: document.id, ...document.data };
         }
 
         throw new Error(`${entity.name} not found`);
@@ -118,7 +128,7 @@ export const createQueriesForEntity = async <T extends Document>(
 
         const documents = await qb.getMany();
 
-        return documents.map(document => document.data);
+        return documents.map(document => ({ id: document.id, ...document.data }));
       },
     },
   };
