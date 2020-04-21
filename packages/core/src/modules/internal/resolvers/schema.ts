@@ -51,6 +51,7 @@ export class SchemaResolver {
 
     const schemas = await repository.find({
       where: { deletedAt: null },
+      relations: ['fields'],
     });
 
     return schemas ?? null;
