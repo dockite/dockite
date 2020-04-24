@@ -14,6 +14,7 @@ let fields = [
   '@dockite/field-colorpicker',
   '@dockite/field-reference',
   '@dockite/field-reference-of',
+  '@dockite/field-code',
 ];
 
 module.exports = {
@@ -42,6 +43,8 @@ module.exports = {
       const dirname = path.dirname(require.resolve(field));
       const ui = path.join(dirname, 'ui', 'index.js');
       const abs = path.resolve(ui);
+
+      console.log(`Adding ${field}`);
 
       config.module.rule('js').include.add(abs);
 
