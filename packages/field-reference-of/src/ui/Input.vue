@@ -5,10 +5,17 @@
   >
     <a-table
       :columns="tableColumns"
-      :data-source="documents"
+      :data-source="referenceOfDocuments"
       :row-key="(record) => record.id"
-      :row-selection="rowSelectionConfig"
     >
+      <router-link
+        slot="id"
+        slot-scope="id"
+        :to="`/documents/${id}`"
+      >
+        {{ id }}
+      </router-link>
+
       <template
         slot="data"
         slot-scope="data"
@@ -116,6 +123,7 @@ export default {
           dataIndex: 'id',
           key: 'id',
           ellipsis: true,
+          scopedSlots: { customRender: 'id' },
         },
         {
           title: 'Identifier',
