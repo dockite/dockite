@@ -19,7 +19,7 @@
       </div>
       <a
         class="dockite-field reference remove"
-        @click.prevent="fieldData = null"
+        @click.prevent="handleClearReference"
       >
         <a-icon type="close" />
       </a>
@@ -28,11 +28,12 @@
       v-else
       class="dockite-field reference no-reference"
     >
-      <a @click="handleClearReference">Select a Document</a>
+      <a @click="modalVisible = true">Select a Document</a>
 
       <a-modal
         :visible="modalVisible"
         :footer="null"
+        title="Select a Document"
         width="50%"
         @cancel="modalVisible = false"
       >
@@ -299,7 +300,7 @@ export default {
 
       this.page = 1;
 
-      this.fetchDocuments();
+      this.findDocuments();
     },
   },
 };
