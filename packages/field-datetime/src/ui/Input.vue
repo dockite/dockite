@@ -23,7 +23,7 @@ export default {
       required: true,
     },
     value: {
-      validator: (value) => (value instanceof Date) || value === null,
+      validator: (value) => typeof value === 'string' || value === null,
       required: true,
     },
     formData: {
@@ -92,7 +92,13 @@ export default {
 
     getDateTimeRule() {
       return {
-        type: 'date',
+        validator(_rule, value, callback) {
+          if (!moment(value).isValid()) {
+            callback(false);
+          }
+
+          callback();
+        },
         message: `${this.fieldConfig.title} must be a valid datetime`,
         trigger: 'change',
       };
