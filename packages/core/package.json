@@ -18,6 +18,7 @@
     "@typescript-eslint/eslint-plugin": "^2.20.0",
     "@typescript-eslint/parser": "^2.20.0",
     "apollo-server-express": "^2.10.1",
+    "axios": "^0.19.2",
     "bcrypt": "^4.0.0",
     "cosmiconfig": "^6.0.0",
     "debug": "^4.1.1",
@@ -36,6 +37,7 @@
     "typescript": "~3.7.5"
   },
   "devDependencies": {
+    "@types/axios": "^0.14.0",
     "@types/bcrypt": "^3.0.0",
     "@types/debug": "^4.1.5",
     "@types/graphql-type-json": "^0.3.2",

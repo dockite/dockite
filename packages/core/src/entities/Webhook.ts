@@ -11,6 +11,11 @@ import {
 
 import { WebhookCall } from './WebhookCall';
 
+interface WebhookOptions {
+  listeners: string[];
+  query?: string;
+}
+
 @Entity()
 @ObjectType()
 export class Webhook {
@@ -32,7 +37,7 @@ export class Webhook {
 
   @Column({ type: 'jsonb', default: {} })
   @GraphQLField(_type => GraphQLJSON)
-  public options!: any; // eslint-disable-line
+  public options!: WebhookOptions; // eslint-disable-line
 
   @CreateDateColumn()
   @GraphQLField()

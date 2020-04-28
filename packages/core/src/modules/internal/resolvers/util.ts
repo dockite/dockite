@@ -29,7 +29,6 @@ export class UtilResolver {
       .limit(perPage)
       .offset((page - 1) * perPage);
 
-    console.log(qb.getSql());
     const documents: Document[] = await qb.getMany();
 
     return documents;
