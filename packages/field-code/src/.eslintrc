@@ -1,0 +1,17 @@
+{
+  "root": true,
+  "extends": [
+    "eslint:recommended",
+    "@typescript-eslint/recommended",
+    "airbnb-base",
+    "plugin:vue/base",
+    "plugin:vue/essential",
+    "plugin:vue/recommended",
+    "plugin:vue/strongly-recommended"
+  ],
+  "rules": {
+    "vue/component-tags-order": ["error", {
+      "order": ["template", "script", "style"]
+    }]
+  }
+}

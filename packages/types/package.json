@@ -4,14 +4,15 @@
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
-    "lint": "echo \"No linting added\" && exit 0",
+    "lint": "exit 0",
+    "build": "tsc",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "graphql": "^14.6.0",
-    "typescript": "^3.8.3"
+    "typescript": "~3.7.5"
   },
   "devDependencies": {
-    "typescript": "^3.8.3"
+    "typescript": "~3.7.5"
   }
 }

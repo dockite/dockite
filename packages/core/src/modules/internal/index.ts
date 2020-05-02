@@ -17,11 +17,15 @@ export const getRegisteredInternalModules = (): any[] => {
   return getModules('internal');
 };
 
-export const InternalGraphQLModule = async (): Promise<GraphQLModule> => {
+export const InternalGraphQLModule = async (): Promise<GraphQLModule<
+  any,
+  any,
+  GlobalContext,
+  any
+>> => {
   log('building type-definitions and resolvers');
   const typeDefsAndResolvers = await buildTypeDefsAndResolvers({
     authChecker,
-    authMode: 'null',
     resolvers: await Promise.all(Object.values(resolvers).map(r => Promise.resolve(r))),
     emitSchemaFile: path.join(__dirname, './schema.gql'),
   });

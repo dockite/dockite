@@ -39,13 +39,14 @@ export class Authentication {
 
       delete user.password;
 
-      const token = sign({ ...user }, getenv('APP_SECRET', 'secret'));
+      const token = sign({ ...user }, getenv('APP_SECRET', 'secret'), {
+        expiresIn: '1h',
+      });
 
       ctx.res.setHeader('authorization', `Bearer ${token}`);
 
       return { user, token };
     } catch (err) {
-      log(err);
       throw new AuthenticationError('Authentication failed.');
     }
   }
@@ -69,7 +70,9 @@ export class Authentication {
 
     delete user.password;
 
-    const token = sign({ ...user }, getenv('APP_SECRET', 'secret'));
+    const token = sign({ ...user }, getenv('APP_SECRET', 'secret'), {
+      expiresIn: '1h',
+    });
 
     ctx.res.setHeader('authorization', `Bearer ${token}`);
 

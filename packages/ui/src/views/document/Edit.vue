@@ -3,79 +3,60 @@
     <portal to="title">
       <a-row type="flex" align="middle" class="title-row">
         <h1 style="margin: 0; padding: 0;">
-          {{ document && document.id ? `Update ${document.id}` : 'Loading...' }}
+          {{ getDocument && getDocument.id ? `Update ${getDocument.id}` : 'Loading...' }}
         </h1>
       </a-row>
     </portal>
-    <a-form v-if="!$apollo.loading" layout="vertical" @submit.prevent="handleSubmit">
-      <a-tabs class="form-tabs" :tab-bar-gutter="0" tab-position="top">
-        <a-tab-pane
-          v-for="group in Object.keys(groups)"
-          :key="group"
-          class="form-tab-pane"
-          :tab="group"
-        >
-          <template v-for="key in Object.keys(documentData).filter(filterBySelectedGroup)">
-            <component
-              :is="getInputField(key)"
-              :key="key"
-              v-model="form[key]"
-              :form-data="form"
-              :field-config="getFieldByKey('name', key)"
-              @update:rules="handleRulesMerge"
-            />
-          </template>
-        </a-tab-pane>
-      </a-tabs>
-      <section class="form-submit-section">
-        <a-button html-type="submit" type="primary" size="large">Update</a-button>
-      </section>
-    </a-form>
+    <div v-if="!$apollo.loading">
+      <a-form-model
+        ref="form"
+        layout="vertical"
+        :model="form"
+        :rules="formRules"
+        @submit.prevent="handleSubmit"
+      >
+        <a-tabs v-model="selectedGroup" class="form-tabs" :tab-bar-gutter="0" tab-position="top">
+          <a-tab-pane
+            v-for="group in Object.keys(groups)"
+            :key="group"
+            class="form-tab-pane"
+            :tab="group"
+          >
+            <template v-for="key in Object.keys(form).filter(filterBySelectedGroup)">
+              <component
+                :is="getInputField(key)"
+                :key="key"
+                v-model="form[key]"
+                :name="key"
+                :form-data="form"
+                :field-config="getFieldByKey('name', key)"
+                @update:rules="handleRulesMerge"
+              />
+            </template>
+          </a-tab-pane>
+        </a-tabs>
+        <section class="form-submit-section">
+          <a-button html-type="submit" type="primary" size="large">Update</a-button>
+        </section>
+      </a-form-model>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator';
 import { Document, Field } from '@dockite/types';
-import { gql } from 'apollo-boost';
+import gql from 'graphql-tag';
 import { startCase } from 'lodash';
-import { fieldManager } from '../../dockite';
+import { Component, Vue, Watch } from 'vue-property-decorator';
 
-type DockiteFormField = Omit<Field, 'schemaId' | 'dockiteField'>;
+import { DockiteFormField } from '../../common/types';
+import { fieldManager } from '../../dockite';
+import GetDocumentById from '../../queries/GetDocumentById.gql';
 
 @Component({
   apollo: {
-    document: {
-      query: gql`
-        query GetDocumentById($id: String!) {
-          document: getDocument(id: $id) {
-            id
-            locale
-            data
-            publishedAt
-            createdAt
-            updatedAt
-            deletedAt
-            schemaId
-            releaseId
-            userId
-            schema {
-              id
-              name
-              groups
-              fields {
-                id
-                name
-                title
-                description
-                type
-                settings
-              }
-            }
-          }
-        }
-      `,
-
+    getDocument: {
+      query: GetDocumentById,
       variables() {
         return {
           id: this.$route.params.id,
@@ -85,13 +66,13 @@ type DockiteFormField = Omit<Field, 'schemaId' | 'dockiteField'>;
   },
 })
 export class EditDocumentPage extends Vue {
-  public document: Document | null = null;
+  public getDocument: Document | null = null;
 
   public startCase = startCase;
 
   public form: Record<string, any> = {};
 
-  public formRules = {};
+  public formRules: Record<string, object[]> = {};
 
   public selectedGroup = '';
 
@@ -119,17 +100,24 @@ export class EditDocumentPage extends Vue {
     return null;
   }
 
+  public handleRulesMerge(rules: Record<string, object[]>): void {
+    this.formRules = {
+      ...this.formRules,
+      ...rules,
+    };
+  }
+
   get documentData(): Record<string, any> {
-    if (this.document?.data) {
-      return this.document.data;
+    if (this.getDocument?.data) {
+      return this.getDocument.data;
     }
 
     return {};
   }
 
   get groups(): Record<string, string[]> {
-    if (this.document?.schema?.groups) {
-      return this.document?.schema?.groups;
+    if (this.getDocument?.schema?.groups) {
+      return this.getDocument.schema.groups;
     }
 
     return {};
@@ -147,24 +135,39 @@ export class EditDocumentPage extends Vue {
       return this.groups[this.selectedGroup].includes(field);
     }
 
-    return true;
+    return false;
   }
 
   get fields(): DockiteFormField[] {
-    if (this.document?.schema?.fields) {
-      return this.document.schema.fields;
+    if (this.getDocument?.schema?.fields) {
+      return this.getDocument.schema.fields;
     }
 
     return [];
   }
 
-  @Watch('documentData')
+  @Watch('fields', { immediate: true })
+  handleFieldsChange() {
+    this.fields.forEach(field => {
+      if (!this.form[field.name]) {
+        Vue.set(this.form, field.name, null);
+      }
+    });
+  }
+
+  @Watch('documentData', { immediate: true })
   handleDocumentDataChange() {
     this.form = { ...this.form, ...this.documentData };
   }
 
   public async handleSubmit() {
     try {
+      if (!this.getDocument || !this.getDocument.id) throw new Error('No document');
+
+      await new Promise((resolve, reject) =>
+        (this.$refs.form as any).validate((valid: boolean) => (valid ? resolve() : reject())),
+      );
+
       await this.$apollo.mutate({
         mutation: gql`
           mutation($id: String!, $data: JSON!) {
@@ -173,10 +176,11 @@ export class EditDocumentPage extends Vue {
             }
           }
         `,
-        variables: { id: this.document.id, data: this.form },
+        variables: { id: this.getDocument.id, data: this.form },
       });
 
       this.$message.success('Document updated successfully!');
+      this.$router.push('/documents');
     } catch {
       this.$message.error('Unable to save document!');
     }

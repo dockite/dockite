@@ -1,19 +1,27 @@
 // import { Worker } from 'worker_threads';
 import { Server } from 'http';
+import path from 'path';
 
+import { DockiteFieldStatic } from '@dockite/field';
 import { ApolloServer } from 'apollo-server-express';
 import debug from 'debug';
 import express from 'express';
-import { DockiteFieldStatic } from '@dockite/field';
+import { set } from 'lodash';
+import { GraphQLSchema } from 'graphql';
 
-import { RootModule } from './modules';
 import { GRAPHQL_PATH } from './common/constants/core';
-import { UserContext, SessionContext, GlobalContext } from './common/types';
-import { verify, getenv } from './utils';
+import { GlobalContext, SessionContext, UserContext } from './common/types';
 import { getConfig } from './config';
+import { DockiteEvents } from './events';
 import { registerField } from './fields';
+import { RootModule } from './modules';
+import { getenv, verify } from './utils';
 
 const log = debug('dockite:core');
+
+export const SchemaStore: { schema: null | GraphQLSchema } = {
+  schema: null,
+};
 
 export const start = async (port = process.env.PORT || 3000): Promise<Server> => {
   log('creating server');
@@ -40,7 +48,11 @@ export const start = async (port = process.env.PORT || 3000): Promise<Server> =>
 
   app.use(express.json());
 
+  app.use('/admin', express.static(path.dirname(require.resolve('@dockite/ui'))));
+  app.all('/admin*', (_req, res) => res.sendFile(require.resolve('@dockite/ui')));
+
   const root = await RootModule();
+  SchemaStore.schema = root.schema;
 
   const server = new ApolloServer({
     schema: root.schema,
@@ -62,6 +74,31 @@ export const start = async (port = process.env.PORT || 3000): Promise<Server> =>
   });
 
   server.applyMiddleware({ app, path: `/${GRAPHQL_PATH}` });
+
+  /**
+   * As bad as this is, it's the only way to hot-reload a
+   * graphql schema without a full server restart.
+   *
+   * Once JS allows for native private methods this may break
+   * however.
+   */
+  DockiteEvents.on('reload', async () => {
+    log('reloading schema');
+    // Load the RootModule again which
+    // will load and compile all sub-modules.
+    const updated = await RootModule();
+
+    SchemaStore.schema = updated.schema;
+
+    // eslint-disable-next-line
+    // @ts-ignore
+    const derrivedData = await server.generateSchemaDerivedData(updated.schema);
+
+    // Update the schema and derrived data.
+    set(server, 'schema', updated.schema);
+    set(server, 'schemaDerivedData', derrivedData);
+  });
+
   log(`access your graphql server from http://localhost:${port}/${GRAPHQL_PATH}`);
 
   return app.listen(port, () => log(`server now listening on ${port}`));

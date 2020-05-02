@@ -1,5 +1,5 @@
 query GetDocumentById($id: String!) {
-  document: getDocument(id: $id) {
+  getDocument(id: $id) {
     id
     locale
     data

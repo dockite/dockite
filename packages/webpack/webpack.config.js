@@ -2,7 +2,7 @@
 const path = require('path');
 
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 const isDev =
   String(process.env.NODE_ENV)
@@ -53,12 +53,25 @@ module.exports = {
       {
         test: /\.(s|post)?css$/,
         include: [path.join(cwd, 'src')],
-        use: ['vue-style-loader', 'css-loader', 'postcss-loader', 'sass-loader'],
+        use: [
+          'vue-style-loader',
+          'style-loader',
+          'css-loader',
+          { loader: 'postcss-loader', options: { options: {} } },
+          'sass-loader',
+        ],
+        sideEffects: true,
+      },
+      {
+        test: /\.(s|post)?css$/,
+        include: /node_modules/,
+        use: ['style-loader', 'css-loader', 'sass-loader'],
+        sideEffects: true,
       },
     ],
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.mjs', '.js', '.jsx', '.vue', '.json', '.wasm'],
   },
-  plugins: [new VueLoaderPlugin(), new BundleAnalyzerPlugin({analyzerMode: 'static'})],
+  plugins: [new VueLoaderPlugin(), new BundleAnalyzerPlugin({ analyzerMode: 'static' })],
 };

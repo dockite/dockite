@@ -1,16 +1,18 @@
-import { Arg, Authorized, Mutation, Query, Resolver } from 'type-graphql';
+import { Arg, Mutation, Query, Resolver } from 'type-graphql';
 import { getRepository } from 'typeorm';
 import GraphQLJSON from 'graphql-type-json';
 import debug from 'debug';
 
+import { Authenticated } from '../../../common/authorizers';
 import { SchemaType } from '../../../common/types';
 import { Document, Schema } from '../../../entities';
+import { DockiteEvents } from '../../../events';
 
 const log = debug('dockite:core:resolvers');
 
 @Resolver(_of => Schema)
 export class SchemaResolver {
-  @Authorized()
+  @Authenticated()
   @Query(_returns => Schema, { nullable: true })
   async getSchema(
     @Arg('id', _type => String, { nullable: true }) id: string | null,
@@ -27,8 +29,8 @@ export class SchemaResolver {
       });
     } else if (name) {
       schema = await repository.findOne({
-        where: { name, deletedAt: null },
         relations: ['fields'],
+        where: { name, deletedAt: null },
       });
     }
 
@@ -36,23 +38,21 @@ export class SchemaResolver {
       return null;
     }
 
-    return schema ?? null;
+    return schema;
   }
 
   /**
    * TODO: Move this to and Connection/Edge model
    */
-  @Authorized()
+  @Authenticated()
   @Query(_returns => [Schema])
   async allSchemas(): Promise<Schema[] | null> {
-    log('Getting called');
     const repository = getRepository(Schema);
 
     const schemas = await repository.find({
       where: { deletedAt: null },
+      relations: ['fields'],
     });
-
-    log(schemas);
 
     return schemas ?? null;
   }
@@ -60,13 +60,17 @@ export class SchemaResolver {
   /**
    * TODO: Perform light validation on fields, settings, groups
    */
-  @Authorized()
+  @Authenticated()
   @Mutation(_returns => Schema)
   async createSchema(
-    @Arg('name') name: string,
-    @Arg('type', _type => SchemaType) type: SchemaType,
-    @Arg('groups', _type => GraphQLJSON) groups: any, // eslint-disable-line
-    @Arg('settings', _type => GraphQLJSON) settings: any, // eslint-disable-line
+    @Arg('name')
+    name: string,
+    @Arg('type', _type => SchemaType)
+    type: SchemaType,
+    @Arg('groups', _type => GraphQLJSON)
+    groups: any, // eslint-disable-line
+    @Arg('settings', _type => GraphQLJSON)
+    settings: any, // eslint-disable-line
   ): Promise<Schema | null> {
     const repository = getRepository(Schema);
 
@@ -83,15 +87,48 @@ export class SchemaResolver {
 
     const savedSchema = await repository.save(schema);
 
+    DockiteEvents.emit('reload');
+
+    return savedSchema;
+  }
+
+  /**
+   * TODO: Perform light validation on fields, settings, groups
+   */
+  @Authenticated()
+  @Mutation(_returns => Schema)
+  async updateSchema(
+    @Arg('id')
+    schemaId: string,
+    @Arg('groups', _type => GraphQLJSON)
+    groups: any, // eslint-disable-line
+    @Arg('settings', _type => GraphQLJSON)
+    settings: any, // eslint-disable-line
+  ): Promise<Schema | null> {
+    const repository = getRepository(Schema);
+    const schema = await repository.findOneOrFail({
+      where: { id: schemaId },
+    });
+
+    schema.groups = groups;
+    schema.settings = settings;
+
+    const savedSchema = await repository.save(schema);
+
+    DockiteEvents.emit('reload');
+
     return savedSchema;
   }
 
   /**
    * TODO: Possibly add a check for if the Schema exists and throw
    */
-  @Authorized()
+  @Authenticated()
   @Mutation(_returns => Boolean)
-  async removeSchema(@Arg('id') id: string): Promise<boolean> {
+  async removeSchema(
+    @Arg('id')
+    id: string,
+  ): Promise<boolean> {
     const repository = getRepository(Schema);
 
     try {
@@ -99,6 +136,8 @@ export class SchemaResolver {
 
       await repository.update({ id }, { deletedAt });
       await getRepository(Document).update({ schemaId: id }, { deletedAt });
+
+      DockiteEvents.emit('reload');
 
       return true;
     } catch {

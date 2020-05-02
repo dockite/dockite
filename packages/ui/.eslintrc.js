@@ -17,6 +17,25 @@ module.exports = {
     'class-methods-use-this': 'off',
     'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+    'import/order': [
+      'error',
+      {
+        groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
+        'newlines-between': 'always',
+        alphabetize: {
+          order: 'asc' /* sort in ascending order. Options: ['ignore', 'asc', 'desc'] */,
+          caseInsensitive: true /* ignore case. Options: [true, false] */,
+        },
+      },
+    ],
+    'import/prefer-default-export': 'off',
+    'import/no-cycle': 'warn',
+    'vue/component-tags-order': [
+      'error',
+      {
+        order: ['template', 'script', 'style'],
+      },
+    ],
   },
   overrides: [
     {

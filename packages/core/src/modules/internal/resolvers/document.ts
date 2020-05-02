@@ -1,13 +1,14 @@
-import { Arg, Authorized, Ctx, Mutation, Query, Resolver } from 'type-graphql';
+import { Arg, Ctx, Mutation, Query, Resolver, Int } from 'type-graphql';
 import { getRepository } from 'typeorm';
 import GraphQLJSON from 'graphql-type-json';
 
+import { Authenticated } from '../../../common/authorizers';
 import { GlobalContext } from '../../../common/types';
 import { Document } from '../../../entities';
 
 @Resolver(_of => Document)
 export class DocumentResolver {
-  @Authorized()
+  @Authenticated()
   @Query(_returns => Document, { nullable: true })
   async getDocument(
     @Arg('id')
@@ -23,21 +24,36 @@ export class DocumentResolver {
     return document ?? null;
   }
 
-  @Authorized()
+  @Authenticated()
   @Query(_returns => [Document], { nullable: true })
   async findDocuments(
     @Arg('schemaId', _type => String, { nullable: true })
     schemaId: string | null,
+    @Arg('schemaIds', _type => [String], { nullable: true })
+    schemaIds: string | null,
+    @Arg('page', _type => Int, { defaultValue: 1 })
+    page: number,
+    @Arg('perPage', _type => Int, { defaultValue: 20 })
+    perPage: number,
   ): Promise<Document[] | null> {
     const repository = getRepository(Document);
 
-    const qb = repository.createQueryBuilder('document').where('document.deletedAt IS NULL');
+    const qb = repository
+      .createQueryBuilder('document')
+      .where('document.deletedAt IS NULL')
+      .leftJoinAndSelect('document.schema', 'schema');
 
     if (schemaId) {
       qb.andWhere('document.schemaId = :schemaId', { schemaId });
     }
 
-    qb.orderBy('document.updatedAt', 'DESC');
+    if (schemaIds) {
+      qb.andWhere('document.schemaId IN (:...schemaIds)', { schemaIds });
+    }
+
+    qb.take(perPage)
+      .skip(perPage * (page - 1))
+      .orderBy('document.updatedAt', 'DESC');
 
     const documents = await qb.getMany();
 
@@ -47,7 +63,7 @@ export class DocumentResolver {
   /**
    * TODO: Move this to and Connection/Edge model
    */
-  @Authorized()
+  @Authenticated()
   @Query(_returns => [Document])
   async allDocuments(): Promise<Document[] | null> {
     const repository = getRepository(Document);
@@ -61,25 +77,25 @@ export class DocumentResolver {
     return documents ?? null;
   }
 
-  @Authorized()
+  @Authenticated()
   @Mutation(_returns => Document)
   async createDocument(
     @Arg('locale') locale: string,
     @Arg('data', _type => GraphQLJSON) data: any, // eslint-disable-line
     @Arg('schemaId') schemaId: string,
     @Arg('releaseId', _type => String, { nullable: true }) releaseId: string | null = null,
-    @Ctx() _ctx: GlobalContext,
+    @Ctx() ctx: GlobalContext,
   ): Promise<Document | null> {
     const repository = getRepository(Document);
 
-    // const { id: userId } = ctx.user!; // eslint-disable-line
+    const { id: userId } = ctx.user!; // eslint-disable-line
 
     const document = repository.create({
       locale,
       data,
       schemaId,
       releaseId,
-      userId: '1131d289-e842-41d5-abda-05d9548f2169',
+      userId,
     });
 
     const savedDocument = await repository.save(document);
@@ -87,7 +103,7 @@ export class DocumentResolver {
     return savedDocument;
   }
 
-  @Authorized()
+  @Authenticated()
   @Mutation(_returns => Document, { nullable: true })
   async updateDocument(
     @Arg('id', _type => String, { nullable: true })
@@ -119,7 +135,7 @@ export class DocumentResolver {
     return savedDocument;
   }
 
-  @Authorized()
+  @Authenticated()
   @Mutation(_returns => Boolean)
   async removeDocument(@Arg('id') id: string): Promise<boolean> {
     const repository = getRepository(Document);

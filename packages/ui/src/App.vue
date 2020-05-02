@@ -1,6 +1,10 @@
 <template>
   <fragment>
-    <a-layout v-if="loaded" id="components-layout-demo-side" style="min-height: 100vh">
+    <a-layout
+      v-if="loaded && authenticated"
+      id="components-layout-demo-side"
+      style="min-height: 100vh"
+    >
       <base-side-menu />
       <a-layout>
         <a-layout-header style="background: #fff; padding: 0 16px; line-height: 1.5;">
@@ -28,7 +32,7 @@
         </a-layout-footer>
       </a-layout>
     </a-layout>
-    <a-layout class="authentication-layout">
+    <a-layout v-else class="authentication-layout">
       <a-layout-content>
         <authentication-form />
       </a-layout-content>
@@ -37,12 +41,13 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
 import { startCase } from 'lodash';
+import { Vue, Component } from 'vue-property-decorator';
 
-import BaseSideMenu from './components/base/SideMenu.vue';
+import AuthenticationForm from './components/authentication/Form.vue';
 import BaseRouterView from './components/base/RouterView.vue';
-import AuthenticationForm from './components/authentication/form.vue';
+import BaseSideMenu from './components/base/SideMenu.vue';
+import { AccountState } from './store/account/types';
 
 @Component({
   components: {
@@ -79,6 +84,14 @@ export class App extends Vue {
     return crumbs;
   }
 
+  get authenticated() {
+    return (this.$store.state.account as AccountState).authenticated;
+  }
+
+  created() {
+    this.$store.dispatch('restoreFromLocal');
+  }
+
   async mounted() {
     await Promise.all((window as any).resolveFields);
     this.loaded = true;
@@ -105,6 +118,7 @@ export default App;
 
   .ant-layout-content {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
   }

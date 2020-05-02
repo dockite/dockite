@@ -9,7 +9,7 @@ import { GlobalContext } from '../../common/types';
 import { getModules } from '../../utils';
 
 import * as resolvers from './resolvers';
-import { createGraphQLSchemas } from './dockite';
+import { createExtraGraphQLSchema } from './dockite';
 
 const log = debug('dockite:core:external');
 
@@ -18,11 +18,15 @@ export const getRegisteredExternalModules = (): any[] => {
   return getModules('external');
 };
 
-export const ExternalGraphQLModule = async (): Promise<GraphQLModule> => {
+export const ExternalGraphQLModule = async (): Promise<GraphQLModule<
+  any,
+  any,
+  GlobalContext,
+  any
+>> => {
   log('building type-definitions and resolvers');
   const resolversAndTypeDefs = await buildTypeDefsAndResolvers({
     resolvers: await Promise.all(Object.values(resolvers).map(r => Promise.resolve(r))),
-    authMode: 'null',
     authChecker,
     emitSchemaFile: path.join(__dirname, './schema.gql'),
   });
@@ -31,13 +35,13 @@ export const ExternalGraphQLModule = async (): Promise<GraphQLModule> => {
   const modules = await Promise.all(getRegisteredExternalModules());
 
   log('creating graphql schemas for content types');
-  const schemas = await createGraphQLSchemas();
+  const schema = await createExtraGraphQLSchema();
 
   log('creating graphql module');
   return new GraphQLModule({
     typeDefs: resolversAndTypeDefs.typeDefs,
     resolvers: resolversAndTypeDefs.resolvers,
-    extraSchemas: schemas,
+    extraSchemas: [schema],
     imports: modules,
     context: (ctx): GlobalContext => ctx,
   });

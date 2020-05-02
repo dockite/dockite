@@ -78,7 +78,7 @@
                 {{ item.type }}
               </span>
               <a slot="actions" style="color:rgba(0,0,0,0.65);" @click="fields.splice(index, 1)">
-                <a-icon type="cross" />
+                <a-icon type="close" />
               </a>
             </a-list-item>
           </a-list>
@@ -99,22 +99,22 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
 import { Field, SchemaType } from '@dockite/types';
+import { gql } from 'apollo-boost';
 import { omitBy } from 'lodash';
 import VueCountryFlag from 'vue-country-flag';
+import { Component, Vue } from 'vue-property-decorator';
 import { Draggable, Container } from 'vue-smooth-dnd';
-import { gql } from 'apollo-boost';
-import AddFieldModal from '../../components/schema/AddField.vue';
 
-type DockiteFormField = Omit<Field, 'schemaId' | 'dockiteField'>;
+import { DockiteFormField } from '../../common/types';
+import AddFieldModal from '../../components/schema/AddField.vue';
 
 @Component({
   components: {
-    VueCountryFlag,
+    AddFieldModal,
     Container,
     Draggable,
-    AddFieldModal,
+    VueCountryFlag,
   },
 })
 export class CreateSchemaPage extends Vue {
@@ -122,7 +122,7 @@ export class CreateSchemaPage extends Vue {
 
   public schemaNameEntered = false;
 
-  public fields: Omit<Field, 'id' | 'schemaId' | 'dockiteField' | 'schema'>[] = [];
+  public fields: DockiteFormField[] = [];
 
   public groups: Record<string, string[]> = {
     Default: [],
@@ -147,9 +147,7 @@ export class CreateSchemaPage extends Vue {
     }
   }
 
-  public filterBySelectedGroup(
-    field: Omit<Field, 'id' | 'schemaId' | 'dockiteField' | 'schema'>,
-  ): boolean {
+  public filterBySelectedGroup(field: DockiteFormField): boolean {
     return this.groups[this.selectedGroup].includes(field.name);
   }
 
@@ -163,7 +161,7 @@ export class CreateSchemaPage extends Vue {
     this.addFieldModalVisible = true;
   }
 
-  public handleFieldSubmit(field: Omit<Field, 'id' | 'schemaId' | 'dockiteField' | 'schema'>) {
+  public handleFieldSubmit(field: DockiteFormField) {
     this.addFieldModalVisible = false;
 
     this.fields.push({
@@ -174,8 +172,13 @@ export class CreateSchemaPage extends Vue {
     this.groups[this.selectedGroup].push(field.name);
   }
 
-  public async handleSubmit() {
+  public async handleSubmit(): Promise<void> {
     try {
+      if (this.fields.length === 0) {
+        this.$message.error('Cannot create schema with no fields');
+        return;
+      }
+
       const { data } = await this.$apollo.mutate({
         mutation: gql`
           mutation CreateSchemaMutation(

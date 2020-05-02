@@ -1,14 +1,27 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
+const path = require('path');
+
 const { cosmiconfigSync } = require('cosmiconfig');
 const { union } = require('lodash');
-const path = require('path');
 const { default: InjectablePlugin, ENTRY_ORDER } = require('webpack-inject-plugin');
 
-let fields = ['@dockite/field-string'];
+let fields = [
+  '@dockite/field-string',
+  '@dockite/field-boolean',
+  '@dockite/field-number',
+  '@dockite/field-datetime',
+  '@dockite/field-json',
+  '@dockite/field-colorpicker',
+  '@dockite/field-reference',
+  '@dockite/field-reference-of',
+  '@dockite/field-code',
+];
 
 module.exports = {
   lintOnSave: false,
+  publicPath: process.env.NODE_ENV === 'production' ? './' : '/',
   devServer: {
+    host: '0.0.0.0',
     proxy: {
       '^/dockite': {
         target: 'http://localhost:3000/',
@@ -31,8 +44,9 @@ module.exports = {
       const ui = path.join(dirname, 'ui', 'index.js');
       const abs = path.resolve(ui);
 
+      console.log(`Adding ${field}`);
+
       config.module.rule('js').include.add(abs);
-      config.module.rule('js').include.add(`${abs}`);
 
       injectImports.push(`import('${abs}')`);
     });
@@ -43,5 +57,12 @@ module.exports = {
       },
       { entryOrder: ENTRY_ORDER.First },
     ]);
+
+    config.module
+      .rule('graphql')
+      .test(/\.(graphql|gql)$/)
+      .use('graphql-tag/loader')
+      .loader('graphql-tag/loader')
+      .end();
   },
 };

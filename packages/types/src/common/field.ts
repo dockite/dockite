@@ -1,13 +1,32 @@
-import { GraphQLInputFieldConfig, GraphQLFieldConfig } from 'graphql';
+import {
+  GraphQLInputType,
+  GraphQLOutputType,
+  GraphQLObjectType,
+  GraphQLFieldConfigArgumentMap,
+} from 'graphql';
+
+import { Schema } from '../entities';
+
+export interface FieldContext {
+  value: any;
+  root: Record<string, any>;
+  args: Record<string, any>;
+  context: Record<string, any>;
+}
 
 export interface DockiteField {
-  inputType(): Promise<GraphQLInputFieldConfig | null>;
+  inputType(): Promise<GraphQLInputType>;
 
   // processInput<Input, Output>(data: Input): Promise<Output>;
 
-  where(): Promise<GraphQLInputFieldConfig | null>;
+  where(): Promise<GraphQLInputType>;
 
-  outputType<Source, Context>(): Promise<GraphQLFieldConfig<Source, Context>>;
+  outputType(
+    dockiteSchemas: Schema[],
+    types: Map<string, GraphQLObjectType>,
+  ): Promise<GraphQLOutputType>;
 
-  // processOutput<Input, Output>(data: Input): Promise<Output>;
+  outputArgs(): Promise<GraphQLFieldConfigArgumentMap>;
+
+  processOutput<T>(context: FieldContext): Promise<T>;
 }

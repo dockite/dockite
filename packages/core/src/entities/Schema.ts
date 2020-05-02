@@ -1,3 +1,4 @@
+import { Schema as BaseSchema, WebhookAction } from '@dockite/types';
 import { GraphQLJSON } from 'graphql-type-json';
 import { Field as GraphQLField, ObjectType, registerEnumType } from 'type-graphql';
 import {
@@ -8,10 +9,13 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  AfterInsert,
+  AfterUpdate,
+  AfterRemove,
 } from 'typeorm';
-import { Schema as BaseSchema } from '@dockite/types';
 
 import { SchemaType } from '../common/types/schema-type';
+import { fireWebhooks } from '../utils/fire-webhooks';
 
 import { Field } from './Field';
 import { User } from './User';
@@ -73,4 +77,19 @@ export class Schema implements BaseSchema {
   @Column({ nullable: true, default: null })
   @GraphQLField()
   public deletedAt!: Date;
+
+  @AfterInsert()
+  handleAfterInsert(): Promise<void> {
+    return fireWebhooks(this, WebhookAction.SchemaCreate);
+  }
+
+  @AfterUpdate()
+  handleAfterUpdate(): Promise<void> {
+    return fireWebhooks(this, WebhookAction.SchemaUpdate);
+  }
+
+  @AfterRemove()
+  handleAfterRemove(): Promise<void> {
+    return fireWebhooks(this, WebhookAction.SchemaDelete);
+  }
 }

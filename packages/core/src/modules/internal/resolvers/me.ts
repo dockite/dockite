@@ -1,13 +1,20 @@
-import { Authorized, Ctx, Query, Resolver } from 'type-graphql';
+import { Ctx, Query, Resolver } from 'type-graphql';
 
+import { Authenticated } from '../../../common/authorizers';
 import { GlobalContext, UserContext } from '../../../common/types';
 import { Me } from '../types/me';
 
 @Resolver()
 export class MeResolver {
-  @Authorized()
+  @Authenticated()
   @Query(_returns => Me, { nullable: true })
-  me(@Ctx() ctx: GlobalContext): UserContext {
-    return ctx.user!; // eslint-disable-line
+  me(@Ctx() ctx: GlobalContext): UserContext | null {
+    if (!ctx.user) return null;
+
+    return {
+      ...ctx.user,
+      createdAt: new Date(ctx.user.createdAt),
+      updatedAt: new Date(ctx.user.updatedAt),
+    };
   }
 }

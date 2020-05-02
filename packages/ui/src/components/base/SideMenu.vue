@@ -17,13 +17,12 @@
       </a-menu-item>
 
       <a-sub-menu key="schema">
-        <span slot="title"><a-icon type="database" /><span>Schemas</span></span>
-        <a-menu-item :key="`schema/create`">
-          <router-link :to="`/schema/create`">
-            Create
-            <a-icon type="plus" />
-          </router-link>
-        </a-menu-item>
+        <router-link slot="title" to="/schema">
+          <a-icon type="database" />
+          <span>
+            Schemas
+          </span>
+        </router-link>
         <a-menu-item v-for="schema in allSchemas" :key="`schema/${schema.name}`">
           <router-link :to="`/schema/${schema.name}`">
             {{ schema.name }}
@@ -31,46 +30,54 @@
         </a-menu-item>
       </a-sub-menu>
 
-      <a-sub-menu>
-        <span slot="title"><a-icon type="team" /><span>Team</span></span>
-        <a-menu-item>Team 1</a-menu-item>
-        <a-menu-item>Team 2</a-menu-item>
+      <a-sub-menu key="settings">
+        <span slot="title">
+          <a-icon type="setting" />
+          <span>
+            Settings
+          </span>
+        </span>
+
+        <a-menu-item :key="`settings/webhooks`">
+          <router-link :to="`/settings/webhooks`">
+            Webhooks
+          </router-link>
+        </a-menu-item>
       </a-sub-menu>
 
-      <a-menu-item>
-        <a-icon type="file" />
-        <span>File</span>
+      <a-menu-item @click="handleLogout">
+        <a-icon type="logout" />
+        <span>Logout</span>
       </a-menu-item>
     </a-menu>
   </a-layout-sider>
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator';
+import { Schema } from '@dockite/types';
 import { gql } from 'apollo-boost';
+import { Component, Vue, Watch } from 'vue-property-decorator';
 
 @Component({
   apollo: {
-    allSchemas: gql`
-      {
-        allSchemas {
-          name
+    allSchemas: {
+      query: gql`
+        {
+          allSchemas {
+            name
+          }
         }
-      }
-    `,
+      `,
+      // pollInterval: 30000,
+    },
   },
 })
 export class BaseSideMenu extends Vue {
-  readonly allSchemas!: any; // eslint-disable-line
+  readonly allSchemas: Pick<Schema, 'name'>[] = [];
 
-  collapsed = false;
+  public collapsed = false;
 
   public openKeys: string[] = [];
-
-  @Watch('allSchemas')
-  handleChange() {
-    console.log(this.allSchemas);
-  }
 
   public calculateKeysFromRoute(): string[] {
     return this.$route.path
@@ -81,13 +88,12 @@ export class BaseSideMenu extends Vue {
       });
   }
 
-  @Watch('$route', { deep: true })
-  handleRouteChange() {
-    console.log('Route change');
-    this.openKeys = this.calculateKeysFromRoute();
+  public handleLogout(): void {
+    this.$store.dispatch('account/logout');
   }
 
-  beforeMount() {
+  @Watch('$route', { deep: true, immediate: true })
+  handleRouteChange(): void {
     this.openKeys = this.calculateKeysFromRoute();
   }
 }
@@ -98,5 +104,11 @@ export default BaseSideMenu;
 <style lang="scss" scoped>
 .ant-menu-inline a {
   display: inline-block;
+}
+
+.ant-menu-submenu-title {
+  a {
+    color: inherit;
+  }
 }
 </style>

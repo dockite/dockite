@@ -1,4 +1,4 @@
-export const getenv = (key: string, def: string): string => {
+export const getenv = (key: string, def = ''): string => {
   if (process.env[key]) {
     // Thanks typescript
     return process.env[key] as string;

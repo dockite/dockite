@@ -1,17 +1,22 @@
+import { Document as BaseDocument, WebhookAction } from '@dockite/types';
+import GraphQLJSON from 'graphql-type-json';
 import { Field as GraphQLField, ObjectType } from 'type-graphql';
 import {
+  AfterInsert,
   Column,
   CreateDateColumn,
   Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  AfterUpdate,
+  AfterRemove,
 } from 'typeorm';
-import GraphQLJSON from 'graphql-type-json';
-import { Document as BaseDocument } from '@dockite/types';
 
-import { Schema } from './Schema';
+import { fireWebhooks } from '../utils/fire-webhooks';
+
 import { Release } from './Release';
+import { Schema } from './Schema';
 import { User } from './User';
 
 @Entity()
@@ -80,4 +85,19 @@ export class Document implements BaseDocument {
 
   @ManyToOne(_type => User, { nullable: true, onDelete: 'SET NULL' })
   public user!: User;
+
+  @AfterInsert()
+  handleAfterInsert(): Promise<void> {
+    return fireWebhooks(this, WebhookAction.DocumentCreate);
+  }
+
+  @AfterUpdate()
+  handleAfterUpdate(): Promise<void> {
+    return fireWebhooks(this, WebhookAction.DocumentUpdate);
+  }
+
+  @AfterRemove()
+  handleAfterRemove(): Promise<void> {
+    return fireWebhooks(this, WebhookAction.DocumentDelete);
+  }
 }

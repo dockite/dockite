@@ -28,19 +28,19 @@
         {{ text }}
       </router-link>
 
-      <span slot="updatedAt" slot-scope="updatedAt">
-        {{ moment(updatedAt).format('YYYY-MM-DD HH:mm:ss') }}
-      </span>
+      <template slot="updatedAt" slot-scope="updatedAt">
+        {{ updatedAt | fromNow }}
+      </template>
     </a-table>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-import { gql } from 'apollo-boost';
 import { Schema, Document } from '@dockite/types';
+import { gql } from 'apollo-boost';
 import { startCase } from 'lodash';
 import moment from 'moment';
+import { Component, Vue } from 'vue-property-decorator';
 
 @Component({
   apollo: {
@@ -97,8 +97,6 @@ export class SchemaTableView extends Vue {
   public documents!: Partial<Document>[];
 
   get columns(): object[] {
-    console.log(this.schema);
-
     if (this.schema && this.schema.fields) {
       const slice = this.schema.fields.slice(0, 5).map(x => ({
         title: startCase(x.name),
@@ -110,11 +108,12 @@ export class SchemaTableView extends Vue {
         {
           title: 'ID',
           dataIndex: 'id',
+          ellipsis: true,
           scopedSlots: { customRender: 'id' },
         },
         ...slice,
         {
-          title: 'Updated At',
+          title: 'Last Updated',
           dataIndex: 'updatedAt',
           scopedSlots: { customRender: 'updatedAt' },
         },
@@ -125,10 +124,11 @@ export class SchemaTableView extends Vue {
       {
         title: 'ID',
         dataIndex: 'id',
+        ellipsis: true,
         scopedSlots: { customRender: 'id' },
       },
       {
-        title: 'Updated At',
+        title: 'Last Updated',
         dataIndex: 'updatedAt',
         scopedSlots: { customRender: 'updatedAt' },
       },
@@ -149,10 +149,6 @@ export class SchemaTableView extends Vue {
 
   public getRowKey(row: Partial<Document>) {
     return row.id;
-  }
-
-  created(): void {
-    console.log('window-dockite', (window as any).dockite);
   }
 }
 

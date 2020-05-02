@@ -9,7 +9,7 @@ import { InternalGraphQLModule } from './internal';
 
 const log = debug('dockite:core:root');
 
-export const RootModule = async (): Promise<GraphQLModule> => {
+export const RootModule = async (): Promise<GraphQLModule<any, any, GlobalContext, any>> => {
   log('retrieving internal and external graphql modules');
   const [internal, external, authentication] = await Promise.all([
     InternalGraphQLModule(),

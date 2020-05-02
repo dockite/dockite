@@ -1,12 +1,14 @@
-import { Arg, Authorized, Mutation, Query, Resolver } from 'type-graphql';
+import { Arg, Mutation, Query, Resolver } from 'type-graphql';
 import { getRepository } from 'typeorm';
 import GraphQLJSON from 'graphql-type-json';
 
-import { Field } from '../../../entities';
+import { Authenticated } from '../../../common/authorizers';
+import { Field, Document } from '../../../entities';
+import { DockiteEvents } from '../../../events';
 
 @Resolver(_of => Field)
 export class FieldResolver {
-  @Authorized()
+  @Authenticated()
   @Query(_returns => Field, { nullable: true })
   async getField(@Arg('id') id: string): Promise<Field | null> {
     const repository = getRepository(Field);
@@ -21,7 +23,7 @@ export class FieldResolver {
   /**
    * TODO: Move this to and Connection/Edge model
    */
-  @Authorized()
+  @Authenticated()
   @Query(_returns => [Field])
   async allFields(): Promise<Field[] | null> {
     const repository = getRepository(Field);
@@ -36,14 +38,15 @@ export class FieldResolver {
   /**
    * TODO: Perform light validation on fields, settings, groups
    */
-  @Authorized()
+  @Authenticated()
   @Mutation(_returns => Field)
   async createField(
     @Arg('name') name: string,
     @Arg('title') title: string,
     @Arg('description') description: string,
     @Arg('type') type: string,
-    @Arg('settings', _type => GraphQLJSON) settings: any,
+    // eslint-disable-next-line
+    @Arg('settings', _type => GraphQLJSON) settings: Record<string, any>,
     @Arg('schemaId') schemaId: string,
   ): Promise<Field | null> {
     const repository = getRepository(Field);
@@ -59,19 +62,35 @@ export class FieldResolver {
 
     const savedField = await repository.save(field);
 
+    DockiteEvents.emit('reload');
+
     return savedField;
   }
 
   /**
    * TODO: Possibly add a check for if the Field exists and throw
    */
-  @Authorized()
+  @Authenticated()
   @Mutation(_returns => Boolean)
   async removeField(@Arg('id') id: string): Promise<boolean> {
     const repository = getRepository(Field);
 
     try {
-      await repository.delete(id);
+      const field = await repository.findOneOrFail(id);
+
+      await Promise.all([
+        repository.delete(field.id),
+        getRepository(Document)
+          .createQueryBuilder()
+          .update()
+          .set({
+            data: () => `data - '${field.name}'`,
+          })
+          .where('schemaId = :schemaId', { schemaId: field.schemaId })
+          .execute(),
+      ]);
+
+      DockiteEvents.emit('reload');
 
       return true;
     } catch {

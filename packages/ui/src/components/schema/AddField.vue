@@ -11,7 +11,7 @@
         @click.prevent="e => handleSelectField(e, field.type)"
       >
         <strong>{{ field.title }}</strong>
-        {{ field.description }}
+        <div>{{ field.description }}</div>
       </a-button>
     </template>
     <a-form-model
@@ -45,6 +45,7 @@
         v-if="getSettingsComponent(selectedField)"
         v-model="field.settings"
         :rules.sync="rules"
+        :apollo-client="apolloClient"
       />
       <a-form-model-item style="margin-top: 12px;">
         <a-button size="large" type="primary" block html-type="submit">Add Field</a-button>
@@ -57,9 +58,11 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop, Watch } from 'vue-property-decorator';
-import { gql } from 'apollo-boost';
 import { Field } from '@dockite/types';
+import { gql } from 'apollo-boost';
+import { Component, Vue, Prop, Watch } from 'vue-property-decorator';
+
+import { apolloClient } from '../../apollo';
 import { fieldManager } from '../../dockite';
 
 @Component({
@@ -82,6 +85,8 @@ export class AddField extends Vue {
 
   @Prop({ type: Array, required: true })
   public fields!: Omit<Field, 'id' | 'schemaId' | 'dockiteField' | 'schema'>[];
+
+  public apolloClient = apolloClient;
 
   get drawerVisible() {
     return this.visible;
@@ -109,9 +114,9 @@ export class AddField extends Vue {
         trigger: 'change',
       },
       {
-        min: 5,
+        min: 2,
         max: 26,
-        message: 'The field name must contain atleast 5 and no more than 26 characters',
+        message: 'The field name must contain atleast 2 and no more than 26 characters',
         trigger: 'change',
       },
       {
@@ -121,7 +126,7 @@ export class AddField extends Vue {
       },
       {
         message: 'The field name is already used, please use a unique identifier',
-        validator: (_rule: any, value: string, callback: Function) => {
+        validator: (_rule: never, value: string, callback: Function) => {
           if (this.fields.filter(field => field.name === value).length > 0) {
             return callback(false);
           }
@@ -137,9 +142,9 @@ export class AddField extends Vue {
         trigger: 'change',
       },
       {
-        min: 5,
+        min: 2,
         max: 26,
-        message: 'The field title must contain atleast 5 and no more than 26 characters',
+        message: 'The field title must contain atleast 2 and no more than 26 characters',
         trigger: 'change',
       },
     ],
@@ -222,5 +227,10 @@ export default AddField;
   @media screen and (min-width: 800px) {
     width: 33%;
   }
+}
+
+.add-field-selector-button {
+  margin-bottom: 1rem;
+  white-space: normal !important;
 }
 </style>

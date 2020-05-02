@@ -1,11 +1,12 @@
-import { Arg, Authorized, Mutation, Query, Resolver } from 'type-graphql';
+import { Arg, Mutation, Query, Resolver } from 'type-graphql';
 import { getRepository } from 'typeorm';
 
+import { Authenticated } from '../../../common/authorizers';
 import { WebhookCall } from '../../../entities';
 
 @Resolver(_of => WebhookCall)
 export class WebhookCallResolver {
-  @Authorized()
+  @Authenticated()
   @Query(_returns => WebhookCall, { nullable: true })
   async getWebhookCall(@Arg('id') id: string): Promise<WebhookCall | null> {
     const repository = getRepository(WebhookCall);
@@ -18,7 +19,7 @@ export class WebhookCallResolver {
   /**
    * TODO: Move this to and Connection/Edge model
    */
-  @Authorized()
+  @Authenticated()
   @Query(_returns => [WebhookCall])
   async allWebhookCalls(): Promise<WebhookCall[] | null> {
     const repository = getRepository(WebhookCall);
@@ -28,7 +29,7 @@ export class WebhookCallResolver {
     return webhookCalls ?? null;
   }
 
-  @Authorized()
+  @Authenticated()
   @Mutation(_returns => Boolean)
   async removeWebhookCall(@Arg('id') id: string): Promise<boolean> {
     const repository = getRepository(WebhookCall);

@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "main": "lib/index.js",
   "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
   "dependencies": {
     "@dockite/field": "1.0.0",
     "@dockite/types": "1.0.0",
@@ -15,6 +19,6 @@
   "devDependencies": {
     "@types/graphql": "^14.5.0",
     "@types/lodash": "^4.14.149",
-    "typescript": "^3.8.3"
+    "typescript": "~3.7.5"
   }
 }
