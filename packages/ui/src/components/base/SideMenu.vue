@@ -19,11 +19,28 @@
       <a-sub-menu key="schema">
         <router-link slot="title" to="/schema">
           <a-icon type="database" />
-          Schemas
+          <span>
+            Schemas
+          </span>
         </router-link>
         <a-menu-item v-for="schema in allSchemas" :key="`schema/${schema.name}`">
           <router-link :to="`/schema/${schema.name}`">
             {{ schema.name }}
+          </router-link>
+        </a-menu-item>
+      </a-sub-menu>
+
+      <a-sub-menu key="settings">
+        <span slot="title">
+          <a-icon type="setting" />
+          <span>
+            Settings
+          </span>
+        </span>
+
+        <a-menu-item :key="`settings/webhooks`">
+          <router-link :to="`/settings/webhooks`">
+            Webhooks
           </router-link>
         </a-menu-item>
       </a-sub-menu>
@@ -90,8 +107,8 @@ export default BaseSideMenu;
 }
 
 .ant-menu-submenu-title {
-  > a {
-    color: rgba(255, 255, 255, 0.65);
+  a {
+    color: inherit;
   }
 }
 </style>

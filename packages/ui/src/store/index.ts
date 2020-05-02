@@ -4,6 +4,7 @@ import Vuex, { StoreOptions } from 'vuex';
 import { account } from './account';
 import { document } from './document';
 import { schema } from './schema';
+import { webhook } from './webhook';
 
 Vue.use(Vuex);
 
@@ -24,6 +25,7 @@ export const store: StoreOptions<RootState> = {
     account,
     document,
     schema,
+    webhook,
   },
 };
 

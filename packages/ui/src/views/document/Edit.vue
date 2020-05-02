@@ -161,7 +161,6 @@ export class EditDocumentPage extends Vue {
   }
 
   public async handleSubmit() {
-    console.log('geting called');
     try {
       if (!this.getDocument || !this.getDocument.id) throw new Error('No document');
 

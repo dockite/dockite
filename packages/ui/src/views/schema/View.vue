@@ -28,9 +28,9 @@
         {{ text }}
       </router-link>
 
-      <span slot="updatedAt" slot-scope="updatedAt">
-        {{ moment(updatedAt).format('YYYY-MM-DD HH:mm:ss') }}
-      </span>
+      <template slot="updatedAt" slot-scope="updatedAt">
+        {{ updatedAt | fromNow }}
+      </template>
     </a-table>
   </div>
 </template>
@@ -108,11 +108,12 @@ export class SchemaTableView extends Vue {
         {
           title: 'ID',
           dataIndex: 'id',
+          ellipsis: true,
           scopedSlots: { customRender: 'id' },
         },
         ...slice,
         {
-          title: 'Updated At',
+          title: 'Last Updated',
           dataIndex: 'updatedAt',
           scopedSlots: { customRender: 'updatedAt' },
         },
@@ -123,10 +124,11 @@ export class SchemaTableView extends Vue {
       {
         title: 'ID',
         dataIndex: 'id',
+        ellipsis: true,
         scopedSlots: { customRender: 'id' },
       },
       {
-        title: 'Updated At',
+        title: 'Last Updated',
         dataIndex: 'updatedAt',
         scopedSlots: { customRender: 'updatedAt' },
       },
