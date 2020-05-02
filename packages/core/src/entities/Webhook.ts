@@ -37,7 +37,7 @@ export class Webhook {
 
   @Column({ type: 'jsonb', default: {} })
   @GraphQLField(_type => GraphQLJSON)
-  public options!: WebhookOptions; // eslint-disable-line
+  public options!: WebhookOptions;
 
   @CreateDateColumn()
   @GraphQLField()

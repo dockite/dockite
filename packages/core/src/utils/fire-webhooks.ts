@@ -31,11 +31,16 @@ export const fireWebhooks = async (entity: object, action: WebhookAction): Promi
           return Axios({
             url: webhook.url,
             method: webhook.method as Method,
-            data: JSON.stringify(entity),
+            data: webhook.method.toLowerCase() === 'get' ? undefined : JSON.stringify(entity),
           }).then(
             (response: AxiosResponse) => {
               return webhookCallRepository.insert({
                 executedAt: new Date(),
+                request: {
+                  url: webhook.url,
+                  method: webhook.method,
+                  data: webhook.method.toLowerCase() === 'get' ? undefined : JSON.stringify(result),
+                },
                 response: { headers: response.headers, data: response.data },
                 status: response.status,
                 success: true,
@@ -44,6 +49,11 @@ export const fireWebhooks = async (entity: object, action: WebhookAction): Promi
             (error: AxiosError) => {
               return webhookCallRepository.insert({
                 executedAt: new Date(),
+                request: {
+                  url: webhook.url,
+                  method: webhook.method,
+                  data: webhook.method.toLowerCase() === 'get' ? undefined : JSON.stringify(result),
+                },
                 status: error.response?.status ?? 500,
                 success: false,
               });
@@ -57,11 +67,17 @@ export const fireWebhooks = async (entity: object, action: WebhookAction): Promi
               Axios({
                 url: webhook.url,
                 method: webhook.method as Method,
-                data: JSON.stringify(result),
+                data: webhook.method.toLowerCase() === 'get' ? undefined : JSON.stringify(result),
               }).then(
                 (response: AxiosResponse) => {
                   return webhookCallRepository.insert({
                     executedAt: new Date(),
+                    request: {
+                      url: webhook.url,
+                      method: webhook.method,
+                      data:
+                        webhook.method.toLowerCase() === 'get' ? undefined : JSON.stringify(result),
+                    },
                     response: { headers: response.headers, data: response.data },
                     status: response.status,
                     success: true,
@@ -70,6 +86,12 @@ export const fireWebhooks = async (entity: object, action: WebhookAction): Promi
                 (error: AxiosError) => {
                   return webhookCallRepository.insert({
                     executedAt: new Date(),
+                    request: {
+                      url: webhook.url,
+                      method: webhook.method,
+                      data:
+                        webhook.method.toLowerCase() === 'get' ? undefined : JSON.stringify(result),
+                    },
                     status: error.response?.status ?? 500,
                     success: false,
                   });
