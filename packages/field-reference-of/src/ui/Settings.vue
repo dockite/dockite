@@ -7,7 +7,7 @@
         placeholder="Select the Schema to get all references from "
       >
         <a-select-option
-          v-for="schema in allSchemas"
+          v-for="schema in allSchemas.results"
           :key="schema.id"
         >
           {{ schema.name }}
@@ -44,12 +44,14 @@ export default {
       query: gql`
         query {
           allSchemas {
-            id
-            name
-            fields {
+            results {
               id
               name
-              type
+              fields {
+                id
+                name
+                type
+              }
             }
           }
         }
@@ -80,7 +82,7 @@ export default {
 
   data() {
     return {
-      allSchemas: [],
+      allSchemas: { results: [] },
     };
   },
 
@@ -121,7 +123,7 @@ export default {
     },
 
     referenceFields() {
-      const schema = find(this.allSchemas, (s) => s.id === this.schemaId);
+      const schema = find(this.allSchemas.results, (s) => s.id === this.schemaId);
 
       if (!schema) return [];
 

@@ -1,10 +1,37 @@
-import { Arg, Mutation, Query, Resolver } from 'type-graphql';
+import {
+  Arg,
+  Field as GraphQLField,
+  Mutation,
+  Query,
+  Resolver,
+  Int,
+  ObjectType,
+} from 'type-graphql';
 import { getRepository } from 'typeorm';
 import GraphQLJSON from 'graphql-type-json';
 
 import { Webhook } from '../../../entities';
 import { RequestMethods } from '../../../common/types';
 import { Authenticated } from '../../../common/authorizers';
+
+@ObjectType()
+class ManyWebhooks {
+  @GraphQLField(_type => [Webhook])
+  results!: Webhook[];
+
+  @GraphQLField(_type => Int)
+  totalItems!: number;
+
+  @GraphQLField(_type => Int)
+  currentPage!: number;
+
+  @GraphQLField(_type => Int)
+  totalPages!: number;
+
+  @GraphQLField(_type => Boolean)
+  hasNextPage!: boolean;
+}
+
 @Resolver(_of => Webhook)
 export class WebhookResolver {
   @Authenticated()
@@ -21,13 +48,29 @@ export class WebhookResolver {
    * TODO: Move this to and Connection/Edge model
    */
   @Authenticated()
-  @Query(_returns => [Webhook])
-  async allWebhooks(): Promise<Webhook[] | null> {
+  @Query(_returns => ManyWebhooks)
+  async allWebhooks(
+    @Arg('page', _type => Int, { defaultValue: 1 })
+    page: number,
+    @Arg('perPage', _type => Int, { defaultValue: 20 })
+    perPage: number,
+  ): Promise<ManyWebhooks> {
     const repository = getRepository(Webhook);
 
-    const webhooks = await repository.find();
+    const [results, totalItems] = await repository.findAndCount({
+      take: perPage,
+      skip: perPage * (page - 1),
+    });
 
-    return webhooks ?? null;
+    const totalPages = Math.ceil(totalItems / perPage);
+
+    return {
+      results,
+      totalItems,
+      currentPage: page,
+      hasNextPage: page < totalPages,
+      totalPages,
+    };
   }
 
   @Authenticated()

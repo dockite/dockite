@@ -57,9 +57,11 @@
 
 <script lang="ts">
 import FetchAllDocuments from '@/queries/AllDocuments.gql';
-import { Schema, Document } from '@dockite/types';
+import { Schema, Document, FindManyResult } from '@dockite/types';
 import moment from 'moment';
 import { Component, Vue } from 'vue-property-decorator';
+
+import { baseFindManyResult } from '../../common/base-find-many-result';
 
 @Component({
   apollo: {
@@ -71,7 +73,7 @@ import { Component, Vue } from 'vue-property-decorator';
 export class AllDocumentPage extends Vue {
   public moment = moment;
 
-  public allDocuments: Partial<Document>[] = [];
+  public allDocuments: FindManyResult<Partial<Document>> = { ...baseFindManyResult };
 
   get columns(): object[] {
     return [
@@ -109,8 +111,8 @@ export class AllDocumentPage extends Vue {
   }
 
   get source() {
-    if (this.allDocuments && this.allDocuments.length > 0) {
-      return this.allDocuments;
+    if (this.allDocuments.results && this.allDocuments.results.length > 0) {
+      return this.allDocuments.results;
     }
 
     return [];

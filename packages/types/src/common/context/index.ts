@@ -1,8 +1,8 @@
 import { User } from '../../entities';
 
 export interface SessionContext {
-  req: Request;
-  res: Response;
+  req: Express.Request;
+  res: Express.Response;
 }
 
 export interface GlobalContext extends SessionContext {

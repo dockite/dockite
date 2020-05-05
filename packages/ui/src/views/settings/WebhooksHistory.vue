@@ -9,7 +9,7 @@
     <a-table
       class="webhook-table"
       :columns="columns"
-      :data-source="allWebhookCalls"
+      :data-source="allWebhookCalls.results"
       :row-key="getRowKey"
     >
       <router-link slot="id" slot-scope="id" :to="`/settings/webhooks/history/${id}`">
@@ -39,8 +39,11 @@
 </template>
 
 <script lang="ts">
+import { FindManyResult } from '@dockite/types';
 import gql from 'graphql-tag';
 import { Vue, Component, Watch } from 'vue-property-decorator';
+
+import { baseFindManyResult } from '../../common/base-find-many-result';
 
 @Component({
   apollo: {
@@ -48,10 +51,12 @@ import { Vue, Component, Watch } from 'vue-property-decorator';
       query: gql`
         query {
           allWebhookCalls {
-            id
-            success
-            status
-            executedAt
+            results {
+              id
+              success
+              status
+              executedAt
+            }
           }
         }
       `,
@@ -59,7 +64,7 @@ import { Vue, Component, Watch } from 'vue-property-decorator';
   },
 })
 export class WebhooksHistoryPage extends Vue {
-  public allWebhookCalls: object[] = [];
+  public allWebhookCalls: FindManyResult<object> = { ...baseFindManyResult };
 
   get columns() {
     return [

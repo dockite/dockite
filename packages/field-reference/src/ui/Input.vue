@@ -81,8 +81,10 @@ export default {
       query: gql`
         query {
           allSchemas {
-            id
-            name
+            results {
+              id
+              name
+            }
           }
         }
       `,
@@ -113,7 +115,7 @@ export default {
 
   data() {
     return {
-      allSchemas: [],
+      allSchemas: { results: [] },
       documents: [],
       document: null,
       modalVisible: false,
@@ -137,8 +139,8 @@ export default {
     },
 
     schemaName() {
-      if (this.fieldData && this.allSchemas.length > 0) {
-        return find(this.allSchemas, (s) => s.id === this.fieldData.schemaId).name;
+      if (this.fieldData && this.allSchemas.results.length > 0) {
+        return find(this.allSchemas.results, (s) => s.id === this.fieldData.schemaId).name;
       }
 
       return null;

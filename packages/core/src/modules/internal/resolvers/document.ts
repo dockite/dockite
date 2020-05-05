@@ -1,10 +1,37 @@
-import { Arg, Ctx, Mutation, Query, Resolver, Int } from 'type-graphql';
-import { getRepository } from 'typeorm';
 import GraphQLJSON from 'graphql-type-json';
+import {
+  Arg,
+  Ctx,
+  Field as GraphQLField,
+  Int,
+  Mutation,
+  ObjectType,
+  Query,
+  Resolver,
+} from 'type-graphql';
+import { getRepository } from 'typeorm';
 
 import { Authenticated } from '../../../common/authorizers';
 import { GlobalContext } from '../../../common/types';
 import { Document } from '../../../entities';
+
+@ObjectType()
+class ManyDocuments {
+  @GraphQLField(_type => [Document])
+  results!: Document[];
+
+  @GraphQLField(_type => Int)
+  totalItems!: number;
+
+  @GraphQLField(_type => Int)
+  currentPage!: number;
+
+  @GraphQLField(_type => Int)
+  totalPages!: number;
+
+  @GraphQLField(_type => Boolean)
+  hasNextPage!: boolean;
+}
 
 @Resolver(_of => Document)
 export class DocumentResolver {
@@ -25,7 +52,7 @@ export class DocumentResolver {
   }
 
   @Authenticated()
-  @Query(_returns => [Document], { nullable: true })
+  @Query(_type => ManyDocuments)
   async findDocuments(
     @Arg('schemaId', _type => String, { nullable: true })
     schemaId: string | null,
@@ -35,7 +62,7 @@ export class DocumentResolver {
     page: number,
     @Arg('perPage', _type => Int, { defaultValue: 20 })
     perPage: number,
-  ): Promise<Document[] | null> {
+  ): Promise<ManyDocuments> {
     const repository = getRepository(Document);
 
     const qb = repository
@@ -55,26 +82,49 @@ export class DocumentResolver {
       .skip(perPage * (page - 1))
       .orderBy('document.updatedAt', 'DESC');
 
-    const documents = await qb.getMany();
+    const [results, totalItems] = await qb.getManyAndCount();
 
-    return documents ?? null;
+    const totalPages = Math.ceil(totalItems / perPage);
+
+    return {
+      results,
+      totalItems,
+      currentPage: page,
+      hasNextPage: page < totalPages,
+      totalPages,
+    };
   }
 
   /**
    * TODO: Move this to and Connection/Edge model
    */
   @Authenticated()
-  @Query(_returns => [Document])
-  async allDocuments(): Promise<Document[] | null> {
+  @Query(_returns => ManyDocuments)
+  async allDocuments(
+    @Arg('page', _type => Int, { defaultValue: 1 })
+    page: number,
+    @Arg('perPage', _type => Int, { defaultValue: 20 })
+    perPage: number,
+  ): Promise<ManyDocuments> {
     const repository = getRepository(Document);
 
-    const documents = await repository.find({
+    const [results, totalItems] = await repository.findAndCount({
       where: { deletedAt: null },
       relations: ['schema'],
       order: { updatedAt: 'DESC' },
+      take: perPage,
+      skip: perPage * (page - 1),
     });
 
-    return documents ?? null;
+    const totalPages = Math.ceil(totalItems / perPage);
+
+    return {
+      results,
+      currentPage: page,
+      totalItems,
+      totalPages,
+      hasNextPage: page < totalPages,
+    };
   }
 
   @Authenticated()

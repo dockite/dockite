@@ -23,7 +23,7 @@
             Schemas
           </span>
         </router-link>
-        <a-menu-item v-for="schema in allSchemas" :key="`schema/${schema.name}`">
+        <a-menu-item v-for="schema in allSchemas.results" :key="`schema/${schema.name}`">
           <router-link :to="`/schema/${schema.name}`">
             {{ schema.name }}
           </router-link>
@@ -54,9 +54,11 @@
 </template>
 
 <script lang="ts">
-import { Schema } from '@dockite/types';
+import { Schema, FindManyResult } from '@dockite/types';
 import { gql } from 'apollo-boost';
 import { Component, Vue, Watch } from 'vue-property-decorator';
+
+import { baseFindManyResult } from '../../common/base-find-many-result';
 
 @Component({
   apollo: {
@@ -64,16 +66,18 @@ import { Component, Vue, Watch } from 'vue-property-decorator';
       query: gql`
         {
           allSchemas {
-            name
+            results {
+              id
+              name
+            }
           }
         }
       `,
-      // pollInterval: 30000,
     },
   },
 })
 export class BaseSideMenu extends Vue {
-  readonly allSchemas: Pick<Schema, 'name'>[] = [];
+  readonly allSchemas: FindManyResult<Pick<Schema, 'id' | 'name'>> = { ...baseFindManyResult };
 
   public collapsed = false;
 

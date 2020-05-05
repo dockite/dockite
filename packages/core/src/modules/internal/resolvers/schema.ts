@@ -1,4 +1,12 @@
-import { Arg, Mutation, Query, Resolver } from 'type-graphql';
+import {
+  Arg,
+  Field as GraphQLField,
+  Mutation,
+  Query,
+  Resolver,
+  ObjectType,
+  Int,
+} from 'type-graphql';
 import { getRepository } from 'typeorm';
 import GraphQLJSON from 'graphql-type-json';
 import debug from 'debug';
@@ -9,6 +17,24 @@ import { Document, Schema } from '../../../entities';
 import { DockiteEvents } from '../../../events';
 
 const log = debug('dockite:core:resolvers');
+
+@ObjectType()
+class ManySchemas {
+  @GraphQLField(_type => [Schema])
+  results!: Schema[];
+
+  @GraphQLField(_type => Int)
+  totalItems!: number;
+
+  @GraphQLField(_type => Int)
+  currentPage!: number;
+
+  @GraphQLField(_type => Int)
+  totalPages!: number;
+
+  @GraphQLField(_type => Boolean)
+  hasNextPage!: boolean;
+}
 
 @Resolver(_of => Schema)
 export class SchemaResolver {
@@ -45,16 +71,31 @@ export class SchemaResolver {
    * TODO: Move this to and Connection/Edge model
    */
   @Authenticated()
-  @Query(_returns => [Schema])
-  async allSchemas(): Promise<Schema[] | null> {
+  @Query(_returns => ManySchemas)
+  async allSchemas(
+    @Arg('page', _type => Int, { defaultValue: 1 })
+    page: number,
+    @Arg('perPage', _type => Int, { defaultValue: 20 })
+    perPage: number,
+  ): Promise<ManySchemas> {
     const repository = getRepository(Schema);
 
-    const schemas = await repository.find({
+    const [results, totalItems] = await repository.findAndCount({
       where: { deletedAt: null },
       relations: ['fields'],
+      take: perPage,
+      skip: perPage * (page - 1),
     });
 
-    return schemas ?? null;
+    const totalPages = Math.ceil(totalItems / perPage);
+
+    return {
+      results,
+      currentPage: page,
+      totalItems,
+      totalPages,
+      hasNextPage: page < totalPages,
+    };
   }
 
   /**
