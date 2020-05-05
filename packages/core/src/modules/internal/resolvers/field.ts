@@ -1,10 +1,36 @@
-import { Arg, Mutation, Query, Resolver } from 'type-graphql';
+import {
+  Arg,
+  Field as GraphQLField,
+  Mutation,
+  Query,
+  Resolver,
+  ObjectType,
+  Int,
+} from 'type-graphql';
 import { getRepository } from 'typeorm';
 import GraphQLJSON from 'graphql-type-json';
 
 import { Authenticated } from '../../../common/authorizers';
 import { Field, Document } from '../../../entities';
 import { DockiteEvents } from '../../../events';
+
+@ObjectType()
+class ManyFields {
+  @GraphQLField(_type => [Field])
+  results!: Field[];
+
+  @GraphQLField(_type => Int)
+  totalItems!: number;
+
+  @GraphQLField(_type => Int)
+  currentPage!: number;
+
+  @GraphQLField(_type => Int)
+  totalPages!: number;
+
+  @GraphQLField(_type => Boolean)
+  hasNextPage!: boolean;
+}
 
 @Resolver(_of => Field)
 export class FieldResolver {
@@ -24,15 +50,30 @@ export class FieldResolver {
    * TODO: Move this to and Connection/Edge model
    */
   @Authenticated()
-  @Query(_returns => [Field])
-  async allFields(): Promise<Field[] | null> {
+  @Query(_returns => ManyFields)
+  async allFields(
+    @Arg('page', _type => Int, { defaultValue: 1 })
+    page: number,
+    @Arg('perPage', _type => Int, { defaultValue: 20 })
+    perPage: number,
+  ): Promise<ManyFields> {
     const repository = getRepository(Field);
 
-    const fields = await repository.find({
+    const [results, totalItems] = await repository.findAndCount({
       where: { deletedAt: null },
+      take: perPage,
+      skip: perPage * (page - 1),
     });
 
-    return fields ?? null;
+    const totalPages = Math.ceil(totalItems / perPage);
+
+    return {
+      results,
+      totalItems,
+      currentPage: page,
+      hasNextPage: page < totalPages,
+      totalPages,
+    };
   }
 
   /**

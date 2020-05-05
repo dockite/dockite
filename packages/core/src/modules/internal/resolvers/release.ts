@@ -1,9 +1,36 @@
-import { Arg, Mutation, Query, Resolver, Ctx } from 'type-graphql';
+import {
+  Arg,
+  Ctx,
+  Field as GraphQLField,
+  Int,
+  Mutation,
+  ObjectType,
+  Query,
+  Resolver,
+} from 'type-graphql';
 import { getRepository } from 'typeorm';
 
 import { Authenticated } from '../../../common/authorizers';
 import { GlobalContext } from '../../../common/types';
 import { Document, Release } from '../../../entities';
+
+@ObjectType()
+class ManyReleases {
+  @GraphQLField(_type => [Release])
+  results!: Release[];
+
+  @GraphQLField(_type => Int)
+  totalItems!: number;
+
+  @GraphQLField(_type => Int)
+  currentPage!: number;
+
+  @GraphQLField(_type => Int)
+  totalPages!: number;
+
+  @GraphQLField(_type => Boolean)
+  hasNextPage!: boolean;
+}
 
 @Resolver(_of => Release)
 export class ReleaseResolver {
@@ -21,13 +48,29 @@ export class ReleaseResolver {
    * TODO: Move this to and Connection/Edge model
    */
   @Authenticated()
-  @Query(_returns => [Release])
-  async allReleases(): Promise<Release[] | null> {
+  @Query(_returns => ManyReleases)
+  async allReleases(
+    @Arg('page', _type => Int, { defaultValue: 1 })
+    page: number,
+    @Arg('perPage', _type => Int, { defaultValue: 20 })
+    perPage: number,
+  ): Promise<ManyReleases> {
     const repository = getRepository(Release);
 
-    const releases = await repository.find();
+    const [results, totalItems] = await repository.findAndCount({
+      take: perPage,
+      skip: perPage * (page - 1),
+    });
 
-    return releases ?? null;
+    const totalPages = Math.ceil(totalItems / perPage);
+
+    return {
+      results,
+      totalItems,
+      currentPage: page,
+      hasNextPage: page < totalPages,
+      totalPages,
+    };
   }
 
   @Authenticated()
