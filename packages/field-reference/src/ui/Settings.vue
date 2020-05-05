@@ -11,7 +11,7 @@
         placeholder="Select the Schema's that documents can be reference"
       >
         <a-select-option
-          v-for="schema in allSchemas"
+          v-for="schema in allSchemas.results"
           :key="schema.name"
         >
           {{ schema.name }}
@@ -32,8 +32,10 @@ export default {
       query: gql`
         query {
           allSchemas {
-            id
-            name
+            results {
+              id
+              name
+            }
           }
         }
       `,
@@ -63,7 +65,7 @@ export default {
 
   data() {
     return {
-      allSchemas: [],
+      allSchemas: { results: [] },
     };
   },
 
@@ -84,12 +86,12 @@ export default {
         }
 
         return this.settings.schemaIds.map(
-          (x) => find(this.allSchemas, (s) => s.id === x).name,
+          (x) => find(this.allSchemas.results, (s) => s.id === x).name,
         );
       },
       set(value) {
         this.settings.schemaIds = value.map(
-          (x) => find(this.allSchemas, (s) => s.name === x).id,
+          (x) => find(this.allSchemas.results, (s) => s.name === x).id,
         );
       },
     },
