@@ -1,4 +1,4 @@
-import { GlobalContext, Field, Document, Schema } from '@dockite/types';
+import { GlobalContext, Field, Document, Schema, FindManyResult } from '@dockite/types';
 import debug from 'debug';
 import {
   GraphQLFieldConfigMap,
@@ -9,11 +9,14 @@ import {
   Source,
   GraphQLFieldConfig,
   GraphQLSchema,
+  GraphQLBoolean,
 } from 'graphql';
-import { camelCase } from 'lodash';
+import { camelCase, startCase } from 'lodash';
 import { Repository } from 'typeorm';
 
 const log = debug('dockite:transformer');
+
+const pascalCase = (value: string): string => startCase(value).replace(' ', '');
 
 interface FieldConfig<Source, Context> {
   name: string;
@@ -90,6 +93,17 @@ export const createQueriesForEntity = async <T extends Document>(
   const allQuery = camelCase(`all${entity.name}`);
   const getQuery = camelCase(`get${entity.name}`);
 
+  const findManyObjectType = new GraphQLObjectType({
+    name: `Many${pascalCase(entity.name)}`,
+    fields: {
+      results: { type: new GraphQLList(type) },
+      totalItems: { type: GraphQLInt },
+      currentPage: { type: GraphQLInt },
+      totalPages: { type: GraphQLInt },
+      hasNextPage: { type: GraphQLBoolean },
+    },
+  });
+
   const queries: GraphQLFieldConfigMap<Source, GlobalContext> = {
     [getQuery]: {
       type,
@@ -97,7 +111,7 @@ export const createQueriesForEntity = async <T extends Document>(
         id: { type: GraphQLString },
         name: { type: GraphQLString },
       },
-      async resolve(context: any, { id, name }): Promise<object> {
+      async resolve(_context, { id, name }): Promise<object> {
         if (id) {
           const document = await repository.findOneOrFail(id);
           return { id: document.id, ...document.data };
@@ -113,22 +127,30 @@ export const createQueriesForEntity = async <T extends Document>(
     },
 
     [allQuery]: {
-      type: new GraphQLList(type),
+      type: findManyObjectType,
       description: entity.settings.description ?? `Retrieves all ${entity.name}`,
       args: {
         page: { type: GraphQLInt, defaultValue: 1 },
         perPage: { type: GraphQLInt, defaultValue: 25 },
       },
-      async resolve(_context, { page, perPage }): Promise<object[]> {
+      async resolve(_context, { page, perPage }): Promise<FindManyResult<any>> {
         const qb = repository
           .createQueryBuilder('document')
           .where('document.schemaId = :schemaId', { schemaId: entity.id })
           .take(perPage)
           .skip(perPage * (page - 1));
 
-        const documents = await qb.getMany();
+        const [results, totalItems] = await qb.getManyAndCount();
 
-        return documents.map(document => ({ id: document.id, ...document.data }));
+        const totalPages = Math.ceil(totalItems / perPage);
+
+        return {
+          results: results.map(doc => ({ id: doc.id, ...doc.data })),
+          totalItems,
+          currentPage: page,
+          hasNextPage: page < totalPages,
+          totalPages,
+        };
       },
     },
   };
