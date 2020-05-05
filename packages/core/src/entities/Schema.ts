@@ -19,6 +19,7 @@ import { fireWebhooks } from '../utils/fire-webhooks';
 
 import { Field } from './Field';
 import { User } from './User';
+import { Document } from './Document';
 
 // Register the enum for type-graphql
 registerEnumType(SchemaType, { name: 'SchemaType' });

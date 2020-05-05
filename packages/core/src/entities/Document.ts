@@ -23,27 +23,27 @@ import { User } from './User';
 @ObjectType()
 export class Document implements BaseDocument {
   @PrimaryGeneratedColumn('uuid')
-  @GraphQLField()
+  @GraphQLField(_type => String)
   public id!: string;
 
   @Column()
-  @GraphQLField()
+  @GraphQLField(_type => String)
   public locale!: string;
 
   @Column({ type: 'jsonb' })
   @GraphQLField(_type => GraphQLJSON)
-  public data!: any; // eslint-disable-line
+  public data!: Record<string, any>; // eslint-disable-line
 
   @Column({ type: 'timestamp', nullable: true, default: null })
   @GraphQLField(_type => Date, { nullable: true })
   public publishedAt?: Date | null;
 
   @CreateDateColumn()
-  @GraphQLField()
+  @GraphQLField(_type => Date)
   public createdAt!: Date;
 
   @UpdateDateColumn()
-  @GraphQLField()
+  @GraphQLField(_type => Date)
   public updatedAt!: Date;
 
   @Column({ type: 'timestamp', nullable: true, default: null })
@@ -51,7 +51,7 @@ export class Document implements BaseDocument {
   public deletedAt?: Date | null;
 
   @Column()
-  @GraphQLField()
+  @GraphQLField(_type => String)
   public schemaId!: string;
 
   @ManyToOne(
