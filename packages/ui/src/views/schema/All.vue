@@ -49,10 +49,12 @@
 </template>
 
 <script lang="ts">
-import { Schema } from '@dockite/types';
+import { Schema, FindManyResult } from '@dockite/types';
 import { gql } from 'apollo-boost';
 import moment from 'moment';
 import { Component, Vue } from 'vue-property-decorator';
+
+import { baseFindManyResult } from '../../common/base-find-many-result';
 
 @Component({
   apollo: {
@@ -60,12 +62,14 @@ import { Component, Vue } from 'vue-property-decorator';
       query: gql`
         query {
           schemas: allSchemas {
-            id
-            name
-            groups
-            settings
-            updatedAt
-            createdAt
+            results {
+              id
+              name
+              groups
+              settings
+              updatedAt
+              createdAt
+            }
           }
         }
       `,
@@ -75,7 +79,7 @@ import { Component, Vue } from 'vue-property-decorator';
 export class SchemaTableView extends Vue {
   public moment = moment;
 
-  public schemas!: Partial<Schema>[];
+  public schemas: FindManyResult<Partial<Schema>> = { ...baseFindManyResult };
 
   get columns(): object[] {
     return [
@@ -107,9 +111,9 @@ export class SchemaTableView extends Vue {
     ];
   }
 
-  get source() {
-    if (this.schemas && this.schemas.length > 0) {
-      return this.schemas;
+  get source(): Partial<Schema>[] {
+    if (this.schemas.results && this.schemas.results.length > 0) {
+      return this.schemas.results;
     }
 
     return [];

@@ -36,11 +36,13 @@
 </template>
 
 <script lang="ts">
-import { Schema, Document } from '@dockite/types';
+import { Schema, Document, FindManyResult } from '@dockite/types';
 import { gql } from 'apollo-boost';
 import { startCase } from 'lodash';
 import moment from 'moment';
 import { Component, Vue } from 'vue-property-decorator';
+
+import { baseFindManyResult } from '../../common/base-find-many-result';
 
 @Component({
   apollo: {
@@ -71,10 +73,12 @@ import { Component, Vue } from 'vue-property-decorator';
       query: gql`
         query FindDocumentsForSchema($schemaId: String) {
           documents: findDocuments(schemaId: $schemaId) {
-            id
-            createdAt
-            updatedAt
-            data
+            results {
+              id
+              createdAt
+              updatedAt
+              data
+            }
           }
         }
       `,
@@ -94,7 +98,7 @@ export class SchemaTableView extends Vue {
 
   public moment = moment;
 
-  public documents!: Partial<Document>[];
+  public documents: FindManyResult<Document> = { ...baseFindManyResult };
 
   get columns(): object[] {
     if (this.schema && this.schema.fields) {
@@ -136,8 +140,8 @@ export class SchemaTableView extends Vue {
   }
 
   get source() {
-    if (this.documents && this.documents.length > 0) {
-      return this.documents.map(doc => {
+    if (this.documents.results && this.documents.results.length > 0) {
+      return this.documents.results.map(doc => {
         const data = doc.data ?? {};
 
         return { ...doc, ...data };

@@ -23,7 +23,7 @@
     <a-table
       class="webhook-table"
       :columns="columns"
-      :data-source="allWebhooks"
+      :data-source="allWebhooks.results"
       :row-key="getRowKey"
     >
       <router-link slot="id" slot-scope="id" :to="`/settings/webhooks/history/${id}`">
@@ -122,7 +122,7 @@
 </template>
 
 <script lang="ts">
-import { WebhookAction } from '@dockite/types';
+import { WebhookAction, FindManyResult } from '@dockite/types';
 import {
   getIntrospectionQuery,
   buildClientSchema,
@@ -141,6 +141,7 @@ import 'codemirror/addon/lint/lint';
 import 'codemirror-graphql/hint';
 import 'codemirror-graphql/lint';
 import 'codemirror-graphql/mode';
+import { baseFindManyResult } from '../../common/base-find-many-result';
 
 @Component({
   apollo: {
@@ -148,11 +149,13 @@ import 'codemirror-graphql/mode';
       query: gql`
         query {
           allWebhooks {
-            id
-            name
-            method
-            url
-            updatedAt
+            results {
+              id
+              name
+              method
+              url
+              updatedAt
+            }
           }
         }
       `,
@@ -164,7 +167,7 @@ import 'codemirror-graphql/mode';
   },
 })
 export class WebhooksPage extends Vue {
-  public allWebhooks: object[] = [];
+  public allWebhooks: FindManyResult<object> = { ...baseFindManyResult };
 
   public introspectionQuery = getIntrospectionQuery();
 

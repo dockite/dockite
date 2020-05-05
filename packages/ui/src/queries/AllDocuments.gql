@@ -1,12 +1,14 @@
 query FetchAllDocuments {
   allDocuments {
-    id
-    data
-    updatedAt
-    createdAt
-    schema {
+    results {
       id
-      name
+      data
+      updatedAt
+      createdAt
+      schema {
+        id
+        name
+      }
     }
   }
 }
