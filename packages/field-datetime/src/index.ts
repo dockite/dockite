@@ -1,7 +1,17 @@
 import { DockiteField } from '@dockite/field';
-import { GraphQLInputType, GraphQLOutputType, GraphQLObjectType } from 'graphql';
+import { GraphQLInputType, GraphQLOutputType, GraphQLObjectType, GraphQLScalarType } from 'graphql';
 import { GraphQLDate, GraphQLDateTime } from 'graphql-iso-date';
 import { Schema, FieldContext } from '@dockite/types';
+
+const DockiteFieldDateType = new GraphQLScalarType({
+  ...GraphQLDate.toConfig(),
+  name: 'DockiteFieldDate',
+});
+
+const DockiteFieldDateTimeType = new GraphQLScalarType({
+  ...GraphQLDateTime.toConfig(),
+  name: 'DockiteFieldDateTime',
+});
 
 export class DockiteFieldDatetime extends DockiteField {
   public static type = 'datetime';
@@ -13,7 +23,7 @@ export class DockiteFieldDatetime extends DockiteField {
   public static defaultOptions = {};
 
   private graphqlType() {
-    return this.schemaField.settings.date ? GraphQLDate : GraphQLDateTime;
+    return this.schemaField.settings.date ? DockiteFieldDateType : DockiteFieldDateTimeType;
   }
 
   public async inputType(): Promise<GraphQLInputType> {

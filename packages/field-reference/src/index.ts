@@ -10,6 +10,14 @@ import {
   GraphQLUnionType,
 } from 'graphql';
 
+const DockiteFieldReferenceInputType = new GraphQLInputObjectType({
+  name: 'ReferenceFieldInput',
+  fields: {
+    id: { type: GraphQLString },
+    schemaId: { type: GraphQLString },
+  },
+});
+
 export class DockiteFieldReference extends DockiteField {
   public static type = 'reference';
 
@@ -20,13 +28,7 @@ export class DockiteFieldReference extends DockiteField {
   public static defaultOptions = {};
 
   public async inputType(): Promise<GraphQLInputType> {
-    return new GraphQLInputObjectType({
-      name: 'ReferenceFieldInput',
-      fields: {
-        id: { type: GraphQLString },
-        schemaId: { type: GraphQLString },
-      } as GraphQLInputFieldConfigMap,
-    });
+    return DockiteFieldReferenceInputType
   }
 
   // public async processInput<Input, Output>(data: Input): Promise<Output> {}

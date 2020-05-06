@@ -2,19 +2,19 @@ import { DockiteField } from '@dockite/field';
 import { GraphQLInputType, GraphQLOutputType, GraphQLObjectType, GraphQLString, GraphQLInputObjectType } from 'graphql';
 import { Schema } from '@dockite/types';
 
-const GraphQLCodeType = new GraphQLObjectType({
-  name: 'GraphQLCode',
+const DockiteFieldCodeType = new GraphQLObjectType({
+  name: 'DockiteFieldCode',
   fields: {
     language: { type: GraphQLString },
-    content: { type: GraphQLString }
+    content: { type: GraphQLString },
   }
 });
 
-const GraphQLCodeTypeInput = new GraphQLInputObjectType({
-  name: 'GraphQLCodeInput',
+const DockiteFieldCodeInputType = new GraphQLInputObjectType({
+  name: 'DockiteFieldCodeInput',
   fields: {
     language: { type: GraphQLString },
-    content: { type: GraphQLString }
+    content: { type: GraphQLString },
   }
 });
 
@@ -28,7 +28,7 @@ export class DockiteFieldCode extends DockiteField {
   public static defaultOptions = {};
 
   public async inputType(): Promise<GraphQLInputType> {
-    return GraphQLCodeTypeInput;
+    return DockiteFieldCodeInputType;
   }
 
   // public async processInput<Input, Output>(data: Input): Promise<Output> {}
@@ -41,6 +41,6 @@ export class DockiteFieldCode extends DockiteField {
     _dockiteSchemas: Schema[],
     _types: Map<string, GraphQLObjectType>,
   ): Promise<GraphQLOutputType> {
-    return GraphQLCodeType;
+    return DockiteFieldCodeType;
   }
 }
