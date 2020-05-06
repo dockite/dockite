@@ -2,6 +2,16 @@ import { DockiteField } from '@dockite/field';
 import { GraphQLFloat, GraphQLInputType, GraphQLInt, GraphQLOutputType, GraphQLScalarType, GraphQLObjectType } from 'graphql';
 import { Schema } from '@dockite/types';
 
+const DockiteFieldFloatType = new GraphQLScalarType({
+  ...GraphQLFloat.toConfig(),
+  name: 'DockiteFieldFloat',
+});
+
+const DockiteFieldIntType = new GraphQLScalarType({
+  ...GraphQLInt.toConfig(),
+  name: 'DockiteFieldInt',
+});
+
 export class DockiteFieldNumber extends DockiteField {
   public static type = 'number';
 
@@ -12,7 +22,7 @@ export class DockiteFieldNumber extends DockiteField {
   public static defaultOptions = {};
 
   private graphqlType(): GraphQLScalarType {
-    return this.schemaField.settings.float ? GraphQLFloat : GraphQLInt
+    return this.schemaField.settings.float ? DockiteFieldFloatType : DockiteFieldIntType
   }
 
   public async inputType(): Promise<GraphQLInputType> {
