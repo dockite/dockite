@@ -30,6 +30,7 @@
   },
   "rules": {
     "class-methods-use-this": "off",
+    "max-classes-per-file": "off",
     "no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
     "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
 
@@ -50,6 +51,7 @@
         "js": "never",
         "jsx": "never"
       }
-    ]
+    ],
+    "import/no-cycle": "off"
   }
 }
