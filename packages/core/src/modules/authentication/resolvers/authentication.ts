@@ -1,6 +1,5 @@
 import { AuthenticationError } from 'apollo-server-express';
 import { compare, hash } from 'bcrypt';
-import debug from 'debug';
 import { sign } from 'jsonwebtoken';
 import { Arg, Ctx, Mutation, Resolver } from 'type-graphql';
 import { getRepository, Repository } from 'typeorm';
@@ -10,7 +9,7 @@ import { User } from '../../../entities';
 import { getenv } from '../../../utils';
 import { AuthenticationResponse } from '../types/response';
 
-const log = debug('dockite:core:authentication:resolver');
+// const log = debug('dockite:core:authentication:resolver');
 
 @Resolver()
 export class Authentication {

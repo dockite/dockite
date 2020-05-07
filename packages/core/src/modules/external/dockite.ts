@@ -1,6 +1,6 @@
 import { createSchema } from '@dockite/transformer';
 import { GraphQLSchema } from 'graphql';
-import { getRepository, Repository } from 'typeorm';
+import { getRepository } from 'typeorm';
 
 import { Document, Schema } from '../../entities';
 
