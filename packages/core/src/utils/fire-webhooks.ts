@@ -39,7 +39,7 @@ export const fireWebhooks = async (entity: object, action: WebhookAction): Promi
                 request: {
                   url: webhook.url,
                   method: webhook.method,
-                  data: webhook.method.toLowerCase() === 'get' ? undefined : JSON.stringify(result),
+                  data: webhook.method.toLowerCase() === 'get' ? undefined : JSON.stringify(entity),
                 },
                 response: { headers: response.headers, data: response.data },
                 status: response.status,
@@ -52,7 +52,7 @@ export const fireWebhooks = async (entity: object, action: WebhookAction): Promi
                 request: {
                   url: webhook.url,
                   method: webhook.method,
-                  data: webhook.method.toLowerCase() === 'get' ? undefined : JSON.stringify(result),
+                  data: webhook.method.toLowerCase() === 'get' ? undefined : JSON.stringify(entity),
                 },
                 status: error.response?.status ?? 500,
                 success: false,
