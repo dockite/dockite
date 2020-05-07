@@ -1,10 +1,12 @@
 import { DockiteField } from '@dockite/field';
-import { GraphQLBoolean, GraphQLInputType, GraphQLOutputType, GraphQLObjectType, GraphQLScalarType, graphql } from 'graphql';
 import { Schema } from '@dockite/types';
+import {
+  GraphQLBoolean, GraphQLInputType, GraphQLObjectType, GraphQLOutputType, GraphQLScalarType,
+} from 'graphql';
 
 const DockiteFieldBooleanType = new GraphQLScalarType({
   ...GraphQLBoolean.toConfig(),
-  name: 'DockiteFieldBoolean'
+  name: 'DockiteFieldBoolean',
 });
 
 export class DockiteFieldBoolean extends DockiteField {

@@ -1,5 +1,7 @@
 import { DockiteField } from '@dockite/field';
-import { GraphQLInputType, GraphQLOutputType, GraphQLObjectType, GraphQLScalarType } from 'graphql';
+import {
+  GraphQLInputType, GraphQLOutputType, GraphQLObjectType, GraphQLScalarType,
+} from 'graphql';
 import { GraphQLDate, GraphQLDateTime } from 'graphql-iso-date';
 import { Schema, FieldContext } from '@dockite/types';
 

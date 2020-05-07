@@ -1,7 +1,6 @@
 import { DockiteField } from '@dockite/field';
-import { Document, Schema, FieldContext } from '@dockite/types';
+import { Document, FieldContext, Schema } from '@dockite/types';
 import {
-  GraphQLInputFieldConfigMap,
   GraphQLInputObjectType,
   GraphQLInputType,
   GraphQLObjectType,
@@ -28,7 +27,7 @@ export class DockiteFieldReference extends DockiteField {
   public static defaultOptions = {};
 
   public async inputType(): Promise<GraphQLInputType> {
-    return DockiteFieldReferenceInputType
+    return DockiteFieldReferenceInputType;
   }
 
   // public async processInput<Input, Output>(data: Input): Promise<Output> {}
@@ -45,8 +44,8 @@ export class DockiteFieldReference extends DockiteField {
     // const schemaIds = this
 
     const unionTypes = dockiteSchemas
-      .filter(schema => schemaIds.includes(schema.id))
-      .map(schema => types.get(schema.name));
+      .filter((schema) => schemaIds.includes(schema.id))
+      .map((schema) => types.get(schema.name));
 
     if (unionTypes.length === 1) {
       const [outputType] = unionTypes;

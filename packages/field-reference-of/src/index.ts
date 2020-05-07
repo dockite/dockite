@@ -39,8 +39,8 @@ export class DockiteFieldReferenceOf extends DockiteField {
     const schemaId: string = this.schemaField.settings.schemaId ?? this.schemaField.schemaId;
 
     const [schemaType] = dockiteSchemas
-      .filter(schema => schemaId === schema.id)
-      .map(schema => types.get(schema.name));
+      .filter((schema) => schemaId === schema.id)
+      .map((schema) => types.get(schema.name));
 
     return new GraphQLList(schemaType as GraphQLObjectType);
   }
@@ -52,7 +52,7 @@ export class DockiteFieldReferenceOf extends DockiteField {
       orderBy: { type: GraphQLString, defaultValue: 'updatedAt' },
       orderDirection: {
         type: new GraphQLEnumType({
-          name: 'OrderDirection_' + this.schemaField.name,
+          name: `OrderDirection_${this.schemaField.name}`,
           values: { DESC: { value: 'DESC' }, ASC: { value: 'ASC' } },
         }),
         defaultValue: 'DESC',
@@ -67,9 +67,9 @@ export class DockiteFieldReferenceOf extends DockiteField {
     const qb = this.repositories.Document.createQueryBuilder('document')
       .leftJoinAndSelect('document.schema', 'schema')
       .andWhere('schema.id = :schemaId', { schemaId })
-      .andWhere(`document.data -> :field ->> 'id' = :documentId`, {
+      .andWhere('document.data -> :field ->> \'id\' = :documentId', {
         field: fieldName,
-        documentId: root['id'],
+        documentId: root.id,
       })
       .take(perPage)
       .offset((page - 1) * perPage);
@@ -77,11 +77,11 @@ export class DockiteFieldReferenceOf extends DockiteField {
     if (args.orderBy !== 'id' && Object.keys(root).includes(args.orderBy)) {
       qb.addOrderBy(`document.data->>'${args.orderBy}'`, args.orderDirection);
     } else {
-      qb.addOrderBy('document.' + args.orderBy, args.orderDirection);
+      qb.addOrderBy(`document.${args.orderBy}`, args.orderDirection);
     }
 
     const documents: Document[] = await qb.getMany();
 
-    return (documents.map(d => ({ id: d.id, ...d.data })) as any) as T;
+    return (documents.map((d) => ({ id: d.id, ...d.data })) as any) as T;
   }
 }
