@@ -5,12 +5,14 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc && webpack --config ../webpack/webpack.config.js",
+    "lint": "eslint src --ext .js,.jsx,.ts,.tsx --quiet",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@dockite/field": "1.0.0",
+    "@dockite/types": "1.0.0",
     "ant-design-vue": "^1.4.12",
-    "graphql": "^14.6.0",
+    "graphql": "^14.6.0",    
     "graphql-tag": "^2.10.3",
     "lodash": "^4.17.15",
     "type-graphql": "^0.17.6",

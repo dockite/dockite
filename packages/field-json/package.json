@@ -5,11 +5,15 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc && webpack --config ../webpack/webpack.config.js",
+    "lint": "eslint src --ext .js,.jsx,.ts,.tsx --quiet",
     "typecheck": "tsc --noEmit"
   },
-  "sideEffects": ["*.css"],
+  "sideEffects": [
+    "*.css"
+  ],
   "dependencies": {
     "@dockite/field": "1.0.0",
+    "@dockite/types": "1.0.0",
     "ant-design-vue": "^1.4.12",
     "codemirror": "^5.52.2",
     "diff-match-patch": "^1.0.4",
