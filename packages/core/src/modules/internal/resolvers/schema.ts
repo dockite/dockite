@@ -1,22 +1,21 @@
+import GraphQLJSON from 'graphql-type-json';
 import {
   Arg,
   Field as GraphQLField,
+  Int,
   Mutation,
+  ObjectType,
   Query,
   Resolver,
-  ObjectType,
-  Int,
 } from 'type-graphql';
 import { getRepository } from 'typeorm';
-import GraphQLJSON from 'graphql-type-json';
-import debug from 'debug';
 
 import { Authenticated } from '../../../common/authorizers';
 import { SchemaType } from '../../../common/types';
 import { Document, Schema } from '../../../entities';
 import { DockiteEvents } from '../../../events';
 
-const log = debug('dockite:core:resolvers');
+// const log = debug('dockite:core:resolvers');
 
 @ObjectType()
 class ManySchemas {

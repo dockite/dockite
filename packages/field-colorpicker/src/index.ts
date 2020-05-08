@@ -1,5 +1,7 @@
 import { DockiteField } from '@dockite/field';
-import { GraphQLInputType, GraphQLOutputType, GraphQLObjectType, GraphQLScalarType } from 'graphql';
+import {
+  GraphQLInputType, GraphQLOutputType, GraphQLObjectType, GraphQLScalarType,
+} from 'graphql';
 import { HexColorCodeResolver as HexColorCode } from 'graphql-scalars';
 import { Schema } from '@dockite/types';
 

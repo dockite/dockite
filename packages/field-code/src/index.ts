@@ -1,5 +1,7 @@
 import { DockiteField } from '@dockite/field';
-import { GraphQLInputType, GraphQLOutputType, GraphQLObjectType, GraphQLString, GraphQLInputObjectType } from 'graphql';
+import {
+  GraphQLInputType, GraphQLOutputType, GraphQLObjectType, GraphQLString, GraphQLInputObjectType,
+} from 'graphql';
 import { Schema } from '@dockite/types';
 
 const DockiteFieldCodeType = new GraphQLObjectType({
@@ -7,7 +9,7 @@ const DockiteFieldCodeType = new GraphQLObjectType({
   fields: {
     language: { type: GraphQLString },
     content: { type: GraphQLString },
-  }
+  },
 });
 
 const DockiteFieldCodeInputType = new GraphQLInputObjectType({
@@ -15,7 +17,7 @@ const DockiteFieldCodeInputType = new GraphQLInputObjectType({
   fields: {
     language: { type: GraphQLString },
     content: { type: GraphQLString },
-  }
+  },
 });
 
 export class DockiteFieldCode extends DockiteField {

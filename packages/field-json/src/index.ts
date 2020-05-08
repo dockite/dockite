@@ -1,5 +1,7 @@
 import { DockiteField } from '@dockite/field';
-import { GraphQLInputType, GraphQLOutputType, GraphQLObjectType, GraphQLScalarType } from 'graphql';
+import {
+  GraphQLInputType, GraphQLOutputType, GraphQLObjectType, GraphQLScalarType,
+} from 'graphql';
 import GraphQLJSON from 'graphql-type-json';
 import { Schema } from '@dockite/types';
 
