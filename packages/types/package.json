@@ -9,6 +9,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "express": "^4.17.1",
     "graphql": "^14.6.0",
     "typescript": "~3.7.5"
   },
