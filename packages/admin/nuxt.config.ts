@@ -13,10 +13,10 @@ const config: Configuration = {
       {
         hid: 'description',
         name: 'description',
-        content: process.env.npm_package_description || ''
-      }
+        content: process.env.npm_package_description || '',
+      },
     ],
-    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }]
+    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
   },
   /*
    ** Customize the progress-bar color
@@ -43,7 +43,7 @@ const config: Configuration = {
     '@nuxtjs/dotenv',
     // '@nuxtjs/auth',
     '@nuxtjs/apollo',
-    'nuxt-i18n'
+    'nuxt-i18n',
   ],
   /*
    ** Axios module configuration
@@ -59,9 +59,9 @@ const config: Configuration = {
     clientConfigs: {
       default: {
         httpEndpoint: 'http://localhost/dockite/graphql',
-        tokenName: 'apollo-token'
-      }
-    }
+        tokenName: 'apollo-token',
+      },
+    },
   },
   /*
    ** Build configuration
@@ -76,13 +76,13 @@ const config: Configuration = {
             require.resolve('@nuxt/babel-preset-app'),
             {
               targets,
-              corejs: { version: 3 }
-            }
-          ]
+              corejs: { version: 3 },
+            },
+          ],
         ];
-      }
-    }
-  }
+      },
+    },
+  },
 };
 
 export default config;

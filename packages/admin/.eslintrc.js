@@ -19,6 +19,13 @@ module.exports = {
   rules: {
     "vue/component-tags-order": ["error", {
       "order": ["template", "script", "style"]
-    }]
+    }],
+    "import/order": [
+      "error",
+      {
+        "groups": ["builtin", "external", "internal", "parent", "sibling", "index"],
+        "newlines-between": "always"
+      }
+    ]
   }
 }

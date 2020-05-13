@@ -1,17 +1,8 @@
 <template>
-  <el-row
-    type="flex"
-    justify="center"
-    align="middle"
-    class="dockite-login-wrapper"
-  >
+  <el-row type="flex" justify="center" align="middle" class="dockite-login-wrapper">
     <logo class="dockite-login-form--logo" />
     <el-card class="dockite-login-form--container">
-      <el-form
-        :model="loginForm"
-        :rules="loginFormRules"
-        @submit.native.prevent=""
-      >
+      <el-form :model="loginForm" :rules="loginFormRules" @submit.native.prevent="">
         <el-form-item label="Email" prop="email">
           <el-input v-model="loginForm.email" type="email" />
         </el-form-item>
@@ -30,18 +21,19 @@
 
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator';
+
 import Logo from '~/components/base/logo.vue';
 
 @Component({
   layout: 'auth',
   components: {
-    Logo
-  }
+    Logo,
+  },
 })
 export default class LoginPage extends Vue {
   public loginForm = {
     email: '',
-    password: ''
+    password: '',
   };
 
   public loginFormRules = {
@@ -49,16 +41,16 @@ export default class LoginPage extends Vue {
       {
         required: true,
         message: 'Email is required',
-        trigger: 'blur'
-      }
+        trigger: 'blur',
+      },
     ],
     password: [
       {
         required: true,
         message: 'Password is required',
-        trigger: 'blur'
-      }
-    ]
+        trigger: 'blur',
+      },
+    ],
   };
 }
 </script>

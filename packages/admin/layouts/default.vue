@@ -13,12 +13,13 @@
 
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator';
+
 import SideMenu from '~/components/base/side-menu.vue';
 
 @Component({
   components: {
-    SideMenu
-  }
+    SideMenu,
+  },
 })
 export default class DefaultLayout extends Vue {}
 </script>

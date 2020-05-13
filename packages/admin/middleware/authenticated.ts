@@ -6,17 +6,13 @@ export interface ApolloTokenDecoded {
 
 const authenticated: Middleware = ({ redirect }) => {
   if (process.client) {
-    const apolloTokenDecodedRaw = window.localStorage.getItem(
-      'apollo-token-decoded'
-    );
+    const apolloTokenDecodedRaw = window.localStorage.getItem('apollo-token-decoded');
 
     if (!apolloTokenDecodedRaw) {
       return redirect('/login');
     }
 
-    const apolloTokenDecoded: ApolloTokenDecoded = JSON.parse(
-      apolloTokenDecodedRaw
-    );
+    const apolloTokenDecoded: ApolloTokenDecoded = JSON.parse(apolloTokenDecodedRaw);
 
     if (Date.now() > apolloTokenDecoded.exp) {
       return redirect('/login');

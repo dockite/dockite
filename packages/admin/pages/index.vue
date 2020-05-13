@@ -12,11 +12,7 @@
         <a href="https://nuxtjs.org/" target="_blank" class="button--green">
           Documentation
         </a>
-        <a
-          href="https://github.com/nuxt/nuxt.js"
-          target="_blank"
-          class="button--grey"
-        >
+        <a href="https://github.com/nuxt/nuxt.js" target="_blank" class="button--grey">
           GitHub
         </a>
       </div>
@@ -28,7 +24,7 @@
 import { Component, Vue } from 'nuxt-property-decorator';
 
 @Component({
-  middleware: 'authenticated'
+  middleware: 'authenticated',
 })
 export default class IndexPage extends Vue {}
 </script>
