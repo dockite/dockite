@@ -1,0 +1,14 @@
+query GetDocument($id: String!) {
+  getDocument(id: $id) {
+    id
+    locale
+    data
+    publishedAt
+    createdAt
+    updatedAt
+    deletedAt
+    releaseId
+    schemaId
+    userId
+  }
+}

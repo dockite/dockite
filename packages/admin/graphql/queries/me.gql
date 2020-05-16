@@ -1,0 +1,11 @@
+query me {
+  me {
+    id
+    firstName
+    lastName
+    email
+    createdAt
+    updatedAt
+    verified
+  }
+}

@@ -29,12 +29,16 @@
     "@nuxtjs/dotenv": "^1.4.0",
     "@nuxtjs/pwa": "^3.0.0-0",
     "@types/vfile-message": "^2.0.0",
+    "date-fns": "^2.13.0",
     "element-ui": "^2.4.11",
     "graphql-tag": "^2.10.3",
+    "lodash": "^4.17.15",
     "normalize.css": "^8.0.1",
     "nuxt": "^2.0.0",
     "nuxt-i18n": "^6.11.1",
-    "nuxt-property-decorator": "^2.7.2"
+    "nuxt-property-decorator": "^2.7.2",
+    "portal-vue": "^2.1.7",
+    "vue-fragment": "^1.5.1"
   },
   "devDependencies": {
     "@nuxt/typescript-build": "^0.6.0",

@@ -29,7 +29,13 @@ const config: Configuration = {
   /*
    ** Plugins to load before mounting the App
    */
-  plugins: ['~/plugins/element-ui.ts'],
+  plugins: [
+    '~/plugins/element-ui.ts',
+    '~/plugins/nuxt-apollo.ts',
+    '~/plugins/vuex-init.ts',
+    '~/plugins/portal-vue.ts',
+    '~/plugins/vue-filters.ts',
+  ],
   /*
    ** Nuxt.js dev-modules
    */
@@ -38,12 +44,33 @@ const config: Configuration = {
    ** Nuxt.js modules
    */
   modules: [
+    [
+      'nuxt-i18n',
+      {
+        locales: [
+          {
+            code: 'en',
+            iso: 'en-US',
+            name: 'English',
+            file: 'en-US.json',
+          },
+        ],
+        detectBrowserLanguage: {
+          useCookie: false,
+          cookieKey: 'i18n_redirected',
+        },
+        strategy: 'no_prefix',
+        defaultLocale: 'en',
+        lazy: true,
+        langDir: 'lang/',
+        fallbackLocale: 'en',
+      },
+    ],
     '@nuxtjs/axios',
     '@nuxtjs/pwa',
     '@nuxtjs/dotenv',
     // '@nuxtjs/auth',
     '@nuxtjs/apollo',
-    'nuxt-i18n',
   ],
   /*
    ** Axios module configuration
@@ -56,10 +83,11 @@ const config: Configuration = {
    */
   apollo: {
     includeNodeModules: true,
+    tokenName: 'apollo-token',
+    authenticationType: 'Bearer',
     clientConfigs: {
       default: {
-        httpEndpoint: 'http://localhost/dockite/graphql',
-        tokenName: 'apollo-token',
+        httpEndpoint: 'http://localhost:3000/dockite/graphql',
       },
     },
   },

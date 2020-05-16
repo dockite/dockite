@@ -4,9 +4,14 @@ module.exports = {
     browser: true,
     node: true
   },
+  parserOptions: {
+    parser: '@typescript-eslint/parser',
+  },
   extends: [
     '@nuxtjs/eslint-config-typescript',
+    'plugin:vue/essential',
     'plugin:vue/recommended',
+    'plugin:vue/strongly-recommended',
     'prettier',
     'prettier/vue',
     'plugin:prettier/recommended',

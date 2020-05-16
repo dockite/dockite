@@ -1,0 +1,17 @@
+query allSchemas {
+  allSchemas {
+    results {
+      id
+      name
+      type
+      groups
+      settings
+      createdAt
+      updatedAt
+    }
+    totalItems
+    totalPages
+    currentPage
+    hasNextPage
+  }
+}

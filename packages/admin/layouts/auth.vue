@@ -5,7 +5,9 @@
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator';
 
-@Component
+@Component({
+  middleware: 'guest',
+})
 export default class AuthLayout extends Vue {}
 </script>
 

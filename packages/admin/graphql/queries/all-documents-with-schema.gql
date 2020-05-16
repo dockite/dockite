@@ -1,0 +1,27 @@
+query allDocumentsWithSchema {
+  allDocuments {
+    results {
+      id
+      locale
+      data
+      publishedAt
+      createdAt
+      updatedAt
+      deletedAt
+      schemaId
+      schema {
+        id
+        name
+        type
+        groups
+        settings
+        createdAt
+        updatedAt
+      }
+    }
+    totalItems
+    currentPage
+    totalPages
+    hasNextPage
+  }
+}

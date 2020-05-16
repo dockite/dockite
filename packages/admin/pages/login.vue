@@ -1,17 +1,18 @@
 <template>
   <el-row type="flex" justify="center" align="middle" class="dockite-login-wrapper">
     <logo class="dockite-login-form--logo" />
+
     <el-card class="dockite-login-form--container">
-      <el-form :model="loginForm" :rules="loginFormRules" @submit.native.prevent="">
-        <el-form-item label="Email" prop="email">
+      <el-form ref="form" :model="loginForm" :rules="loginFormRules" @submit.native.prevent="login">
+        <el-form-item :label="$t('login.labels.email')" prop="email">
           <el-input v-model="loginForm.email" type="email" />
         </el-form-item>
-        <el-form-item label="Password" prop="password">
+        <el-form-item :label="$t('login.labels.password')" prop="password">
           <el-input v-model="loginForm.password" type="password" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary">
-            Sign in
+          <el-button native-type="submit" type="primary">
+            {{ $t('login.labels.button') }}
           </el-button>
         </el-form-item>
       </el-form>
@@ -21,7 +22,10 @@
 
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator';
+import { Form } from 'element-ui';
 
+import { namespace } from '~/store/auth';
+import { PASSWORD_MIN_LEN } from '~/common/constants';
 import Logo from '~/components/base/logo.vue';
 
 @Component({
@@ -36,30 +40,61 @@ export default class LoginPage extends Vue {
     password: '',
   };
 
-  public loginFormRules = {
-    email: [
-      {
-        required: true,
-        message: 'Email is required',
-        trigger: 'blur',
-      },
-    ],
-    password: [
-      {
-        required: true,
-        message: 'Password is required',
-        trigger: 'blur',
-      },
-    ],
-  };
+  get loginFormRules() {
+    const $t = this.$t.bind(this);
+
+    return {
+      email: [
+        {
+          required: true,
+          message: $t('validationMessages.required', [$t('login.labels.password')]),
+          trigger: 'blur',
+        },
+        {
+          type: 'email',
+          message: $t('validationMessages.invalid.email'),
+          trigger: 'blur',
+        },
+      ],
+      password: [
+        {
+          required: true,
+          message: $t('validationMessages.required', [$t('login.labels.password')]),
+          trigger: 'blur',
+        },
+        {
+          min: PASSWORD_MIN_LEN,
+          message: $t('validationMessages.min.chars', [
+            $t('login.labels.password'),
+            PASSWORD_MIN_LEN,
+          ]),
+          trigger: 'blur',
+        },
+      ],
+    };
+  }
+
+  public async login(): Promise<void> {
+    const valid = await (this.$refs.form as Form).validate();
+
+    if (!valid) {
+      return;
+    }
+
+    await this.$store.dispatch(`${namespace}/login`, this.loginForm);
+
+    this.$router.push('/');
+  }
 }
 </script>
 
 <style lang="scss">
 .dockite-login-wrapper {
+  background: #fbfbfb;
   flex-direction: column;
   height: 100vh;
   width: 100%;
+  padding: 1rem;
 }
 
 .dockite-login-form--container {

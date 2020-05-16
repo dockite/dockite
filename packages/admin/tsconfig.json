@@ -17,8 +17,8 @@
       "@/*": ["./*"],
       // "element-ui": [".sink.d.ts"]
     },
-    "typeRoots": ["./types"],
     "skipLibCheck": true,
+    "typeRoots": ["./types"],
     "types": ["@types/node", "@nuxt/types", "nuxt-i18n"]
   },
   "exclude": ["node_modules", ".nuxt", "dist"]

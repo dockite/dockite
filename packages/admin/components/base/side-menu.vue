@@ -1,34 +1,54 @@
 <template>
-  <el-menu default-active="2" class="el-menu-vertical-demo" :collapse="isCollapse">
-    <el-submenu index="1">
-      <template slot="title">
-        <i class="el-icon-location"></i>
-        <span slot="title">Navigator One</span>
-      </template>
-      <el-menu-item-group>
-        <span slot="title">Group One</span>
-        <el-menu-item index="1-1">item one</el-menu-item>
-        <el-menu-item index="1-2">item two</el-menu-item>
-      </el-menu-item-group>
-      <el-menu-item-group title="Group Two">
-        <el-menu-item index="1-3">item three</el-menu-item>
-      </el-menu-item-group>
-      <el-submenu index="1-4">
-        <span slot="title">item four</span>
-        <el-menu-item index="1-4-1">item one</el-menu-item>
-      </el-submenu>
-    </el-submenu>
-    <el-menu-item index="2">
-      <i class="el-icon-menu"></i>
-      <span slot="title">Navigator Two</span>
+  <el-menu
+    :router="true"
+    class="dockite-aside--el-menu"
+    :collapse="isCollapse"
+    :background-color="backgroundColor"
+    :text-color="textColor"
+    :active-text-color="activeTextColor"
+  >
+    <el-menu-item index="/">
+      <i class="el-icon-s-home"></i>
+      <span slot="title">{{ $t('sideMenu.home') }}</span>
     </el-menu-item>
-    <el-menu-item index="3" disabled>
+    <el-menu-item index="/documents">
+      <i class="el-icon-document"></i>
+      <span slot="title">{{ $t('sideMenu.documents') }}</span>
+    </el-menu-item>
+    <el-submenu index="/schemas">
+      <template slot="title">
+        <i class="el-icon-s-grid"></i>
+        <span slot="title">{{ $t('sideMenu.schemas') }}</span>
+      </template>
+      <el-menu-item-group title="Management">
+        <el-menu-item index="/schemas">
+          <span slot="title">All Schemas</span>
+        </el-menu-item>
+        <el-menu-item index="/schemas/create">
+          <span slot="title">Create Schema</span>
+        </el-menu-item>
+      </el-menu-item-group>
+      <el-menu-item-group v-if="allSchemas" title="Recent Schemas">
+        <el-menu-item
+          v-for="schema in allSchemas.results"
+          :key="schema.id"
+          :index="`/schema/${schema.id}`"
+        >
+          <span slot="title">{{ schema.name }}</span>
+        </el-menu-item>
+      </el-menu-item-group>
+    </el-submenu>
+    <el-menu-item index="#3" disabled>
       <i class="el-icon-document"></i>
       <span slot="title">Navigator Three</span>
     </el-menu-item>
-    <el-menu-item index="4">
-      <i class="el-icon-setting"></i>
-      <span slot="title">Navigator Four</span>
+    <el-menu-item index="#logout" @click.native.prevent="logout">
+      <i class="el-icon-refresh-left"></i>
+      <span slot="title">Logout</span>
+    </el-menu-item>
+    <el-menu-item index="#collapse" @click.native.prevent="isCollapse = !isCollapse">
+      <i :class="{ 'el-icon-d-arrow-left': !isCollapse, 'el-icon-d-arrow-right': isCollapse }" />
+      <span slot="title">{{ isCollapse ? 'Expand' : 'Collapse' }}</span>
     </el-menu-item>
   </el-menu>
 </template>
@@ -36,8 +56,51 @@
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator';
 
+import { namespace } from '~/store/auth';
+import * as data from '~/store/data';
+import { NAV_BACKGROUND_COLOR, NAV_ACTIVE_TEXT_COLOR, NAV_TEXT_COLOR } from '~/common/constants';
+
 @Component
 export default class SideMenuComponent extends Vue {
   public isCollapse = false;
+
+  public backgroundColor = NAV_BACKGROUND_COLOR;
+
+  public activeTextColor = NAV_ACTIVE_TEXT_COLOR;
+
+  public textColor = NAV_TEXT_COLOR;
+
+  get allSchemas() {
+    const state: data.DataState = this.$store.state[data.namespace];
+
+    return state.allSchemas;
+  }
+
+  async fetchAllSchemas() {
+    if (this.allSchemas.results.length === 0) {
+      await this.$store.dispatch(`${data.namespace}/fetchAllSchemas`);
+    }
+  }
+
+  mounted() {
+    this.fetchAllSchemas();
+  }
+
+  public async logout() {
+    await this.$store.dispatch(`${namespace}/logout`);
+
+    this.$router.push('/login');
+  }
 }
 </script>
+
+<style lang="scss">
+.dockite-aside--el-menu:not(.el-menu--collapse) {
+  width: 100vw;
+  max-width: 300px;
+}
+
+.el-menu-item-group__title {
+  color: rgba(255, 255, 255, 0.8);
+}
+</style>
