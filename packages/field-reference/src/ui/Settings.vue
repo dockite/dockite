@@ -1,23 +1,23 @@
 <template>
   <fragment>
-    <a-form-model-item label="Required">
-      <a-switch v-model="settings.required" />
-    </a-form-model-item>
-    <a-form-model-item label="Schema Types">
-      <a-select
+    <el-form-item label="Required">
+      <el-switch v-model="settings.required" />
+    </el-form-item>
+    <el-form-item label="Schema Types">
+      <el-select
         v-model="schemaIds"
         mode="multiple"
         style="width: 100%"
         placeholder="Select the Schema's that documents can be reference"
       >
-        <a-select-option
+        <el-select-option
           v-for="schema in allSchemas.results"
           :key="schema.name"
         >
           {{ schema.name }}
-        </a-select-option>
-      </a-select>
-    </a-form-model-item>
+        </el-select-option>
+      </el-select>
+    </el-form-item>
   </fragment>
 </template>
 

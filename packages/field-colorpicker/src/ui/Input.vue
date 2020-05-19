@@ -1,5 +1,5 @@
 <template>
-  <a-form-model-item
+  <el-form-item
     ref="field"
     :label="fieldConfig.title"
     :colon="true"
@@ -35,7 +35,7 @@
     <p slot="extra">
       {{ fieldConfig.description }}
     </p>
-  </a-form-model-item>
+  </el-form-item>
 </template>
 
 <script>

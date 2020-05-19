@@ -1,33 +1,33 @@
 <template>
   <fragment>
-    <a-form-model-item label="Schema Type">
-      <a-select
+    <el-form-item label="Schema Type">
+      <el-select
         v-model="schemaId"
         style="width: 100%"
         placeholder="Select the Schema to get all references from "
       >
-        <a-select-option
+        <el-select-option
           v-for="schema in allSchemas.results"
           :key="schema.id"
         >
           {{ schema.name }}
-        </a-select-option>
-      </a-select>
-    </a-form-model-item>
-    <a-form-model-item label="Reference Field">
-      <a-select
+        </el-select-option>
+      </el-select>
+    </el-form-item>
+    <el-form-item label="Reference Field">
+      <el-select
         v-model="fieldName"
         style="width: 100%"
         placeholder="Select the the reference field name"
       >
-        <a-select-option
+        <el-select-option
           v-for="field in referenceFields"
           :key="field.name"
         >
           {{ field.name }}
-        </a-select-option>
-      </a-select>
-    </a-form-model-item>
+        </el-select-option>
+      </el-select>
+    </el-form-item>
   </fragment>
 </template>
 

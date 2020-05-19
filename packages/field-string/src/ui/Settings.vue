@@ -1,26 +1,26 @@
 <template>
   <fragment>
-    <a-form-model-item label="Required">
-      <a-switch v-model="settings.required" />
-    </a-form-model-item>
-    <a-form-model-item label="URL Safe">
-      <a-switch v-model="settings.urlSafe" />
-    </a-form-model-item>
-    <a-form-model-item label="Textarea">
-      <a-switch v-model="settings.textarea" />
-    </a-form-model-item>
-    <a-form-model-item label="Min Length">
-      <a-input-number
+    <el-form-item label="Required">
+      <el-switch v-model="settings.required" />
+    </el-form-item>
+    <el-form-item label="URL Safe">
+      <el-switch v-model="settings.urlSafe" />
+    </el-form-item>
+    <el-form-item label="Textarea">
+      <el-switch v-model="settings.textarea" />
+    </el-form-item>
+    <el-form-item label="Min Length">
+      <el-input-number
         v-model="settings.minLen"
         :min="0"
       />
-    </a-form-model-item>
-    <a-form-model-item label="Max Length">
-      <a-input-number
+    </el-form-item>
+    <el-form-item label="Max Length">
+      <el-input-number
         v-model="settings.maxLen"
         :min="0"
       />
-    </a-form-model-item>
+    </el-form-item>
   </fragment>
 </template>
 

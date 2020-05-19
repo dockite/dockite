@@ -1,15 +1,15 @@
 <template>
-  <a-form-model-item
+  <el-form-item
     :label="fieldConfig.title"
     :colon="true"
     :prop="fieldConfig.name"
   >
-    <a-input-number
+    <el-input-number
       v-model="fieldData"
       type="number"
       v-bind="fieldBind"
     />
-  </a-form-model-item>
+  </el-form-item>
 </template>
 
 <script>

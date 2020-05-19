@@ -1,17 +1,17 @@
 <template>
   <fragment>
-    <a-form-model-item label="Required">
-      <a-switch v-model="settings.required" />
-    </a-form-model-item>
-    <a-form-model-item label="Float">
-      <a-switch v-model="settings.float" />
-    </a-form-model-item>
-    <a-form-model-item label="Min Value">
-      <a-input-number v-model="settings.min" />
-    </a-form-model-item>
-    <a-form-model-item label="Max Value">
-      <a-input-number v-model="settings.max" />
-    </a-form-model-item>
+    <el-form-item label="Required">
+      <el-switch v-model="settings.required" />
+    </el-form-item>
+    <el-form-item label="Float">
+      <el-switch v-model="settings.float" />
+    </el-form-item>
+    <el-form-item label="Min Value">
+      <el-input-number v-model="settings.min" />
+    </el-form-item>
+    <el-form-item label="Max Value">
+      <el-input-number v-model="settings.max" />
+    </el-form-item>
   </fragment>
 </template>
 

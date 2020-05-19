@@ -1,14 +1,14 @@
 <template>
-  <a-form-model-item
+  <el-form-item
     :label="fieldConfig.title"
     :colon="true"
     :prop="fieldConfig.name"
   >
-    <a-date-picker
+    <el-date-picker
       v-model="fieldData"
       :show-time="!settings.date"
     />
-  </a-form-model-item>
+  </el-form-item>
 </template>
 
 <script>

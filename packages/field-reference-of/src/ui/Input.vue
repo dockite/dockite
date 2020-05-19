@@ -1,11 +1,11 @@
 <template>
-  <a-form-model-item
+  <el-form-item
     :label="fieldConfig.title"
     :colon="true"
   >
-    <a-table
+    <el-table
       :columns="tableColumns"
-      :data-source="referenceOfDocuments"
+      :datel-source="referenceOfDocuments"
       :row-key="(record) => record.id"
     >
       <router-link
@@ -33,11 +33,11 @@
           {{ JSON.stringify(data).substr(0, 15) }}
         </span>
       </template>
-    </a-table>
+    </el-table>
     <p slot="extra">
       {{ fieldConfig.description }}
     </p>
-  </a-form-model-item>
+  </el-form-item>
 </template>
 
 <script>

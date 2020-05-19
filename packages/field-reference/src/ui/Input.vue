@@ -1,5 +1,5 @@
 <template>
-  <a-form-model-item
+  <el-form-item
     :label="fieldConfig.title"
     :colon="true"
     :prop="fieldConfig.name"
@@ -21,7 +21,7 @@
         class="dockite-field reference remove"
         @click.prevent="handleClearReference"
       >
-        <a-icon type="close" />
+        <el-icon type="close" />
       </a>
     </div>
     <div
@@ -30,16 +30,16 @@
     >
       <a @click="modalVisible = true">Select a Document</a>
 
-      <a-modal
+      <el-modal
         :visible="modalVisible"
         :footer="null"
         title="Select a Document"
         width="50%"
         @cancel="modalVisible = false"
       >
-        <a-table
+        <el-table
           :columns="tableColumns"
-          :data-source="documents"
+          :datel-source="documents"
           :row-key="(record) => record.id"
           :row-selection="rowSelectionConfig"
         >
@@ -60,13 +60,13 @@
               {{ JSON.stringify(data).substr(0, 15) }}
             </span>
           </template>
-        </a-table>
-      </a-modal>
+        </el-table>
+      </el-modal>
     </div>
     <p slot="extra">
       {{ fieldConfig.description }}
     </p>
-  </a-form-model-item>
+  </el-form-item>
 </template>
 
 <script>

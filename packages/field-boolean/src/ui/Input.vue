@@ -1,17 +1,17 @@
 <template>
-  <a-form-model-item
+  <el-form-item
     :label="fieldConfig.title"
     :colon="true"
     :prop="fieldConfig.name"
   >
-    <a-switch
+    <el-switch
       v-model="fieldData"
       size="large"
     />
     <p slot="extra">
       {{ fieldConfig.description }}
     </p>
-  </a-form-model-item>
+  </el-form-item>
 </template>
 
 <script>

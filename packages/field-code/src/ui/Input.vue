@@ -1,5 +1,10 @@
 <template>
-  <a-form-model-item ref="field" :label="fieldConfig.title" :colon="true" :prop="fieldConfig.name">
+  <el-form-item
+    ref="field"
+    :label="fieldConfig.title"
+    :colon="true"
+    :prop="fieldConfig.name"
+  >
     <code-mirror
       ref="codemirror"
       v-model="fieldData.content"
@@ -17,21 +22,24 @@
     />
     <div class="dockite-field code language-selector">
       <span style="padding-right: 1rem;">Language:</span>
-      <a-select
+      <el-select
+        v-model="fieldData.language"
         show-search
         style="max-width: 250px;"
-        v-model="fieldData.language"
         :filter-option="filterSelect"
       >
-        <a-select-option v-for="lang in Object.keys(mimeMap)" :key="lang">
+        <el-select-option
+          v-for="lang in Object.keys(mimeMap)"
+          :key="lang"
+        >
           {{ lang }}
-        </a-select-option>
-      </a-select>
+        </el-select-option>
+      </el-select>
     </div>
     <p slot="extra">
       {{ fieldConfig.description }}
     </p>
-  </a-form-model-item>
+  </el-form-item>
 </template>
 
 <script>
@@ -63,8 +71,8 @@ export default {
           return true;
         }
 
-        return typeof value === 'object' &&
-          Object.keys(value).filter(key => ['language', 'content'].includes(key)).length >= 2
+        return typeof value === 'object'
+          && Object.keys(value).filter((key) => ['language', 'content'].includes(key)).length >= 2;
       },
       required: true,
     },
@@ -133,10 +141,10 @@ export default {
 
     this.$emit('update:rules', { [this.fieldConfig.name]: rules });
 
-    this.includes.forEach(include => {
+    this.includes.forEach((include) => {
       if (!this.modeManager.includes(include)) {
         const path = `${include}/${include}.js`;
-        import(/* webpackMode: "eager" */ `codemirror/mode/` + path).then(() => {
+        import(/* webpackMode: "eager" */ `codemirror/mode/${path}`).then(() => {
           this.modeManager.push(include);
         });
       }
