@@ -1,4 +1,5 @@
 import { Schema, Document } from '@dockite/types';
+import { DockiteFieldStatic } from '@dockite/field';
 
 export interface ManyResultsResponse<T> {
   results: T[];
@@ -55,4 +56,20 @@ export type FindDocumentResultItem = Omit<AllDocumentsWithSchemaResultItem, 'sch
 
 export interface FindDocumentsQueryResponse {
   findDocuments: ManyResultsResponse<FindDocumentResultItem>;
+}
+
+export interface AvailableFieldsQueryResponse {
+  availableFields: DockiteFieldStatic[];
+}
+
+export interface CreateSchemaMutationResponse {
+  createSchema: {
+    id: string;
+  };
+}
+
+export interface CreateFieldMutationResponse {
+  createField: {
+    id: string;
+  };
 }

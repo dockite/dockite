@@ -22,11 +22,11 @@
           </el-collapse>
         </div>
         <el-row type="flex" justify="space-between">
-          <el-button type="danger">
-            Delete
-          </el-button>
           <el-button @click.prevent="$router.go(-1)">
             Cancel
+          </el-button>
+          <el-button type="danger">
+            Delete
           </el-button>
         </el-row>
       </el-card>

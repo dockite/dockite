@@ -1,4 +1,5 @@
 import { Document } from '@dockite/types';
+import { DockiteFieldStatic } from '@dockite/field';
 import { ActionTree, GetterTree, MutationTree } from 'vuex';
 
 import { RootState } from '.';
@@ -9,13 +10,15 @@ import {
   AllSchemasQueryResponse,
   AllSchemasResultItem,
   FindDocumentResultItem,
-  GetDocumentQueryResponse,
   FindDocumentsQueryResponse,
+  GetDocumentQueryResponse,
+  AvailableFieldsQueryResponse,
 } from '~/common/types';
 import AllDocumentsWithSchemaQuery from '~/graphql/queries/all-documents-with-schema.gql';
 import AllSchemasQuery from '~/graphql/queries/all-schemas.gql';
-import GetDocumentQuery from '~/graphql/queries/get-document.gql';
 import FindDocumentsBySchemaIdQuery from '~/graphql/queries/find-documents-by-schema-id.gql';
+import GetDocumentQuery from '~/graphql/queries/get-document.gql';
+import AvailableFieldsQuery from '~/graphql/queries/available-fields.gql';
 
 interface ManyResultSet<T> {
   results: T[];
@@ -30,6 +33,7 @@ export interface DataState {
   allDocumentsWithSchema: ManyResultSet<AllDocumentsWithSchemaResultItem>;
   getDocument: Record<string, Document>;
   findDocumentsBySchemaId: ManyResultSet<FindDocumentResultItem>;
+  availableFields: DockiteFieldStatic[];
 }
 
 export const namespace = 'data';
@@ -57,6 +61,7 @@ export const state = (): DataState => ({
     currentPage: null,
     hasNextPage: null,
   },
+  availableFields: [],
 });
 
 export const getters: GetterTree<DataState, RootState> = {
@@ -71,9 +76,10 @@ export const getters: GetterTree<DataState, RootState> = {
 };
 
 export const actions: ActionTree<DataState, RootState> = {
-  async fetchAllSchemas({ commit }): Promise<void> {
+  async fetchAllSchemas({ commit }, payload: boolean = false): Promise<void> {
     const { data } = await this.$apolloClient.query<AllSchemasQueryResponse>({
       query: AllSchemasQuery,
+      fetchPolicy: payload ? 'no-cache' : 'cache-first',
     });
 
     if (!data.allSchemas) {
@@ -127,6 +133,18 @@ export const actions: ActionTree<DataState, RootState> = {
 
     commit('setFindDocumentsBySchemaId', data);
   },
+
+  async fetchAvailableFields({ commit }): Promise<void> {
+    const { data } = await this.$apolloClient.query<AvailableFieldsQueryResponse>({
+      query: AvailableFieldsQuery,
+    });
+
+    if (!data.availableFields) {
+      throw new Error('graphql: availableFields could not be fetched');
+    }
+
+    commit('setAvailableFields', data);
+  },
 };
 
 export const mutations: MutationTree<DataState> = {
@@ -149,5 +167,9 @@ export const mutations: MutationTree<DataState> = {
 
   setFindDocumentsBySchemaId(state, payload: FindDocumentsQueryResponse): void {
     state.findDocumentsBySchemaId = { ...payload.findDocuments };
+  },
+
+  setAvailableFields(state, payload: AvailableFieldsQueryResponse): void {
+    state.availableFields = payload.availableFields;
   },
 };

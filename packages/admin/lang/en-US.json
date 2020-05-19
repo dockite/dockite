@@ -13,6 +13,9 @@
     },
     "min": {
       "chars": "{0} must be at least {1} characters"
+    },
+    "max": {
+      "chars": "{0} must be no more than {1} characters"
     }
   },
   "sideMenu": {

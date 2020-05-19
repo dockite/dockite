@@ -32,16 +32,18 @@
         <el-menu-item
           v-for="schema in allSchemas.results"
           :key="schema.id"
-          :index="`/schema/${schema.id}`"
+          :index="`/schemas/${schema.id}`"
         >
           <span slot="title">{{ schema.name }}</span>
         </el-menu-item>
       </el-menu-item-group>
     </el-submenu>
-    <el-menu-item index="#3" disabled>
-      <i class="el-icon-document"></i>
-      <span slot="title">Navigator Three</span>
-    </el-menu-item>
+    <el-submenu index="/settings">
+      <template slot="title">
+        <i class="el-icon-setting"></i>
+        <span slot="title">Settings</span>
+      </template>
+    </el-submenu>
     <el-menu-item index="#logout" @click.native.prevent="logout">
       <i class="el-icon-refresh-left"></i>
       <span slot="title">Logout</span>
