@@ -1,24 +1,20 @@
 <template>
   <div class="add-field-component">
     <el-drawer
-      :visible="visible"
+      :visible="field !== null"
       :destroy-on-close="true"
       size=""
-      custom-class="dockite-add-field--drawer"
+      custom-class="dockite-edit-field--drawer"
       @close="handleClose"
     >
-      <h2 slot="title">
-        Add a Field
-      </h2>
-
       <div class="dockite-drawer--body">
         <el-form
-          v-if="fieldSelected"
+          v-if="field !== null"
           ref="form"
           :model="field"
-          :rules="addFieldFormRules"
+          :rules="editFieldFormRules"
           label-position="top"
-          @submit.native.prevent="handleAddField"
+          @submit.native.prevent="handleEditField"
         >
           <el-form-item label="Name" prop="name">
             <el-input ref="fieldName" v-model="field.name" />
@@ -51,36 +47,17 @@
             />
           </template>
 
-          <el-form-item style="margin-bottom: 0.5rem;">
+          <el-form-item>
             <el-button
               style="width: 100%"
               type="primary"
               html-type="submit"
-              @click="handleAddField"
+              @click="handleEditField"
             >
-              Add Field
-            </el-button>
-          </el-form-item>
-
-          <el-form-item style="margin-bottom: 0.5rem;">
-            <el-button style="width: 100%" type="text" @click="handleCancelSelectField">
-              Cancel
+              Update Field
             </el-button>
           </el-form-item>
         </el-form>
-
-        <el-row v-else type="flex" class="dockite-add-field--fields-container">
-          <el-button
-            v-for="field in availableFields"
-            :key="field.type"
-            class="dockite-add-field--button"
-            @click="handleSelectField(field.type)"
-          >
-            <span class="dockite-add-field--button-title">{{ field.title }}</span>
-
-            {{ field.description }}
-          </el-button>
-        </el-row>
       </div>
     </el-drawer>
   </div>
@@ -90,42 +67,44 @@
 import { Component, Vue, Prop, Watch, Ref } from 'nuxt-property-decorator';
 import { DockiteFieldStatic } from '@dockite/field';
 import { Field } from '@dockite/types';
-import { Input, Form } from 'element-ui';
+import { Form } from 'element-ui';
+import { TreeData } from 'element-ui/types/tree';
 
 import * as data from '~/store/data';
 
+type EditableField = Omit<Field, 'id' | 'schemaId' | 'dockiteField' | 'schema'>;
+type NullableEditableField = EditableField | null;
+
+interface FieldTreeData extends TreeData {
+  dockite: Omit<Field, 'id' | 'schemaId' | 'dockiteField' | 'schema'>;
+  children?: FieldTreeData[];
+}
+
 @Component
-export default class AddFieldComponent extends Vue {
+export default class EditFieldComponent extends Vue {
   @Prop()
   readonly visible!: boolean;
 
   @Prop({ required: true, type: Array })
-  readonly currentFields!: Omit<Field, 'id' | 'schemaId' | 'dockiteField' | 'schema'>[];
+  readonly currentFields!: EditableField[];
+
+  @Prop({ required: true })
+  readonly value!: FieldTreeData | null;
 
   @Ref()
   readonly form!: Form;
 
-  public fieldSelected = false;
-
-  public fieldType: string | null = null;
-
   public fieldSettingsRules: object = {};
 
-  public field: Omit<Field, 'id' | 'schemaId' | 'dockiteField' | 'schema'> = {
-    ...this.initialFieldState,
-  };
+  public fieldOldName = '';
 
-  get initialFieldState() {
-    return {
-      name: '',
-      title: '',
-      type: this.fieldType ?? '',
-      description: '',
-      settings: {},
-    };
+  public field: NullableEditableField = null;
+
+  get fieldType(): string | null {
+    return this.field?.type ?? null;
   }
 
-  get addFieldFormRules(): object {
+  get editFieldFormRules(): object {
     return {
       name: [
         {
@@ -148,7 +127,11 @@ export default class AddFieldComponent extends Vue {
         {
           message: 'The field name is already used, please use a unique identifier',
           validator: (_rule: never, value: string, cb: Function) => {
-            if (this.currentFields.filter(field => field.name === value).length > 0) {
+            const found = this.currentFields.some(field => {
+              return field.name === value && field.name !== this.fieldOldName;
+            });
+
+            if (found) {
               return cb(new Error());
             }
 
@@ -182,12 +165,14 @@ export default class AddFieldComponent extends Vue {
   }
 
   public handleClose(): void {
-    this.$emit('update:visible', false);
-
-    this.handleCancelSelectField();
+    this.$emit('submit');
   }
 
-  public async handleAddField(): Promise<void> {
+  public async handleEditField(): Promise<void> {
+    if (this.field === null) {
+      return;
+    }
+
     try {
       const valid = await this.form.validate();
 
@@ -195,7 +180,11 @@ export default class AddFieldComponent extends Vue {
         throw new Error('Invalid form data');
       }
 
-      this.$emit('add-field', this.field);
+      this.$emit('input', {
+        ...this.value,
+        label: this.field.title,
+        dockite: { ...this.field },
+      });
 
       this.handleClose();
     } catch (err) {
@@ -209,6 +198,20 @@ export default class AddFieldComponent extends Vue {
     return state.availableFields;
   }
 
+  @Watch('value')
+  handleValueChange(newVal: FieldTreeData | null, oldVal: FieldTreeData | null) {
+    if (oldVal === null && newVal !== null) {
+      const { dockite } = newVal;
+      this.fieldOldName = dockite.name;
+      this.field = { ...dockite };
+    }
+
+    if (newVal === null) {
+      this.field = null;
+      this.fieldOldName = '';
+    }
+  }
+
   @Watch('availableFields', { immediate: true })
   handleAvailableFieldsChange(): void {
     if (this.availableFields.length === 0) {
@@ -218,29 +221,15 @@ export default class AddFieldComponent extends Vue {
 
   @Watch('field.name')
   handleFieldNameChange(): void {
-    this.field.name = this.field.name.toLowerCase().trim();
-  }
-
-  handleSelectField(type: string): void {
-    this.fieldType = type;
-    this.field = { ...this.initialFieldState };
-
-    this.fieldSelected = true;
-
-    this.$nextTick(() => {
-      (this.$refs.fieldName as Input).focus();
-    });
-  }
-
-  handleCancelSelectField(): void {
-    this.fieldSelected = false;
-    this.fieldType = null;
+    if (this.field !== null) {
+      this.field.name = this.field.name.toLowerCase().trim();
+    }
   }
 }
 </script>
 
 <style lang="scss">
-.dockite-add-field--drawer {
+.dockite-edit-field--drawer {
   width: 100%;
   max-width: 400px;
 }
@@ -269,7 +258,7 @@ export default class AddFieldComponent extends Vue {
   position: initial;
 }
 
-.dockite-add-field--fields-container {
+.dockite-edit-field--fields-container {
   flex-direction: column;
   flex-wrap: wrap;
 
@@ -278,12 +267,12 @@ export default class AddFieldComponent extends Vue {
   }
 }
 
-.dockite-add-field--button {
+.dockite-edit-field--button {
   height: 80px;
   width: 100%;
   margin-bottom: 1rem;
 
-  span.dockite-add-field--button-title {
+  span.dockite-edit-field--button-title {
     display: block;
     font-weight: bold;
     padding-bottom: 0.5rem;

@@ -21,25 +21,25 @@
       :rules="rules"
       @submit.native.prevent="handleSubmit"
     >
-      <a-form-model-item label="Name" prop="name">
-        <a-input v-model="field.name" />
+      <el-form-item label="Name" prop="name">
+        <el-input v-model="field.name" />
         <p slot="extra">
           The identifier of the field, must be lowercase and may only contain alphanumeric
           characters, underscores and dashses.
         </p>
-      </a-form-model-item>
-      <a-form-model-item label="Title" prop="title">
-        <a-input v-model="field.title" />
+      </el-form-item>
+      <el-form-item label="Title" prop="title">
+        <el-input v-model="field.title" />
         <p slot="extra">
           The title of the field, this is its friendly name and will be displayed in forms.
         </p>
-      </a-form-model-item>
-      <a-form-model-item label="Description" prop="description">
-        <a-input v-model="field.description" type="textarea" />
+      </el-form-item>
+      <el-form-item label="Description" prop="description">
+        <el-input v-model="field.description" type="textarea" />
         <p slot="extra">
           The description of the field, this should help the user determine how to use it.
         </p>
-      </a-form-model-item>
+      </el-form-item>
       <component
         :is="getSettingsComponent(selectedField)"
         v-if="getSettingsComponent(selectedField)"
@@ -47,12 +47,12 @@
         :rules.sync="rules"
         :apollo-client="apolloClient"
       />
-      <a-form-model-item style="margin-top: 12px;">
-        <a-button size="large" type="primary" block html-type="submit">Add Field</a-button>
-      </a-form-model-item>
-      <a-form-model-item style="margin-top: 12px;">
-        <a-button size="large" type="link" block @click="selectedField = null">Cancel</a-button>
-      </a-form-model-item>
+      <el-form-item style="margin-top: 12px;">
+        <el-button size="large" type="primary" block html-type="submit">Add Field</el-button>
+      </el-form-item>
+      <el-form-item style="margin-top: 12px;">
+        <el-button size="large" type="link" block @click="selectedField = null">Cancel</el-button>
+      </el-form-item>
     </a-form-model>
   </a-drawer>
 </template>

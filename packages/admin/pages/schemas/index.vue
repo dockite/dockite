@@ -24,10 +24,10 @@
         <el-table-column prop="updatedAt" label="Updated" :formatter="cellValueFromNow" />
         <el-table-column label="Actions">
           <template slot-scope="scope">
-            <router-link :to="`/documents/${scope.row.id}`" style="padding-right: 0.75rem;">
+            <router-link :to="`/schemas/${scope.row.id}/edit`" style="padding-right: 0.75rem;">
               <i class="el-icon-edit-outline" />
             </router-link>
-            <router-link :to="`/documents/${scope.row.id}/delete`">
+            <router-link :to="`/schemas/${scope.row.id}/delete`">
               <i class="el-icon-delete" />
             </router-link>
           </template>

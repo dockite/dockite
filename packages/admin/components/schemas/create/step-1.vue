@@ -66,6 +66,13 @@ export default class CreateSchemaStepOneComponent extends Vue {
         {
           max: SCHEMA_NAME_MAX_LEN,
           message: $t('validationMessages.max.chars', [SCHEMA_NAME_MAX_LEN]),
+          trigger: 'blur',
+        },
+        {
+          pattern: /[A-Za-z][0-9A-Za-z\s]*/,
+          message:
+            'Schema Name must start with an alpha character and can only contain alpha-numeric characters and spaces.',
+          trigger: 'blur',
         },
       ],
     };

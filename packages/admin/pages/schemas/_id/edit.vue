@@ -1,76 +1,87 @@
 <template>
-  <div class="create-schema-step-2-component">
-    <h3>Next, lets add some fields</h3>
+  <fragment>
+    <portal to="header">
+      <h2>
+        Edit Schema - <strong>{{ schemaName }}</strong>
+      </h2>
+    </portal>
 
-    <p class="dockite-text--subtitle">
-      Fields define what a schema can hold, you can add String fields for names and descriptions,
-      Color fields for product colors and so forth. A schema can have as many fields as you desire
-      however the more you add the harder it can be to manage later on.
-    </p>
-
-    <el-tabs v-model="currentTab" type="border-card" editable @edit="handleEditTabs">
-      <el-tab-pane v-for="tab in availableTabs" :key="tab" :label="tab" :name="tab">
-        <el-tree
-          :data="fieldData"
-          empty-text="There's currently no fields"
-          node-key="id"
-          default-expand-all
-          draggable
-          :allow-drop="handleAllowDrop"
-        >
-          <span slot-scope="{ node, data }" class="dockite-tree--node">
-            <span>{{ node.label }}</span>
-            <span>
-              <el-tag size="mini">
-                {{ data.dockite.type }}
-              </el-tag>
-              <el-button type="text" size="mini" @click="fieldToBeEdited = data">
-                Edit
-              </el-button>
-              <el-button type="text" size="mini" @click="handleRemoveField(node, data)">
-                Remove
-              </el-button>
+    <div class="create-schema-step-2-component">
+      <el-tabs v-model="currentTab" type="border-card" editable @edit="handleEditTabs">
+        <el-tab-pane v-for="tab in availableTabs" :key="tab" :label="tab" :name="tab">
+          <el-tree
+            :data="fieldData"
+            empty-text="There's currently no fields"
+            node-key="id"
+            default-expand-all
+            draggable
+            :allow-drop="handleAllowDrop"
+          >
+            <span slot-scope="{ node, data }" class="dockite-tree--node">
+              <span>{{ node.label }}</span>
+              <span>
+                <el-tag size="mini">
+                  {{ data.dockite.type }}
+                </el-tag>
+                <el-button type="text" size="mini" @click="fieldToBeEdited = data">
+                  Edit
+                </el-button>
+                <el-button type="text" size="mini" @click="handleRemoveField(node, data)">
+                  Remove
+                </el-button>
+              </span>
             </span>
-          </span>
-        </el-tree>
+          </el-tree>
 
-        <el-row type="flex" justify="center" style="margin-top: 1rem;">
-          <el-button class="dockite-button--dashed" @click="showAddField = true">
-            Add Field
-            <i class="el-icon-plus"></i>
-          </el-button>
-        </el-row>
-      </el-tab-pane>
-    </el-tabs>
+          <el-row type="flex" justify="center" style="margin-top: 1rem;">
+            <el-button class="dockite-button--dashed" @click="showAddField = true">
+              Add Field
+              <i class="el-icon-plus"></i>
+            </el-button>
+          </el-row>
+        </el-tab-pane>
+      </el-tabs>
 
-    <add-field
-      :visible.sync="showAddField"
-      :current-fields="fieldDataFlat"
-      @add-field="handleAddField"
-    />
+      <add-field
+        :visible.sync="showAddField"
+        :current-fields="fieldDataFlat"
+        @add-field="handleAddField"
+      />
 
-    <edit-field
-      :value="fieldToBeEdited"
-      :current-fields="fieldDataFlat"
-      @input="handleEditField"
-      @submit="fieldToBeEdited = null"
-    />
-  </div>
+      <edit-field
+        :value="fieldToBeEdited"
+        :current-fields="fieldDataFlat"
+        @input="handleEditField"
+        @submit="fieldToBeEdited = null"
+      />
+
+      <el-row type="flex" justify="space-between">
+        <span />
+        <el-button type="primary" style="margin-top: 1rem;">
+          Update
+        </el-button>
+      </el-row>
+    </div>
+  </fragment>
 </template>
 
 <script lang="ts">
 import { Component, Vue, Prop } from 'nuxt-property-decorator';
 import { Fragment } from 'vue-fragment';
-import { TreeNode } from 'element-ui/types/tree';
+import { TreeData, TreeNode } from 'element-ui/types/tree';
 import { Field } from '@dockite/types';
 
-import { FieldTreeData, UnpersistedField } from '~/common/types';
 import * as auth from '~/store/auth';
 import Logo from '~/components/base/logo.vue';
 import AddField from '~/components/fields/add-field.vue';
 import EditField from '~/components/fields/edit-field.vue';
 
 const ALLOWED_DROP_TYPES = ['group', 'variant', 'string'];
+
+interface FieldTreeData extends TreeData {
+  dockite: Omit<Field, 'id' | 'schemaId' | 'dockiteField' | 'schema'>;
+  children?: FieldTreeData[];
+}
 
 @Component({
   components: {
@@ -88,7 +99,11 @@ export default class CreateSchemaStepTwoComponent extends Vue {
 
   public currentTab = 'Default';
 
-  public fieldToBeEdited: UnpersistedField | null = null;
+  public fieldToBeEdited: Omit<Field, 'id' | 'schemaId' | 'dockiteField' | 'schema'> | null = null;
+
+  get schemaName(): string {
+    return this.$route.params.id;
+  }
 
   get availableTabs(): string[] {
     return Object.keys(this.groupFieldData);
@@ -106,8 +121,8 @@ export default class CreateSchemaStepTwoComponent extends Vue {
     Default: [],
   };
 
-  get fieldDataFlat(): UnpersistedField[] {
-    const fieldData: UnpersistedField[] = [];
+  get fieldDataFlat(): Omit<Field, 'id' | 'schemaId' | 'dockiteField' | 'schema'>[] {
+    const fieldData: Omit<Field, 'id' | 'schemaId' | 'dockiteField' | 'schema'>[] = [];
 
     Object.values(this.groupFieldData).forEach(groupFieldData => {
       fieldData.push(...this.getFieldDataFlat(groupFieldData));
@@ -133,7 +148,7 @@ export default class CreateSchemaStepTwoComponent extends Vue {
   }
 
   public submit(): void {
-    const fieldData: UnpersistedField[] = [];
+    const fieldData: Omit<Field, 'id' | 'schemaId' | 'dockiteField' | 'schema'>[] = [];
     const groups: Record<string, string[]> = {};
 
     Object.keys(this.groupFieldData).forEach(group => {
@@ -163,8 +178,10 @@ export default class CreateSchemaStepTwoComponent extends Vue {
     this.$emit('field-data', { groups, fields: fieldData });
   }
 
-  public transformTreeFieldDataToFieldData(treeFieldData: FieldTreeData[]): UnpersistedField[] {
-    const fieldData: UnpersistedField[] = [];
+  public transformTreeFieldDataToFieldData(
+    treeFieldData: FieldTreeData[],
+  ): Omit<Field, 'id' | 'schemaId' | 'dockiteField' | 'schema'>[] {
+    const fieldData: Omit<Field, 'id' | 'schemaId' | 'dockiteField' | 'schema'>[] = [];
 
     treeFieldData.forEach(treeField => {
       if (treeField.children && treeField.children.length > 0) {
@@ -216,7 +233,7 @@ export default class CreateSchemaStepTwoComponent extends Vue {
     this.$emit('next-step');
   }
 
-  public handleEditField(value: FieldTreeData): void {
+  public handleEditField(value: Omit<Field, 'id' | 'schemaId' | 'dockiteField' | 'schema'>): void {
     if (this.fieldToBeEdited !== null) {
       Object.assign(this.fieldToBeEdited, value);
     }
