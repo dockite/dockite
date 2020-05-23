@@ -7,7 +7,7 @@ export interface RootState {
   initialized: boolean;
 }
 
-export const state = () => ({
+export const state = (): RootState => ({
   applicationName: 'dockite',
   initialized: false,
 });

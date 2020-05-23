@@ -57,9 +57,11 @@
 </template>
 
 <script lang="ts">
+import { formatDistanceToNow } from 'date-fns';
 import { Component, Vue, Watch } from 'nuxt-property-decorator';
 import { Fragment } from 'vue-fragment';
-import { formatDistanceToNow } from 'date-fns';
+
+import { ManyResultSet, FindDocumentResultItem } from '../../../common/types';
 
 import * as data from '~/store/data';
 
@@ -69,7 +71,7 @@ import * as data from '~/store/data';
   },
 })
 export default class SchemaDocumentsPage extends Vue {
-  get findDocumentsBySchemaId() {
+  get findDocumentsBySchemaId(): ManyResultSet<FindDocumentResultItem> {
     const state: data.DataState = this.$store.state[data.namespace];
 
     return state.findDocumentsBySchemaId;
@@ -99,8 +101,8 @@ export default class SchemaDocumentsPage extends Vue {
     return this.findDocumentsBySchemaId.totalPages;
   }
 
-  public async fetchFindDocumentsBySchemaId() {
-    await this.$store.dispatch(`${data.namespace}/fetchFindDocumentsBySchemaId`, this.schemaId);
+  public fetchFindDocumentsBySchemaId(): void {
+    this.$store.dispatch(`${data.namespace}/fetchFindDocumentsBySchemaId`, this.schemaId);
   }
 
   public cellValueFromNow(_row: never, _column: never, cellValue: string, _index: never): string {
@@ -108,7 +110,7 @@ export default class SchemaDocumentsPage extends Vue {
   }
 
   @Watch('schemaId', { immediate: true })
-  handleSchemaIdChange() {
+  handleSchemaIdChange(): void {
     this.fetchFindDocumentsBySchemaId();
   }
 }

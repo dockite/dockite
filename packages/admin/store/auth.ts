@@ -3,9 +3,9 @@ import { ActionTree, GetterTree, MutationTree } from 'vuex';
 
 import { RootState } from '.';
 
+import { LoginMutationResponse, MeQueryResponse } from '~/common/types';
 import LoginMutation from '~/graphql/mutations/login.gql';
 import MeQuery from '~/graphql/queries/me.gql';
-import { LoginMutationResponse, MeQueryResponse } from '~/common/types';
 
 interface JWTToken {
   exp: number;
@@ -25,7 +25,7 @@ export interface LoginActionPayload {
 
 export const namespace = 'auth';
 
-export const state = () => ({
+export const state = (): AuthState => ({
   authenticated: false,
   user: null,
   token: null,

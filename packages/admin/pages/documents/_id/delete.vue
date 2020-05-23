@@ -35,10 +35,9 @@
 </template>
 
 <script lang="ts">
+import { Document } from '@dockite/types';
 import { Component, Vue, Watch } from 'nuxt-property-decorator';
 import { Fragment } from 'vue-fragment';
-import { formatDistanceToNow } from 'date-fns';
-import { Document } from '@dockite/types';
 
 import * as data from '~/store/data';
 
@@ -52,7 +51,7 @@ export default class AllDocumentsPage extends Vue {
     return this.$store.getters[`${data.namespace}/getDocumentById`](this.documentId);
   }
 
-  get documentRaw() {
+  get documentRaw(): string {
     return JSON.stringify(this.document, null, 2);
   }
 
@@ -60,12 +59,12 @@ export default class AllDocumentsPage extends Vue {
     return this.$route.params.id;
   }
 
-  public async fetchDocumentById() {
-    await this.$store.dispatch(`${data.namespace}/fetchDocumentById`, { id: this.documentId });
+  public fetchDocumentById(): void {
+    this.$store.dispatch(`${data.namespace}/fetchDocumentById`, { id: this.documentId });
   }
 
   @Watch('documentId', { immediate: true })
-  handleDocumentIdChange() {
+  handleDocumentIdChange(): void {
     this.fetchDocumentById();
   }
 }

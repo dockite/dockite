@@ -58,9 +58,11 @@
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator';
 
+import { AllSchemasResultItem, ManyResultSet } from '../../common/types';
+
+import { NAV_BACKGROUND_COLOR, NAV_ACTIVE_TEXT_COLOR, NAV_TEXT_COLOR } from '~/common/constants';
 import { namespace } from '~/store/auth';
 import * as data from '~/store/data';
-import { NAV_BACKGROUND_COLOR, NAV_ACTIVE_TEXT_COLOR, NAV_TEXT_COLOR } from '~/common/constants';
 
 @Component
 export default class SideMenuComponent extends Vue {
@@ -72,23 +74,23 @@ export default class SideMenuComponent extends Vue {
 
   public textColor = NAV_TEXT_COLOR;
 
-  get allSchemas() {
+  get allSchemas(): ManyResultSet<AllSchemasResultItem> {
     const state: data.DataState = this.$store.state[data.namespace];
 
     return state.allSchemas;
   }
 
-  async fetchAllSchemas() {
+  async fetchAllSchemas(): Promise<void> {
     if (this.allSchemas.results.length === 0) {
       await this.$store.dispatch(`${data.namespace}/fetchAllSchemas`);
     }
   }
 
-  mounted() {
+  mounted(): void {
     this.fetchAllSchemas();
   }
 
-  public async logout() {
+  public async logout(): Promise<void> {
     await this.$store.dispatch(`${namespace}/logout`);
 
     this.$router.push('/login');

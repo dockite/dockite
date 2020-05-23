@@ -1,5 +1,5 @@
-import { Schema, Document } from '@dockite/types';
 import { DockiteFieldStatic } from '@dockite/field';
+import { Schema, Document } from '@dockite/types';
 
 export interface ManyResultsResponse<T> {
   results: T[];
@@ -52,6 +52,10 @@ export interface GetDocumentQueryResponse {
   getDocument: Document;
 }
 
+export interface GetSchemaWithFieldsQueryResponse {
+  getSchema: Schema;
+}
+
 export type FindDocumentResultItem = Omit<AllDocumentsWithSchemaResultItem, 'schema'>;
 
 export interface FindDocumentsQueryResponse {
@@ -68,8 +72,23 @@ export interface CreateSchemaMutationResponse {
   };
 }
 
+export interface UpdateSchemaMutationResponse {
+  updateSchema: {
+    id: string;
+  };
+}
+
 export interface CreateFieldMutationResponse {
   createField: {
     id: string;
   };
+}
+
+export interface UpdateFieldMutationResponse {
+  updateField: {
+    id: string;
+  };
+}
+export interface DeleteFieldMutationResponse {
+  removeField: boolean;
 }

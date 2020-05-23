@@ -1,0 +1,19 @@
+query GetSchemaWithFields($id: String!) {
+  getSchema(id: $id) {
+    id
+    name
+    type
+    groups
+    settings
+    fields {
+      id
+      name
+      title
+      description
+      type
+      settings
+    }
+    createdAt
+    updatedAt
+  }
+}

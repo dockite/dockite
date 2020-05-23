@@ -10,7 +10,11 @@ export interface DockiteFieldManager {
 
 const fieldManager: DockiteFieldManager = {};
 
-const registerField = (name: string, inputComponent: Component, settingsComponent: Component) => {
+const registerField = (
+  name: string,
+  inputComponent: Component,
+  settingsComponent: Component,
+): void => {
   if (!fieldManager[name]) {
     fieldManager[name] = {
       input: inputComponent,

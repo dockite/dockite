@@ -2,7 +2,7 @@ module.exports = {
   root: true,
   env: {
     browser: true,
-    node: true
+    node: true,
   },
   parserOptions: {
     parser: '@typescript-eslint/parser',
@@ -17,20 +17,31 @@ module.exports = {
     'plugin:prettier/recommended',
     'plugin:nuxt/recommended',
   ],
-  plugins: [
-    'prettier'
-  ],
+  plugins: ['prettier'],
   // add your custom rules here
   rules: {
-    "vue/component-tags-order": ["error", {
-      "order": ["template", "script", "style"]
-    }],
-    "import/order": [
-      "error",
+    'vue/component-tags-order': [
+      'error',
       {
-        "groups": ["builtin", "external", "internal", "parent", "sibling", "index"],
-        "newlines-between": "always"
-      }
-    ]
-  }
-}
+        order: ['template', 'script', 'style'],
+      },
+    ],
+    '@typescript-eslint/explicit-function-return-type': [
+      'error',
+      {
+        allowExpressions: true,
+      },
+    ],
+    'import/order': [
+      'error',
+      {
+        'newlines-between': 'always',
+        groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
+        alphabetize: {
+          order: 'asc' /* sort in ascending order. Options: ['ignore', 'asc', 'desc'] */,
+          caseInsensitive: true /* ignore case. Options: [true, false] */,
+        },
+      },
+    ],
+  },
+};

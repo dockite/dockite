@@ -1,0 +1,3 @@
+mutation DeleteField($id: String!) {
+  removeField(id: $id)
+}

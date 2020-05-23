@@ -59,16 +59,15 @@
 </template>
 
 <script lang="ts">
+import { TreeNode } from 'element-ui/types/tree';
 import { Component, Vue, Prop } from 'nuxt-property-decorator';
 import { Fragment } from 'vue-fragment';
-import { TreeNode } from 'element-ui/types/tree';
-import { Field } from '@dockite/types';
 
 import { FieldTreeData, UnpersistedField } from '~/common/types';
-import * as auth from '~/store/auth';
 import Logo from '~/components/base/logo.vue';
 import AddField from '~/components/fields/add-field.vue';
 import EditField from '~/components/fields/edit-field.vue';
+import * as auth from '~/store/auth';
 
 const ALLOWED_DROP_TYPES = ['group', 'variant', 'string'];
 
@@ -116,10 +115,8 @@ export default class CreateSchemaStepTwoComponent extends Vue {
     return fieldData;
   }
 
-  private getFieldDataFlat(
-    fieldData: FieldTreeData[],
-  ): Omit<Field, 'id' | 'schemaId' | 'dockiteField' | 'schema'>[] {
-    const data: Omit<Field, 'id' | 'schemaId' | 'dockiteField' | 'schema'>[] = [];
+  private getFieldDataFlat(fieldData: FieldTreeData[]): UnpersistedField[] {
+    const data: UnpersistedField[] = [];
 
     fieldData.forEach(fd => {
       data.push(fd.dockite);
@@ -179,7 +176,7 @@ export default class CreateSchemaStepTwoComponent extends Vue {
     return fieldData;
   }
 
-  public handleRemoveField(node: TreeNode<string, FieldTreeData>, data: FieldTreeData) {
+  public handleRemoveField(node: TreeNode<string, FieldTreeData>, data: FieldTreeData): void {
     const parent = node.parent;
 
     if (!parent) {
@@ -197,7 +194,7 @@ export default class CreateSchemaStepTwoComponent extends Vue {
     children.splice(index, 1);
   }
 
-  public handleAddField(field: Omit<Field, 'id' | 'schemaId' | 'dockiteField' | 'schema'>) {
+  public handleAddField(field: UnpersistedField): void {
     this.groupFieldData[this.currentTab].push({
       label: field.title,
       dockite: field,
@@ -208,7 +205,7 @@ export default class CreateSchemaStepTwoComponent extends Vue {
     _draggingNode: TreeNode<string, FieldTreeData>,
     dropNode: TreeNode<string, FieldTreeData>,
     _type: 'prev' | 'inner' | 'next',
-  ) {
+  ): boolean {
     return ALLOWED_DROP_TYPES.includes(dropNode.data.dockite.type);
   }
 

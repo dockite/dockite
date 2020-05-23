@@ -39,12 +39,12 @@
 </template>
 
 <script lang="ts">
+import { Field } from '@dockite/types';
 import { Component, Vue, Prop } from 'nuxt-property-decorator';
 import { Fragment } from 'vue-fragment';
-import { Field } from '@dockite/types';
 
-import * as auth from '~/store/auth';
 import Logo from '~/components/base/logo.vue';
+import * as auth from '~/store/auth';
 
 @Component({
   components: {

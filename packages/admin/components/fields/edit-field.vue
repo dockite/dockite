@@ -64,11 +64,11 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop, Watch, Ref } from 'nuxt-property-decorator';
 import { DockiteFieldStatic } from '@dockite/field';
 import { Field } from '@dockite/types';
 import { Form } from 'element-ui';
 import { TreeData } from 'element-ui/types/tree';
+import { Component, Vue, Prop, Watch, Ref } from 'nuxt-property-decorator';
 
 import * as data from '~/store/data';
 
@@ -199,7 +199,7 @@ export default class EditFieldComponent extends Vue {
   }
 
   @Watch('value')
-  handleValueChange(newVal: FieldTreeData | null, oldVal: FieldTreeData | null) {
+  handleValueChange(newVal: FieldTreeData | null, oldVal: FieldTreeData | null): void {
     if (oldVal === null && newVal !== null) {
       const { dockite } = newVal;
       this.fieldOldName = dockite.name;

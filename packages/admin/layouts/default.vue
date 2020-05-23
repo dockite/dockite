@@ -29,8 +29,8 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator';
 import { startCase } from 'lodash';
+import { Component, Vue } from 'nuxt-property-decorator';
 
 import SideMenu from '~/components/base/side-menu.vue';
 

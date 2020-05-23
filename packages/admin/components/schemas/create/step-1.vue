@@ -22,12 +22,12 @@
 </template>
 
 <script lang="ts">
+import { Form } from 'element-ui';
 import { Component, Vue, Prop } from 'nuxt-property-decorator';
 import { Fragment } from 'vue-fragment';
-import { Form } from 'element-ui';
 
-import * as auth from '~/store/auth';
 import Logo from '~/components/base/logo.vue';
+import * as auth from '~/store/auth';
 
 const SCHEMA_NAME_MAX_LEN = 26;
 
@@ -45,7 +45,7 @@ export default class CreateSchemaStepOneComponent extends Vue {
     return this.$store.getters[`${auth.namespace}/fullName`];
   }
 
-  get stepOneForm() {
+  get stepOneForm(): { schemaName: string } {
     const schemaName = this.value;
 
     return {
@@ -78,7 +78,7 @@ export default class CreateSchemaStepOneComponent extends Vue {
     };
   }
 
-  public async submit() {
+  public async submit(): Promise<void> {
     const valid = await (this.$refs.form as Form).validate();
 
     if (!valid) {

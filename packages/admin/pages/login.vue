@@ -5,7 +5,7 @@
     <el-card class="dockite-login-form--container">
       <el-form ref="form" :model="loginForm" :rules="loginFormRules" @submit.native.prevent="login">
         <el-form-item :label="$t('login.labels.email')" prop="email">
-          <el-input v-model="loginForm.email" type="email" />
+          <el-input ref="email" v-model="loginForm.email" type="email" />
         </el-form-item>
         <el-form-item :label="$t('login.labels.password')" prop="password">
           <el-input v-model="loginForm.password" type="password" />
@@ -21,12 +21,12 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator';
-import { Form } from 'element-ui';
+import { Form, Input } from 'element-ui';
+import { Component, Vue, Ref } from 'nuxt-property-decorator';
 
-import { namespace } from '~/store/auth';
 import { PASSWORD_MIN_LEN } from '~/common/constants';
 import Logo from '~/components/base/logo.vue';
+import { namespace } from '~/store/auth';
 
 @Component({
   layout: 'auth',
@@ -35,12 +35,15 @@ import Logo from '~/components/base/logo.vue';
   },
 })
 export default class LoginPage extends Vue {
+  @Ref()
+  readonly email!: Input;
+
   public loginForm = {
     email: '',
     password: '',
   };
 
-  get loginFormRules() {
+  get loginFormRules(): Record<string, Record<string, any>[]> {
     const $t = this.$t.bind(this);
 
     return {
@@ -84,6 +87,10 @@ export default class LoginPage extends Vue {
     await this.$store.dispatch(`${namespace}/login`, this.loginForm);
 
     this.$router.push('/');
+  }
+
+  public mounted(): void {
+    this.email.focus();
   }
 }
 </script>

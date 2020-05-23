@@ -87,10 +87,11 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop, Watch, Ref } from 'nuxt-property-decorator';
 import { DockiteFieldStatic } from '@dockite/field';
-import { Field } from '@dockite/types';
 import { Input, Form } from 'element-ui';
+import { Component, Vue, Prop, Watch, Ref } from 'nuxt-property-decorator';
+
+import { UnpersistedField } from '../../common/types';
 
 import * as data from '~/store/data';
 
@@ -100,7 +101,7 @@ export default class AddFieldComponent extends Vue {
   readonly visible!: boolean;
 
   @Prop({ required: true, type: Array })
-  readonly currentFields!: Omit<Field, 'id' | 'schemaId' | 'dockiteField' | 'schema'>[];
+  readonly currentFields!: UnpersistedField[];
 
   @Ref()
   readonly form!: Form;
@@ -111,11 +112,11 @@ export default class AddFieldComponent extends Vue {
 
   public fieldSettingsRules: object = {};
 
-  public field: Omit<Field, 'id' | 'schemaId' | 'dockiteField' | 'schema'> = {
+  public field: UnpersistedField = {
     ...this.initialFieldState,
   };
 
-  get initialFieldState() {
+  get initialFieldState(): UnpersistedField {
     return {
       name: '',
       title: '',

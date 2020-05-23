@@ -62,9 +62,11 @@
 </template>
 
 <script lang="ts">
+import { formatDistanceToNow } from 'date-fns';
 import { Component, Vue } from 'nuxt-property-decorator';
 import { Fragment } from 'vue-fragment';
-import { formatDistanceToNow } from 'date-fns';
+
+import { ManyResultSet, AllDocumentsWithSchemaResultItem } from '../../common/types';
 
 import * as data from '~/store/data';
 
@@ -74,7 +76,7 @@ import * as data from '~/store/data';
   },
 })
 export default class AllDocumentsPage extends Vue {
-  get allDocumentsWithSchema() {
+  get allDocumentsWithSchema(): ManyResultSet<AllDocumentsWithSchemaResultItem> {
     const state: data.DataState = this.$store.state[data.namespace];
 
     return state.allDocumentsWithSchema;
@@ -96,15 +98,15 @@ export default class AllDocumentsPage extends Vue {
     return this.allDocumentsWithSchema.totalPages;
   }
 
-  public async fetchAllDocumentsWithSchema() {
-    await this.$store.dispatch(`${data.namespace}/fetchAllDocumentsWithSchema`);
+  public fetchAllDocumentsWithSchema(): void {
+    this.$store.dispatch(`${data.namespace}/fetchAllDocumentsWithSchema`);
   }
 
   public cellValueFromNow(_row: never, _column: never, cellValue: string, _index: never): string {
     return formatDistanceToNow(new Date(cellValue)) + ' ago';
   }
 
-  mounted() {
+  mounted(): void {
     this.fetchAllDocumentsWithSchema();
   }
 }

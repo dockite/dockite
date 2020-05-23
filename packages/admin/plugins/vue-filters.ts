@@ -1,6 +1,6 @@
-import Vue from 'vue';
-import { startCase, camelCase, kebabCase, snakeCase } from 'lodash';
 import { formatDistanceToNow } from 'date-fns';
+import { startCase, camelCase, kebabCase, snakeCase } from 'lodash';
+import Vue from 'vue';
 
 Vue.filter('startCase', startCase);
 Vue.filter('camelCase', camelCase);

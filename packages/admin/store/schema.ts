@@ -1,13 +1,24 @@
+import { SchemaType, Schema, Field } from '@dockite/types';
 import { ActionTree, GetterTree, MutationTree } from 'vuex';
-import { Field, SchemaType } from '@dockite/types';
 
 import { RootState } from '.';
 
-import CreateSchemaMutation from '~/graphql/mutations/create-schema.gql';
+import {
+  CreateFieldMutationResponse,
+  CreateSchemaMutationResponse,
+  UpdateSchemaMutationResponse,
+  UnpersistedField,
+  DeleteFieldMutationResponse,
+} from '~/common/types';
 import CreateFieldMutation from '~/graphql/mutations/create-field.gql';
+import CreateSchemaMutation from '~/graphql/mutations/create-schema.gql';
+import DeleteFieldMutation from '~/graphql/mutations/delete-field.gql';
+import UpdateFieldMutation from '~/graphql/mutations/update-field.gql';
+import UpdateSchemaMutation from '~/graphql/mutations/update-schema.gql';
+// import DeleteSchemaMutation from '~/graphql/mutations/delete-schema.gql';
 import AllSchemasQuery from '~/graphql/queries/all-schemas.gql';
+import GetSchemaWithFieldsQuery from '~/graphql/queries/get-schema-with-fields.gql';
 import * as data from '~/store/data';
-import { CreateSchemaMutationResponse, CreateFieldMutationResponse } from '~/common/types';
 
 export interface SchemaState {
   errors: null | string | string[];
@@ -15,13 +26,19 @@ export interface SchemaState {
 
 interface CreateSchemaWithFields {
   name: string;
-  fields: Omit<Field, 'id' | 'schemaId' | 'dockiteField' | 'schema'>[];
+  fields: UnpersistedField[];
   groups: Record<string, string[]>;
+}
+
+interface UpdateSchemaAndFieldsPayload {
+  schema: Schema;
+  fields: Field[];
+  deletedFields: string[];
 }
 
 export const namespace = 'schema';
 
-export const state = () => ({
+export const state = (): SchemaState => ({
   errors: null,
 });
 
@@ -63,6 +80,70 @@ export const actions: ActionTree<SchemaState, RootState> = {
     await Promise.all(createFieldPromises);
 
     await this.dispatch(`${data.namespace}/fetchAllSchemas`, true);
+  },
+
+  async updateSchemaAndFields(_, payload: UpdateSchemaAndFieldsPayload) {
+    // const { fields }: Schema = this.getters(`${data.namespace}/getSchemaWithFieldsById`)(
+    //   payload.schema.id,
+    // );
+
+    const { data: schemaData } = await this.$apolloClient.mutate<UpdateSchemaMutationResponse>({
+      mutation: UpdateSchemaMutation,
+      variables: {
+        ...payload.schema,
+      },
+      refetchQueries: [
+        { query: AllSchemasQuery },
+        { query: GetSchemaWithFieldsQuery, variables: { id: payload.schema.id } },
+      ],
+    });
+
+    if (!schemaData?.updateSchema) {
+      throw new Error('Unable to create schema');
+    }
+
+    const deleteFieldsPromises = payload.deletedFields.map(id =>
+      this.$apolloClient.mutate<DeleteFieldMutationResponse>({
+        mutation: DeleteFieldMutation,
+        variables: { id },
+        refetchQueries: [
+          { query: AllSchemasQuery },
+          { query: GetSchemaWithFieldsQuery, variables: { id: payload.schema.id } },
+        ],
+      }),
+    );
+
+    const updateFieldsPromises = payload.fields
+      .filter(field => (field.id ?? null) !== null)
+      .map(field =>
+        this.$apolloClient.mutate({
+          mutation: UpdateFieldMutation,
+          variables: {
+            ...field,
+          },
+          refetchQueries: [
+            { query: AllSchemasQuery },
+            { query: GetSchemaWithFieldsQuery, variables: { id: payload.schema.id } },
+          ],
+        }),
+      );
+
+    const createFieldsPromises = payload.fields
+      .filter(field => (field.id ?? null) === null)
+      .map(field =>
+        this.$apolloClient.mutate({
+          mutation: CreateFieldMutation,
+          variables: {
+            schemaId: payload.schema.id,
+            ...field,
+          },
+          refetchQueries: [{ query: AllSchemasQuery }],
+        }),
+      );
+
+    await Promise.all([...deleteFieldsPromises, ...updateFieldsPromises, ...createFieldsPromises]);
+
+    this.commit(`${data.namespace}/removeSchemaWithFields`, payload.schema.id);
   },
 };
 

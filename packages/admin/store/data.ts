@@ -1,5 +1,6 @@
-import { Document } from '@dockite/types';
 import { DockiteFieldStatic } from '@dockite/field';
+import { Document, Schema } from '@dockite/types';
+import Vue from 'vue';
 import { ActionTree, GetterTree, MutationTree } from 'vuex';
 
 import { RootState } from '.';
@@ -13,25 +14,21 @@ import {
   FindDocumentsQueryResponse,
   GetDocumentQueryResponse,
   AvailableFieldsQueryResponse,
+  GetSchemaWithFieldsQueryResponse,
+  ManyResultSet,
 } from '~/common/types';
 import AllDocumentsWithSchemaQuery from '~/graphql/queries/all-documents-with-schema.gql';
 import AllSchemasQuery from '~/graphql/queries/all-schemas.gql';
+import AvailableFieldsQuery from '~/graphql/queries/available-fields.gql';
 import FindDocumentsBySchemaIdQuery from '~/graphql/queries/find-documents-by-schema-id.gql';
 import GetDocumentQuery from '~/graphql/queries/get-document.gql';
-import AvailableFieldsQuery from '~/graphql/queries/available-fields.gql';
-
-interface ManyResultSet<T> {
-  results: T[];
-  totalItems: number | null;
-  totalPages: number | null;
-  currentPage: number | null;
-  hasNextPage: boolean | null;
-}
+import GetSchemaWithFieldsQuery from '~/graphql/queries/get-schema-with-fields.gql';
 
 export interface DataState {
   allSchemas: ManyResultSet<AllSchemasResultItem>;
   allDocumentsWithSchema: ManyResultSet<AllDocumentsWithSchemaResultItem>;
   getDocument: Record<string, Document>;
+  getSchemaWithFields: Record<string, Schema>;
   findDocumentsBySchemaId: ManyResultSet<FindDocumentResultItem>;
   availableFields: DockiteFieldStatic[];
 }
@@ -54,6 +51,7 @@ export const state = (): DataState => ({
     hasNextPage: null,
   },
   getDocument: {},
+  getSchemaWithFields: {},
   findDocumentsBySchemaId: {
     results: [],
     totalItems: null,
@@ -68,10 +66,17 @@ export const getters: GetterTree<DataState, RootState> = {
   getDocumentById: state => (id: string): Document | null => {
     return state.getDocument[id] ?? null;
   },
+
   getSchemaNameById: state => (id: string): string => {
     const schema = state.allSchemas.results.find(schema => schema.id === id);
 
     return schema ? schema.name : '';
+  },
+
+  getSchemaWithFieldsById: state => (id: string): Schema | null => {
+    const schema = state.getSchemaWithFields[id];
+
+    return schema ?? null;
   },
 };
 
@@ -121,6 +126,26 @@ export const actions: ActionTree<DataState, RootState> = {
     commit('setDocument', data);
   },
 
+  async fetchSchemaWithFieldsById(
+    { state, commit },
+    payload: { id: string; force?: boolean },
+  ): Promise<void> {
+    if (state.getSchemaWithFields[payload.id] && !payload.force) {
+      return;
+    }
+
+    const { data } = await this.$apolloClient.query<GetSchemaWithFieldsQueryResponse>({
+      query: GetSchemaWithFieldsQuery,
+      variables: { id: payload.id },
+    });
+
+    if (!data.getSchema) {
+      throw new Error('graphql: getSchema could not be fetched');
+    }
+
+    commit('setSchemaWithFields', data);
+  },
+
   async fetchFindDocumentsBySchemaId({ commit }, payload: string): Promise<void> {
     const { data } = await this.$apolloClient.query<FindDocumentsQueryResponse>({
       query: FindDocumentsBySchemaIdQuery,
@@ -163,6 +188,19 @@ export const mutations: MutationTree<DataState> = {
         ...payload.getDocument,
       },
     };
+  },
+
+  setSchemaWithFields(state, payload: GetSchemaWithFieldsQueryResponse): void {
+    state.getSchemaWithFields = {
+      ...state.getSchemaWithFields,
+      [payload.getSchema.id]: {
+        ...payload.getSchema,
+      },
+    };
+  },
+
+  removeSchemaWithFields(state, payload: string): void {
+    Vue.delete(state.getSchemaWithFields, payload);
   },
 
   setFindDocumentsBySchemaId(state, payload: FindDocumentsQueryResponse): void {

@@ -11,8 +11,8 @@
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator';
 
-import { namespace } from '~/store/auth';
 import Logo from '~/components/base/logo.vue';
+import { namespace } from '~/store/auth';
 
 @Component({
   layout: 'default',
@@ -28,7 +28,7 @@ export default class LogoutPage extends Vue {
     this.$router.push('/login');
   }
 
-  mounted() {
+  mounted(): void {
     this.logout();
   }
 }
