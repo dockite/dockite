@@ -1,9 +1,38 @@
 <template>
   <fragment>
     <portal to="header">
-      <h2>
-        Schema - <strong>{{ schemaName }}</strong>
-      </h2>
+      <el-row style="width: 100%" type="flex" justify="space-between" align="middle">
+        <h2>
+          Schema - <strong>{{ schemaName }}</strong>
+        </h2>
+
+        <el-dropdown>
+          <el-button size="medium">
+            Actions
+            <i class="el-icon-arrow-down el-icon--right" />
+          </el-button>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item>
+              <router-link :to="`/schemas/${schemaId}/create`">
+                <i class="el-icon-document-add" />
+                Create
+              </router-link>
+            </el-dropdown-item>
+            <el-dropdown-item>
+              <router-link :to="`/schemas/${schemaId}/edit`">
+                <i class="el-icon-edit" />
+                Edit
+              </router-link>
+            </el-dropdown-item>
+            <el-dropdown-item>
+              <router-link :to="`/schemas/${schemaId}/delete`" style="color: rgb(245, 108, 108)">
+                <i class="el-icon-delete" />
+                Delete
+              </router-link>
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+      </el-row>
     </portal>
 
     <div class="all-documents-page">
@@ -26,7 +55,7 @@
             <span v-else-if="scope.row.data.identifier">
               {{ scope.row.data.identifier }}
             </span>
-            <span v-else :title="scope.row.data">
+            <span v-else :title="JSON.stringify(scope.row.data)">
               {{ JSON.stringify(scope.row.data).substr(0, 15) }}
             </span>
           </template>

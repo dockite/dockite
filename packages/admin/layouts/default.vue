@@ -5,7 +5,7 @@
     </el-aside>
     <el-container>
       <el-header class="dockite-main--header" height="">
-        <portal-target name="header">
+        <portal-target name="header" style="width: 100%">
           <h2>Portal <strong>header</strong> not used</h2>
         </portal-target>
       </el-header>
@@ -79,6 +79,16 @@ export default class DefaultLayout extends Vue {
   align-items: center;
   background: #ffffff;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+
+  &h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin: 0;
+    line-height: 1;
+  }
 }
 
 .dockite-main--breadcrumb {

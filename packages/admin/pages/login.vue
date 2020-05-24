@@ -89,7 +89,7 @@ export default class LoginPage extends Vue {
     this.$router.push('/');
   }
 
-  public mounted(): void {
+  mounted(): void {
     this.email.focus();
   }
 }

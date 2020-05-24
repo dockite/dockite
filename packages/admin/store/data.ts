@@ -203,6 +203,10 @@ export const mutations: MutationTree<DataState> = {
     Vue.delete(state.getSchemaWithFields, payload);
   },
 
+  removeDocument(state, payload: string): void {
+    Vue.delete(state.getDocument, payload);
+  },
+
   setFindDocumentsBySchemaId(state, payload: FindDocumentsQueryResponse): void {
     state.findDocumentsBySchemaId = { ...payload.findDocuments };
   },

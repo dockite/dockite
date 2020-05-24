@@ -92,3 +92,18 @@ export interface UpdateFieldMutationResponse {
 export interface DeleteFieldMutationResponse {
   removeField: boolean;
 }
+
+export interface CreateDocumentMutationResponse {
+  createDocument: {
+    id: string;
+  };
+}
+
+export interface UpdateDocumentMutationResponse {
+  updateDocument: {
+    id: string;
+  };
+}
+export interface DeleteDocumentMutationResponse {
+  removeDocument: boolean;
+}

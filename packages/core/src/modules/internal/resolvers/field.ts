@@ -102,7 +102,18 @@ export class FieldResolver {
       schemaId,
     });
 
-    const savedField = await repository.save(field);
+    const [savedField, _] = await Promise.all([
+      repository.save(field),
+      getRepository(Document)
+        .createQueryBuilder()
+        .update()
+        .set({
+          data: () => `data || '{ "${field.name}": null }'`,
+        })
+        .where('schemaId = :schemaId', { schemaId: field.schemaId })
+        .andWhere('document.data ->> :fieldName IS NULL', { fieldName: field.name })
+        .execute(),
+    ]);
 
     DockiteEvents.emit('reload');
 

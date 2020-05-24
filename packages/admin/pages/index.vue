@@ -30,18 +30,12 @@ import { Component, Vue } from 'nuxt-property-decorator';
 import { Fragment } from 'vue-fragment';
 
 import Logo from '~/components/base/logo.vue';
-import StepOne from '~/components/schemas/create/step-1.vue';
-import StepTwo from '~/components/schemas/create/step-2.vue';
-import StepThree from '~/components/schemas/create/step-3.vue';
 import * as auth from '~/store/auth';
 
 @Component({
   components: {
     Fragment,
     Logo,
-    StepOne,
-    StepTwo,
-    StepThree,
   },
 })
 export default class IndexPage extends Vue {

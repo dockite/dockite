@@ -31,7 +31,7 @@
         </el-table-column>
         <el-table-column prop="schema.name" label="Schema">
           <template slot-scope="scope">
-            <router-link :to="`/schema/${scope.row.schema.name}`">
+            <router-link :to="`/schemas/${scope.row.schema.id}`">
               {{ scope.row.schema.name }}
             </router-link>
           </template>

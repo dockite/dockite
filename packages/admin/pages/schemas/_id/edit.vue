@@ -6,7 +6,7 @@
       </h2>
     </portal>
 
-    <div class="create-schema-step-2-component">
+    <div class="edit-schema-component">
       <el-tabs v-model="currentTab" type="border-card" editable @edit="handleEditTabs">
         <el-tab-pane v-for="tab in availableTabs" :key="tab" :label="tab" :name="tab">
           <el-tree
@@ -55,9 +55,12 @@
         @submit="fieldToBeEdited = null"
       />
 
-      <el-row type="flex" justify="space-between">
-        <span />
-        <el-button type="primary" style="margin-top: 1rem;" @click="submit">
+      <el-row type="flex" justify="space-between" style="margin-top: 1rem;">
+        <el-button type="text" @click="$router.go(-1)">
+          Cancel
+        </el-button>
+
+        <el-button type="primary" @click="submit">
           Update
         </el-button>
       </el-row>
@@ -105,6 +108,10 @@ export default class EditSchemaPage extends Vue {
   public deletedFields: string[] = [];
 
   get schemaName(): string {
+    return this.$store.getters[`${data.namespace}/getSchemaNameById`](this.schemaId);
+  }
+
+  get schemaId(): string {
     return this.$route.params.id;
   }
 
@@ -149,48 +156,50 @@ export default class EditSchemaPage extends Vue {
   }
 
   public async submit(): Promise<void> {
-    const fieldData: UnpersistedField[] = [];
-    const groups: Record<string, string[]> = {};
+    try {
+      const fieldData: UnpersistedField[] = [];
+      const groups: Record<string, string[]> = {};
 
-    Object.keys(this.groupFieldData).forEach(group => {
-      groups[group] = this.getFieldDataFlat(this.groupFieldData[group]).map(x => x.name);
-      fieldData.push(...this.transformTreeFieldDataToFieldData(this.groupFieldData[group]));
-    });
-
-    if (fieldData.length === 0) {
-      this.$message({
-        message: 'A schema requires atleast one field.',
-        type: 'error',
+      Object.keys(this.groupFieldData).forEach(group => {
+        groups[group] = this.getFieldDataFlat(this.groupFieldData[group]).map(x => x.name);
+        fieldData.push(...this.transformTreeFieldDataToFieldData(this.groupFieldData[group]));
       });
 
-      throw new Error('Schema requires fields');
-    }
+      if (fieldData.length === 0) {
+        this.$message({
+          message: 'A schema requires atleast one field.',
+          type: 'error',
+        });
 
-    if (Object.keys(this.groupFieldData).some(key => this.groupFieldData[key].length === 0)) {
-      this.$message({
-        message:
-          'A group without fields exists. Please remove any groups that have no corresponding fields.',
-        type: 'error',
+        throw new Error('Schema requires fields');
+      }
+
+      if (Object.keys(this.groupFieldData).some(key => this.groupFieldData[key].length === 0)) {
+        this.$message({
+          message:
+            'A group without fields exists. Please remove any groups that have no corresponding fields.',
+          type: 'error',
+        });
+
+        throw new Error('Groups must have fields');
+      }
+
+      await this.$store.dispatch(`${schema.namespace}/updateSchemaAndFields`, {
+        schema: {
+          ...this.schema,
+          groups,
+        },
+        fields: fieldData,
+        deletedFields: this.deletedFields,
       });
 
-      throw new Error('Groups must have fields');
-    }
+      this.$message({
+        message: 'Schema updated successfully',
+        type: 'success',
+      });
 
-    await this.$store.dispatch(`${schema.namespace}/updateSchemaAndFields`, {
-      schema: {
-        ...this.schema,
-        groups,
-      },
-      fields: fieldData,
-      deletedFields: this.deletedFields,
-    });
-
-    this.$message({
-      message: 'Schema updated successfully',
-      type: 'success',
-    });
-
-    this.$router.push(`/schemas/${this.$route.params.id}`);
+      this.$router.push(`/schemas/${this.$route.params.id}`);
+    } catch (_) {}
   }
 
   public transformTreeFieldDataToFieldData(treeFieldData: FieldTreeData[]): UnpersistedField[] {
