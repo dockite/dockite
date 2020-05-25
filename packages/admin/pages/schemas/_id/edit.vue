@@ -71,7 +71,7 @@
 <script lang="ts">
 import { Schema, Field } from '@dockite/types';
 import { TreeNode } from 'element-ui/types/tree';
-import { cloneDeep } from 'lodash';
+import { cloneDeep, sortBy } from 'lodash';
 import { Component, Vue, Watch } from 'nuxt-property-decorator';
 import { Fragment } from 'vue-fragment';
 
@@ -242,7 +242,11 @@ export default class EditSchemaPage extends Vue {
           ),
         );
 
-        Vue.set(this.groupFieldData, group, fieldTreeData);
+        const fieldTreeDataSorted = sortBy(fieldTreeData, [
+          i => this.schema.groups[group].indexOf(i.dockite.name),
+        ]);
+
+        Vue.set(this.groupFieldData, group, fieldTreeDataSorted);
       });
     }
   }

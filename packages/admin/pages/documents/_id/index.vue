@@ -42,6 +42,7 @@
 <script lang="ts">
 import { Schema, Field, Document } from '@dockite/types';
 import { Form } from 'element-ui';
+import { sortBy } from 'lodash';
 import { Component, Vue, Watch, Ref } from 'nuxt-property-decorator';
 import { Fragment } from 'vue-fragment';
 
@@ -121,7 +122,9 @@ export default class UpdateDocumentPage extends Vue {
   }
 
   public getFieldsByGroupName(name: string): Field[] {
-    return this.fields.filter(field => this.groups[name].includes(field.name));
+    const filteredFields = this.fields.filter(field => this.groups[name].includes(field.name));
+
+    return sortBy(filteredFields, [i => this.groups[name].indexOf(i.name)]);
   }
 
   public getGroupNameFromFieldName(name: string): string {

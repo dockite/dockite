@@ -21,6 +21,7 @@
   "sideMenu": {
     "home": "Home",
     "documents": "Documents",
-    "schemas": "Schemas"
+    "schemas": "Schemas",
+    "webhooks": "Webhooks"
   }
 }

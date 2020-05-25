@@ -39,11 +39,22 @@
           </el-menu-item>
         </el-menu-item-group>
       </el-submenu>
+      <el-submenu index="/releases">
+        <template slot="title">
+          <i class="el-icon-date"></i>
+          <span slot="title">Releases (Coming Soon)</span>
+        </template>
+      </el-submenu>
       <el-submenu index="/settings">
         <template slot="title">
           <i class="el-icon-setting"></i>
           <span slot="title">Settings</span>
         </template>
+
+        <el-menu-item index="/settings/webhooks">
+          <i class="el-icon-connection"></i>
+          <span slot="title">{{ $t('sideMenu.webhooks') }}</span>
+        </el-menu-item>
       </el-submenu>
       <el-menu-item index="#logout" @click.native.prevent="logout">
         <i class="el-icon-refresh-left"></i>
@@ -55,6 +66,7 @@
       </el-menu-item>
     </el-menu>
 
+    <!-- This is a dummy menu so we can have a fixed menu with smooth animations -->
     <el-menu
       class="dockite-aside--el-menu"
       :collapse="isCollapse"

@@ -28,7 +28,9 @@
         </el-tabs>
       </el-form>
       <el-row type="flex" justify="space-between" align="middle" style="margin-top: 1rem;">
-        <span></span>
+        <el-button type="text" @click="$router.go(-1)">
+          Cancel
+        </el-button>
         <el-button type="primary" @click="submit">
           Create Document
         </el-button>
