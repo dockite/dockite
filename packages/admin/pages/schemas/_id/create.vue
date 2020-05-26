@@ -31,6 +31,7 @@
         <el-button type="text" @click="$router.go(-1)">
           Cancel
         </el-button>
+
         <el-button type="primary" @click="submit">
           Create Document
         </el-button>

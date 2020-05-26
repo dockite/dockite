@@ -16,27 +16,42 @@ import {
   AvailableFieldsQueryResponse,
   GetSchemaWithFieldsQueryResponse,
   ManyResultSet,
+  AllWebhooksQueryResponse,
+  AllWebhooksResultItem,
+  FindWebhookCallsQueryResponse,
+  FindWebhookCallsResultItem,
 } from '~/common/types';
 import AllDocumentsWithSchemaQuery from '~/graphql/queries/all-documents-with-schema.gql';
 import AllSchemasQuery from '~/graphql/queries/all-schemas.gql';
+import AllWebhooksQuery from '~/graphql/queries/all-webhooks.gql';
 import AvailableFieldsQuery from '~/graphql/queries/available-fields.gql';
 import FindDocumentsBySchemaIdQuery from '~/graphql/queries/find-documents-by-schema-id.gql';
+import FindWebhookCallsByWebhookIdQuery from '~/graphql/queries/find-webhook-calls-by-webhook-id.gql';
 import GetDocumentQuery from '~/graphql/queries/get-document.gql';
 import GetSchemaWithFieldsQuery from '~/graphql/queries/get-schema-with-fields.gql';
 
 export interface DataState {
   allSchemas: ManyResultSet<AllSchemasResultItem>;
+  allWebhooks: ManyResultSet<AllWebhooksResultItem>;
   allDocumentsWithSchema: ManyResultSet<AllDocumentsWithSchemaResultItem>;
   getDocument: Record<string, Document>;
   getSchemaWithFields: Record<string, Schema>;
   findDocumentsBySchemaId: ManyResultSet<FindDocumentResultItem>;
   availableFields: DockiteFieldStatic[];
+  findWebhookCallsByWebhookId: ManyResultSet<FindWebhookCallsResultItem>;
 }
 
 export const namespace = 'data';
 
 export const state = (): DataState => ({
   allSchemas: {
+    results: [],
+    totalItems: null,
+    totalPages: null,
+    currentPage: null,
+    hasNextPage: null,
+  },
+  allWebhooks: {
     results: [],
     totalItems: null,
     totalPages: null,
@@ -60,6 +75,13 @@ export const state = (): DataState => ({
     hasNextPage: null,
   },
   availableFields: [],
+  findWebhookCallsByWebhookId: {
+    results: [],
+    totalItems: null,
+    totalPages: null,
+    currentPage: null,
+    hasNextPage: null,
+  },
 });
 
 export const getters: GetterTree<DataState, RootState> = {
@@ -170,6 +192,31 @@ export const actions: ActionTree<DataState, RootState> = {
 
     commit('setAvailableFields', data);
   },
+
+  async fetchAllWebhooks({ commit }): Promise<void> {
+    const { data } = await this.$apolloClient.query<AllWebhooksQueryResponse>({
+      query: AllWebhooksQuery,
+    });
+
+    if (!data.allWebhooks) {
+      throw new Error('graphql: allWebhooks could not be fetched');
+    }
+
+    commit('setAllWebhooks', data);
+  },
+
+  async fetchFindWebhookCallsByWebhookId({ commit }, payload: string): Promise<void> {
+    const { data } = await this.$apolloClient.query<FindWebhookCallsQueryResponse>({
+      query: FindWebhookCallsByWebhookIdQuery,
+      variables: { id: payload },
+    });
+
+    if (!data.findWebhookCalls) {
+      throw new Error('graphql: findWebhookCalls could not be fetched');
+    }
+
+    commit('setFindWebhookCallsByWebhookId', data);
+  },
 };
 
 export const mutations: MutationTree<DataState> = {
@@ -213,5 +260,13 @@ export const mutations: MutationTree<DataState> = {
 
   setAvailableFields(state, payload: AvailableFieldsQueryResponse): void {
     state.availableFields = payload.availableFields;
+  },
+
+  setAllWebhooks(state, payload: AllWebhooksQueryResponse) {
+    state.allWebhooks = { ...payload.allWebhooks };
+  },
+
+  setFindWebhookCallsByWebhookId(state, payload: FindWebhookCallsQueryResponse): void {
+    state.findWebhookCallsByWebhookId = { ...payload.findWebhookCalls };
   },
 };

@@ -1,5 +1,5 @@
 import { DockiteFieldStatic } from '@dockite/field';
-import { Schema, Document } from '@dockite/types';
+import { Schema, Document, Webhook, WebhookCall } from '@dockite/types';
 
 export interface ManyResultsResponse<T> {
   results: T[];
@@ -104,6 +104,19 @@ export interface UpdateDocumentMutationResponse {
     id: string;
   };
 }
+
 export interface DeleteDocumentMutationResponse {
   removeDocument: boolean;
+}
+
+export type AllWebhooksResultItem = Webhook;
+
+export interface AllWebhooksQueryResponse {
+  allWebhooks: ManyResultsResponse<AllWebhooksResultItem>;
+}
+
+export type FindWebhookCallsResultItem = WebhookCall;
+
+export interface FindWebhookCallsQueryResponse {
+  findWebhookCalls: ManyResultsResponse<FindWebhookCallsResultItem>;
 }

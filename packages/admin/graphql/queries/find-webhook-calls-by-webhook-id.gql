@@ -1,0 +1,16 @@
+query FindWebhookCalls($id: String!) {
+  findWebhookCalls(webhookId: $id) {
+    results {
+      id
+      success
+      status
+      request
+      response
+      executedAt
+    }
+    totalItems
+    currentPage
+    totalPages
+    hasNextPage
+  }
+}
