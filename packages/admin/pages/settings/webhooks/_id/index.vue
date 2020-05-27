@@ -11,12 +11,16 @@
             {{ scope.row.id.slice(0, 8) + '...' }}
           </template>
         </el-table-column>
-        <el-table-column prop="success" label="Success"></el-table-column>
+        <el-table-column label="Success">
+          <template slot-scope="scope">
+            {{ scope.row.success ? 'Yes' : 'No' }}
+          </template>
+        </el-table-column>
         <el-table-column prop="status" label="Status Code"></el-table-column>
         <el-table-column prop="executedAt" label="Executed At" :formatter="cellValueFromNow" />
         <el-table-column label="Actions">
           <template slot-scope="scope">
-            <el-button type="text" @click="() => scope.row.id">
+            <el-button type="text" @click="webhookCallToDisplay = scope.row">
               <i class="el-icon-view" />
             </el-button>
           </template>
@@ -32,13 +36,30 @@
         layout="prev, pager, next"
       />
     </div>
+
+    <el-dialog
+      title="Webhook Call - Raw Details"
+      custom-class="dockite-dialog--webhook-call"
+      :visible="webhookCallToDisplay !== null"
+      @close="webhookCallToDisplay = null"
+    >
+      <textarea
+        ref="webhookCallDetail"
+        :value="JSON.stringify(webhookCallToDisplay, null, 2)"
+      ></textarea>
+    </el-dialog>
   </fragment>
 </template>
 
 <script lang="ts">
+import { WebhookCall } from '@dockite/types';
+import CodeMirror from 'codemirror';
 import { formatDistanceToNow } from 'date-fns';
-import { Component, Vue, Watch } from 'nuxt-property-decorator';
+import { Component, Vue, Watch, Ref } from 'nuxt-property-decorator';
 import { Fragment } from 'vue-fragment';
+
+import 'codemirror/mode/javascript/javascript';
+import 'codemirror/theme/nord.css';
 
 import { FindWebhookCallsResultItem, ManyResultSet } from '~/common/types';
 import * as data from '~/store/data';
@@ -49,6 +70,13 @@ import * as data from '~/store/data';
   },
 })
 export default class AllDocumentsPage extends Vue {
+  public showWebhookCallDetail = false;
+
+  public webhookCallToDisplay: null | WebhookCall = null;
+
+  @Ref()
+  readonly webhookCallDetail!: HTMLTextAreaElement;
+
   get findWebhookCallsByWebhookId(): ManyResultSet<FindWebhookCallsResultItem> {
     const state: data.DataState = this.$store.state[data.namespace];
 
@@ -83,6 +111,21 @@ export default class AllDocumentsPage extends Vue {
     return formatDistanceToNow(new Date(cellValue)) + ' ago';
   }
 
+  @Watch('webhookCallToDisplay', { immediate: true })
+  handleWebhookCallToDisplayChange(): void {
+    if (this.webhookCallToDisplay !== null) {
+      this.$nextTick(() => {
+        CodeMirror.fromTextArea(this.webhookCallDetail, {
+          mode: 'application/json',
+          tabSize: 2,
+          lineNumbers: true,
+          lineWrapping: true,
+          theme: 'nord',
+        });
+      });
+    }
+  }
+
   @Watch('webhookId', { immediate: true })
   handleWebhookIdChange(): void {
     this.fetchWebhookCalls();
@@ -102,5 +145,10 @@ export default class AllDocumentsPage extends Vue {
   button {
     background: transparent;
   }
+}
+
+.dockite-dialog--webhook-call {
+  width: 80%;
+  max-width: 650px;
 }
 </style>

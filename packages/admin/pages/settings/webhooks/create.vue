@@ -5,7 +5,13 @@
     </portal>
 
     <div class="dockite-create-webhook-page">
-      <el-form :model="form" :rules="formRules" label-position="top">
+      <el-form
+        ref="formRef"
+        :model="form"
+        :rules="formRules"
+        label-position="top"
+        @submit.native.prevent="submit"
+      >
         <el-form-item label="Name" prop="name">
           <el-input v-model="form.name"></el-input>
         </el-form-item>
@@ -34,9 +40,17 @@
         <el-form-item label="Execute GraphQL Query?">
           <el-switch v-model="willExecuteGraphQL"></el-switch>
         </el-form-item>
-        <el-form-item v-if="willExecuteGraphQL" label="GraphQL Query">
+        <el-form-item v-if="willExecuteGraphQL" label="GraphQL Query" prop="options.query">
           <el-input ref="graphqlEditor" v-model="form.options.query" type="textarea"></el-input>
           <!-- <textarea ref="graphqlEditor"></textarea> -->
+        </el-form-item>
+        <el-form-item>
+          <el-row type="flex" justify="space-between" align="middle">
+            <span />
+            <el-button type="primary" native-type="submit" @click.prevent="submit">
+              Create
+            </el-button>
+          </el-row>
         </el-form-item>
       </el-form>
     </div>
@@ -46,6 +60,7 @@
 <script lang="ts">
 import { WebhookAction, Webhook } from '@dockite/types';
 import CodeMirror from 'codemirror';
+import { Form } from 'element-ui';
 import { Component, Vue, Ref, Watch } from 'nuxt-property-decorator';
 import { Fragment } from 'vue-fragment';
 
@@ -60,6 +75,7 @@ import { RequestMethod } from '../../../common/types';
 
 import Logo from '~/components/base/logo.vue';
 import * as auth from '~/store/auth';
+import * as webhook from '~/store/webhook';
 
 type WebhookForm = Omit<Webhook, 'id' | 'createdAt' | 'updatedAt'>;
 
@@ -79,6 +95,9 @@ export default class CreateWebhookPage extends Vue {
 
   @Ref()
   readonly graphqlEditor!: any;
+
+  @Ref()
+  readonly formRef!: Form;
 
   public willExecuteGraphQL = false;
 
@@ -105,6 +124,8 @@ export default class CreateWebhookPage extends Vue {
 
   get formRules(): object {
     const $t = this.$t.bind(this);
+    const queryRequired = this.willExecuteGraphQL;
+
     return {
       name: [
         {
@@ -148,13 +169,42 @@ export default class CreateWebhookPage extends Vue {
         ],
         query: [
           {
-            required: this.willExecuteGraphQL,
+            required: queryRequired,
             message: $t('validationMessages.required', ['GraphQL Query']),
-            trigger: 'blur',
+            trigger: 'change',
           },
         ],
       },
     };
+  }
+
+  public async submit(): Promise<void> {
+    try {
+      await this.formRef.validate();
+
+      const options = this.willExecuteGraphQL
+        ? this.form.options
+        : { listeners: this.form.options.listeners };
+
+      await this.$store.dispatch(`${webhook.namespace}/createWebhook`, {
+        ...this.form,
+        options: { ...options },
+      });
+
+      this.$message({
+        message: 'Webhook created successfully',
+        type: 'success',
+      });
+
+      this.$router.push('/settings/webhooks');
+    } catch (err) {
+      console.log(err);
+      this.$message({
+        message:
+          'Unable to create webhook, please ensure that the configuration is correct and try again.',
+        type: 'warning',
+      });
+    }
   }
 
   @Watch('willExecuteGraphQL', { immediate: true })
@@ -163,12 +213,24 @@ export default class CreateWebhookPage extends Vue {
       this.form.options.query = '';
 
       this.$nextTick(() => {
-        CodeMirror.fromTextArea(this.graphqlEditor.getInput() as HTMLTextAreaElement, {
-          mode: 'graphql',
-          theme: 'nord',
-          tabSize: 2,
-          lineNumbers: true,
-          lineWrapping: true,
+        const editor = CodeMirror.fromTextArea(
+          this.graphqlEditor.getInput() as HTMLTextAreaElement,
+          {
+            mode: 'graphql',
+            theme: 'nord',
+            tabSize: 2,
+            lineNumbers: true,
+            lineWrapping: true,
+          },
+        );
+
+        editor.on('change', cm => {
+          this.form.options.query = cm.getValue();
+        });
+
+        editor.on('blur', _ => {
+          this.graphqlEditor.focus();
+          this.graphqlEditor.blur();
         });
       });
     } else {
@@ -182,14 +244,21 @@ export default class CreateWebhookPage extends Vue {
 }
 </script>
 
-<style>
+<style lang="scss">
 .dockite-create-webhook-page {
   padding: 1rem;
   background: #ffffff;
 }
 
+.el-form-item.is-error {
+  .CodeMirror {
+    border: 1px solid #f56c6c;
+  }
+}
+
 .CodeMirror {
   line-height: normal;
   padding: 0.5rem 0;
+  margin-bottom: 0.25rem;
 }
 </style>

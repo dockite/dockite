@@ -120,3 +120,15 @@ export type FindWebhookCallsResultItem = WebhookCall;
 export interface FindWebhookCallsQueryResponse {
   findWebhookCalls: ManyResultsResponse<FindWebhookCallsResultItem>;
 }
+
+export interface CreateWebhookMutationResponse {
+  createWebhook: Webhook;
+}
+
+export interface DeleteWebhookMutationResponse {
+  removeWebhook: boolean;
+}
+
+export interface UpdateWebhookMutationResponse {
+  updateWebhook: Webhook;
+}

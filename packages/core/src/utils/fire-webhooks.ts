@@ -2,25 +2,22 @@ import { WebhookAction } from '@dockite/types';
 import { getRepository, InsertResult } from 'typeorm';
 import Axios, { Method, AxiosError, AxiosResponse } from 'axios';
 import { graphql } from 'graphql';
+import debug from 'debug';
 
 import { Webhook, WebhookCall } from '../entities';
 import { SchemaStore } from '../server';
 
-const queryString = `
-  EXISTS(
-    SELECT 1
-    FROM jsonb_array_elements_text(webhook.options -> 'actions') as actions
-    WHERE actions = :action
-  )
-  `
-  .replace(/\s{2}/g, ' ')
-  .replace(/\n/g, '');
+const log = debug('dockite:core:webhooks');
 
 export const fireWebhooks = async (entity: object, action: WebhookAction): Promise<void> => {
   const webhookRepository = getRepository(Webhook);
   const webhookCallRepository = getRepository(WebhookCall);
 
-  const qb = webhookRepository.createQueryBuilder('webhook').where(queryString, { action });
+  log(`firing webhooks for: ${action}`);
+
+  const qb = webhookRepository
+    .createQueryBuilder('webhook')
+    .where(`webhook.options -> 'listeners' ? :action`, { action });
 
   const webhooks = await qb.getMany();
 
@@ -44,6 +41,7 @@ export const fireWebhooks = async (entity: object, action: WebhookAction): Promi
                 response: { headers: response.headers, data: response.data },
                 status: response.status,
                 success: true,
+                webhookId: webhook.id,
               });
             },
             (error: AxiosError) => {
@@ -56,6 +54,7 @@ export const fireWebhooks = async (entity: object, action: WebhookAction): Promi
                 },
                 status: error.response?.status ?? 500,
                 success: false,
+                webhookId: webhook.id,
               });
             },
           );
@@ -81,6 +80,7 @@ export const fireWebhooks = async (entity: object, action: WebhookAction): Promi
                     response: { headers: response.headers, data: response.data },
                     status: response.status,
                     success: true,
+                    webhookId: webhook.id,
                   });
                 },
                 (error: AxiosError) => {
@@ -94,6 +94,7 @@ export const fireWebhooks = async (entity: object, action: WebhookAction): Promi
                     },
                     status: error.response?.status ?? 500,
                     success: false,
+                    webhookId: webhook.id,
                   });
                 },
               ),
