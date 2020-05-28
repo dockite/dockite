@@ -41,6 +41,7 @@
       title="Webhook Call - Raw Details"
       custom-class="dockite-dialog--webhook-call"
       :visible="webhookCallToDisplay !== null"
+      :destroy-on-close="true"
       @close="webhookCallToDisplay = null"
     >
       <textarea
