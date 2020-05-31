@@ -6,6 +6,7 @@
     <div v-if="ready" class="create-schema-document-page">
       <el-form
         ref="formEl"
+        :validate-on-rule-change="false"
         label-position="top"
         :model="form"
         :rules="formRules"
@@ -43,6 +44,7 @@
 <script lang="ts">
 import { Schema, Field } from '@dockite/types';
 import { Form } from 'element-ui';
+import { sortBy } from 'lodash';
 import { Component, Vue, Watch, Ref } from 'nuxt-property-decorator';
 import { Fragment } from 'vue-fragment';
 
@@ -110,7 +112,9 @@ export default class CreateSchemaDocumentPage extends Vue {
   }
 
   public getFieldsByGroupName(name: string): Field[] {
-    return this.fields.filter(field => this.groups[name].includes(field.name));
+    const filteredFields = this.fields.filter(field => this.groups[name].includes(field.name));
+
+    return sortBy(filteredFields, [i => this.groups[name].indexOf(i.name)]);
   }
 
   public getGroupNameFromFieldName(name: string): string {

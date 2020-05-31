@@ -1,34 +1,87 @@
 <template>
-  <fragment>
+  <div>
     <el-form-item label="Required">
       <el-switch v-model="settings.required" />
     </el-form-item>
     <el-form-item label="Schema Types">
       <el-select
         v-model="schemaIds"
-        mode="multiple"
+        multiple
+        filterable
         style="width: 100%"
         placeholder="Select the Schema's that documents can be reference"
       >
-        <el-select-option
+        <el-option
           v-for="schema in allSchemas.results"
           :key="schema.name"
-        >
-          {{ schema.name }}
-        </el-select-option>
+          :label="schema.name"
+          :value="schema.id"
+        />
       </el-select>
     </el-form-item>
-  </fragment>
+  </div>
 </template>
 
-<script>
+<script lang="ts">
+import { Component, Prop, Vue } from 'vue-property-decorator';
 import { Fragment } from 'vue-fragment';
-import { find } from 'lodash';
 import gql from 'graphql-tag';
+import { Schema } from '@dockite/types';
 
-export default {
-  apollo: {
-    allSchemas: {
+interface Settings {
+  required: boolean;
+  schemaIds: string[];
+}
+
+interface SchemaResults {
+  results: Schema[];
+}
+
+@Component({
+  name: 'ReferenceFieldSettingsComponent',
+  components: {
+    Fragment,
+  },
+})
+export default class ReferenceFieldSettingsComponent extends Vue {
+  @Prop({ required: true, type: Object })
+  readonly value!: any;
+
+  @Prop({ required: true, type: Object })
+  readonly rules!: object;
+
+  public allSchemas: SchemaResults = { results: [] };
+
+  get settings(): Settings {
+    return this.value;
+  }
+
+  set settings(value: Settings) {
+    this.$emit('input', value);
+  }
+
+  get schemaIds(): string[] {
+    if (!this.settings.schemaIds) {
+      return [];
+    }
+
+    return this.settings.schemaIds;
+  }
+
+  set schemaIds(value: string[]) {
+    this.settings = {
+      ...this.settings,
+      schemaIds: value,
+    };
+  }
+
+  async mounted(): Promise<void> {
+    this.settings = {
+      required: false,
+      schemaIds: [],
+    };
+
+    const { data } = await this.$apolloClient.query<{allSchemas: SchemaResults}>({
       query: gql`
         query {
           allSchemas {
@@ -39,71 +92,11 @@ export default {
           }
         }
       `,
-    },
-  },
+    });
 
-  components: {
-    Fragment,
-  },
-
-  props: {
-    value: {
-      type: Object,
-      required: true,
-    },
-
-    rules: {
-      type: Object,
-      required: true,
-    },
-
-    apolloClient: {
-      type: Object,
-      required: true,
-    },
-  },
-
-  data() {
-    return {
-      allSchemas: { results: [] },
-    };
-  },
-
-  computed: {
-    settings: {
-      get() {
-        return this.value;
-      },
-      set(value) {
-        this.$emit('input', value);
-      },
-    },
-
-    schemaIds: {
-      get() {
-        if (!this.settings.schemaIds) {
-          return [];
-        }
-
-        return this.settings.schemaIds.map(
-          (x) => find(this.allSchemas.results, (s) => s.id === x).name,
-        );
-      },
-      set(value) {
-        this.settings.schemaIds = value.map(
-          (x) => find(this.allSchemas.results, (s) => s.name === x).id,
-        );
-      },
-    },
-  },
-
-  mounted() {
-    this.settings = {
-      required: false,
-      schemaIds: [],
-    };
-  },
-};
+    this.allSchemas = data.allSchemas;
+  }
+}
 </script>
 
 <style></style>

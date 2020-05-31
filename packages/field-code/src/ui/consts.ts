@@ -65,7 +65,7 @@ export const includes = [
   'yaml',
 ];
 
-export const mimeMap = {
+export const mimeMap: Record<string, string> = {
   C: 'text/x-csrc',
   'C#': 'text/x-csharp',
   'C++': 'text/x-c++src',

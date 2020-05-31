@@ -8,12 +8,7 @@
     ]
   ],
   "plugins": [
-    [
-      "import",
-      {
-        "libraryName": "ant-design-vue",
-        // "style": "css"
-      }
-    ]
+    ["@babel/proposal-decorators", { "legacy": true }],
+    ["@babel/proposal-class-properties", { "loose": true }]
   ]
 }
