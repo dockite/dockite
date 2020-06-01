@@ -1,3 +1,5 @@
+import 'reflect-metadata';
+
 import { registerField } from '@dockite/field';
 
 import Input from './Input.vue';

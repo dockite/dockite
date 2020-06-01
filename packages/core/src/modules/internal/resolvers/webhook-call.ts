@@ -72,6 +72,35 @@ export class WebhookCallResolver {
   }
 
   @Authenticated()
+  @Query(_returns => ManyWebhookCalls)
+  async findWebhookCalls(
+    @Arg('page', _type => Int, { defaultValue: 1 })
+    page: number,
+    @Arg('perPage', _type => Int, { defaultValue: 20 })
+    perPage: number,
+    @Arg('webhookId', _type => String)
+    webhookId: string,
+  ): Promise<ManyWebhookCalls> {
+    const repository = getRepository(WebhookCall);
+
+    const [results, totalItems] = await repository.findAndCount({
+      where: { webhookId },
+      take: perPage,
+      skip: perPage * (page - 1),
+    });
+
+    const totalPages = Math.ceil(totalItems / perPage);
+
+    return {
+      results,
+      totalItems,
+      currentPage: page,
+      hasNextPage: page < totalPages,
+      totalPages,
+    };
+  }
+
+  @Authenticated()
   @Mutation(_returns => Boolean)
   async removeWebhookCall(@Arg('id') id: string): Promise<boolean> {
     const repository = getRepository(WebhookCall);

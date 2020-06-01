@@ -1,0 +1,17 @@
+query FindDocumentsBySchemaId($id: String!, $page: Int!) {
+  findDocuments(schemaId: $id, page: $page) {
+    results {
+      id
+      locale
+      data
+      publishedAt
+      createdAt
+      updatedAt
+      releaseId
+    }
+    totalItems
+    currentPage
+    totalPages
+    hasNextPage
+  }
+}

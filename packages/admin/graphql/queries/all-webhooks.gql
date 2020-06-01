@@ -1,0 +1,17 @@
+query AllWebhooks {
+  allWebhooks {
+    results {
+      id
+      name
+      url
+      method
+      options
+      createdAt
+      updatedAt
+    }
+    totalItems
+    currentPage
+    totalPages
+    hasNextPage
+  }
+}

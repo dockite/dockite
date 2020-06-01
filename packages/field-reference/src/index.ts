@@ -8,6 +8,9 @@ import {
   GraphQLString,
   GraphQLUnionType,
 } from 'graphql';
+import { startCase } from 'lodash';
+
+const graphqlCase = (value: string): string => startCase(value).replace(/\s/g, '');
 
 const DockiteFieldReferenceInputType = new GraphQLInputObjectType({
   name: 'ReferenceFieldInput',
@@ -56,6 +59,9 @@ export class DockiteFieldReference extends DockiteField {
     return new GraphQLUnionType({
       name: `${this.schemaField.name}_Union`,
       types: unionTypes as GraphQLObjectType[],
+      resolveType(obj: {schemaName: string}) {
+        return graphqlCase(obj.schemaName);
+      },
     });
   }
 
@@ -63,6 +69,8 @@ export class DockiteFieldReference extends DockiteField {
     if (!value) {
       return (null as any) as T;
     }
+
+    console.log('asd', value);
 
     const criteria: { id: string; schemaId: string } = value;
 
@@ -72,6 +80,8 @@ export class DockiteFieldReference extends DockiteField {
       .andWhere('schema.id = :schemaId', { schemaId: criteria.schemaId })
       .getOne();
 
-    return (document.data as any) as T;
+    console.log(document);
+
+    return ({ id: document.id, schemaName: document.schema.name, ...document.data } as any) as T;
   }
 }

@@ -20,10 +20,6 @@ module.exports = {
     filename: 'index.js',
     path: path.resolve(cwd, 'lib', 'ui'),
   },
-  externals: {
-    vue: 'Vue',
-    'ant-design-vue': 'antDesignVue',
-  },
   module: {
     rules: [
       {
@@ -39,6 +35,11 @@ module.exports = {
         loader: 'ts-loader',
         options: {
           appendTsSuffixTo: [/\.vue$/],
+          compilerOptions: {
+            module: 'esnext',
+            target: 'ES6',
+            moduleResolution: 'node',
+          },
         },
       },
       {
@@ -46,9 +47,6 @@ module.exports = {
         include: [path.join(cwd, 'src')],
         exclude: /node_modules/,
         loader: 'babel-loader',
-        options: {
-          presets: ['@babel/preset-env'],
-        },
       },
       {
         test: /\.(s|post)?css$/,
@@ -69,6 +67,9 @@ module.exports = {
         sideEffects: true,
       },
     ],
+  },
+  externals: {
+    vue: 'Vue',
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.mjs', '.js', '.jsx', '.vue', '.json', '.wasm'],

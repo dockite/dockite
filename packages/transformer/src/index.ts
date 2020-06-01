@@ -1,22 +1,22 @@
-import { GlobalContext, Field, Document, Schema, FindManyResult } from '@dockite/types';
+import { Document, Field, FindManyResult, GlobalContext, Schema } from '@dockite/types';
 import debug from 'debug';
 import {
+  GraphQLBoolean,
+  GraphQLFieldConfig,
   GraphQLFieldConfigMap,
   GraphQLInt,
   GraphQLList,
   GraphQLObjectType,
+  GraphQLSchema,
   GraphQLString,
   Source,
-  GraphQLFieldConfig,
-  GraphQLSchema,
-  GraphQLBoolean,
 } from 'graphql';
-import { camelCase, startCase } from 'lodash';
+import { startCase } from 'lodash';
 import { Repository } from 'typeorm';
 
 const log = debug('dockite:transformer');
 
-const pascalCase = (value: string): string => startCase(value).replace(' ', '');
+const graphqlCase = (value: string): string => startCase(value).replace(/\s/g, '');
 
 interface FieldConfig<Source, Context> {
   name: string;
@@ -47,7 +47,7 @@ const createObjectType = async (
         ]);
 
         return {
-          name: field.name,
+          name: String(field.name),
           config: {
             type: outputType,
             resolve: async (root: any, args, context): Promise<any> => {
@@ -68,7 +68,7 @@ const createObjectType = async (
     // Then add all non-null fields
     fieldsMap.forEach(field => {
       if (field.config !== null) {
-        typeFields[field.name] = field.config;
+        typeFields[String(field.name)] = field.config;
       }
     });
   };
@@ -77,7 +77,7 @@ const createObjectType = async (
   const payload = {
     fieldResolver,
     object: new GraphQLObjectType({
-      name: entity.name,
+      name: graphqlCase(entity.name),
       fields: typeFields,
     }),
   };
@@ -90,11 +90,11 @@ export const createQueriesForEntity = async <T extends Document>(
   repository: Repository<T>,
   type: GraphQLObjectType,
 ): Promise<GraphQLFieldConfigMap<Source, GlobalContext>> => {
-  const allQuery = camelCase(`all${entity.name}`);
-  const getQuery = camelCase(`get${entity.name}`);
+  const allQuery = `all${graphqlCase(entity.name)}`;
+  const getQuery = `get${graphqlCase(entity.name)}`;
 
   const findManyObjectType = new GraphQLObjectType({
-    name: `Many${pascalCase(entity.name)}`,
+    name: `Many${graphqlCase(entity.name)}`,
     fields: {
       results: { type: new GraphQLList(type) },
       totalItems: { type: GraphQLInt },

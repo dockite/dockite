@@ -1,0 +1,42 @@
+
+$--color-primary: #2b6cb0;
+$--font-path: '~element-ui/lib/theme-chalk/fonts';
+
+@import '~element-ui/packages/theme-chalk/src/reset';
+@import '~element-ui/packages/theme-chalk/src/index';
+
+body {
+  background: #eeeeee;
+}
+
+$breakpoints: (
+  'sm': 640px,
+  'md': 768px,
+  'lg': 1024px,
+  'xl': 1280px
+);
+
+@each $size, $value in $breakpoints {
+  .dockite-container--#{$size} {
+    width: 100%;
+    max-width: $value;
+    margin: 0 auto;
+  }
+}
+
+
+pre.dockite-data--raw {
+  background: #eeeeee;
+  border-radius: 4px;
+  border: 1px solid darken(#eeeeee, 15%);
+  max-height: 400px;
+  overflow: auto;
+  padding: 1rem;
+}
+
+.el-form-item__description {
+  color: rgba(0, 0, 0, 0.66);
+  font-size: 12px;
+  line-height: 1;
+  padding-top: 4px;
+}

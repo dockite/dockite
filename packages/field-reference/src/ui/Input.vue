@@ -1,12 +1,12 @@
 <template>
-  <a-form-model-item
+  <el-form-item
     :label="fieldConfig.title"
-    :colon="true"
+    class="dockite-field-reference"
     :prop="fieldConfig.name"
   >
     <div
       v-if="fieldData"
-      class="dockite-field reference active-reference"
+      class="active-reference"
     >
       <div>
         <span>{{ schemaName }}</span>
@@ -21,206 +21,181 @@
         class="dockite-field reference remove"
         @click.prevent="handleClearReference"
       >
-        <a-icon type="close" />
+        <i class="el-icon-close" />
       </a>
     </div>
+
     <div
       v-else
       class="dockite-field reference no-reference"
     >
-      <a @click="modalVisible = true">Select a Document</a>
+      <a @click="dialogVisible = true">Select a Document</a>
+    </div>
 
-      <a-modal
-        :visible="modalVisible"
-        :footer="null"
-        title="Select a Document"
-        width="50%"
-        @cancel="modalVisible = false"
+    <el-dialog
+      custom-class="dockite-dialog--reference-selection"
+      :visible="dialogVisible"
+      title="Select a Document"
+      @close="dialogVisible = false"
+    >
+      <el-table
+        :data="documents"
+        :row-key="record => record.id"
+        :max-height="400"
       >
-        <a-table
-          :columns="tableColumns"
-          :data-source="documents"
-          :row-key="(record) => record.id"
-          :row-selection="rowSelectionConfig"
+        <el-table-column
+          label=""
+          width="25"
         >
-          <template
-            slot="data"
-            slot-scope="data"
-          >
-            <span v-if="data.name">
-              {{ data.name }}
+          <template slot-scope="scope">
+            <input
+              v-model="document"
+              type="radio"
+              :value="scope.row"
+            >
+          </template>
+        </el-table-column>
+
+        <el-table-column
+          prop="id"
+          label="ID"
+        >
+          <template slot-scope="scope">
+            {{ scope.row.id.slice(0, 8) + '...' }}
+          </template>
+        </el-table-column>
+        <el-table-column label="Identifier">
+          <template slot-scope="scope">
+            <span v-if="scope.row.data.name">
+              {{ scope.row.data.name }}
             </span>
-            <span v-else-if="data.title">
-              {{ data.title }}
+            <span v-else-if="scope.row.data.title">
+              {{ scope.row.data.title }}
             </span>
-            <span v-else-if="data.identifier">
-              {{ data.identifier }}
+            <span v-else-if="scope.row.data.identifier">
+              {{ scope.row.data.identifier }}
             </span>
-            <span v-else>
-              {{ JSON.stringify(data).substr(0, 15) }}
+            <span
+              v-else
+              :title="scope.row.data"
+            >
+              {{ JSON.stringify(scope.row.data).substr(0, 15) }}
             </span>
           </template>
-        </a-table>
-      </a-modal>
-    </div>
-    <p slot="extra">
+        </el-table-column>
+        <el-table-column
+          prop="schema.name"
+          label="Schema"
+        />
+      </el-table>
+    </el-dialog>
+
+    <div class="el-form-item__description">
       {{ fieldConfig.description }}
-    </p>
-  </a-form-model-item>
+    </div>
+  </el-form-item>
 </template>
 
-<script>
+<script lang="ts">
 import gql from 'graphql-tag';
-import { find } from 'lodash';
+import {
+  Component, Prop, Vue, Watch,
+} from 'vue-property-decorator';
+import { Field, Document, Schema } from '@dockite/types';
 
-export default {
-  name: 'ReferenceField',
+interface SchemaResults {
+  results: Schema[];
+}
 
-  apollo: {
-    allSchemas: {
-      query: gql`
-        query {
-          allSchemas {
-            results {
-              id
-              name
-            }
-          }
-        }
-      `,
-    },
-  },
+interface ValueType {
+  id: string;
+  schemaId: string;
+}
 
-  props: {
-    name: {
-      type: String,
-      required: true,
-    },
+@Component({
+  name: 'ReferenceFieldInputComponent',
+})
+export default class ReferenceFieldInputComponent extends Vue {
+  @Prop({ required: true })
+  readonly name!: string;
 
-    value: {
-      validator: (value) => typeof value === 'object' || value === null,
-      required: true,
-    },
+  @Prop({ required: true })
+  readonly value!: ValueType | null;
 
-    formData: {
-      type: Object,
-      required: true,
-    },
+  @Prop({ required: true })
+  readonly formData!: object;
 
-    fieldConfig: {
-      type: Object,
-      required: true,
-    },
-  },
+  @Prop({ required: true })
+  readonly fieldConfig!: Field;
 
-  data() {
-    return {
-      allSchemas: { results: [] },
-      documents: [],
-      document: null,
-      modalVisible: false,
-      page: 1,
-      perPage: 20,
-    };
-  },
+  public documents: Document[] = [];
 
-  computed: {
-    fieldData: {
-      get() {
-        if (this.value !== null) {
-          return this.value;
-        }
+  public document: Document | null = null;
 
-        return null;
-      },
-      set(value) {
-        this.$emit('input', value);
-      },
-    },
+  public dialogVisible = false;
 
-    schemaName() {
-      if (this.fieldData && this.allSchemas.results.length > 0) {
-        return find(this.allSchemas.results, (s) => s.id === this.fieldData.schemaId).name;
-      }
+  public page = 1;
 
+  public perPage = 20;
+
+  get fieldData(): ValueType | null {
+    return this.value;
+  }
+
+  set fieldData(value: ValueType | null) {
+    this.$emit('input', value);
+  }
+
+  get schemaName(): string | null {
+    if (!this.document) {
       return null;
-    },
+    }
 
-    documentIdentifier() {
-      if (!this.document) {
-        return 'Unknown';
-      }
+    return this.document.schema.name;
+  }
 
-      const { data } = this.document;
+  get documentIdentifier(): string {
+    if (!this.document) {
+      return 'Unknown';
+    }
 
-      if (data.name) {
-        return data.name;
-      }
+    const { data } = this.document;
 
-      if (data.title) {
-        return data.title;
-      }
+    if (data.name) {
+      return data.name;
+    }
 
-      if (data.identifier) {
-        return data.identifier;
-      }
+    if (data.title) {
+      return data.title;
+    }
 
-      return this.document.id;
-    },
+    if (data.identifier) {
+      return data.identifier;
+    }
 
-    tableColumns() {
-      return [
-        {
-          title: 'ID',
-          dataIndex: 'id',
-          key: 'id',
-          ellipsis: true,
-        },
-        {
-          title: 'Identifier',
-          dataIndex: 'data',
-          key: 'data',
-          scopedSlots: { customRender: 'data' },
-        },
-        {
-          title: 'Schema',
-          dataIndex: 'schema.name',
-          key: 'schemaName',
-        },
-        {
-          title: 'Last Updated',
-          dataIndex: 'updatedAt',
-        },
-      ];
-    },
+    return data.id;
+  }
 
-    rowSelectionConfig() {
-      return {
-        type: 'radio',
-        onSelect: (record) => {
-          this.modalVisible = false;
+  @Watch('fieldData', { immediate: true })
+  handleFieldDataChange(): void {
+    if (this.fieldData !== null) {
+      this.getDocumentById();
+    }
+  }
 
-          this.fieldData = {
-            id: record.id,
-            schemaId: record.schema.id,
-          };
-        },
+  @Watch('document', { immediate: true })
+  handleDocumentChange(): void {
+    if (this.document !== null && this.document.id !== this.fieldData?.id) {
+      this.fieldData = {
+        id: this.document.id,
+        schemaId: this.document.schema.id,
       };
-    },
-  },
 
-  watch: {
-    fieldData: {
-      immediate: true,
-      handler() {
-        if (this.fieldData) {
-          this.getDocumentById();
-        }
-      },
-    },
-  },
+      this.dialogVisible = false;
+    }
+  }
 
-  mounted() {
+  mounted(): void {
     if (!this.fieldData) {
       this.findDocuments();
     }
@@ -230,29 +205,25 @@ export default {
     if (this.fieldConfig.settings.required) rules.push(this.getRequiredRule());
 
     this.$emit('update:rules', { [this.fieldConfig.name]: rules });
-  },
+  }
 
-  methods: {
-    getRequiredRule() {
-      return {
-        required: true,
-        message: `${this.fieldConfig.title} is required`,
-        trigger: 'change',
-      };
-    },
+  public getRequiredRule(): object {
+    return {
+      required: true,
+      message: `${this.fieldConfig.title} is required`,
+      trigger: 'change',
+    };
+  }
 
-    async findDocuments() {
-      const { schemaIds } = this.fieldConfig.settings;
-      const { page } = this;
+  public async findDocuments(): Promise<void> {
+    const { schemaIds } = this.fieldConfig.settings;
+    const { page } = this;
 
-      const { data } = await this.$apollo.query({
-        query: gql`
-          query FindDocumentsBySchemaIds(
-            $schemaIds: [String!]
-            $page: Int = 1
-            $perPage: Int = 20
-          ) {
-            findDocuments(schemaIds: $schemaIds, page: $page, perPage: $perPage) {
+    const { data } = await this.$apolloClient.query({
+      query: gql`
+        query FindDocumentsBySchemaIds($schemaIds: [String!], $page: Int = 1, $perPage: Int = 20) {
+          findDocuments(schemaIds: $schemaIds, page: $page, perPage: $perPage) {
+            results {
               id
               data
               updatedAt
@@ -262,62 +233,75 @@ export default {
               }
             }
           }
-        `,
-        variables: {
-          schemaIds,
-          page,
-        },
-      });
+        }
+      `,
+      variables: {
+        schemaIds,
+        page,
+      },
+    });
 
-      this.documents = data.findDocuments;
-    },
+    this.documents = data.findDocuments.results;
+  }
 
-    async getDocumentById() {
-      const { id } = this.fieldData;
-      const { data } = await this.$apollo.query({
-        query: gql`
-          query GetReferenceDocumentById($id: String!) {
-            getDocument(id: $id) {
+  public async getDocumentById(): Promise<void> {
+    if (!this.fieldData) {
+      return;
+    }
+
+    const { id } = this.fieldData;
+
+    const { data } = await this.$apolloClient.query({
+      query: gql`
+        query GetReferenceDocumentById($id: String!) {
+          getDocument(id: $id) {
+            id
+            data
+            updatedAt
+            schema {
               id
-              data
-              updatedAt
-              schema {
-                id
-                name
-              }
+              name
             }
           }
-        `,
+        }
+      `,
 
-        variables: {
-          id,
-        },
-      });
+      variables: {
+        id,
+      },
+    });
 
-      this.document = data.getDocument;
-    },
+    this.document = data.getDocument;
+  }
 
-    handleClearReference() {
-      this.fieldData = null;
+  public handleClearReference(): void {
+    this.fieldData = null;
 
-      this.page = 1;
+    this.page = 1;
 
-      this.findDocuments();
-    },
-  },
-};
+    this.findDocuments();
+  }
+}
 </script>
 
 <style lang="scss">
-.dockite-field.reference {
-  &.active-reference {
+.dockite-field-reference {
+  .active-reference {
+    line-height: 1;
+
+    box-sizing: border-box;
+
+    * {
+      box-sizing: border-box;
+    }
+
     display: flex;
     align-items: center;
 
     width: 100%;
     padding: 1rem;
 
-    border: 1px solid #d9d9d9;
+    border: 1px solid #DCDFE6;
     border-radius: 4px;
 
     & > div {
@@ -350,15 +334,22 @@ export default {
     }
   }
 
-  &.no-reference {
+  .no-reference {
+    box-sizing: border-box;
+
+    * {
+      box-sizing: border-box;
+    }
+
     a {
-      border: 1px solid #d9d9d9;
+      border: 1px solid #DCDFE6;
       color: rgba(0, 0, 0, 0.65);
       border-radius: 4px;
       display: block;
       width: 100%;
       padding: 1rem;
       text-align: center;
+      cursor: pointer;
 
       &:hover {
         opacity: 0.75;
@@ -366,5 +357,10 @@ export default {
       }
     }
   }
+}
+
+.dockite-dialog--reference-selection {
+  width: 80%;
+  max-width: 650px;
 }
 </style>

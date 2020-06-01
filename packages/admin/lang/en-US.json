@@ -1,0 +1,27 @@
+{
+  "login": {
+    "labels": {
+      "email": "Email",
+      "password": "Password",
+      "button": "Sign in"
+    }
+  },
+  "validationMessages": {
+    "required": "{0} is required.",
+    "invalid": {
+      "email": "Provided email is invalid"
+    },
+    "min": {
+      "chars": "{0} must be at least {1} characters"
+    },
+    "max": {
+      "chars": "{0} must be no more than {1} characters"
+    }
+  },
+  "sideMenu": {
+    "home": "Home",
+    "documents": "Documents",
+    "schemas": "Schemas",
+    "webhooks": "Webhooks"
+  }
+}

@@ -1,72 +1,59 @@
 <template>
-  <a-form-model-item
+  <el-form-item
     :label="fieldConfig.title"
-    :colon="true"
     :prop="fieldConfig.name"
+    class="dockite-field-string"
   >
-    <a-input
-      v-if="!fieldConfig.settings.textarea"
-      v-model="fieldData"
-      size="large"
-    />
-    <a-textarea
+    <el-input
       v-if="fieldConfig.settings.textarea"
       v-model="fieldData"
-      size="large"
+      type="textarea"
       :auto-size="{ minRows: 3, maxRows: 5 }"
       :allow-clear="true"
     />
-    <p slot="extra">
+    <el-input
+      v-else
+      v-model="fieldData"
+    />
+    <div class="el-form-item__description">
       {{ fieldConfig.description }}
-    </p>
-  </a-form-model-item>
+    </div>
+  </el-form-item>
 </template>
 
-<script>
-import isURL from 'validator/es/lib/isURL';
+<script lang="ts">
+import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Field } from '@dockite/types';
 
-export default {
-  name: 'StringField',
+@Component({
+  name: 'StringFieldInputComponent',
+})
+export default class StringFieldInputComponent extends Vue {
+  @Prop({ required: true })
+  readonly name!: string;
 
-  props: {
-    name: {
-      type: String,
-      required: true,
-    },
-    value: {
-      validator: (value) => typeof value === 'string' || value === null,
-      required: true,
-    },
-    formData: {
-      type: Object,
-      required: true,
-    },
-    fieldConfig: {
-      type: Object,
-      required: true,
-    },
-  },
+  @Prop({ required: true })
+  readonly value!: string | null;
 
-  data() {
-    return {};
-  },
+  @Prop({ required: true })
+  readonly formData!: object;
 
-  computed: {
-    fieldData: {
-      get() {
-        if (this.value !== null) {
-          return this.value;
-        }
+  @Prop({ required: true })
+  readonly fieldConfig!: Field;
 
-        return '';
-      },
-      set(value) {
-        this.$emit('input', value);
-      },
-    },
-  },
+  get fieldData(): string {
+    if (this.value !== null) {
+      return this.value;
+    }
 
-  mounted() {
+    return '';
+  }
+
+  set fieldData(value: string) {
+    this.$emit('input', value);
+  }
+
+  mounted(): void {
     if (this.value === null) {
       this.$emit('input', '');
     }
@@ -79,48 +66,40 @@ export default {
     if (this.fieldConfig.settings.maxLen) rules.push(this.getMaxRule());
 
     this.$emit('update:rules', { [this.fieldConfig.name]: rules });
-  },
+  }
 
-  methods: {
-    getUrlSafeRule() {
-      return {
-        validator(_rule, value, callback) {
-          if (!isURL(value)) {
-            return callback(false);
-          }
+  getUrlSafeRule(): object {
+    return {
+      pattern: /^[A-Za-z0-9-_]+$/,
+      message: `${this.fieldConfig.title} must be URL Safe`,
+      trigger: 'blur',
+    };
+  }
 
-          return callback();
-        },
-        message: `${this.fieldConfig.title} must be URL Safe`,
-        trigger: 'change',
-      };
-    },
+  getRequiredRule(): object {
+    return {
+      required: true,
+      message: `${this.fieldConfig.title} is required`,
+      trigger: 'blur',
+    };
+  }
 
-    getRequiredRule() {
-      return {
-        required: true,
-        message: `${this.fieldConfig.title} is required`,
-        trigger: 'change',
-      };
-    },
+  getMinRule(): object {
+    return {
+      min: Number(this.fieldConfig.settings.minLen),
+      message: `${this.fieldConfig.title} must contain atleast ${this.fieldConfig.settings.minLen} characters.`,
+      trigger: 'blur',
+    };
+  }
 
-    getMinRule() {
-      return {
-        min: Number(this.fieldConfig.settings.minLen),
-        message: `${this.fieldConfig.title} must contain atleast ${this.fieldConfig.settings.minLen} characters.`,
-        trigger: 'change',
-      };
-    },
-
-    getMaxRule() {
-      return {
-        max: Number(this.fieldConfig.settings.maxLen),
-        message: `${this.fieldConfig.title} must contain no more than ${this.fieldConfig.settings.maxLen} characters.`,
-        trigger: 'change',
-      };
-    },
-  },
-};
+  getMaxRule(): object {
+    return {
+      max: Number(this.fieldConfig.settings.maxLen),
+      message: `${this.fieldConfig.title} must contain no more than ${this.fieldConfig.settings.maxLen} characters.`,
+      trigger: 'blur',
+    };
+  }
+}
 </script>
 
 <style></style>

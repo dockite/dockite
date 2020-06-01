@@ -1,11 +1,11 @@
 <template>
   <fragment>
-    <a-form-model-item label="Required">
-      <a-switch v-model="settings.required" />
-    </a-form-model-item>
-    <a-form-model-item label="Date only">
-      <a-switch v-model="settings.date" />
-    </a-form-model-item>
+    <el-form-item label="Required">
+      <el-switch v-model="settings.required" />
+    </el-form-item>
+    <el-form-item label="Date only">
+      <el-switch v-model="settings.date" />
+    </el-form-item>
   </fragment>
 </template>
 
@@ -41,10 +41,12 @@ export default {
   },
 
   mounted() {
-    this.settings = {
-      required: false,
-      date: false,
-    };
+    if (Object.keys(this.settings).length === 0) {
+      this.settings = {
+        required: false,
+        date: false,
+      };
+    }
   },
 };
 </script>

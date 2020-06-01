@@ -1,0 +1,19 @@
+mutation CreateField(
+  $schemaId: String!
+  $name: String!
+  $type: String!
+  $title: String!
+  $description: String!
+  $settings: JSON!
+) {
+  createField(
+    schemaId: $schemaId
+    name: $name
+    type: $type
+    title: $title
+    description: $description
+    settings: $settings
+  ) {
+    id
+  }
+}

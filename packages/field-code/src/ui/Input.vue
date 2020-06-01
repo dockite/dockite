@@ -1,125 +1,105 @@
 <template>
-  <a-form-model-item ref="field" :label="fieldConfig.title" :colon="true" :prop="fieldConfig.name">
+  <el-form-item
+    :label="fieldConfig.title"
+    :prop="fieldConfig.name"
+    class="dockite-field-code"
+  >
     <code-mirror
       ref="codemirror"
       v-model="fieldData.content"
       :options="codeMirrorOptions"
-      @blur="
-        () => {
-          $refs.field.onFieldBlur();
-        }
-      "
-      @input="
-        () => {
-          $refs.field.onFieldChange();
-        }
-      "
     />
-    <div class="dockite-field code language-selector">
+    <div class="language-selector">
       <span style="padding-right: 1rem;">Language:</span>
-      <a-select
-        show-search
-        style="max-width: 250px;"
+      <el-select
         v-model="fieldData.language"
-        :filter-option="filterSelect"
+        filterable
+        style="max-width: 250px;"
       >
-        <a-select-option v-for="lang in Object.keys(mimeMap)" :key="lang">
+        <el-option
+          v-for="lang in Object.keys(mimeMap)"
+          :key="lang"
+          :label="lang"
+          :value="lang"
+        >
           {{ lang }}
-        </a-select-option>
-      </a-select>
+        </el-option>
+      </el-select>
     </div>
-    <p slot="extra">
+    <div class="el-form-item__description">
       {{ fieldConfig.description }}
-    </p>
-  </a-form-model-item>
+    </div>
+  </el-form-item>
 </template>
 
-<script>
+<script lang="ts">
+import { Field } from '@dockite/types';
 import { codemirror as CodeMirror } from 'vue-codemirror';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 
 import 'codemirror/lib/codemirror.css';
-import 'codemirror/theme/monokai.css';
+import 'codemirror/theme/nord.css';
 
 import 'codemirror-graphql/mode';
 import 'codemirror/mode/javascript/javascript';
 
 import { includes, mimeMap } from './consts';
 
-export default {
-  name: 'CodeField',
+export interface CodeFieldPayload {
+  language: string;
+  content: string;
+}
 
+@Component({
+  name: 'CodeFieldInputComponent',
   components: {
     CodeMirror,
   },
+})
+export default class CodeFieldInputComponent extends Vue {
+  @Prop({ required: true })
+  readonly name!: string;
 
-  props: {
-    name: {
-      type: String,
-      required: true,
-    },
-    value: {
-      validator: (value) => {
-        if (value === null) {
-          return true;
-        }
+  @Prop({ required: true })
+  readonly value!: CodeFieldPayload | null;
 
-        return typeof value === 'object' &&
-          Object.keys(value).filter(key => ['language', 'content'].includes(key)).length >= 2
-      },
-      required: true,
-    },
-    formData: {
-      type: Object,
-      required: true,
-    },
-    fieldConfig: {
-      type: Object,
-      required: true,
-    },
-  },
+  @Prop({ required: true })
+  readonly formData!: object;
 
-  data() {
+  @Prop({ required: true })
+  readonly fieldConfig!: Field;
+
+  public mimeMap = mimeMap;
+
+  public includes = includes;
+
+  public modeManager = ['javascript', 'graphql'];
+
+  get codeMirrorOptions(): object {
     return {
-      mimeMap,
-      includes,
-      modeManager: ['javascript', 'graphql'],
+      tabSize: 2,
+      styleActiveLine: true,
+      lineNumbers: true,
+      lineWrapping: false,
+      line: true,
+      mode: this.mimeMap[this.fieldData.language],
+      theme: 'nord',
     };
-  },
+  }
 
-  computed: {
-    codeMirrorOptions() {
-      return {
-        tabSize: 2,
-        styleActiveLine: true,
-        lineNumbers: true,
-        lineWrapping: false,
-        line: true,
-        mode: this.mimeMap[this.fieldData.language],
-        theme: 'monokai',
-      };
-    },
+  get fieldData(): CodeFieldPayload {
+    if (this.value === null) {
+      return { language: 'Javascript', content: '' };
+    }
 
-    fieldData: {
-      get() {
-        if (this.value === null) {
-          return { language: 'Javascript', content: '' };
-        }
+    return this.value;
+  }
 
-        return this.value;
-      },
-      set(value) {
-        this.$emit('input', value);
-      },
-    },
-  },
+  set fieldData(value: CodeFieldPayload) {
+    this.$emit('input', value);
+  }
 
-  watch: {
-    currentMode() {
-      this.fieldData.language = this.currentMode;
-    },
-  },
-
-  mounted() {
+  mounted(): void {
     if (this.value === null) {
       this.$emit('input', {
         language: 'Javascript',
@@ -133,42 +113,40 @@ export default {
 
     this.$emit('update:rules', { [this.fieldConfig.name]: rules });
 
-    this.includes.forEach(include => {
+    this.includes.forEach((include) => {
       if (!this.modeManager.includes(include)) {
         const path = `${include}/${include}.js`;
-        import(/* webpackMode: "eager" */ `codemirror/mode/` + path).then(() => {
+        import(/* webpackMode: "eager" */ `codemirror/mode/${path}`).then(() => {
           this.modeManager.push(include);
         });
       }
     });
-  },
+  }
 
-  methods: {
-    getRequiredRule() {
-      return {
-        required: true,
-        message: `${this.fieldConfig.title} is required`,
-        trigger: 'change',
-      };
-    },
-
-    filterSelect(input, option) {
-      return (
-        option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
-      );
-    },
-  },
-};
+  getRequiredRule(): object {
+    return {
+      required: true,
+      message: `${this.fieldConfig.title} is required`,
+      trigger: 'change',
+    };
+  }
+}
 </script>
 
 <style lang="scss">
-.dockite-field.code {
-  &.language-selector {
+.dockite-field-code {
+  .language-selector {
     display: flex;
     align-items: center;
     justify-content: flex-end;
 
     padding-top: 0.5rem;
+  }
+
+  .CodeMirror {
+    line-height: normal;
+    padding: 0.5rem 0;
+    margin-bottom: 0.25rem;
   }
 }
 </style>

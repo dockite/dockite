@@ -1,0 +1,67 @@
+{
+  "name": "@dockite/admin",
+  "version": "1.0.0",
+  "description": "My superb Nuxt.js project",
+  "author": "Dockite",
+  "private": true,
+  "scripts": {
+    "dev": "nuxt-ts",
+    "build": "nuxt-ts build",
+    "generate": "nuxt-ts generate",
+    "start": "nuxt-ts start",
+    "lint": "eslint --ext .ts,.js,.vue --ignore-path .gitignore .",
+    "test": "jest"
+  },
+  "lint-staged": {
+    "*.{js,vue}": "yarn lint",
+    "*.{css,vue}": "stylelint"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "dependencies": {
+    "@nuxt/typescript-runtime": "^0.4.0",
+    "@nuxtjs/apollo": "^4.0.0-rc19",
+    "@nuxtjs/auth": "^4.9.1",
+    "@nuxtjs/axios": "^5.10.3",
+    "@nuxtjs/dotenv": "^1.4.0",
+    "@nuxtjs/pwa": "^3.0.0-0",
+    "@types/codemirror": "^0.0.95",
+    "@types/vfile-message": "^2.0.0",
+    "codemirror": "^5.54.0",
+    "codemirror-graphql": "^0.11.6",
+    "date-fns": "^2.13.0",
+    "element-ui": "^2.4.11",
+    "graphql-tag": "^2.10.3",
+    "lodash": "^4.17.15",
+    "normalize.css": "^8.0.1",
+    "nuxt": "^2.0.0",
+    "nuxt-i18n": "^6.11.1",
+    "nuxt-property-decorator": "^2.7.2",
+    "portal-vue": "^2.1.7",
+    "vue-fragment": "^1.5.1",
+    "webpack-inject-plugin": "^1.5.4"
+  },
+  "devDependencies": {
+    "@nuxt/typescript-build": "^0.6.0",
+    "@nuxtjs/eslint-config-typescript": "^1.0.0",
+    "@nuxtjs/eslint-module": "^1.0.0",
+    "@nuxtjs/stylelint-module": "^3.1.0",
+    "@vue/test-utils": "^1.0.0-beta.27",
+    "babel-eslint": "^10.0.1",
+    "babel-jest": "^24.1.0",
+    "eslint": "^6.1.0",
+    "eslint-config-prettier": "^6.10.0",
+    "eslint-plugin-nuxt": ">=0.4.2",
+    "eslint-plugin-prettier": "^3.1.2",
+    "husky": "^4.0.0",
+    "jest": "^24.1.0",
+    "lint-staged": "^10.0.0",
+    "prettier": "^1.19.1",
+    "stylelint": "^10.1.0",
+    "ts-jest": "^25.0.0",
+    "vue-jest": "^4.0.0-0"
+  }
+}

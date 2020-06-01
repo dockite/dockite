@@ -9,6 +9,7 @@ import {
 } from 'type-graphql';
 import { getRepository } from 'typeorm';
 import GraphQLJSON from 'graphql-type-json';
+import { omitBy } from 'lodash';
 
 import { Authenticated } from '../../../common/authorizers';
 import { Field, Document } from '../../../entities';
@@ -101,11 +102,62 @@ export class FieldResolver {
       schemaId,
     });
 
-    const savedField = await repository.save(field);
+    const [savedField, _] = await Promise.all([
+      repository.save(field),
+      getRepository(Document)
+        .createQueryBuilder()
+        .update()
+        .set({
+          data: () => `data || '{ "${field.name}": null }'`,
+        })
+        .where('schemaId = :schemaId', { schemaId: field.schemaId })
+        .andWhere('document.data ->> :fieldName IS NULL', { fieldName: field.name })
+        .execute(),
+    ]);
 
     DockiteEvents.emit('reload');
 
     return savedField;
+  }
+
+  @Authenticated()
+  @Mutation(_returns => Field)
+  async updateField(
+    @Arg('id') id: string,
+    @Arg('name', { nullable: true }) name: string,
+    @Arg('title', { nullable: true }) title: string,
+    @Arg('description', { nullable: true }) description: string,
+    @Arg('type', { nullable: true }) type: string,
+    // eslint-disable-next-line
+    @Arg('settings', _type => GraphQLJSON, {nullable: true}) settings: Record<string, any>,
+  ): Promise<Field | null> {
+    const repository = getRepository(Field);
+
+    try {
+      const field = await repository.findOneOrFail(id);
+
+      const attributes = omitBy(
+        {
+          title,
+          description,
+          type,
+          settings,
+        },
+        x => x === null,
+      );
+
+      const savedField = await repository.save({
+        ...field,
+        ...attributes,
+      });
+
+      DockiteEvents.emit('reload');
+
+      return savedField;
+    } catch (err) {
+      console.log(err);
+      return null;
+    }
   }
 
   /**

@@ -1,7 +1,7 @@
 <template>
-  <a-form-model-item label="Required">
-    <a-switch v-model="settings.required" />
-  </a-form-model-item>
+  <el-form-item label="Required">
+    <el-switch v-model="settings.required" />
+  </el-form-item>
 </template>
 
 <script>
@@ -30,9 +30,11 @@ export default {
   },
 
   mounted() {
-    this.settings = {
-      required: false,
-    };
+    if (Object.keys(this.settings).length === 0) {
+      this.settings = {
+        required: false,
+      };
+    }
   },
 };
 </script>

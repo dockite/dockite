@@ -1,0 +1,5 @@
+mutation UpdateSchemaMutation($id: String!, $groups: JSON!, $settings: JSON!) {
+  updateSchema(id: $id, groups: $groups, settings: $settings) {
+    id
+  }
+}

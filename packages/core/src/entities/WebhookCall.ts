@@ -4,7 +4,7 @@ import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } f
 
 import { Webhook } from './Webhook';
 
-type JSONValue = string | number | boolean | JSONObject | JSONArray;
+type JSONValue = string | number | boolean | null | JSONObject | JSONArray;
 
 interface JSONObject {
   [x: string]: JSONValue;

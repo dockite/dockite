@@ -1,62 +1,52 @@
 <template>
-  <a-form-model-item
+  <el-form-item
     :label="fieldConfig.title"
-    :colon="true"
     :prop="fieldConfig.name"
+    class="dockite-field-boolean"
   >
-    <a-switch
+    <el-switch
       v-model="fieldData"
       size="large"
     />
-    <p slot="extra">
+    <div class="el-form-item__description">
       {{ fieldConfig.description }}
-    </p>
-  </a-form-model-item>
+    </div>
+  </el-form-item>
 </template>
 
-<script>
-export default {
-  name: 'BooleanField',
+<script lang="ts">
+import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Field } from '@dockite/types';
 
-  props: {
-    name: {
-      type: String,
-      required: true,
-    },
-    value: {
-      validator: (value) => typeof value === 'boolean' || value === null,
-      required: true,
-    },
-    formData: {
-      type: Object,
-      required: true,
-    },
-    fieldConfig: {
-      type: Object,
-      required: true,
-    },
-  },
+@Component({
+  name: 'BooleanFieldInputComponent',
+})
+export default class BooleanFieldInputComponent extends Vue {
+  @Prop({ required: true })
+  readonly name!: string;
 
-  data() {
-    return {};
-  },
+  @Prop({ required: true })
+  readonly value!: boolean | null;
 
-  computed: {
-    fieldData: {
-      get() {
-        if (this.value !== null) {
-          return this.value;
-        }
+  @Prop({ required: true })
+  readonly formData!: object;
 
-        return false;
-      },
-      set(value) {
-        this.$emit('input', value);
-      },
-    },
-  },
+  @Prop({ required: true })
+  readonly fieldConfig!: Field;
 
-  mounted() {
+  get fieldData(): boolean {
+    if (this.value !== null) {
+      return this.value;
+    }
+
+    return false;
+  }
+
+  set fieldData(value: boolean) {
+    this.$emit('input', value);
+  }
+
+  mounted(): void {
     if (this.value === null) {
       this.$emit('input', false);
     }
@@ -66,18 +56,16 @@ export default {
     if (this.fieldConfig.settings.required) rules.push(this.getRequiredRule());
 
     this.$emit('update:rules', { [this.fieldConfig.name]: rules });
-  },
+  }
 
-  methods: {
-    getRequiredRule() {
-      return {
-        required: true,
-        message: `${this.fieldConfig.title} is required`,
-        trigger: 'change',
-      };
-    },
-  },
-};
+  getRequiredRule(): object {
+    return {
+      required: true,
+      message: `${this.fieldConfig.title} is required`,
+      trigger: 'change',
+    };
+  }
+}
 </script>
 
 <style></style>

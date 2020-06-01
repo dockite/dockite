@@ -1,0 +1,5 @@
+mutation CreateDocumentMutation($schemaId: String!, $data: JSON!, $locale: String!) {
+  createDocument(schemaId: $schemaId, data: $data, locale: $locale) {
+    id
+  }
+}
