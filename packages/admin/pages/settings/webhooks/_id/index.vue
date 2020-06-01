@@ -4,7 +4,7 @@
       <h2>All Webhooks</h2>
     </portal>
 
-    <div class="all-documents-page">
+    <div class="all-webhook-calls-page">
       <el-table :data="findWebhookCallsByWebhookId.results" style="width: 100%">
         <el-table-column prop="id" label="ID">
           <template slot-scope="scope">
@@ -27,14 +27,20 @@
         </el-table-column>
       </el-table>
 
-      <el-pagination
-        class="dockite-element--pagination"
-        :current-page="currentPage"
-        :page-count="totalPages"
-        :pager-count="5"
-        hide-on-single-page
-        layout="prev, pager, next"
-      />
+      <el-row type="flex" justify="space-between">
+        <span />
+        <el-pagination
+          :current-page="currentPage"
+          class="dockite-element--pagination"
+          :page-count="totalPages"
+          :pager-count="5"
+          :page-size="20"
+          :total="totalItems"
+          hide-on-single-page
+          layout="total, prev, pager, next"
+          @current-change="handlePageChange"
+        />
+      </el-row>
     </div>
 
     <el-dialog
@@ -70,7 +76,7 @@ import * as data from '~/store/data';
     Fragment,
   },
 })
-export default class AllDocumentsPage extends Vue {
+export default class WebhookCallsPage extends Vue {
   public showWebhookCallDetail = false;
 
   public webhookCallToDisplay: null | WebhookCall = null;
@@ -104,12 +110,27 @@ export default class AllDocumentsPage extends Vue {
     return this.findWebhookCallsByWebhookId.totalPages;
   }
 
-  public fetchWebhookCalls(): void {
-    this.$store.dispatch(`${data.namespace}/fetchFindWebhookCallsByWebhookId`, this.webhookId);
+  get totalItems(): number {
+    if (!this.findWebhookCallsByWebhookId.totalItems) {
+      return 1;
+    }
+
+    return this.findWebhookCallsByWebhookId.totalItems;
+  }
+
+  public fetchWebhookCalls(page = 1): void {
+    this.$store.dispatch(`${data.namespace}/fetchFindWebhookCallsByWebhookId`, {
+      webhookId: this.webhookId,
+      page,
+    });
   }
 
   public cellValueFromNow(_row: never, _column: never, cellValue: string, _index: never): string {
     return formatDistanceToNow(new Date(cellValue)) + ' ago';
+  }
+
+  public handlePageChange(newPage: number): void {
+    this.fetchWebhookCalls(newPage);
   }
 
   @Watch('webhookCallToDisplay', { immediate: true })
@@ -135,17 +156,12 @@ export default class AllDocumentsPage extends Vue {
 </script>
 
 <style lang="scss">
+.all-webhook-calls-page {
+  background: #ffffff;
+}
+
 .dockite-element--pagination {
-  /* background: #ffffff; */
-  background: transparent;
-
-  li {
-    background: transparent;
-  }
-
-  button {
-    background: transparent;
-  }
+  padding: 1rem;
 }
 
 .dockite-dialog--webhook-call {

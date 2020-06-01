@@ -11,6 +11,7 @@
         <el-form
           v-if="field !== null"
           ref="form"
+          :validate-on-rule-change="false"
           :model="field"
           :rules="editFieldFormRules"
           label-position="top"

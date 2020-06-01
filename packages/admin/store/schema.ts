@@ -9,13 +9,14 @@ import {
   UpdateSchemaMutationResponse,
   UnpersistedField,
   DeleteFieldMutationResponse,
+  DeleteSchemaMutationResponse,
 } from '~/common/types';
 import CreateFieldMutation from '~/graphql/mutations/create-field.gql';
 import CreateSchemaMutation from '~/graphql/mutations/create-schema.gql';
 import DeleteFieldMutation from '~/graphql/mutations/delete-field.gql';
+import DeleteSchemaMutation from '~/graphql/mutations/delete-schema.gql';
 import UpdateFieldMutation from '~/graphql/mutations/update-field.gql';
 import UpdateSchemaMutation from '~/graphql/mutations/update-schema.gql';
-// import DeleteSchemaMutation from '~/graphql/mutations/delete-schema.gql';
 import AllSchemasQuery from '~/graphql/queries/all-schemas.gql';
 import GetSchemaWithFieldsQuery from '~/graphql/queries/get-schema-with-fields.gql';
 import * as data from '~/store/data';
@@ -144,6 +145,20 @@ export const actions: ActionTree<SchemaState, RootState> = {
     await Promise.all([...deleteFieldsPromises, ...updateFieldsPromises, ...createFieldsPromises]);
 
     this.commit(`${data.namespace}/removeSchemaWithFields`, payload.schema.id);
+  },
+
+  async deleteSchema(_, payload: string) {
+    const { data } = await this.$apolloClient.mutate<DeleteSchemaMutationResponse>({
+      mutation: DeleteSchemaMutation,
+      variables: {
+        id: payload,
+      },
+      refetchQueries: [{ query: AllSchemasQuery }],
+    });
+
+    if (!data?.removeSchema) {
+      throw new Error('Unable to delete schema');
+    }
   },
 };
 

@@ -68,7 +68,7 @@ import * as data from '~/store/data';
     Fragment,
   },
 })
-export default class AllDocumentsPage extends Vue {
+export default class AllWebhooksPage extends Vue {
   get allWebhooks(): ManyResultSet<AllWebhooksResultItem> {
     const state: data.DataState = this.$store.state[data.namespace];
 

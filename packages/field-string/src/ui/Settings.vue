@@ -56,13 +56,15 @@ export default {
   },
 
   mounted() {
-    this.settings = {
-      maxLen: null,
-      minLen: null,
-      textarea: false,
-      required: false,
-      urlSafe: false,
-    };
+    if (Object.keys(this.settings).length === 0) {
+      this.settings = {
+        maxLen: null,
+        minLen: null,
+        textarea: false,
+        required: false,
+        urlSafe: false,
+      };
+    }
   },
 };
 </script>

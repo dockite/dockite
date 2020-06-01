@@ -78,6 +78,10 @@ export interface UpdateSchemaMutationResponse {
   };
 }
 
+export interface DeleteSchemaMutationResponse {
+  removeSchema: boolean;
+}
+
 export interface CreateFieldMutationResponse {
   createField: {
     id: string;

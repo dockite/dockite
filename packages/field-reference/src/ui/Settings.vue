@@ -75,12 +75,7 @@ export default class ReferenceFieldSettingsComponent extends Vue {
     };
   }
 
-  async mounted(): Promise<void> {
-    this.settings = {
-      required: false,
-      schemaIds: [],
-    };
-
+  async fetchAllSchemas(): Promise<void> {
     const { data } = await this.$apolloClient.query<{allSchemas: SchemaResults}>({
       query: gql`
         query {
@@ -95,6 +90,17 @@ export default class ReferenceFieldSettingsComponent extends Vue {
     });
 
     this.allSchemas = data.allSchemas;
+  }
+
+  mounted(): void {
+    if (Object.keys(this.settings).length === 0) {
+      this.settings = {
+        required: false,
+        schemaIds: [],
+      };
+    }
+
+    this.fetchAllSchemas();
   }
 }
 </script>

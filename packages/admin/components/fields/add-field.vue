@@ -16,6 +16,7 @@
           v-if="fieldSelected"
           ref="form"
           :model="field"
+          :validate-on-rule-change="false"
           :rules="addFieldFormRules"
           label-position="top"
           @submit.native.prevent="handleAddField"

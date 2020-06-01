@@ -116,9 +116,10 @@ export const actions: ActionTree<DataState, RootState> = {
     commit('setAllSchemas', data);
   },
 
-  async fetchAllDocumentsWithSchema({ commit }): Promise<void> {
+  async fetchAllDocumentsWithSchema({ commit }, payload = 1): Promise<void> {
     const { data } = await this.$apolloClient.query<AllDocumentsWithSchemaQueryResponse>({
       query: AllDocumentsWithSchemaQuery,
+      variables: { page: payload },
     });
 
     if (!data.allDocuments) {
@@ -168,10 +169,13 @@ export const actions: ActionTree<DataState, RootState> = {
     commit('setSchemaWithFields', data);
   },
 
-  async fetchFindDocumentsBySchemaId({ commit }, payload: string): Promise<void> {
+  async fetchFindDocumentsBySchemaId(
+    { commit },
+    payload: { schemaId: string; page?: number },
+  ): Promise<void> {
     const { data } = await this.$apolloClient.query<FindDocumentsQueryResponse>({
       query: FindDocumentsBySchemaIdQuery,
-      variables: { id: payload },
+      variables: { id: payload.schemaId, page: payload.page ?? 1 },
     });
 
     if (!data.findDocuments) {
@@ -205,10 +209,13 @@ export const actions: ActionTree<DataState, RootState> = {
     commit('setAllWebhooks', data);
   },
 
-  async fetchFindWebhookCallsByWebhookId({ commit }, payload: string): Promise<void> {
+  async fetchFindWebhookCallsByWebhookId(
+    { commit },
+    payload: { webhookId: string; page?: number },
+  ): Promise<void> {
     const { data } = await this.$apolloClient.query<FindWebhookCallsQueryResponse>({
       query: FindWebhookCallsByWebhookIdQuery,
-      variables: { id: payload },
+      variables: { id: payload.webhookId, page: payload.page ?? 1 },
     });
 
     if (!data.findWebhookCalls) {

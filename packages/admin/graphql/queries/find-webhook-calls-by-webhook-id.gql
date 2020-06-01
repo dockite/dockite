@@ -1,5 +1,5 @@
-query FindWebhookCalls($id: String!) {
-  findWebhookCalls(webhookId: $id) {
+query FindWebhookCalls($id: String!, $page: Int!) {
+  findWebhookCalls(webhookId: $id, page: $page) {
     results {
       id
       success

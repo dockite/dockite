@@ -43,7 +43,7 @@ import 'codemirror/theme/nord.css';
 import 'codemirror-graphql/mode';
 import 'codemirror/mode/javascript/javascript';
 
-import { includes, mimeMap } from './consts.ts';
+import { includes, mimeMap } from './consts';
 
 export interface CodeFieldPayload {
   language: string;

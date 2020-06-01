@@ -35,7 +35,7 @@
       </el-row>
     </portal>
 
-    <div class="all-documents-page">
+    <div class="all-schema-documents-page">
       <el-table :data="findDocumentsBySchemaId.results" style="width: 100%">
         <el-table-column prop="id" label="ID">
           <template slot-scope="scope">
@@ -56,7 +56,7 @@
               {{ scope.row.data.identifier }}
             </span>
             <span v-else :title="JSON.stringify(scope.row.data)">
-              {{ JSON.stringify(scope.row.data).substr(0, 15) }}
+              {{ JSON.stringify(scope.row.data).slice(0, 15) + '...' }}
             </span>
           </template>
         </el-table-column>
@@ -73,14 +73,21 @@
           </template>
         </el-table-column>
       </el-table>
-      <el-pagination
-        class="dockite-element--pagination"
-        :current-page="currentPage"
-        :page-count="totalPages"
-        :pager-count="5"
-        hide-on-single-page
-        layout="prev, pager, next"
-      />
+
+      <el-row type="flex" justify="space-between">
+        <span />
+        <el-pagination
+          :current-page="currentPage"
+          class="dockite-element--pagination"
+          :page-count="totalPages"
+          :pager-count="5"
+          :page-size="20"
+          :total="totalItems"
+          hide-on-single-page
+          layout="total, prev, pager, next"
+          @current-change="handlePageChange"
+        />
+      </el-row>
     </div>
   </fragment>
 </template>
@@ -130,12 +137,27 @@ export default class SchemaDocumentsPage extends Vue {
     return this.findDocumentsBySchemaId.totalPages;
   }
 
-  public fetchFindDocumentsBySchemaId(): void {
-    this.$store.dispatch(`${data.namespace}/fetchFindDocumentsBySchemaId`, this.schemaId);
+  get totalItems(): number {
+    if (!this.findDocumentsBySchemaId.totalItems) {
+      return 1;
+    }
+
+    return this.findDocumentsBySchemaId.totalItems;
+  }
+
+  public fetchFindDocumentsBySchemaId(page = 1): void {
+    this.$store.dispatch(`${data.namespace}/fetchFindDocumentsBySchemaId`, {
+      schemaId: this.schemaId,
+      page,
+    });
   }
 
   public cellValueFromNow(_row: never, _column: never, cellValue: string, _index: never): string {
     return formatDistanceToNow(new Date(cellValue)) + ' ago';
+  }
+
+  public handlePageChange(newPage: number): void {
+    this.fetchFindDocumentsBySchemaId(newPage);
   }
 
   @Watch('schemaId', { immediate: true })
@@ -146,16 +168,11 @@ export default class SchemaDocumentsPage extends Vue {
 </script>
 
 <style lang="scss">
+.all-schema-documents-page {
+  background: #ffffff;
+}
+
 .dockite-element--pagination {
-  /* background: #ffffff; */
-  background: transparent;
-
-  li {
-    background: transparent;
-  }
-
-  button {
-    background: transparent;
-  }
+  padding: 1rem;
 }
 </style>

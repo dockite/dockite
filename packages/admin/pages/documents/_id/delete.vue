@@ -46,7 +46,7 @@ import * as data from '~/store/data';
     Fragment,
   },
 })
-export default class AllDocumentsPage extends Vue {
+export default class EditDocumentPage extends Vue {
   get document(): Document | null {
     return this.$store.getters[`${data.namespace}/getDocumentById`](this.documentId);
   }

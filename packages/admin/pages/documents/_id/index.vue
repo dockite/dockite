@@ -6,6 +6,7 @@
     <div v-if="ready" class="update-document-page">
       <el-form
         ref="formEl"
+        :validate-on-rule-change="false"
         label-position="top"
         :model="form"
         :rules="formRules"
@@ -42,7 +43,7 @@
 <script lang="ts">
 import { Schema, Field, Document } from '@dockite/types';
 import { Form } from 'element-ui';
-import { sortBy } from 'lodash';
+import { sortBy, cloneDeep } from 'lodash';
 import { Component, Vue, Watch, Ref } from 'nuxt-property-decorator';
 import { Fragment } from 'vue-fragment';
 
@@ -139,7 +140,7 @@ export default class UpdateDocumentPage extends Vue {
 
   public initialiseForm(): void {
     if (this.document) {
-      this.form = { ...this.form, ...this.document.data };
+      this.form = { ...this.form, ...cloneDeep(this.document.data) };
     }
 
     this.fields.forEach(field => {

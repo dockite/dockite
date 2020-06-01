@@ -1,5 +1,5 @@
-query allDocumentsWithSchema {
-  allDocuments {
+query allDocumentsWithSchema($page: Int!) {
+  allDocuments(page: $page) {
     results {
       id
       locale

@@ -4,50 +4,109 @@
     :colon="true"
   >
     <el-table
-      :columns="tableColumns"
-      :datel-source="referenceOfDocuments"
-      :row-key="(record) => record.id"
+      :max-height="400"
+      :data="referenceOfDocuments"
+      :row-key="record => record.id"
+      style="border: 1px solid #DCDFE6; border-radius: 4px;"
     >
-      <router-link
-        slot="id"
-        slot-scope="id"
-        :to="`/documents/${id}`"
+      <el-table-column
+        prop="id"
+        label="ID"
       >
-        {{ id }}
-      </router-link>
-
-      <template
-        slot="data"
-        slot-scope="data"
-      >
-        <span v-if="data.name">
-          {{ data.name }}
-        </span>
-        <span v-else-if="data.title">
-          {{ data.title }}
-        </span>
-        <span v-else-if="data.identifier">
-          {{ data.identifier }}
-        </span>
-        <span v-else>
-          {{ JSON.stringify(data).substr(0, 15) }}
-        </span>
-      </template>
+        <template slot-scope="scope">
+          <router-link :to="`/documents/${scope.row.id}`">
+            {{ scope.row.id.slice(0, 8) + '...' }}
+          </router-link>
+        </template>
+      </el-table-column>
+      <el-table-column label="Identifier">
+        <template slot-scope="scope">
+          <span v-if="scope.row.data.name">
+            {{ scope.row.data.name }}
+          </span>
+          <span v-else-if="scope.row.data.title">
+            {{ scope.row.data.title }}
+          </span>
+          <span v-else-if="scope.row.data.identifier">
+            {{ scope.row.data.identifier }}
+          </span>
+          <span
+            v-else
+            :title="JSON.stringify(scope.row.data)"
+          >
+            {{ JSON.stringify(scope.row.data).substr(0, 15) }}
+          </span>
+        </template>
+      </el-table-column>
     </el-table>
+
+    <el-row
+      type="flex"
+      justify="space-between"
+    >
+      <span />
+      <el-pagination
+        :current-page="page"
+        class="dockite-element--pagination"
+        :page-count="totalPages"
+        :pager-count="5"
+        :page-size="20"
+        :total="totalItems"
+        hide-on-single-page
+        layout="total, prev, pager, next"
+        @current-change="(newPage) => page = newPage"
+      />
+    </el-row>
+
     <p slot="extra">
       {{ fieldConfig.description }}
     </p>
   </el-form-item>
 </template>
 
-<script>
+<script lang="ts">
+import {
+  Component, Prop, Vue, Watch,
+} from 'vue-property-decorator';
 import gql from 'graphql-tag';
+import { Field, Document } from '@dockite/types';
 
-export default {
-  name: 'ReferenceOfField',
+interface ManyReferences {
+  results: Document[];
+  totalItems: number;
+  currentPage: number;
+  hasNextPage: boolean;
+  totalPages: number;
+}
 
-  apollo: {
-    referenceOfDocuments: {
+@Component({
+  name: 'ReferenceOfFieldInputComponent',
+})
+export default class ReferenceOfFieldInputComponent extends Vue {
+  @Prop({ required: true })
+  readonly name!: string;
+
+  @Prop({ required: true })
+  readonly value!: null;
+
+  @Prop({ required: true })
+  readonly formData!: object;
+
+  @Prop({ required: true })
+  readonly fieldConfig!: Field;
+
+  public referenceOfDocuments: Document[] = [];
+
+  public page = 1;
+
+  public perPage = 20;
+
+  public totalItems = 1;
+
+  public totalPages = 1;
+
+  public async fetchReferenceOfDocuments(): Promise<void> {
+    const { data } = await this.$apolloClient.query<{ referenceOfDocuments: ManyReferences }>({
       query: gql`
         query FindReferenceOfDocuments(
           $documentId: String!
@@ -57,94 +116,51 @@ export default {
           $perPage: Int! = 20
         ) {
           referenceOfDocuments: resolveReferenceOf(
-            documentId: $documentId,
-            schemaId: $schemaId,
-            fieldName: $fieldName,
-            page: $page,
-            perPage: $perPage,
+            documentId: $documentId
+            schemaId: $schemaId
+            fieldName: $fieldName
+            page: $page
+            perPage: $perPage
           ) {
-            id
-            data
-            updatedAt
-            schema {
+            results {
               id
-              name
+              data
+              updatedAt
+              schema {
+                id
+                name
+              }
             }
+            totalItems
+            currentPage
+            hasNextPage
+            totalPages
           }
         }
       `,
-      variables() {
-        return {
-          documentId: this.$route.params.id,
-          schemaId: this.fieldConfig.settings.schemaId,
-          fieldName: this.fieldConfig.settings.fieldName,
-          page: this.page,
-          perPage: this.perPage,
-        };
+      variables: {
+        documentId: this.$route.params.id,
+        schemaId: this.fieldConfig.settings.schemaId,
+        fieldName: this.fieldConfig.settings.fieldName,
+        page: this.page,
+        perPage: this.perPage,
       },
-    },
-  },
+    });
 
-  props: {
-    name: {
-      type: String,
-      required: true,
-    },
+    this.referenceOfDocuments = data.referenceOfDocuments.results;
+    this.totalItems = data.referenceOfDocuments.totalItems;
+    this.totalPages = data.referenceOfDocuments.totalPages;
+  }
 
-    value: {
-      validator: (value) => value === null,
-      required: true,
-    },
+  @Watch('page')
+  handlePageChange(): void {
+    this.fetchReferenceOfDocuments();
+  }
 
-    formData: {
-      type: Object,
-      required: true,
-    },
-
-    fieldConfig: {
-      type: Object,
-      required: true,
-    },
-  },
-
-  data() {
-    return {
-      referenceOfDocuments: [],
-      page: 1,
-      perPage: 20,
-    };
-  },
-
-  computed: {
-    tableColumns() {
-      return [
-        {
-          title: 'ID',
-          dataIndex: 'id',
-          key: 'id',
-          ellipsis: true,
-          scopedSlots: { customRender: 'id' },
-        },
-        {
-          title: 'Identifier',
-          dataIndex: 'data',
-          key: 'data',
-          scopedSlots: { customRender: 'data' },
-        },
-        {
-          title: 'Schema',
-          dataIndex: 'schema.name',
-          key: 'schemaName',
-        },
-        {
-          title: 'Last Updated',
-          dataIndex: 'updatedAt',
-        },
-      ];
-    },
-  },
-};
+  mounted(): void {
+    this.fetchReferenceOfDocuments();
+  }
+}
 </script>
 
-<style lang="scss">
-</style>
+<style lang="scss"></style>

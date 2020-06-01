@@ -38,9 +38,11 @@ export default {
   },
 
   mounted() {
-    this.settings = {
-      required: false,
-    };
+    if (Object.keys(this.settings).length === 0) {
+      this.settings = {
+        required: false,
+      };
+    }
   },
 };
 </script>

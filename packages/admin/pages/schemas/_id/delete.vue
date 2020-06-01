@@ -24,7 +24,7 @@
           <el-button @click.prevent="$router.go(-1)">
             Cancel
           </el-button>
-          <el-button type="danger">
+          <el-button type="danger" @click.prevent="handleDeleteSchema">
             Delete
           </el-button>
         </el-row>
@@ -39,13 +39,14 @@ import { Component, Vue, Watch } from 'nuxt-property-decorator';
 import { Fragment } from 'vue-fragment';
 
 import * as data from '~/store/data';
+import * as schema from '~/store/schema';
 
 @Component({
   components: {
     Fragment,
   },
 })
-export default class AllDocumentsPage extends Vue {
+export default class DeleteSchemaPage extends Vue {
   get schemaName(): string {
     return this.$store.getters[`${data.namespace}/getSchemaNameById`](this.schemaId);
   }
@@ -56,6 +57,17 @@ export default class AllDocumentsPage extends Vue {
 
   public fetchSchemaById(): void {
     this.$store.dispatch(`${data.namespace}/fetchSchemaWithFieldsById`, { id: this.schemaId });
+  }
+
+  public async handleDeleteSchema(): Promise<void> {
+    await this.$store.dispatch(`${schema.namespace}/deleteSchema`, this.schemaId);
+
+    this.$message({
+      message: 'Schema deleted successfully',
+      type: 'success',
+    });
+
+    this.$router.push('/schemas');
   }
 
   @Watch('schemaId', { immediate: true })

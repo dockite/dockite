@@ -25,7 +25,7 @@
               {{ scope.row.data.identifier }}
             </span>
             <span v-else :title="scope.row.data">
-              {{ JSON.stringify(scope.row.data).substr(0, 15) }}
+              {{ JSON.stringify(scope.row.data).slice(0, 15) + '...' }}
             </span>
           </template>
         </el-table-column>
@@ -49,14 +49,20 @@
           </template>
         </el-table-column>
       </el-table>
-      <el-pagination
-        class="dockite-element--pagination"
-        :current-page="currentPage"
-        :page-count="totalPages"
-        :pager-count="5"
-        hide-on-single-page
-        layout="prev, pager, next"
-      />
+      <el-row type="flex" justify="space-between">
+        <span />
+        <el-pagination
+          :current-page="currentPage"
+          class="dockite-element--pagination"
+          :page-count="totalPages"
+          :pager-count="5"
+          :page-size="20"
+          :total="totalItems"
+          hide-on-single-page
+          layout="total, prev, pager, next"
+          @current-change="handlePageChange"
+        />
+      </el-row>
     </div>
   </fragment>
 </template>
@@ -98,12 +104,24 @@ export default class AllDocumentsPage extends Vue {
     return this.allDocumentsWithSchema.totalPages;
   }
 
-  public fetchAllDocumentsWithSchema(): void {
-    this.$store.dispatch(`${data.namespace}/fetchAllDocumentsWithSchema`);
+  get totalItems(): number {
+    if (!this.allDocumentsWithSchema.totalItems) {
+      return 1;
+    }
+
+    return this.allDocumentsWithSchema.totalItems;
+  }
+
+  public fetchAllDocumentsWithSchema(page = 1): void {
+    this.$store.dispatch(`${data.namespace}/fetchAllDocumentsWithSchema`, page);
   }
 
   public cellValueFromNow(_row: never, _column: never, cellValue: string, _index: never): string {
     return formatDistanceToNow(new Date(cellValue)) + ' ago';
+  }
+
+  public handlePageChange(newPage: number): void {
+    this.fetchAllDocumentsWithSchema(newPage);
   }
 
   mounted(): void {
@@ -113,16 +131,11 @@ export default class AllDocumentsPage extends Vue {
 </script>
 
 <style lang="scss">
+.all-documents-page {
+  background: #ffffff;
+}
+
 .dockite-element--pagination {
-  /* background: #ffffff; */
-  background: transparent;
-
-  li {
-    background: transparent;
-  }
-
-  button {
-    background: transparent;
-  }
+  padding: 1rem;
 }
 </style>

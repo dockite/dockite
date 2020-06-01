@@ -1,11 +1,29 @@
-import { Resolver, Query, Int, Arg } from 'type-graphql';
+import { Arg, Field as GraphQLField, Int, ObjectType, Query, Resolver } from 'type-graphql';
 import { getRepository } from 'typeorm';
 
 import { Document } from '../../../entities';
 
+@ObjectType()
+class ManyReferences {
+  @GraphQLField(_type => [Document])
+  results!: Document[];
+
+  @GraphQLField(_type => Int)
+  totalItems!: number;
+
+  @GraphQLField(_type => Int)
+  currentPage!: number;
+
+  @GraphQLField(_type => Int)
+  totalPages!: number;
+
+  @GraphQLField(_type => Boolean)
+  hasNextPage!: boolean;
+}
+
 @Resolver()
 export class UtilResolver {
-  @Query(_returns => [Document], { nullable: true })
+  @Query(_returns => ManyReferences, { nullable: true })
   public async resolveReferenceOf(
     @Arg('documentId', _type => String)
     documentId: string,
@@ -17,7 +35,7 @@ export class UtilResolver {
     page: number,
     @Arg('perPage', _type => Int, { defaultValue: 20 })
     perPage: number,
-  ): Promise<Document[]> {
+  ): Promise<ManyReferences> {
     const qb = getRepository(Document)
       .createQueryBuilder('document')
       .leftJoinAndSelect('document.schema', 'schema')
@@ -25,12 +43,22 @@ export class UtilResolver {
       .andWhere(`document.data -> :field ->> 'id' = :documentId`, {
         field: fieldName,
         documentId,
-      })
-      .limit(perPage)
-      .offset((page - 1) * perPage);
+      });
 
-    const documents: Document[] = await qb.getMany();
+    qb.take(perPage)
+      .skip(perPage * (page - 1))
+      .orderBy('document.updatedAt', 'DESC');
 
-    return documents;
+    const [results, totalItems] = await qb.getManyAndCount();
+
+    const totalPages = Math.ceil(totalItems / perPage);
+
+    return {
+      results,
+      totalItems,
+      currentPage: page,
+      hasNextPage: page < totalPages,
+      totalPages,
+    };
   }
 }

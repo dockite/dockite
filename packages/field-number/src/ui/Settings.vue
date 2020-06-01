@@ -1,15 +1,27 @@
 <template>
   <fragment>
-    <el-form-item label="Required">
+    <el-form-item
+      label="Required"
+      prop="settings.required"
+    >
       <el-switch v-model="settings.required" />
     </el-form-item>
-    <el-form-item label="Float">
+    <el-form-item
+      label="Float"
+      prop="settings.float"
+    >
       <el-switch v-model="settings.float" />
     </el-form-item>
-    <el-form-item label="Min Value">
+    <el-form-item
+      label="Min Value"
+      prop="settings.min"
+    >
       <el-input-number v-model="settings.min" />
     </el-form-item>
-    <el-form-item label="Max Value">
+    <el-form-item
+      label="Max Value"
+      prop="settings.max"
+    >
       <el-input-number v-model="settings.max" />
     </el-form-item>
   </fragment>
@@ -47,12 +59,14 @@ export default {
   },
 
   mounted() {
-    this.settings = {
-      required: false,
-      float: false,
-      min: null,
-      max: null,
-    };
+    if (Object.keys(this.settings).length === 0) {
+      this.settings = {
+        required: false,
+        float: false,
+        min: null,
+        max: null,
+      };
+    }
   },
 };
 </script>
