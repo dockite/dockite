@@ -1,5 +1,4 @@
-import { DockiteFieldStatic } from '@dockite/field';
-import { Document, Schema } from '@dockite/types';
+import { DockiteFieldStatic, Document, Schema } from '@dockite/types';
 import Vue from 'vue';
 import { ActionTree, GetterTree, MutationTree } from 'vuex';
 

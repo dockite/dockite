@@ -1,4 +1,4 @@
-import { DockiteFieldStatic } from '@dockite/field';
+import { DockiteFieldStatic } from '@dockite/types';
 import debug from 'debug';
 
 const log = debug('dockite:core:fields');

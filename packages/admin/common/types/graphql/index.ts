@@ -1,5 +1,4 @@
-import { DockiteFieldStatic } from '@dockite/field';
-import { Schema, Document, Webhook, WebhookCall } from '@dockite/types';
+import { DockiteFieldStatic, Document, Schema, Webhook, WebhookCall } from '@dockite/types';
 
 export interface ManyResultsResponse<T> {
   results: T[];
