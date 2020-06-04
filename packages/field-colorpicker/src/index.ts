@@ -35,8 +35,4 @@ export class DockiteFieldColorPicker extends DockiteField {
   ): Promise<GraphQLOutputType> {
     return DockiteFieldColorType;
   }
-
-  public async processOutput<T>(data: any): Promise<T> {
-    return data[this.schemaField.name] as T;
-  }
 }
