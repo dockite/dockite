@@ -39,7 +39,8 @@
         "ts": "never",
         "tsx": "never",
         "js": "never",
-        "jsx": "never"
+        "jsx": "never",
+        "mjs": "never"
       }
     ],
     "import/no-cycle": "off",
