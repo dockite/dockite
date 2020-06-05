@@ -15,5 +15,5 @@ getConfig();
 const startTime = Date.now();
 
 export default connect().then(() =>
-  start().then(() => console.log('Time taken', Date.now() - startTime, 'seconds')),
+  start().then(() => console.log('Time taken', (Date.now() - startTime) / 1000, 'seconds')),
 );

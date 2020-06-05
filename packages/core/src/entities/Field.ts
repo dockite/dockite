@@ -1,5 +1,4 @@
-import { DockiteField } from '@dockite/field';
-import { Field as BaseField } from '@dockite/types';
+import { DockiteField, Field as BaseField } from '@dockite/types';
 import GraphQLJSON from 'graphql-type-json';
 import { Field as GraphQLField, ObjectType } from 'type-graphql';
 import {
