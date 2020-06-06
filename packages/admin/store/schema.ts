@@ -148,7 +148,7 @@ export const actions: ActionTree<SchemaState, RootState> = {
   },
 
   async deleteSchema(_, payload: string) {
-    const { data } = await this.$apolloClient.mutate<DeleteSchemaMutationResponse>({
+    const { data: schemaData } = await this.$apolloClient.mutate<DeleteSchemaMutationResponse>({
       mutation: DeleteSchemaMutation,
       variables: {
         id: payload,
@@ -156,9 +156,12 @@ export const actions: ActionTree<SchemaState, RootState> = {
       refetchQueries: [{ query: AllSchemasQuery }],
     });
 
-    if (!data?.removeSchema) {
+    if (!schemaData?.removeSchema) {
       throw new Error('Unable to delete schema');
     }
+
+    await this.dispatch(`${data.namespace}/fetchAllSchemas`, true);
+    this.commit(`${data.namespace}/removeSchemaWithFields`, payload);
   },
 };
 
