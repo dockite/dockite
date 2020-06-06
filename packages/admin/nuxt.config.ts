@@ -108,7 +108,7 @@ const config: Configuration = {
             require.resolve('@nuxt/babel-preset-app'),
             {
               targets,
-              corejs: { version: 3 },
+              corejs: { version: 2 },
             },
           ],
         ];
@@ -126,6 +126,8 @@ const config: Configuration = {
           '@dockite/field-reference',
           '@dockite/field-reference-of',
           '@dockite/field-code',
+          '@dockite/field-group',
+          '@dockite/field-variant',
         ];
 
         const injectables: string[] = [];

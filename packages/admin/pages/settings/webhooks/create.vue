@@ -171,7 +171,7 @@ export default class CreateWebhookPage extends Vue {
           {
             required: queryRequired,
             message: $t('validationMessages.required', ['GraphQL Query']),
-            trigger: 'change',
+            trigger: 'blur',
           },
         ],
       },
