@@ -1,7 +1,8 @@
 <template>
   <el-form-item
     :label="fieldConfig.title"
-    :prop="fieldConfig.name"
+    :prop="name"
+    :rules="rules"
     class="dockite-field-boolean"
   >
     <el-switch
@@ -34,6 +35,8 @@ export default class BooleanFieldInputComponent extends Vue {
   @Prop({ required: true })
   readonly fieldConfig!: Field;
 
+  public rules: object[] = [];
+
   get fieldData(): boolean {
     if (this.value !== null) {
       return this.value;
@@ -46,23 +49,21 @@ export default class BooleanFieldInputComponent extends Vue {
     this.$emit('input', value);
   }
 
-  mounted(): void {
+  beforeMount(): void {
     if (this.value === null) {
       this.$emit('input', false);
     }
 
-    const rules = [];
-
-    if (this.fieldConfig.settings.required) rules.push(this.getRequiredRule());
-
-    this.$emit('update:rules', { [this.fieldConfig.name]: rules });
+    if (this.fieldConfig.settings.required) {
+      this.rules.push(this.getRequiredRule());
+    }
   }
 
   getRequiredRule(): object {
     return {
       required: true,
       message: `${this.fieldConfig.title} is required`,
-      trigger: 'change',
+      trigger: 'blur',
     };
   }
 }

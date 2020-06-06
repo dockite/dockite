@@ -1,17 +1,25 @@
 <template>
   <el-form-item
     :label="fieldConfig.title"
-    :colon="true"
-    :prop="fieldConfig.name"
+    :prop="name"
+    :rules="rules"
     class="dockite-field-number"
   >
     <el-input-number
-      v-model.number="fieldData"
+      v-if="settings.float"
+      v-model="fieldData"
       style="width: 100%;"
       :step="step"
       :precision="precision"
       controls-position="right"
-      type="number"
+      :min="min"
+      :max="max"
+    />
+    <el-input-number
+      v-else
+      v-model="fieldData"
+      style="width: 100%;"
+      controls-position="right"
       :min="min"
       :max="max"
     />
@@ -38,6 +46,8 @@ export default class NumberFieldInputComponent extends Vue {
   @Prop({ required: true })
   readonly fieldConfig!: Field;
 
+  public rules: object[] = [];
+
   get fieldData(): number {
     if (this.value !== null) {
       return this.value;
@@ -50,7 +60,7 @@ export default class NumberFieldInputComponent extends Vue {
     this.$emit('input', value);
   }
 
-  get settings(): { min?: number; max?: number } {
+  get settings(): { min?: number; max?: number; float?: boolean } {
     return this.fieldConfig.settings;
   }
 
@@ -78,20 +88,30 @@ export default class NumberFieldInputComponent extends Vue {
     return 0;
   }
 
-  public mounted(): void {
+  public beforeMount(): void {
     if (this.value === null) {
       this.$emit('input', false);
     }
 
-    const rules = [];
+    if (this.fieldConfig.settings.required) {
+      this.rules.push(this.getRequiredRule());
+    }
 
-    if (this.fieldConfig.settings.required) rules.push(this.getRequiredRule());
-    if (!this.fieldConfig.settings.float) rules.push(this.getIntRule());
-    if (this.fieldConfig.settings.float) rules.push(this.getFloatRule());
-    if (this.fieldConfig.settings.min) rules.push(this.getMinRule());
-    if (this.fieldConfig.settings.max) rules.push(this.getMaxRule());
+    if (!this.fieldConfig.settings.float) {
+      this.rules.push(this.getIntRule());
+    }
 
-    this.$emit('update:rules', { [this.fieldConfig.name]: rules });
+    if (this.fieldConfig.settings.float) {
+      this.rules.push(this.getFloatRule());
+    }
+
+    if (this.fieldConfig.settings.min) {
+      this.rules.push(this.getMinRule());
+    }
+
+    if (this.fieldConfig.settings.max) {
+      this.rules.push(this.getMaxRule());
+    }
   }
 
   public getRequiredRule(): object {

@@ -11,7 +11,7 @@
     "@dockite/types": "1.0.0",
     "graphql": "^14.6.0",
     "type-graphql": "^0.17.6",
-    "typeorm": "^0.2.24",
+    "typeorm": "^0.2.22",
     "vue": "^2.6.11"
   },
   "devDependencies": {

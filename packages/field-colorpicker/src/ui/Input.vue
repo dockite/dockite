@@ -2,7 +2,8 @@
   <el-form-item
     ref="field"
     :label="fieldConfig.title"
-    :prop="fieldConfig.name"
+    :prop="name"
+    :rules="rules"
     class="dockite-field-colorpicker"
   >
     <el-row
@@ -41,6 +42,8 @@ export default class ColorpickerFieldInputComponent extends Vue {
   @Prop({ required: true })
   readonly fieldConfig!: Field;
 
+  public rules: object[] = [];
+
   get fieldData(): string | null {
     return this.value;
   }
@@ -49,12 +52,12 @@ export default class ColorpickerFieldInputComponent extends Vue {
     this.$emit('input', value);
   }
 
-  mounted(): void {
-    const rules = [this.getHexColorRule()];
+  beforeMount(): void {
+    this.rules.push(this.getHexColorRule());
 
-    if (this.fieldConfig.settings.required) rules.push(this.getRequiredRule());
-
-    this.$emit('update:rules', { [this.fieldConfig.name]: rules });
+    if (this.fieldConfig.settings.required) {
+      this.rules.push(this.getRequiredRule());
+    }
   }
 
 
@@ -62,7 +65,7 @@ export default class ColorpickerFieldInputComponent extends Vue {
     return {
       required: true,
       message: `${this.fieldConfig.title} is required`,
-      trigger: 'change',
+      trigger: 'blur',
     };
   }
 
@@ -70,7 +73,7 @@ export default class ColorpickerFieldInputComponent extends Vue {
     return {
       pattern: /^#[A-Fa-f-0-9]{6}$/,
       message: `${this.fieldConfig.title} must be a valid hexadecimal color`,
-      trigger: 'change',
+      trigger: 'blur',
     };
   }
 }

@@ -16,7 +16,9 @@
     "plugin:vue/base",
     "plugin:vue/essential",
     "plugin:vue/recommended",
-    "plugin:vue/strongly-recommended"
+    "plugin:vue/strongly-recommended",
+    "prettier/vue",
+    "plugin:prettier/recommended"
   ],
   "rules": {
     "class-methods-use-this": "off",
@@ -40,8 +42,7 @@
         "tsx": "never",
         "js": "never",
         "jsx": "never",
-        "vue": "never",
-        "mjs": "never"
+        "vue": "never"
       }
     ],
     "import/no-cycle": "off",

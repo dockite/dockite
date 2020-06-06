@@ -1,4 +1,4 @@
-import { Field, Schema, FieldContext } from '@dockite/types';
+import { Field, Schema, FieldContext, DockiteFieldStatic } from '@dockite/types';
 import {
   GraphQLInputType,
   GraphQLOutputType,
@@ -8,19 +8,6 @@ import {
 } from 'graphql';
 import { Repository } from 'typeorm';
 import { Component } from 'vue';
-
-export interface DockiteFieldStatic {
-  type: string;
-  title: string;
-  description: string;
-  defaultOptions: object;
-
-  new (
-    schemaField: Field,
-    repositories: { [id: string]: Repository<any> },
-    schema: GraphQLSchema | null,
-  ): DockiteField;
-}
 
 export abstract class DockiteField {
   public static type: string;
@@ -50,6 +37,7 @@ export abstract class DockiteField {
   public abstract outputType(
     dockiteSchemas: Schema[],
     types: Map<string, GraphQLObjectType>,
+    dockiteFields: Record<string, DockiteFieldStatic>,
   ): Promise<GraphQLOutputType>;
 
   public outputArgs(): Promise<GraphQLFieldConfigArgumentMap> {

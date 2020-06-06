@@ -14,6 +14,8 @@ let config: CoreConfiguration = {
     '@dockite/field-reference',
     '@dockite/field-reference-of',
     '@dockite/field-code',
+    '@dockite/field-group',
+    '@dockite/field-variant',
   ],
 };
 

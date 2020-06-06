@@ -1,7 +1,7 @@
 <template>
   <el-form-item
     :label="fieldConfig.title"
-    :colon="true"
+    :prop="name"
   >
     <el-table
       :max-height="400"
@@ -94,6 +94,8 @@ export default class ReferenceOfFieldInputComponent extends Vue {
 
   @Prop({ required: true })
   readonly fieldConfig!: Field;
+
+  public rules: object[] = [];
 
   public referenceOfDocuments: Document[] = [];
 

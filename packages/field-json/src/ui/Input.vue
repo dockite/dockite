@@ -2,7 +2,8 @@
   <el-form-item
     class="dockite-field-json"
     :label="fieldConfig.title"
-    :prop="fieldConfig.name"
+    :prop="name"
+    :rules="rules"
   >
     <code-mirror
       v-model="fieldData"
@@ -49,6 +50,8 @@ export default class JSONFieldInputComponent extends Vue {
   @Prop({ required: true })
   readonly fieldConfig!: Field;
 
+  public rules: object[] = [];
+
   public codeMirrorOptions: object = {
     line: true,
     lineNumbers: true,
@@ -75,23 +78,23 @@ export default class JSONFieldInputComponent extends Vue {
     this.$emit('input', value);
   }
 
-  mounted(): void {
+  beforeMount(): void {
     if (this.value === null) {
       this.$emit('input', '');
     }
 
-    const rules = [this.getJSONRule()];
+    this.rules.push(this.getJSONRule());
 
-    if (this.fieldConfig.settings.required) rules.push(this.getRequiredRule());
-
-    this.$emit('update:rules', { [this.fieldConfig.name]: rules });
+    if (this.fieldConfig.settings.required) {
+      this.rules.push(this.getRequiredRule());
+    }
   }
 
   public getRequiredRule(): object {
     return {
       required: true,
       message: `${this.fieldConfig.title} is required`,
-      trigger: 'change',
+      trigger: 'blur',
     };
   }
 
@@ -111,7 +114,7 @@ export default class JSONFieldInputComponent extends Vue {
         }
       },
       message: `${this.fieldConfig.title} must be valid JSON`,
-      trigger: 'change',
+      trigger: 'blur',
     };
   }
 }

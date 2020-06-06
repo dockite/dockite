@@ -2,7 +2,7 @@
 import { Server } from 'http';
 // import path from 'path';
 
-import { DockiteFieldStatic } from '@dockite/field';
+import { DockiteFieldStatic } from '@dockite/types';
 import { ApolloServer } from 'apollo-server-express';
 import debug from 'debug';
 import express from 'express';

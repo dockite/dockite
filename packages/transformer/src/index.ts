@@ -1,4 +1,11 @@
-import { Document, Field, FindManyResult, GlobalContext, Schema } from '@dockite/types';
+import {
+  Document,
+  Field,
+  FindManyResult,
+  GlobalContext,
+  Schema,
+  DockiteFieldStatic,
+} from '@dockite/types';
 import debug from 'debug';
 import {
   GraphQLBoolean,
@@ -26,7 +33,11 @@ interface FieldConfig<Source, Context> {
 const createObjectType = async (
   entity: Schema,
 ): Promise<{
-  fieldResolver: (dockiteSchemas: Schema[], types: Map<string, GraphQLObjectType>) => Promise<void>;
+  fieldResolver: (
+    dockiteSchemas: Schema[],
+    types: Map<string, GraphQLObjectType>,
+    dockiteFields: Record<string, DockiteFieldStatic>,
+  ) => Promise<void>;
   object: GraphQLObjectType;
 }> => {
   // Build our empty field map
@@ -37,12 +48,13 @@ const createObjectType = async (
   const fieldResolver = async (
     dockiteSchemas: Schema[],
     types: Map<string, GraphQLObjectType>,
+    dockiteFields: Record<string, DockiteFieldStatic>,
   ): Promise<void> => {
     const fieldsMap: FieldConfig<Source, GlobalContext>[] = await Promise.all(
       entity.fields.map(async (field: Field) => {
         // eslint-disable-next-line
         const [outputType, outputArgs] = await Promise.all([
-          field.dockiteField!.outputType(dockiteSchemas, types),
+          field.dockiteField!.outputType(dockiteSchemas, types, dockiteFields),
           field.dockiteField!.outputArgs(),
         ]);
 
@@ -161,11 +173,13 @@ export const createQueriesForEntity = async <T extends Document>(
 export const createSchema = async <T extends Document>(
   dockiteSchemas: Schema[],
   documentRepository: Repository<T>,
+  dockiteFields: Record<string, DockiteFieldStatic>,
 ): Promise<GraphQLSchema> => {
   const types = new Map<string, GraphQLObjectType>();
   const fieldResolvers: ((
     dockiteSchemas: Schema[],
     types: Map<string, GraphQLObjectType>,
+    dockiteFields: Record<string, DockiteFieldStatic>,
   ) => Promise<void>)[] = [];
 
   await Promise.all(
@@ -177,7 +191,9 @@ export const createSchema = async <T extends Document>(
     ),
   );
 
-  await Promise.all(fieldResolvers.map(fieldResolver => fieldResolver(dockiteSchemas, types)));
+  await Promise.all(
+    fieldResolvers.map(fieldResolver => fieldResolver(dockiteSchemas, types, dockiteFields)),
+  );
 
   const queries = await Promise.all(
     dockiteSchemas.map(schema =>

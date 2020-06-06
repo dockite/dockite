@@ -87,7 +87,7 @@
 </template>
 
 <script lang="ts">
-import { DockiteFieldStatic } from '@dockite/field';
+import { DockiteFieldStatic } from '@dockite/types';
 import { Input, Form } from 'element-ui';
 import { Component, Vue, Prop, Watch, Ref } from 'nuxt-property-decorator';
 

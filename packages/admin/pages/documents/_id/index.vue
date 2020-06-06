@@ -4,14 +4,7 @@
       <h2>Update - {{ documentId }}</h2>
     </portal>
     <div v-if="ready" class="update-document-page">
-      <el-form
-        ref="formEl"
-        :validate-on-rule-change="false"
-        label-position="top"
-        :model="form"
-        :rules="formRules"
-        @submit.native.prevent="submit"
-      >
+      <el-form ref="formEl" label-position="top" :model="form" @submit.native.prevent="submit">
         <el-tabs v-model="currentTab" type="border-card">
           <el-tab-pane v-for="tab in availableTabs" :key="tab" :label="tab" :name="tab">
             <component
@@ -22,7 +15,6 @@
               :name="field.name"
               :field-config="field"
               :form-data="form"
-              @update:rules="handleFormRulesMerge"
             >
             </component>
           </el-tab-pane>
@@ -62,8 +54,6 @@ export default class UpdateDocumentPage extends Vue {
   public currentTab = 'Default';
 
   public form: Record<string, any> = {};
-
-  public formRules: Record<string, object[]> = {};
 
   public ready = false;
 
@@ -148,13 +138,6 @@ export default class UpdateDocumentPage extends Vue {
         Vue.set(this.form, field.name, null);
       }
     });
-  }
-
-  public handleFormRulesMerge(rules: Record<string, object[]>): void {
-    this.formRules = {
-      ...this.formRules,
-      ...rules,
-    };
   }
 
   public fetchSchemaById(): Promise<void> {
