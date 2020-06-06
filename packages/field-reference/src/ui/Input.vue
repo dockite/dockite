@@ -2,7 +2,8 @@
   <el-form-item
     :label="fieldConfig.title"
     class="dockite-field-reference"
-    :prop="fieldConfig.name"
+    :prop="name"
+    :rules="rules"
   >
     <div
       v-if="fieldData"
@@ -128,6 +129,8 @@ export default class ReferenceFieldInputComponent extends Vue {
   @Prop({ required: true })
   readonly fieldConfig!: Field;
 
+  public rules: object[] = [];
+
   public documents: Document[] = [];
 
   public document: Document | null = null;
@@ -195,23 +198,21 @@ export default class ReferenceFieldInputComponent extends Vue {
     }
   }
 
-  mounted(): void {
+  beforeMount(): void {
     if (!this.fieldData) {
       this.findDocuments();
     }
 
-    const rules = [];
-
-    if (this.fieldConfig.settings.required) rules.push(this.getRequiredRule());
-
-    this.$emit('update:rules', { [this.fieldConfig.name]: rules });
+    if (this.fieldConfig.settings.required) {
+      this.rules.push(this.getRequiredRule);
+    }
   }
 
   public getRequiredRule(): object {
     return {
       required: true,
       message: `${this.fieldConfig.title} is required`,
-      trigger: 'change',
+      trigger: 'blur',
     };
   }
 
@@ -301,7 +302,7 @@ export default class ReferenceFieldInputComponent extends Vue {
     width: 100%;
     padding: 1rem;
 
-    border: 1px solid #DCDFE6;
+    border: 1px solid #dcdfe6;
     border-radius: 4px;
 
     & > div {
@@ -342,7 +343,7 @@ export default class ReferenceFieldInputComponent extends Vue {
     }
 
     a {
-      border: 1px solid #DCDFE6;
+      border: 1px solid #dcdfe6;
       color: rgba(0, 0, 0, 0.65);
       border-radius: 4px;
       display: block;

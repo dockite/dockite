@@ -1,7 +1,8 @@
 <template>
   <el-form-item
     :label="fieldConfig.title"
-    :prop="fieldConfig.name"
+    :prop="name"
+    :rules="rules"
     class="dockite-field-datetime"
   >
     <el-date-picker
@@ -35,6 +36,8 @@ export default class DatetimeFieldInputComponent extends Vue {
   @Prop({ required: true })
   readonly fieldConfig!: Field;
 
+  public rules: object[] = [];
+
   get fieldData(): string | null {
     return this.value;
   }
@@ -48,13 +51,9 @@ export default class DatetimeFieldInputComponent extends Vue {
   }
 
   mounted() {
-    const rules = [];
-
-    if (this.fieldConfig.settings.required) rules.push(this.getRequiredRule());
-    if (!this.fieldConfig.settings.date) rules.push(this.getDateTimeRule());
-    if (this.fieldConfig.settings.date) rules.push(this.getDateRule());
-
-    this.$emit('update:rules', { [this.fieldConfig.name]: rules });
+    if (this.fieldConfig.settings.required) { this.rules.push(this.getRequiredRule()); }
+    if (!this.fieldConfig.settings.date) { this.rules.push(this.getDateTimeRule()); }
+    if (this.fieldConfig.settings.date) { this.rules.push(this.getDateRule()); }
   }
 
   public getRequiredRule(): object {

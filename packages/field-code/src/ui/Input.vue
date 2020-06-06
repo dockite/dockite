@@ -1,7 +1,8 @@
 <template>
   <el-form-item
     :label="fieldConfig.title"
-    :prop="fieldConfig.name"
+    :prop="name"
+    :rules="rules"
     class="dockite-field-code"
   >
     <code-mirror
@@ -43,7 +44,7 @@ import 'codemirror/theme/nord.css';
 import 'codemirror-graphql/mode';
 import 'codemirror/mode/javascript/javascript';
 
-import { includes, mimeMap } from './consts';
+import { includes, mimeMap } from './consts.ts';
 
 export interface CodeFieldPayload {
   language: string;
@@ -68,6 +69,8 @@ export default class CodeFieldInputComponent extends Vue {
 
   @Prop({ required: true })
   readonly fieldConfig!: Field;
+
+  public rules: object[] = [];
 
   public mimeMap = mimeMap;
 
@@ -99,7 +102,7 @@ export default class CodeFieldInputComponent extends Vue {
     this.$emit('input', value);
   }
 
-  mounted(): void {
+  beforeMount(): void {
     if (this.value === null) {
       this.$emit('input', {
         language: 'Javascript',
@@ -107,11 +110,10 @@ export default class CodeFieldInputComponent extends Vue {
       });
     }
 
-    const rules = [];
 
-    if (this.fieldConfig.settings.required) rules.push(this.getRequiredRule());
-
-    this.$emit('update:rules', { [this.fieldConfig.name]: rules });
+    if (this.fieldConfig.settings.required) {
+      this.rules.push(this.getRequiredRule());
+    }
 
     this.includes.forEach((include) => {
       if (!this.modeManager.includes(include)) {
@@ -127,7 +129,7 @@ export default class CodeFieldInputComponent extends Vue {
     return {
       required: true,
       message: `${this.fieldConfig.title} is required`,
-      trigger: 'change',
+      trigger: 'blur',
     };
   }
 }

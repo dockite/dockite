@@ -1,7 +1,8 @@
 <template>
   <el-form-item
     :label="fieldConfig.title"
-    :prop="fieldConfig.name"
+    :prop="name"
+    :rules="rules"
     class="dockite-field-string"
   >
     <el-input
@@ -41,6 +42,8 @@ export default class StringFieldInputComponent extends Vue {
   @Prop({ required: true })
   readonly fieldConfig!: Field;
 
+  public rules: object[] = [];
+
   get fieldData(): string {
     if (this.value !== null) {
       return this.value;
@@ -53,19 +56,16 @@ export default class StringFieldInputComponent extends Vue {
     this.$emit('input', value);
   }
 
-  mounted(): void {
+  beforeMount(): void {
     if (this.value === null) {
       this.$emit('input', '');
     }
 
-    const rules = [];
 
-    if (this.fieldConfig.settings.required) rules.push(this.getRequiredRule());
-    if (this.fieldConfig.settings.urlSafe) rules.push(this.getUrlSafeRule());
-    if (this.fieldConfig.settings.minLen) rules.push(this.getMinRule());
-    if (this.fieldConfig.settings.maxLen) rules.push(this.getMaxRule());
-
-    this.$emit('update:rules', { [this.fieldConfig.name]: rules });
+    if (this.fieldConfig.settings.required) { this.rules.push(this.getRequiredRule()); }
+    if (this.fieldConfig.settings.urlSafe) { this.rules.push(this.getUrlSafeRule()); }
+    if (this.fieldConfig.settings.minLen) { this.rules.push(this.getMinRule()); }
+    if (this.fieldConfig.settings.maxLen) { this.rules.push(this.getMaxRule()); }
   }
 
   getUrlSafeRule(): object {

@@ -41,7 +41,8 @@
         "ts": "never",
         "tsx": "never",
         "js": "never",
-        "jsx": "never"
+        "jsx": "never",
+        "vue": "never"
       }
     ],
     "import/no-cycle": "off",

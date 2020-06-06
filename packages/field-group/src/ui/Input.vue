@@ -1,53 +1,55 @@
 <template>
-  <fieldset class="dockite-field-group">
-    <legend>{{ fieldConfig.title }}</legend>
-    <template v-if="ready">
-      <template v-if="repeatable && Array.isArray(fieldData)">
-        <div
-          v-for="(item, itemIndex) in fieldData"
-          :key="itemIndex"
-          class="dockite-field-group--item"
-        >
-          <el-button
-            v-if="repeatable"
-            type="text"
-            class="dockite-field-group--remove-item"
-            title="Remove the current group item"
-            @click.prevent="handleRemoveField(itemIndex)"
+  <el-form-item :prop="name" :rules="rules">
+    <fieldset class="dockite-field-group">
+      <legend>{{ fieldConfig.title }}</legend>
+      <template v-if="ready">
+        <template v-if="repeatable && Array.isArray(fieldData)">
+          <div
+            v-for="(item, itemIndex) in fieldData"
+            :key="itemIndex"
+            class="dockite-field-group--item"
           >
-            <i class="el-icon-close" />
-          </el-button>
-          <component
-            :is="$dockiteFieldManager[field.type].input"
-            v-for="(field, fieldIndex) in fields"
-            :key="fieldIndex"
-            v-model="fieldData[itemIndex][field.name]"
-            :name="field.name"
-            :field-config="field"
-            :form-data="formData"
-          />
-        </div>
+            <el-button
+              v-if="repeatable"
+              type="text"
+              class="dockite-field-group--remove-item"
+              title="Remove the current group item"
+              @click.prevent="handleRemoveField(itemIndex)"
+            >
+              <i class="el-icon-close" />
+            </el-button>
+            <component
+              :is="$dockiteFieldManager[field.type].input"
+              v-for="(field, fieldIndex) in fields"
+              :key="fieldIndex"
+              v-model="fieldData[itemIndex][field.name]"
+              :name="`${name}[${itemIndex}].${field.name}`"
+              :field-config="field"
+              :form-data="formData"
+            />
+          </div>
+        </template>
+        <template v-else>
+          <div class="dockite-field-group--item">
+            <component
+              :is="$dockiteFieldManager[field.type].input"
+              v-for="(field, index) in fields"
+              :key="index"
+              v-model="fieldData[field.name]"
+              :name="`${name}.${field.name}`"
+              :field-config="field"
+              :form-data="formData"
+            />
+          </div>
+        </template>
       </template>
-      <template v-else>
-        <div class="dockite-field-group--item">
-          <component
-            :is="$dockiteFieldManager[field.type].input"
-            v-for="(field, index) in fields"
-            :key="index"
-            v-model="fieldData[field.name]"
-            :name="field.name"
-            :field-config="field"
-            :form-data="formData"
-          />
-        </div>
-      </template>
-    </template>
-    <el-row type="flex" justify="center">
-      <el-button v-if="repeatable" @click.prevent="handleAddField">
-        <i class="el-icon-plus" />
-      </el-button>
-    </el-row>
-  </fieldset>
+      <el-row type="flex" justify="center">
+        <el-button v-if="repeatable" @click.prevent="handleAddField">
+          <i class="el-icon-plus" />
+        </el-button>
+      </el-row>
+    </fieldset>
+  </el-form-item>
 </template>
 
 <script lang="ts">
@@ -55,6 +57,13 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 import { Field } from '@dockite/types';
 
 type UnpersistedField = Omit<Field, 'id' | 'schemaId' | 'dockiteField' | 'schema'>;
+
+interface Settings {
+  required: boolean;
+  repeatable: boolean;
+  minRows: number;
+  maxRows: number;
+}
 
 @Component({
   name: 'GroupFieldInputComponent',
@@ -72,7 +81,11 @@ export default class GroupFieldInputComponent extends Vue {
   @Prop({ required: true })
   readonly fieldConfig!: Field;
 
+  public rules: object[] = [];
+
   public ready = false;
+
+  public groupRules: Record<string, any> = {};
 
   get fields(): UnpersistedField[] {
     return this.fieldConfig.settings.children;
@@ -94,15 +107,19 @@ export default class GroupFieldInputComponent extends Vue {
     return {};
   }
 
-  get repeatable(): boolean {
-    return this.fieldConfig.settings.repeatable ?? false;
-  }
-
   set fieldData(value: Record<string, any> | Record<string, any>[]) {
     this.$emit('input', value);
   }
 
-  mounted(): void {
+  get settings(): Settings {
+    return this.fieldConfig.settings;
+  }
+
+  get repeatable(): boolean {
+    return this.settings.repeatable ?? false;
+  }
+
+  beforeMount(): void {
     if (this.value === null) {
       this.$emit('input', this.repeatable ? [] : {});
     }
@@ -110,18 +127,44 @@ export default class GroupFieldInputComponent extends Vue {
     this.initialiseForm();
     this.ready = true;
 
-    const rules = [];
+    if (this.settings.required) {
+      this.rules.push(this.getRequiredRule());
+    }
 
-    if (this.fieldConfig.settings.required) rules.push(this.getRequiredRule());
+    if (this.settings.repeatable) {
+      if (this.settings.minRows > -Infinity) {
+        this.rules.push(this.getMinRule());
+      }
 
-    this.$emit('update:rules', { [this.fieldConfig.name]: rules });
+      if (this.settings.maxRows < Infinity) {
+        this.rules.push(this.getMaxRule());
+      }
+    }
   }
 
-  getRequiredRule(): object {
+  public getRequiredRule(): object {
     return {
       required: true,
       message: `${this.fieldConfig.title} is required`,
-      trigger: 'change',
+      trigger: 'blur',
+    };
+  }
+
+  public getMinRule(): object {
+    return {
+      type: 'array',
+      min: this.settings.minRows,
+      message: `${this.fieldConfig.title} must contain at least ${this.settings.minRows} rows.`,
+      trigger: 'blur',
+    };
+  }
+
+  public getMaxRule(): object {
+    return {
+      type: 'array',
+      max: this.settings.maxRows,
+      message: `${this.fieldConfig.title} must contain at most ${this.settings.maxRows} rows.`,
+      trigger: 'blur',
     };
   }
 
@@ -171,6 +214,10 @@ export default class GroupFieldInputComponent extends Vue {
 
 .dockite-field-group--item {
   position: relative;
+
+  .el-form-item {
+    margin-bottom: 22px !important;
+  }
 }
 
 .dockite-field-group--remove-item {

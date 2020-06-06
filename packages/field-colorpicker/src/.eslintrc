@@ -40,6 +40,7 @@
         "tsx": "never",
         "js": "never",
         "jsx": "never",
+        "vue": "never",
         "mjs": "never"
       }
     ],
