@@ -80,17 +80,17 @@ export class Schema implements BaseSchema {
   public deletedAt!: Date;
 
   @AfterInsert()
-  handleAfterInsert(): Promise<void> {
-    return fireWebhooks(this, WebhookAction.SchemaCreate);
+  handleAfterInsert(): void {
+    fireWebhooks(this, WebhookAction.SchemaCreate);
   }
 
   @AfterUpdate()
-  handleAfterUpdate(): Promise<void> {
-    return fireWebhooks(this, WebhookAction.SchemaUpdate);
+  handleAfterUpdate(): void {
+    fireWebhooks(this, WebhookAction.SchemaUpdate);
   }
 
   @AfterRemove()
-  handleAfterRemove(): Promise<void> {
-    return fireWebhooks(this, WebhookAction.SchemaDelete);
+  handleAfterRemove(): void {
+    fireWebhooks(this, WebhookAction.SchemaDelete);
   }
 }

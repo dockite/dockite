@@ -87,17 +87,17 @@ export class Document implements BaseDocument {
   public user!: User;
 
   @AfterInsert()
-  handleAfterInsert(): Promise<void> {
-    return fireWebhooks(this, WebhookAction.DocumentCreate);
+  handleAfterInsert(): void {
+    fireWebhooks(this, WebhookAction.DocumentCreate);
   }
 
   @AfterUpdate()
-  handleAfterUpdate(): Promise<void> {
-    return fireWebhooks(this, WebhookAction.DocumentUpdate);
+  handleAfterUpdate(): void {
+    fireWebhooks(this, WebhookAction.DocumentUpdate);
   }
 
   @AfterRemove()
-  handleAfterRemove(): Promise<void> {
-    return fireWebhooks(this, WebhookAction.DocumentDelete);
+  handleAfterRemove(): void {
+    fireWebhooks(this, WebhookAction.DocumentDelete);
   }
 }
