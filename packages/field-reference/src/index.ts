@@ -70,8 +70,6 @@ export class DockiteFieldReference extends DockiteField {
       return (null as any) as T;
     }
 
-    console.log('asd', value);
-
     const criteria: { id: string; schemaId: string } = value;
 
     const document: Document = await this.repositories.Document.createQueryBuilder('document')
@@ -79,8 +77,6 @@ export class DockiteFieldReference extends DockiteField {
       .where('document.id = :id', { id: criteria.id })
       .andWhere('schema.id = :schemaId', { schemaId: criteria.schemaId })
       .getOne();
-
-    console.log(document);
 
     return ({ id: document.id, schemaName: document.schema.name, ...document.data } as any) as T;
   }
