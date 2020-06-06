@@ -222,9 +222,10 @@ export default class GroupFieldInputComponent extends Vue {
 
 .dockite-field-group--remove-item {
   position: absolute;
-  top: 7px;
-  right: 7px;
+  top: 10px;
+  right: 10px;
   color: #f56c6c;
+  z-index: 9999;
 
   &:hover {
     color: #f56c6c;

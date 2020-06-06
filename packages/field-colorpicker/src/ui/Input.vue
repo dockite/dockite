@@ -81,6 +81,10 @@ export default class ColorpickerFieldInputComponent extends Vue {
 
 <style lang="scss">
 .dockite-field-colorpicker {
+  .el-form-item__content {
+    height: 50px;
+  }
+
   .el-color-picker__trigger {
     width: 100%;
     height: 50px;

@@ -63,8 +63,8 @@ export default {
       this.settings = {
         required: false,
         float: false,
-        min: null,
-        max: null,
+        min: -Infinity,
+        max: Infinity,
       };
     }
   },
