@@ -135,8 +135,8 @@ export const actions: ActionTree<SchemaState, RootState> = {
         this.$apolloClient.mutate({
           mutation: CreateFieldMutation,
           variables: {
-            schemaId: payload.schema.id,
             ...field,
+            schemaId: payload.schema.id,
           },
           refetchQueries: [{ query: AllSchemasQuery }],
         }),

@@ -91,7 +91,8 @@ const config: Configuration = {
     authenticationType: 'Bearer',
     clientConfigs: {
       default: {
-        httpEndpoint: 'http://localhost:3000/dockite/graphql',
+        // TODO: read this from the rc file
+        httpEndpoint: 'http://localhost:3000/dockite/graphql/internal',
       },
     },
   },

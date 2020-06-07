@@ -69,7 +69,7 @@ module.exports = {
     ],
   },
   externals: {
-    vue: 'Vue',
+    vue: '$Vue',
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.mjs', '.js', '.jsx', '.vue', '.json', '.wasm'],

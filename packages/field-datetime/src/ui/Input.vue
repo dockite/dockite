@@ -60,7 +60,7 @@ export default class DatetimeFieldInputComponent extends Vue {
     return {
       required: true,
       message: `${this.fieldConfig.title} is required`,
-      trigger: 'change',
+      trigger: 'blur',
     };
   }
 

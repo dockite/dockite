@@ -2471,14 +2471,14 @@
     webpack-node-externals "^1.7.2"
     webpackbar "^4.0.0"
 
-"@nuxtjs/apollo@^4.0.0-rc19":
-  version "4.0.0-rc19"
-  resolved "https://registry.yarnpkg.com/@nuxtjs/apollo/-/apollo-4.0.0-rc19.tgz#145b50c8e0185dac83c37f48ab685861f9005850"
-  integrity sha512-OCUxdhz09vTA7jq4KrhdYw23PRXS4yHWST99Ohc1oSUiZUyNrmQc+VUNAz9bhSVjfHABrP1NP2FzKnBE1iEZhA==
+"@nuxtjs/apollo@^4.0.1-rc.1":
+  version "4.0.1-rc.1"
+  resolved "https://registry.yarnpkg.com/@nuxtjs/apollo/-/apollo-4.0.1-rc.1.tgz#c11302107d1c2d7d955c74ec2308a178ed6280d1"
+  integrity sha512-i+/J/kL9rxw63ueJ4KpgqLt2Js0tYzoRgrUZ8eOT0sf/uDUCbvAxXlrOtgGD3ijVWolB2Dtlkz1YtJMJl8Lizw==
   dependencies:
     cross-fetch "^3.0.4"
-    universal-cookie "^4.0.2"
-    vue-apollo "^3.0.2"
+    universal-cookie "^4.0.3"
+    vue-apollo "^3.0.3"
     vue-cli-plugin-apollo "^0.21.3"
     webpack-node-externals "^1.7.2"
 
@@ -4115,7 +4115,7 @@ apollo-cache-control@^0.11.0:
     apollo-server-env "^2.4.4"
     apollo-server-plugin-base "^0.9.0"
 
-apollo-cache-inmemory@^1.6.3:
+apollo-cache-inmemory@^1.6.3, apollo-cache-inmemory@^1.6.6:
   version "1.6.6"
   resolved "https://registry.yarnpkg.com/apollo-cache-inmemory/-/apollo-cache-inmemory-1.6.6.tgz#56d1f2a463a6b9db32e9fa990af16d2a008206fd"
   integrity sha512-L8pToTW/+Xru2FFAhkZ1OA9q4V4nuvfoPecBM34DecAugUZEBhI2Hmpgnzq2hTKZ60LAMrlqiASm0aqAY6F8/A==
@@ -5902,6 +5902,14 @@ codemirror-graphql@^0.11.6:
   dependencies:
     graphql-language-service-interface "^2.3.3"
     graphql-language-service-parser "^1.5.2"
+
+codemirror-graphql@^0.12.0-alpha.11:
+  version "0.12.0-alpha.11"
+  resolved "https://registry.yarnpkg.com/codemirror-graphql/-/codemirror-graphql-0.12.0-alpha.11.tgz#0f699bf084b659921704446a6508790ba0e4b286"
+  integrity sha512-j95VBUUTM50HoLfhhPQQAoUl8Py+DCxgeNSFCGhsCsXWBiFBVEnSw/7VAjx3/dkZonjoS9LUJs+OHgkliYE18w==
+  dependencies:
+    graphql-language-service-interface "^2.4.0-alpha.11"
+    graphql-language-service-parser "^1.6.0-alpha.6"
 
 codemirror@^5.41.0, codemirror@^5.52.2:
   version "5.53.2"
@@ -8833,6 +8841,16 @@ graphql-language-service-interface@^2.3.3:
     graphql-language-service-types "^1.5.2"
     graphql-language-service-utils "^2.3.3"
 
+graphql-language-service-interface@^2.4.0-alpha.11:
+  version "2.4.0-alpha.11"
+  resolved "https://registry.yarnpkg.com/graphql-language-service-interface/-/graphql-language-service-interface-2.4.0-alpha.11.tgz#a0f0d638462010eb1adb5c1943da106816a51a80"
+  integrity sha512-T1eJ/n+B/Gewk3//JtezncMY/tmpLi/BOZIXAAUMqgLQv8Y/VZVwx4tw/+qmx92SHKWEDMMZUGzd2FrLs7SOCQ==
+  dependencies:
+    graphql-language-service-parser "^1.6.0-alpha.6"
+    graphql-language-service-types "^1.6.0-alpha.8"
+    graphql-language-service-utils "^2.4.0-alpha.9"
+    vscode-languageserver-types "^3.15.1"
+
 graphql-language-service-parser@^1.5.2:
   version "1.5.2"
   resolved "https://registry.yarnpkg.com/graphql-language-service-parser/-/graphql-language-service-parser-1.5.2.tgz#37deb56c16155cbd324fedef42ef9a3f0b38d723"
@@ -8841,12 +8859,22 @@ graphql-language-service-parser@^1.5.2:
     graphql-config "2.2.1"
     graphql-language-service-types "^1.5.2"
 
+graphql-language-service-parser@^1.6.0-alpha.6:
+  version "1.6.0-alpha.6"
+  resolved "https://registry.yarnpkg.com/graphql-language-service-parser/-/graphql-language-service-parser-1.6.0-alpha.6.tgz#609ed4fbeeecc9783633451562ce308d486b2cb9"
+  integrity sha512-vKcCHmSSAcI4+IWQVpzhPwjTp7o0fiM/exmbnMEIfW4qNE8aLXE7Fcbg7chCyqTIYL+cWVqFJHS3WISnBZFmhQ==
+
 graphql-language-service-types@^1.5.2:
   version "1.5.2"
   resolved "https://registry.yarnpkg.com/graphql-language-service-types/-/graphql-language-service-types-1.5.2.tgz#bfd3b27a45dbc2457233c73cc1f8ff5da26795f8"
   integrity sha512-WOFHBZX1K41svohPTmhOcKg+zz27d6ULFuZ8mzkiJ9nIpGKueAPyh7/xR0VZNBUAfDzTCbE6wQZxsPl5Kvd7IA==
   dependencies:
     graphql-config "2.2.1"
+
+graphql-language-service-types@^1.6.0-alpha.8:
+  version "1.6.0-alpha.8"
+  resolved "https://registry.yarnpkg.com/graphql-language-service-types/-/graphql-language-service-types-1.6.0-alpha.8.tgz#07f0fd5a5f9b0fadf492652eb15592956724620c"
+  integrity sha512-sVCPUJRgJO99hGD7OoG6Xbs70JFMqfjIGa2vV9edZCUUIxCN6RstQmM5MML3jtagkR3Se309IjlgtooXylgGGg==
 
 graphql-language-service-utils@^2.3.3:
   version "2.3.3"
@@ -8855,6 +8883,13 @@ graphql-language-service-utils@^2.3.3:
   dependencies:
     graphql-config "2.2.1"
     graphql-language-service-types "^1.5.2"
+
+graphql-language-service-utils@^2.4.0-alpha.9:
+  version "2.4.0-alpha.9"
+  resolved "https://registry.yarnpkg.com/graphql-language-service-utils/-/graphql-language-service-utils-2.4.0-alpha.9.tgz#444712f2f44f3970f5ab2358868fdd3138f2e15c"
+  integrity sha512-e2v5ErbZtxt0vbyn8PIxRXsUj4xlRU8lmTuLB/NjDqosF26NQgw2BoeUhPiXmuldnkv14kVWpUvdus7AP/EgGg==
+  dependencies:
+    graphql-language-service-types "^1.6.0-alpha.8"
 
 graphql-query-complexity@^0.5.0:
   version "0.5.0"
@@ -16659,7 +16694,7 @@ unist-util-visit@^1.1.0:
   dependencies:
     unist-util-visit-parents "^2.0.0"
 
-universal-cookie@^4.0.2:
+universal-cookie@^4.0.3:
   version "4.0.3"
   resolved "https://registry.yarnpkg.com/universal-cookie/-/universal-cookie-4.0.3.tgz#c2fa59127260e6ad21ef3e0cdd66ad453cbc41f6"
   integrity sha512-YbEHRs7bYOBTIWedTR9koVEe2mXrq+xdjTJZcoKJK/pQaE6ni28ak2AKXFpevb+X6w3iU5SXzWDiJkmpDRb9qw==
@@ -16968,6 +17003,11 @@ vscode-languageserver-types@3.14.0:
   resolved "https://registry.yarnpkg.com/vscode-languageserver-types/-/vscode-languageserver-types-3.14.0.tgz#d3b5952246d30e5241592b6dde8280e03942e743"
   integrity sha512-lTmS6AlAlMHOvPQemVwo3CezxBp0sNB95KNPkqp3Nxd5VFEnuG1ByM0zlRWos0zjO3ZWtkvhal0COgiV1xIA4A==
 
+vscode-languageserver-types@^3.15.1:
+  version "3.15.1"
+  resolved "https://registry.yarnpkg.com/vscode-languageserver-types/-/vscode-languageserver-types-3.15.1.tgz#17be71d78d2f6236d414f0001ce1ef4d23e6b6de"
+  integrity sha512-+a9MPUQrNGRrGU630OGbYVQ+11iOIovjCkqxajPa9w57Sd5ruK8WQNsslzpa0x/QJqC8kRc2DUxWjIFwoNm4ZQ==
+
 vscode-languageserver@^5.1.0:
   version "5.2.1"
   resolved "https://registry.yarnpkg.com/vscode-languageserver/-/vscode-languageserver-5.2.1.tgz#0d2feddd33f92aadf5da32450df498d52f6f14eb"
@@ -16986,7 +17026,7 @@ vscode-uri@^1.0.6:
   resolved "https://registry.yarnpkg.com/vscode-uri/-/vscode-uri-1.0.8.tgz#9769aaececae4026fb6e22359cb38946580ded59"
   integrity sha512-obtSWTlbJ+a+TFRYGaUumtVwb+InIUVI0Lu0VBUAPmj2cU5JutEXg3xUE0c2J5Tcy7h2DEKVJBFi+Y9ZSFzzPQ==
 
-vue-apollo@^3.0.2:
+vue-apollo@^3.0.3:
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/vue-apollo/-/vue-apollo-3.0.3.tgz#7f29558df76eec0f03251847eef153816a261827"
   integrity sha512-WJaQ1v/i46/oIPlKv7J0Tx6tTlbuaeCdhrAbL06h+Zca2gzr5ywjUFpl8ijMTGJsQ+Ph/U4xEpBFBOMxQmL+7g==

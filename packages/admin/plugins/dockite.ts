@@ -1,7 +1,7 @@
 import { Plugin } from '@nuxt/types';
 import Vue, { Component } from 'vue';
 
-window.Vue = Vue;
+window.$Vue = Vue;
 
 export interface DockiteFieldManager {
   [name: string]: {
