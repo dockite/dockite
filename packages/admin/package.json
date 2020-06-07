@@ -34,6 +34,7 @@
     "codemirror-graphql": "^0.11.6",
     "date-fns": "^2.13.0",
     "element-ui": "^2.4.11",
+    "graphql": "^15.0.0",
     "graphql-tag": "^2.10.3",
     "lodash": "^4.17.15",
     "normalize.css": "^8.0.1",
@@ -41,6 +42,8 @@
     "nuxt-i18n": "^6.11.1",
     "nuxt-property-decorator": "^2.7.2",
     "portal-vue": "^2.1.7",
+    "type-graphql": "1.0.0-rc.2",
+    "typescript": "^3.9.5",
     "vue-fragment": "^1.5.1",
     "webpack-inject-plugin": "^1.5.4"
   },

@@ -15,7 +15,6 @@
   "devDependencies": {
     "@commitlint/cli": "^8.3.5",
     "@commitlint/config-conventional": "^8.3.4",
-    "@types/graphql": "^14.5.0",
     "@typescript-eslint/eslint-plugin": "^2.20.0",
     "@typescript-eslint/parser": "^2.20.0",
     "eslint": "^6.8.0",
@@ -27,11 +26,11 @@
     "lerna": "^3.20.2",
     "lint-staged": "~10.2.2",
     "prettier": "^1.19.1",
-    "typescript": "~3.7.5"
+    "typescript": "^3.9.5"
   },
   "dependencies": {
-    "graphql": "^14.6.0",
+    "graphql": "^15.0.0",
     "reflect-metadata": "^0.1.13",
-    "type-graphql": "^0.17.6"
+    "type-graphql": "1.0.0-rc.2"
   }
 }

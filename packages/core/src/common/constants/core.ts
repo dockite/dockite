@@ -1,1 +1,2 @@
-export const GRAPHQL_PATH = 'dockite/graphql';
+export const EXTERNAL_GRAPHQL_PATH = 'dockite/graphql/external';
+export const INTERNAL_GRAPHQL_PATH = 'dockite/graphql/internal';
