@@ -23,9 +23,15 @@ export const AuthenticationGraphQLModule = async (): Promise<GraphQLModule<
     return Module;
   }
 
+  const resolverPromises = ((await Promise.all(
+    Object.values(resolvers).map(r => Promise.resolve(r)),
+  )) as any[]) as [Function, ...Function[]];
+
+  log({ resolverPromises });
+
   log('building type-definitions and resolvers');
   const typeDefsAndResolvers = await buildTypeDefsAndResolvers({
-    resolvers: await Promise.all(Object.values(resolvers).map(r => Promise.resolve(r))),
+    resolvers: resolverPromises,
     authChecker,
     emitSchemaFile: path.join(__dirname, './schema.gql'),
   });

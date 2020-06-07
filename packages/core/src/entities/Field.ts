@@ -67,13 +67,13 @@ export class Field implements BaseField {
         // eslint-disable-next-line
         const Repositories: { [id: string]: Repository<any> } = {};
 
-        const { schema } = SchemaStore;
+        const { internalSchema } = SchemaStore;
 
         Object.entries(Entities).forEach(([key, val]) => {
           Repositories[key] = getRepository(val);
         });
 
-        this.dockiteField = new FieldClass(this, Repositories, schema);
+        this.dockiteField = new FieldClass(this, Repositories, internalSchema);
       }
     }
   }

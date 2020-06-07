@@ -66,10 +66,10 @@ export const fireWebhooks = async (entity: object, action: WebhookAction): Promi
           );
         }
 
-        if (SchemaStore.schema) {
+        if (SchemaStore.internalSchema) {
           log('firing graphql webhooks');
           log(webhook.options.query);
-          return graphql(SchemaStore.schema, webhook.options.query, undefined, {
+          return graphql(SchemaStore.internalSchema, webhook.options.query, undefined, {
             user: {
               id: '00000000-0000-0000-0000-000000000000',
               email: 'webhooks@dockite',

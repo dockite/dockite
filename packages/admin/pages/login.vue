@@ -50,7 +50,7 @@ export default class LoginPage extends Vue {
       email: [
         {
           required: true,
-          message: $t('validationMessages.required', [$t('login.labels.password')]),
+          message: $t('validationMessages.required', [$t('login.labels.email')]),
           trigger: 'blur',
         },
         {
