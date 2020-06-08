@@ -148,7 +148,10 @@ export class DocumentResolver {
     const qb = repository
       .search(term)
       .andWhere('searchEngine.deletedAt IS NULL')
-      .leftJoinAndSelect('searchEngine.schema', 'schema');
+      .leftJoinAndSelect('searchEngine.schema', 'schema')
+      .take(perPage)
+      .skip(perPage * (page - 1))
+      .orderBy('searchEngine.updatedAt', 'DESC');
 
     if (schemaId && schemaId !== '') {
       qb.andWhere('searchEngine.schemaId = :schemaId', { schemaId });

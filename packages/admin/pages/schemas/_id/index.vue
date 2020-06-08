@@ -86,7 +86,6 @@
       <el-row type="flex" justify="space-between">
         <span />
         <el-pagination
-          v-show="term === ''"
           :current-page="currentPage"
           class="dockite-element--pagination"
           :page-count="totalPages"
@@ -170,12 +169,24 @@ export default class SchemaDocumentsPage extends Vue {
     });
   }
 
+  public fetchSearchDocumentsWithSchema(term: string, page = 1): void {
+    this.$store.dispatch(`${data.namespace}/fetchSearchDocumentsWithSchema`, {
+      term,
+      page,
+      schemaId: this.schemaId,
+    });
+  }
+
   public cellValueFromNow(_row: never, _column: never, cellValue: string, _index: never): string {
     return formatDistanceToNow(new Date(cellValue)) + ' ago';
   }
 
   public handlePageChange(newPage: number): void {
-    this.fetchFindDocumentsBySchemaId(newPage);
+    if (this.term === '') {
+      this.fetchFindDocumentsBySchemaId(newPage);
+    } else {
+      this.fetchSearchDocumentsWithSchema(this.term, newPage);
+    }
   }
 
   @Watch('schemaId', { immediate: true })
@@ -186,10 +197,7 @@ export default class SchemaDocumentsPage extends Vue {
   @Watch('term')
   public handleTermChange(newTerm: string): void {
     if (newTerm !== '') {
-      this.$store.dispatch(`${data.namespace}/fetchSearchDocumentsWithSchema`, {
-        term: newTerm,
-        schemaId: this.schemaId,
-      });
+      this.fetchSearchDocumentsWithSchema(newTerm);
     }
   }
 }

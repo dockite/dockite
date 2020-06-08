@@ -141,7 +141,7 @@ export const actions: ActionTree<DataState, RootState> = {
 
   async fetchSearchDocumentsWithSchema(
     { commit },
-    payload: { term: string; schemaId?: string },
+    payload: { term: string; schemaId?: string; page?: number },
   ): Promise<void> {
     const { data } = await this.$apolloClient.query<SearchDocumentsWithSchemaQueryResponse>({
       query: SearchDocumentsWithSchemaQuery,

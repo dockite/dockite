@@ -62,7 +62,6 @@
       <el-row type="flex" justify="space-between">
         <span />
         <el-pagination
-          v-show="term === ''"
           :current-page="currentPage"
           class="dockite-element--pagination"
           :page-count="totalPages"
@@ -129,18 +128,26 @@ export default class AllDocumentsPage extends Vue {
     this.$store.dispatch(`${data.namespace}/fetchAllDocumentsWithSchema`, page);
   }
 
+  public fetchSearchDocumentsWithSchema(term: string, page = 1): void {
+    this.$store.dispatch(`${data.namespace}/fetchSearchDocumentsWithSchema`, { term, page });
+  }
+
   public cellValueFromNow(_row: never, _column: never, cellValue: string, _index: never): string {
     return formatDistanceToNow(new Date(cellValue)) + ' ago';
   }
 
   public handlePageChange(newPage: number): void {
-    this.fetchAllDocumentsWithSchema(newPage);
+    if (this.term === '') {
+      this.fetchAllDocumentsWithSchema(newPage);
+    } else {
+      this.fetchSearchDocumentsWithSchema(this.term, newPage);
+    }
   }
 
   @Watch('term')
   public handleTermChange(newTerm: string): void {
     if (newTerm !== '') {
-      this.$store.dispatch(`${data.namespace}/fetchSearchDocumentsWithSchema`, { term: newTerm });
+      this.fetchSearchDocumentsWithSchema(newTerm);
     }
   }
 
