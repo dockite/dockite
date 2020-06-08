@@ -9,6 +9,7 @@ import { createExtraGraphQLSchema } from './dockite';
 import * as resolvers from './resolvers';
 
 const log = debug('dockite:core:external');
+const tlog = debug('dockite:core:external:timer');
 
 // eslint-disable-next-line
 export const getRegisteredExternalModules = (): any[] => {
@@ -21,13 +22,12 @@ export const ExternalGraphQLModule = async (): Promise<GraphQLModule<
   GlobalContext,
   any
 >> => {
+  tlog('starting');
   log('building type-definitions and resolvers');
 
   const resolverPromises = ((await Promise.all(
     Object.values(resolvers).map(r => Promise.resolve(r)),
   )) as any[]) as [Function, ...Function[]];
-
-  log({ resolverPromises });
 
   const externalSchema = await buildTypeDefsAndResolvers({
     resolvers: resolverPromises,
@@ -35,17 +35,14 @@ export const ExternalGraphQLModule = async (): Promise<GraphQLModule<
     // emitSchemaFile: path.join(__dirname, './schema.gql'),
   });
 
-  log('external', externalSchema);
-
   log('collecting registered modules');
   const modules = await Promise.all(getRegisteredExternalModules());
-
-  log('modules', modules);
 
   log('creating graphql schemas for content types');
   const schema = await createExtraGraphQLSchema();
 
   log('creating graphql module');
+  tlog('ending');
   return new GraphQLModule({
     typeDefs: externalSchema.typeDefs,
     resolvers: externalSchema.resolvers,

@@ -6,32 +6,41 @@
           Schema - <strong>{{ schemaName }}</strong>
         </h2>
 
-        <el-dropdown>
-          <el-button size="medium">
-            Actions
-            <i class="el-icon-arrow-down el-icon--right" />
-          </el-button>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>
-              <router-link :to="`/schemas/${schemaId}/create`">
-                <i class="el-icon-document-add" />
-                Create
-              </router-link>
-            </el-dropdown-item>
-            <el-dropdown-item>
-              <router-link :to="`/schemas/${schemaId}/edit`">
-                <i class="el-icon-edit" />
-                Edit
-              </router-link>
-            </el-dropdown-item>
-            <el-dropdown-item>
-              <router-link :to="`/schemas/${schemaId}/delete`" style="color: rgb(245, 108, 108)">
-                <i class="el-icon-delete" />
-                Delete
-              </router-link>
-            </el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
+        <el-row type="flex" align="middle">
+          <el-input
+            v-model="term"
+            size="medium"
+            style="max-width: 250px; margin-right: 1rem;"
+            placeholder="Search"
+            suffix-icon="el-icon-search"
+          />
+          <el-dropdown>
+            <el-button size="medium">
+              Actions
+              <i class="el-icon-arrow-down el-icon--right" />
+            </el-button>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item>
+                <router-link :to="`/schemas/${schemaId}/create`">
+                  <i class="el-icon-document-add" />
+                  Create
+                </router-link>
+              </el-dropdown-item>
+              <el-dropdown-item>
+                <router-link :to="`/schemas/${schemaId}/edit`">
+                  <i class="el-icon-edit" />
+                  Edit
+                </router-link>
+              </el-dropdown-item>
+              <el-dropdown-item>
+                <router-link :to="`/schemas/${schemaId}/delete`" style="color: rgb(245, 108, 108)">
+                  <i class="el-icon-delete" />
+                  Delete
+                </router-link>
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </el-row>
       </el-row>
     </portal>
 
@@ -77,6 +86,7 @@
       <el-row type="flex" justify="space-between">
         <span />
         <el-pagination
+          v-show="term === ''"
           :current-page="currentPage"
           class="dockite-element--pagination"
           :page-count="totalPages"
@@ -97,7 +107,11 @@ import { formatDistanceToNow } from 'date-fns';
 import { Component, Vue, Watch } from 'nuxt-property-decorator';
 import { Fragment } from 'vue-fragment';
 
-import { ManyResultSet, FindDocumentResultItem } from '../../../common/types';
+import {
+  ManyResultSet,
+  FindDocumentResultItem,
+  SearchDocumentsWithSchemaResultItem,
+} from '../../../common/types';
 
 import * as data from '~/store/data';
 
@@ -107,10 +121,14 @@ import * as data from '~/store/data';
   },
 })
 export default class SchemaDocumentsPage extends Vue {
-  get findDocumentsBySchemaId(): ManyResultSet<FindDocumentResultItem> {
+  public term = '';
+
+  get findDocumentsBySchemaId(): ManyResultSet<
+    FindDocumentResultItem | SearchDocumentsWithSchemaResultItem
+  > {
     const state: data.DataState = this.$store.state[data.namespace];
 
-    return state.findDocumentsBySchemaId;
+    return this.term === '' ? state.findDocumentsBySchemaId : state.searchDocumentsWithSchema;
   }
 
   get schemaId(): string {
@@ -163,6 +181,16 @@ export default class SchemaDocumentsPage extends Vue {
   @Watch('schemaId', { immediate: true })
   handleSchemaIdChange(): void {
     this.fetchFindDocumentsBySchemaId();
+  }
+
+  @Watch('term')
+  public handleTermChange(newTerm: string): void {
+    if (newTerm !== '') {
+      this.$store.dispatch(`${data.namespace}/fetchSearchDocumentsWithSchema`, {
+        term: newTerm,
+        schemaId: this.schemaId,
+      });
+    }
   }
 }
 </script>

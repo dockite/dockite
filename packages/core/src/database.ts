@@ -18,7 +18,9 @@ export const connect = async (): Promise<Connection> => {
 
   log('collecting registered entities');
   if (config.entities && config.entities.length > 0) {
-    externalEntities = await Promise.all(config.entities.map(x => import(x)));
+    externalEntities = await Promise.all(
+      config.entities.map(x => import(x).then(i => Promise.resolve(i))),
+    );
   }
 
   log('creating database connection');
@@ -34,6 +36,8 @@ export const connect = async (): Promise<Connection> => {
     logging: ['query', 'error'],
     logger: 'debug',
   });
+
+  await connection.synchronize();
 
   return connection;
 };

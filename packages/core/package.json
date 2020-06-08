@@ -20,6 +20,7 @@
     "apollo-server-express": "^2.10.1",
     "axios": "^0.19.2",
     "bcrypt": "^4.0.0",
+    "class-validator": "^0.12.2",
     "cosmiconfig": "^6.0.0",
     "debug": "^4.1.1",
     "dotenv": "^8.2.0",

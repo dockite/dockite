@@ -11,6 +11,7 @@ import { GlobalContext } from '../../common/types';
 import * as resolvers from './resolvers';
 
 const log = debug('dockite:core:internal');
+const tlog = debug('dockite:core:internal:timer');
 
 // eslint-disable-next-line
 export const getRegisteredInternalModules = (): any[] => {
@@ -23,13 +24,12 @@ export const InternalGraphQLModule = async (): Promise<GraphQLModule<
   GlobalContext,
   any
 >> => {
+  tlog('starting');
   log('building type-definitions and resolvers');
 
   const resolverPromises = ((await Promise.all(
     Object.values(resolvers).map(r => Promise.resolve(r)),
   )) as any[]) as [Function, ...Function[]];
-
-  log({ resolverPromises });
 
   const typeDefsAndResolvers = await buildTypeDefsAndResolvers({
     authChecker,
@@ -41,6 +41,7 @@ export const InternalGraphQLModule = async (): Promise<GraphQLModule<
   const modules = await Promise.all(getRegisteredInternalModules());
 
   log('creating graphql module');
+  tlog('ending');
   return new GraphQLModule({
     typeDefs: typeDefsAndResolvers.typeDefs,
     resolvers: typeDefsAndResolvers.resolvers,

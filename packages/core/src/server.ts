@@ -60,11 +60,13 @@ export const start = async (port = process.env.PORT || 3000): Promise<Server> =>
   // app.use('/admin', express.static(path.dirname(require.resolve('@dockite/ui'))));
   // app.all('/admin*', (_req, res) => res.sendFile(require.resolve('@dockite/ui')));
 
+  log('collecting modules');
   const [root, external] = await Promise.all([RootModule(), ExternalGraphQLModule()]);
 
   SchemaStore.internalSchema = root.schema;
   SchemaStore.externalSchema = external.schema;
 
+  log('creating servers');
   const internalServer = new ApolloServer({
     schema: root.schema,
     context: ({ req, res }: SessionContext): GlobalContext => {
@@ -91,6 +93,7 @@ export const start = async (port = process.env.PORT || 3000): Promise<Server> =>
     playground: true,
   });
 
+  log('attaching servers');
   internalServer.applyMiddleware({ app, path: `/${INTERNAL_GRAPHQL_PATH}` });
   externalServer.applyMiddleware({ app, path: `/${EXTERNAL_GRAPHQL_PATH}` });
 
