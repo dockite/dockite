@@ -1,7 +1,17 @@
 <template>
   <fragment>
     <portal to="header">
-      <h2>All Documents</h2>
+      <el-row type="flex" align="middle" justify="space-between">
+        <h2>All Documents</h2>
+
+        <el-input
+          v-model="term"
+          size="medium"
+          style="max-width: 250px"
+          placeholder="Search"
+          suffix-icon="el-icon-search"
+        />
+      </el-row>
     </portal>
 
     <div class="all-documents-page">
@@ -52,6 +62,7 @@
       <el-row type="flex" justify="space-between">
         <span />
         <el-pagination
+          v-show="term === ''"
           :current-page="currentPage"
           class="dockite-element--pagination"
           :page-count="totalPages"
@@ -69,7 +80,7 @@
 
 <script lang="ts">
 import { formatDistanceToNow } from 'date-fns';
-import { Component, Vue } from 'nuxt-property-decorator';
+import { Component, Vue, Watch } from 'nuxt-property-decorator';
 import { Fragment } from 'vue-fragment';
 
 import { ManyResultSet, AllDocumentsWithSchemaResultItem } from '../../common/types';
@@ -82,10 +93,12 @@ import * as data from '~/store/data';
   },
 })
 export default class AllDocumentsPage extends Vue {
+  public term = '';
+
   get allDocumentsWithSchema(): ManyResultSet<AllDocumentsWithSchemaResultItem> {
     const state: data.DataState = this.$store.state[data.namespace];
 
-    return state.allDocumentsWithSchema;
+    return this.term === '' ? state.allDocumentsWithSchema : state.searchDocumentsWithSchema;
   }
 
   get currentPage(): number {
@@ -122,6 +135,13 @@ export default class AllDocumentsPage extends Vue {
 
   public handlePageChange(newPage: number): void {
     this.fetchAllDocumentsWithSchema(newPage);
+  }
+
+  @Watch('term')
+  public handleTermChange(newTerm: string): void {
+    if (newTerm !== '') {
+      this.$store.dispatch(`${data.namespace}/fetchSearchDocumentsWithSchema`, { term: newTerm });
+    }
   }
 
   mounted(): void {

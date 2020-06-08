@@ -19,6 +19,8 @@ import {
   AllWebhooksResultItem,
   FindWebhookCallsQueryResponse,
   FindWebhookCallsResultItem,
+  SearchDocumentsWithSchemaResultItem,
+  SearchDocumentsWithSchemaQueryResponse,
 } from '~/common/types';
 import AllDocumentsWithSchemaQuery from '~/graphql/queries/all-documents-with-schema.gql';
 import AllSchemasQuery from '~/graphql/queries/all-schemas.gql';
@@ -28,11 +30,13 @@ import FindDocumentsBySchemaIdQuery from '~/graphql/queries/find-documents-by-sc
 import FindWebhookCallsByWebhookIdQuery from '~/graphql/queries/find-webhook-calls-by-webhook-id.gql';
 import GetDocumentQuery from '~/graphql/queries/get-document.gql';
 import GetSchemaWithFieldsQuery from '~/graphql/queries/get-schema-with-fields.gql';
+import SearchDocumentsWithSchemaQuery from '~/graphql/queries/search-documents-with-schema.gql';
 
 export interface DataState {
   allSchemas: ManyResultSet<AllSchemasResultItem>;
   allWebhooks: ManyResultSet<AllWebhooksResultItem>;
   allDocumentsWithSchema: ManyResultSet<AllDocumentsWithSchemaResultItem>;
+  searchDocumentsWithSchema: ManyResultSet<SearchDocumentsWithSchemaResultItem>;
   getDocument: Record<string, Document>;
   getSchemaWithFields: Record<string, Schema>;
   findDocumentsBySchemaId: ManyResultSet<FindDocumentResultItem>;
@@ -58,6 +62,13 @@ export const state = (): DataState => ({
     hasNextPage: null,
   },
   allDocumentsWithSchema: {
+    results: [],
+    totalItems: null,
+    totalPages: null,
+    currentPage: null,
+    hasNextPage: null,
+  },
+  searchDocumentsWithSchema: {
     results: [],
     totalItems: null,
     totalPages: null,
@@ -126,6 +137,22 @@ export const actions: ActionTree<DataState, RootState> = {
     }
 
     commit('setAllDocumentsWithSchema', data);
+  },
+
+  async fetchSearchDocumentsWithSchema(
+    { commit },
+    payload: { term: string; schemaId?: string },
+  ): Promise<void> {
+    const { data } = await this.$apolloClient.query<SearchDocumentsWithSchemaQueryResponse>({
+      query: SearchDocumentsWithSchemaQuery,
+      variables: { ...payload },
+    });
+
+    if (!data.searchDocuments) {
+      throw new Error('graphql: searchDocumentsWithSchema could not be fetched');
+    }
+
+    commit('setSearchDocumentsWithSchema', data);
   },
 
   async fetchDocumentById(
@@ -232,6 +259,10 @@ export const mutations: MutationTree<DataState> = {
 
   setAllDocumentsWithSchema(state, payload: AllDocumentsWithSchemaQueryResponse): void {
     state.allDocumentsWithSchema = { ...payload.allDocuments };
+  },
+
+  setSearchDocumentsWithSchema(state, payload: SearchDocumentsWithSchemaQueryResponse): void {
+    state.searchDocumentsWithSchema = { ...payload.searchDocuments };
   },
 
   setDocument(state, payload: GetDocumentQueryResponse) {

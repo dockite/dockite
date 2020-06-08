@@ -47,6 +47,12 @@ export interface AllDocumentsWithSchemaQueryResponse {
   allDocuments: ManyResultsResponse<AllDocumentsWithSchemaResultItem>;
 }
 
+export type SearchDocumentsWithSchemaResultItem = Omit<Document, 'user' | 'userId' | 'schemaId'>;
+
+export interface SearchDocumentsWithSchemaQueryResponse {
+  searchDocuments: ManyResultsResponse<SearchDocumentsWithSchemaResultItem>;
+}
+
 export interface GetDocumentQueryResponse {
   getDocument: Document;
 }
