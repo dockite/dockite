@@ -58,6 +58,7 @@ export class WebhookCallResolver {
     const [results, totalItems] = await repository.findAndCount({
       take: perPage,
       skip: perPage * (page - 1),
+      order: { executedAt: 'DESC' },
     });
 
     const totalPages = Math.ceil(totalItems / perPage);
@@ -87,6 +88,7 @@ export class WebhookCallResolver {
       where: { webhookId },
       take: perPage,
       skip: perPage * (page - 1),
+      order: { executedAt: 'DESC' },
     });
 
     const totalPages = Math.ceil(totalItems / perPage);
