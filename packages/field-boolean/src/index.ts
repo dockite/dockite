@@ -1,7 +1,6 @@
 import { DockiteField } from '@dockite/field';
-import { Schema } from '@dockite/types';
 import {
-  GraphQLBoolean, GraphQLInputType, GraphQLObjectType, GraphQLOutputType, GraphQLScalarType,
+  GraphQLBoolean, GraphQLInputType, GraphQLOutputType, GraphQLScalarType,
 } from 'graphql';
 
 const DockiteFieldBooleanType = new GraphQLScalarType({
@@ -28,10 +27,7 @@ export class DockiteFieldBoolean extends DockiteField {
     return DockiteFieldBooleanType;
   }
 
-  public async outputType(
-    _dockiteSchemas: Schema[],
-    _types: Map<string, GraphQLObjectType>,
-  ): Promise<GraphQLOutputType> {
+  public async outputType(): Promise<GraphQLOutputType> {
     return DockiteFieldBooleanType;
   }
 }

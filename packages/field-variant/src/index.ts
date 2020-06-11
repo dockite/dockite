@@ -40,7 +40,7 @@ export class DockiteFieldVariant extends DockiteField {
 
   public async outputType(
     dockiteSchemas: Schema[],
-    types: Map<string, GraphQLObjectType>,
+    objectTypes: Map<string, GraphQLObjectType>,
     dockiteFields: Record<string, DockiteFieldStatic>,
   ): Promise<GraphQLOutputType> {
     const fields: Omit<Field, 'id' | 'dockiteField' | 'schema' | 'schemaId'>[] =
@@ -57,7 +57,7 @@ export class DockiteFieldVariant extends DockiteField {
         const dockiteField = new FieldClass(f as Field, this.repositories, this.schema);
 
         const [outputType, outputArgs] = await Promise.all([
-          dockiteField.outputType(dockiteSchemas, types, dockiteFields),
+          dockiteField.outputType(dockiteSchemas, objectTypes, dockiteFields),
           dockiteField.outputArgs(),
         ]);
 
@@ -86,9 +86,7 @@ export class DockiteFieldVariant extends DockiteField {
     const fieldsToObjects = cleanedFields.map(field => {
       const { name: schemaName } = dockiteSchemas.find(
         schema => schema.id === this.schemaField.schemaId,
-      ) ?? {
-        name: 'Unknown',
-      };
+      ) ?? { name: 'Unknown' };
 
       return new GraphQLObjectType({
         name: graphqlCase(`${schemaName}_${this.schemaField.name}_Variant_${field.name}`),

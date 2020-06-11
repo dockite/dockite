@@ -41,14 +41,14 @@ export class DockiteFieldReference extends DockiteField {
 
   public async outputType(
     dockiteSchemas: Schema[],
-    types: Map<string, GraphQLObjectType>,
+    objectTypes: Map<string, GraphQLObjectType>,
   ): Promise<GraphQLOutputType> {
     const schemaIds: string[] = this.schemaField.settings.schemaIds ?? [];
     // const schemaIds = this
 
     const unionTypes = dockiteSchemas
       .filter((schema) => schemaIds.includes(schema.id))
-      .map((schema) => types.get(schema.name));
+      .map((schema) => objectTypes.get(schema.name));
 
     if (unionTypes.length === 1) {
       const [outputType] = unionTypes;
@@ -59,7 +59,7 @@ export class DockiteFieldReference extends DockiteField {
     return new GraphQLUnionType({
       name: `${this.schemaField.name}_Union`,
       types: unionTypes as GraphQLObjectType[],
-      resolveType(obj: {schemaName: string}) {
+      resolveType(obj: { schemaName: string }) {
         return graphqlCase(obj.schemaName);
       },
     });

@@ -1,10 +1,11 @@
+/* eslint-disable no-param-reassign */
 import {
+  DockiteFieldStatic,
   Document,
   Field,
   FindManyResult,
   GlobalContext,
   Schema,
-  DockiteFieldStatic,
 } from '@dockite/types';
 import debug from 'debug';
 import {
@@ -23,34 +24,43 @@ import { Repository } from 'typeorm';
 
 const log = debug('dockite:transformer');
 
+// This turns any text into mostly GraphQL compliant strings.
+// TODO: Deprecate this once schemas have an option for both name and title
 const graphqlCase = (value: string): string => startCase(value).replace(/\s/g, '');
 
-interface FieldConfig<Source, Context> {
+// This is the shape of a field config item which
+// is used for building the corresponding GraphQL types.
+interface FieldConfigItem<Source, Context> {
   name: string;
   config: GraphQLFieldConfig<Source, Context>;
 }
 
-const createObjectType = async (
-  entity: Schema,
-): Promise<{
-  fieldResolver: (
-    dockiteSchemas: Schema[],
-    types: Map<string, GraphQLObjectType>,
-    dockiteFields: Record<string, DockiteFieldStatic>,
-  ) => Promise<void>;
-  object: GraphQLObjectType;
-}> => {
-  // Build our empty field map
-  log(`Building object type for ${entity.name}`);
-  const typeFields: GraphQLFieldConfigMap<Source, GlobalContext> = {};
+// The shape of a field resolver function which
+// is used for populating the fields of an object
+// type post-instantiation.
+type FieldResolverFn = (
+  dockiteSchemas: Schema[],
+  types: Map<string, GraphQLObjectType>,
+  dockiteFields: Record<string, DockiteFieldStatic>,
+) => Promise<void>;
 
-  // Retrieve our field configs from the registered dockite-fields
-  const fieldResolver = async (
+/**
+ * Provided an entity and a map for storing fields, build and return a function
+ * that will resolve each field and then add them types map.
+ *
+ * @param entity
+ * @param typeFields
+ */
+const makeFieldResolverFn = (
+  entity: Schema,
+  typeFields: GraphQLFieldConfigMap<Source, GlobalContext>,
+): FieldResolverFn => {
+  return async (
     dockiteSchemas: Schema[],
     types: Map<string, GraphQLObjectType>,
     dockiteFields: Record<string, DockiteFieldStatic>,
   ): Promise<void> => {
-    const fieldsMap: FieldConfig<Source, GlobalContext>[] = await Promise.all(
+    const fieldsMap: FieldConfigItem<Source, GlobalContext>[] = await Promise.all(
       entity.fields.map(async (field: Field) => {
         // eslint-disable-next-line
         const [outputType, outputArgs] = await Promise.all([
@@ -69,7 +79,7 @@ const createObjectType = async (
             },
             args: outputArgs,
           },
-        } as FieldConfig<Source, GlobalContext>;
+        } as FieldConfigItem<Source, GlobalContext>;
       }),
     );
 
@@ -84,6 +94,27 @@ const createObjectType = async (
       }
     });
   };
+};
+
+/**
+ * Provided a schema this method will create an GraphQL object type
+ * for it containing all of it's associated fields and corresponding
+ * resolvers for said fields.
+ *
+ * @param entity The schema to create an object type for
+ */
+const createObjectType = async (
+  entity: Schema,
+): Promise<{
+  fieldResolver: FieldResolverFn;
+  object: GraphQLObjectType;
+}> => {
+  log(`Building object type for ${entity.name}`);
+  // Build our empty field map
+  const typeFields: GraphQLFieldConfigMap<Source, GlobalContext> = {};
+
+  // Retrieve our field configs from the registered dockite-fields
+  const fieldResolver = makeFieldResolverFn(entity, typeFields);
 
   // Finally return the built object type
   const payload = {
@@ -97,6 +128,15 @@ const createObjectType = async (
   return payload;
 };
 
+/**
+ * Provided a schema, its corresponding GraphQL Object and access to
+ * retrieve documents from the database this method will create the required
+ * queries for retreiving either a singlular or multiple schema items.
+ *
+ * @param entity
+ * @param repository
+ * @param type
+ */
 export const createQueriesForEntity = async <T extends Document>(
   entity: Schema,
   repository: Repository<T>,
@@ -170,29 +210,36 @@ export const createQueriesForEntity = async <T extends Document>(
   return queries;
 };
 
+/**
+ * Provided an array of Schemas, a map of DockiteFields and access to retrieve
+ * documents from the database this method will create a GraphQL Schema for each
+ * Schema entity including its corresponding fields and resolvers.
+ *
+ * @param dockiteSchemas
+ * @param documentRepository
+ * @param dockiteFields
+ */
 export const createSchema = async <T extends Document>(
   dockiteSchemas: Schema[],
   documentRepository: Repository<T>,
   dockiteFields: Record<string, DockiteFieldStatic>,
 ): Promise<GraphQLSchema> => {
-  const types = new Map<string, GraphQLObjectType>();
-  const fieldResolvers: ((
-    dockiteSchemas: Schema[],
-    types: Map<string, GraphQLObjectType>,
-    dockiteFields: Record<string, DockiteFieldStatic>,
-  ) => Promise<void>)[] = [];
+  const objectTypeManager = new Map<string, GraphQLObjectType>();
+  const fieldResolvers: FieldResolverFn[] = [];
 
   await Promise.all(
     dockiteSchemas.map(schema =>
       createObjectType(schema).then(result => {
-        types.set(schema.name, result.object);
+        objectTypeManager.set(schema.name, result.object);
         fieldResolvers.push(result.fieldResolver);
       }),
     ),
   );
 
   await Promise.all(
-    fieldResolvers.map(fieldResolver => fieldResolver(dockiteSchemas, types, dockiteFields)),
+    fieldResolvers.map(fieldResolver =>
+      fieldResolver(dockiteSchemas, objectTypeManager, dockiteFields),
+    ),
   );
 
   const queries = await Promise.all(
@@ -200,7 +247,7 @@ export const createSchema = async <T extends Document>(
       createQueriesForEntity(
         schema,
         documentRepository,
-        types.get(schema.name) as GraphQLObjectType,
+        objectTypeManager.get(schema.name) as GraphQLObjectType,
       ),
     ),
   );

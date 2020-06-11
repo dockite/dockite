@@ -1,13 +1,13 @@
 import { DockiteField } from '@dockite/field';
-import { Field, GlobalContext, Schema, DockiteFieldStatic } from '@dockite/types';
+import { DockiteFieldStatic, Field, GlobalContext, Schema } from '@dockite/types';
 import {
   GraphQLFieldConfig,
   GraphQLInputType,
+  GraphQLList,
   GraphQLObjectType,
   GraphQLOutputType,
   GraphQLString,
   Source,
-  GraphQLList,
 } from 'graphql';
 import { GraphQLJSON } from 'graphql-type-json';
 
@@ -37,7 +37,7 @@ export class DockiteFieldGroup extends DockiteField {
 
   public async outputType(
     dockiteSchemas: Schema[],
-    types: Map<string, GraphQLObjectType>,
+    objectTypes: Map<string, GraphQLObjectType>,
     dockiteFields: Record<string, DockiteFieldStatic>,
   ): Promise<GraphQLOutputType> {
     const fields: Omit<Field, 'id' | 'dockiteField' | 'schema' | 'schemaId'>[] =
@@ -54,7 +54,7 @@ export class DockiteFieldGroup extends DockiteField {
         const dockiteField = new FieldClass(this.schemaField, this.repositories, this.schema);
 
         const [outputType, outputArgs] = await Promise.all([
-          dockiteField.outputType(dockiteSchemas, types, dockiteFields),
+          dockiteField.outputType(dockiteSchemas, objectTypes, dockiteFields),
           dockiteField.outputArgs(),
         ]);
 

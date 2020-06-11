@@ -1,9 +1,6 @@
 import { DockiteField } from '@dockite/field';
-import {
-  GraphQLInputType, GraphQLOutputType, GraphQLObjectType, GraphQLScalarType,
-} from 'graphql';
+import { GraphQLInputType, GraphQLOutputType, GraphQLScalarType } from 'graphql';
 import { HexColorCodeResolver as HexColorCode } from 'graphql-scalars';
-import { Schema } from '@dockite/types';
 
 const DockiteFieldColorType = new GraphQLScalarType({
   ...HexColorCode.toConfig(),
@@ -29,10 +26,7 @@ export class DockiteFieldColorPicker extends DockiteField {
     return DockiteFieldColorType;
   }
 
-  public async outputType(
-    _dockiteSchemas: Schema[],
-    _types: Map<string, GraphQLObjectType>,
-  ): Promise<GraphQLOutputType> {
+  public async outputType(): Promise<GraphQLOutputType> {
     return DockiteFieldColorType;
   }
 }

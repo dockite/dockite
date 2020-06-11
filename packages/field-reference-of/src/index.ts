@@ -1,15 +1,15 @@
 import { DockiteField } from '@dockite/field';
+import { Document, FieldContext, Schema } from '@dockite/types';
 import {
+  GraphQLEnumType,
+  GraphQLFieldConfigArgumentMap,
   GraphQLInputType,
+  GraphQLInt,
+  GraphQLList,
+  GraphQLObjectType,
   GraphQLOutputType,
   GraphQLString,
-  GraphQLObjectType,
-  GraphQLFieldConfigArgumentMap,
-  GraphQLList,
-  GraphQLInt,
-  GraphQLEnumType,
 } from 'graphql';
-import { Schema, Document, FieldContext } from '@dockite/types';
 
 export class DockiteFieldReferenceOf extends DockiteField {
   public static type = 'reference_of';
@@ -34,13 +34,13 @@ export class DockiteFieldReferenceOf extends DockiteField {
 
   public async outputType(
     dockiteSchemas: Schema[],
-    types: Map<string, GraphQLObjectType>,
+    objectTypes: Map<string, GraphQLObjectType>,
   ): Promise<GraphQLOutputType> {
     const schemaId: string = this.schemaField.settings.schemaId ?? this.schemaField.schemaId;
 
     const [schemaType] = dockiteSchemas
       .filter((schema) => schemaId === schema.id)
-      .map((schema) => types.get(schema.name));
+      .map((schema) => objectTypes.get(schema.name));
 
     return new GraphQLList(schemaType as GraphQLObjectType);
   }
@@ -67,7 +67,7 @@ export class DockiteFieldReferenceOf extends DockiteField {
     const qb = this.repositories.Document.createQueryBuilder('document')
       .leftJoinAndSelect('document.schema', 'schema')
       .andWhere('schema.id = :schemaId', { schemaId })
-      .andWhere('document.data -> :field ->> \'id\' = :documentId', {
+      .andWhere("document.data -> :field ->> 'id' = :documentId", {
         field: fieldName,
         documentId: root.id,
       })

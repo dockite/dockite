@@ -1,9 +1,7 @@
 import { DockiteField } from '@dockite/field';
-import {
-  GraphQLInputType, GraphQLOutputType, GraphQLObjectType, GraphQLScalarType,
-} from 'graphql';
+import { FieldContext } from '@dockite/types';
+import { GraphQLInputType, GraphQLOutputType, GraphQLScalarType } from 'graphql';
 import { GraphQLDate, GraphQLDateTime } from 'graphql-iso-date';
-import { Schema, FieldContext } from '@dockite/types';
 
 const DockiteFieldDateType = new GraphQLScalarType({
   ...GraphQLDate.toConfig(),
@@ -38,10 +36,7 @@ export class DockiteFieldDatetime extends DockiteField {
     return this.graphqlType();
   }
 
-  public async outputType(
-    _dockiteSchemas: Schema[],
-    _types: Map<string, GraphQLObjectType>,
-  ): Promise<GraphQLOutputType> {
+  public async outputType(): Promise<GraphQLOutputType> {
     return this.graphqlType();
   }
 
