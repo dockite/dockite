@@ -63,6 +63,11 @@ export class SchemaResolver {
       return null;
     }
 
+    schema.groups = schema.groups.reduce(
+      (acc: Record<string, string[]>, curr: Record<string, string[]>) => ({ ...acc, ...curr }),
+      {},
+    );
+
     return schema;
   }
 
@@ -84,6 +89,14 @@ export class SchemaResolver {
       relations: ['fields'],
       take: perPage,
       skip: perPage * (page - 1),
+    });
+
+    results.forEach(schema => {
+      // eslint-disable-next-line no-param-reassign
+      schema.groups = schema.groups.reduce(
+        (acc: Record<string, string[]>, curr: Record<string, string[]>) => ({ ...acc, ...curr }),
+        {},
+      );
     });
 
     const totalPages = Math.ceil(totalItems / perPage);
@@ -118,10 +131,12 @@ export class SchemaResolver {
       throw new Error('SchemaType provided is invalid');
     }
 
+    const preservedGroups = Object.keys(groups).map(key => ({ [key]: groups[key] }));
+
     const schema = repository.create({
       name,
       type,
-      groups,
+      groups: preservedGroups,
       settings,
     });
 
@@ -150,7 +165,9 @@ export class SchemaResolver {
       where: { id: schemaId },
     });
 
-    schema.groups = groups;
+    const preservedGroups = Object.keys(groups).map(key => ({ [key]: groups[key] }));
+
+    schema.groups = preservedGroups;
     schema.settings = settings;
 
     const savedSchema = await repository.save(schema);
