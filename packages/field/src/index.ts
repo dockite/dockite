@@ -1,10 +1,15 @@
-import { Field, Schema, FieldContext, DockiteFieldStatic } from '@dockite/types';
 import {
+  Field,
+  FieldContext,
+  FieldIOContext,
+  HookContext,
+  HookContextWithOldData,
+} from '@dockite/types';
+import {
+  GraphQLFieldConfigArgumentMap,
   GraphQLInputType,
   GraphQLOutputType,
   GraphQLSchema,
-  GraphQLObjectType,
-  GraphQLFieldConfigArgumentMap,
 } from 'graphql';
 import { Repository } from 'typeorm';
 import { Component } from 'vue';
@@ -28,24 +33,66 @@ export abstract class DockiteField {
     this.schema = schema;
   }
 
-  public abstract inputType(): Promise<GraphQLInputType>;
+  public abstract inputType(ctx: FieldIOContext): Promise<GraphQLInputType>;
 
-  // public abstract processInput<Input, Output>(data: Input): Promise<Output>;
+  public async processInput<T>(ctx: HookContextWithOldData): Promise<T> {
+    return ctx.fieldData as T;
+  }
+
+  public validateInput(_ctx: HookContextWithOldData): Promise<void> {
+    return Promise.resolve();
+  }
+
+  public processInputRaw<T>(ctx: HookContextWithOldData): Promise<T> {
+    return this.processInput(ctx);
+  }
+
+  public validateInputRaw(_ctx: HookContextWithOldData): Promise<void> {
+    return Promise.resolve();
+  }
+
+  public processInputGraphQL<T>(ctx: FieldContext): Promise<T> {
+    return this.processInput(ctx);
+  }
+
+  public validateInputGraphQL(_ctx: HookContextWithOldData): Promise<void> {
+    return Promise.resolve();
+  }
 
   public abstract where(): Promise<GraphQLInputType>;
 
-  public abstract outputType(
-    dockiteSchemas: Schema[],
-    types: Map<string, GraphQLObjectType>,
-    dockiteFields: Record<string, DockiteFieldStatic>,
-  ): Promise<GraphQLOutputType>;
+  public abstract outputType(ctx: FieldIOContext): Promise<GraphQLOutputType>;
 
   public outputArgs(): Promise<GraphQLFieldConfigArgumentMap> {
     return Promise.resolve({});
   }
 
-  public async processOutput<T>(context: FieldContext): Promise<T> {
-    return context.value as T;
+  public async processOutput<T>(ctx: HookContext): Promise<T> {
+    return ctx.fieldData as T;
+  }
+
+  public processOutputRaw<T>(ctx: HookContext): Promise<T> {
+    return this.processOutput(ctx);
+  }
+
+  public processOutputGraphQL<T>(ctx: FieldContext): Promise<T> {
+    return this.processOutput(ctx);
+  }
+
+  public onCreate(_ctx: HookContext): Promise<void> {
+    return Promise.resolve();
+  }
+
+  public onUpdate(_ctx: HookContextWithOldData): Promise<void> {
+    return Promise.resolve();
+  }
+
+  public onSoftDelete(_ctx: HookContext): Promise<void> {
+    return Promise.resolve();
+  }
+
+  public onPermanentDelete(_ctx: HookContext): Promise<void> {
+    return Promise.resolve();
   }
 }
 

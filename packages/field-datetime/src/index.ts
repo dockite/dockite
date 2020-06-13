@@ -40,7 +40,7 @@ export class DockiteFieldDatetime extends DockiteField {
     return this.graphqlType();
   }
 
-  public async processOutput<T>({ value }: FieldContext): Promise<T> {
-    return (new Date(value) as any) as T;
+  public async processOutput<T>({ fieldData }: FieldContext): Promise<T> {
+    return (new Date(fieldData) as any) as T;
   }
 }

@@ -1,5 +1,5 @@
 import { DockiteField } from '@dockite/field';
-import { Document, FieldContext, Schema } from '@dockite/types';
+import { Document, FieldContext, FieldIOContext } from '@dockite/types';
 import {
   GraphQLEnumType,
   GraphQLFieldConfigArgumentMap,
@@ -32,15 +32,15 @@ export class DockiteFieldReferenceOf extends DockiteField {
     return GraphQLString;
   }
 
-  public async outputType(
-    dockiteSchemas: Schema[],
-    objectTypes: Map<string, GraphQLObjectType>,
-  ): Promise<GraphQLOutputType> {
+  public async outputType({
+    dockiteSchemas,
+    graphqlTypes,
+  }: FieldIOContext): Promise<GraphQLOutputType> {
     const schemaId: string = this.schemaField.settings.schemaId ?? this.schemaField.schemaId;
 
     const [schemaType] = dockiteSchemas
       .filter((schema) => schemaId === schema.id)
-      .map((schema) => objectTypes.get(schema.name));
+      .map((schema) => graphqlTypes.get(schema.name));
 
     return new GraphQLList(schemaType as GraphQLObjectType);
   }
@@ -60,7 +60,11 @@ export class DockiteFieldReferenceOf extends DockiteField {
     } as GraphQLFieldConfigArgumentMap;
   }
 
-  public async processOutput<T>({ root, args }: FieldContext): Promise<T> {
+  public async processOutputGraphQL<T>({ data, args }: FieldContext): Promise<T> {
+    if (!args) {
+      throw new Error("Output type wasn't built correctly");
+    }
+
     const { schemaId, fieldName } = this.schemaField.settings;
     const { page, perPage } = args;
 
@@ -69,12 +73,12 @@ export class DockiteFieldReferenceOf extends DockiteField {
       .andWhere('schema.id = :schemaId', { schemaId })
       .andWhere("document.data -> :field ->> 'id' = :documentId", {
         field: fieldName,
-        documentId: root.id,
+        documentId: data.id,
       })
       .take(perPage)
       .offset((page - 1) * perPage);
 
-    if (args.orderBy !== 'id' && Object.keys(root).includes(args.orderBy)) {
+    if (args.orderBy !== 'id' && Object.keys(data).includes(args.orderBy)) {
       qb.addOrderBy(`document.data->>'${args.orderBy}'`, args.orderDirection);
     } else {
       qb.addOrderBy(`document.${args.orderBy}`, args.orderDirection);

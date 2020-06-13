@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable no-param-reassign */
 import {
   DockiteFieldStatic,
@@ -57,14 +58,17 @@ const makeFieldResolverFn = (
 ): FieldResolverFn => {
   return async (
     dockiteSchemas: Schema[],
-    types: Map<string, GraphQLObjectType>,
+    graphqlTypes: Map<string, GraphQLObjectType>,
     dockiteFields: Record<string, DockiteFieldStatic>,
   ): Promise<void> => {
     const fieldsMap: FieldConfigItem<Source, GlobalContext>[] = await Promise.all(
       entity.fields.map(async (field: Field) => {
-        // eslint-disable-next-line
         const [outputType, outputArgs] = await Promise.all([
-          field.dockiteField!.outputType(dockiteSchemas, types, dockiteFields),
+          field.dockiteField!.outputType({
+            dockiteSchemas,
+            graphqlTypes,
+            dockiteFields,
+          }),
           field.dockiteField!.outputArgs(),
         ]);
 
@@ -72,10 +76,15 @@ const makeFieldResolverFn = (
           name: String(field.name),
           config: {
             type: outputType,
-            resolve: async (root: any, args, context): Promise<any> => {
-              const value = root[field.name];
-              // eslint-disable-next-line
-              return field.dockiteField!.processOutput<typeof outputType>({value, root, args, context});
+            resolve: async (data: Record<string, any>, args): Promise<any> => {
+              const fieldData = data[field.name];
+
+              return field.dockiteField!.processOutputGraphQL<typeof outputType>({
+                field,
+                fieldData,
+                data,
+                args,
+              });
             },
             args: outputArgs,
           },

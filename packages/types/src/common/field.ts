@@ -9,11 +9,27 @@ import { Repository } from 'typeorm';
 
 import { Schema, Field } from '../entities';
 
+export interface FieldIOContext {
+  dockiteFields: Record<string, DockiteFieldStatic>;
+  dockiteSchemas: Schema[];
+  graphqlTypes: Map<string, GraphQLObjectType>;
+}
+
 export interface FieldContext {
-  value: any;
-  root: Record<string, any>;
-  args: Record<string, any>;
-  context: Record<string, any>;
+  field: Field;
+  fieldData: any;
+  data: Record<string, any>;
+  args?: Record<string, any>;
+}
+
+export interface HookContext {
+  field: Field;
+  fieldData: any;
+  data: Record<string, any>;
+}
+
+export interface HookContextWithOldData extends HookContext {
+  oldData?: Record<string, any>;
 }
 
 export interface DockiteFieldStatic {
@@ -30,19 +46,37 @@ export interface DockiteFieldStatic {
 }
 
 export interface DockiteField {
-  inputType(): Promise<GraphQLInputType>;
+  inputType(ctx: FieldIOContext): Promise<GraphQLInputType>;
 
-  // processInput<Input, Output>(data: Input): Promise<Output>;
+  processInput<T>(ctx: HookContextWithOldData): Promise<T>;
+
+  validateInput(ctx: HookContextWithOldData): Promise<void>;
+
+  processInputRaw<T>(ctx: HookContextWithOldData): Promise<T>;
+
+  validateInputRaw(ctx: HookContextWithOldData): Promise<void>;
+
+  processInputGraphQL<T>(ctx: FieldContext): Promise<T>;
+
+  validateInputGraphQL(ctx: HookContextWithOldData): Promise<void>;
 
   where(): Promise<GraphQLInputType>;
 
-  outputType(
-    dockiteSchemas: Schema[],
-    types: Map<string, GraphQLObjectType>,
-    dockiteFields: Record<string, DockiteFieldStatic>,
-  ): Promise<GraphQLOutputType>;
+  outputType(ctx: FieldIOContext): Promise<GraphQLOutputType>;
 
   outputArgs(): Promise<GraphQLFieldConfigArgumentMap>;
 
-  processOutput<T>(context: FieldContext): Promise<T>;
+  processOutputRaw<T>(ctx: HookContext): Promise<T>;
+
+  processOutputGraphQL<T>(ctx: FieldContext): Promise<T>;
+
+  processOutput<T>(ctx: HookContext): Promise<T>;
+
+  onCreate(ctx: HookContext): Promise<void>;
+
+  onUpdate(ctx: HookContextWithOldData): Promise<void>;
+
+  onSoftDelete(ctx: HookContext): Promise<void>;
+
+  onPermanentDelete(ctx: HookContext): Promise<void>;
 }

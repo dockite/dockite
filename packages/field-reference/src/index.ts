@@ -1,5 +1,7 @@
 import { DockiteField } from '@dockite/field';
-import { Document, FieldContext, Schema } from '@dockite/types';
+import {
+  Document, FieldContext, FieldIOContext,
+} from '@dockite/types';
 import {
   GraphQLInputObjectType,
   GraphQLInputType,
@@ -39,16 +41,15 @@ export class DockiteFieldReference extends DockiteField {
     return GraphQLString;
   }
 
-  public async outputType(
-    dockiteSchemas: Schema[],
-    objectTypes: Map<string, GraphQLObjectType>,
-  ): Promise<GraphQLOutputType> {
+  public async outputType({
+    dockiteSchemas,
+    graphqlTypes,
+  }: FieldIOContext): Promise<GraphQLOutputType> {
     const schemaIds: string[] = this.schemaField.settings.schemaIds ?? [];
-    // const schemaIds = this
 
     const unionTypes = dockiteSchemas
       .filter((schema) => schemaIds.includes(schema.id))
-      .map((schema) => objectTypes.get(schema.name));
+      .map((schema) => graphqlTypes.get(schema.name));
 
     if (unionTypes.length === 1) {
       const [outputType] = unionTypes;
@@ -65,12 +66,12 @@ export class DockiteFieldReference extends DockiteField {
     });
   }
 
-  public async processOutput<T>({ value }: FieldContext): Promise<T> {
-    if (!value) {
+  public async processOutputGraphQL<T>({ fieldData }: FieldContext): Promise<T> {
+    if (!fieldData) {
       return (null as any) as T;
     }
 
-    const criteria: { id: string; schemaId: string } = value;
+    const criteria: { id: string; schemaId: string } = fieldData;
 
     const document: Document = await this.repositories.Document.createQueryBuilder('document')
       .leftJoinAndSelect('document.schema', 'schema')
