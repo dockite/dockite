@@ -12,10 +12,9 @@
     "graphql": "^15.0.0",
     "type-graphql": "1.0.0-rc.2",
     "typeorm": "^0.2.22",
-    "typescript": "^3.9.5",
     "vue": "^2.6.11"
   },
   "devDependencies": {
-    "typescript": "~3.7.5"
+    "typescript": "^3.9.5"
   }
 }
