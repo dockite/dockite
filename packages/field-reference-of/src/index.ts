@@ -69,8 +69,6 @@ export class DockiteFieldReferenceOf extends DockiteField {
     const { schemaId, fieldName } = this.schemaField.settings;
     const { page, perPage } = args;
 
-    console.log(this.orm);
-
     const qb = this.orm
       .getRepository(Document)
       .createQueryBuilder('document')

@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import GraphQLJSON from 'graphql-type-json';
 import {
@@ -51,7 +52,21 @@ export class DocumentResolver {
       relations: ['schema', 'schema.fields'],
     });
 
-    return document ?? null;
+    if (!document) {
+      return null;
+    }
+
+    await Promise.all(
+      document.schema.fields.map(async field => {
+        document.data[field.name] = await field.dockiteField!.processOutputRaw({
+          data: document.data,
+          field,
+          fieldData: document.data[field.name] ?? null,
+        });
+      }),
+    );
+
+    return document;
   }
 
   @Authenticated()
@@ -71,7 +86,8 @@ export class DocumentResolver {
     const qb = repository
       .createQueryBuilder('document')
       .where('document.deletedAt IS NULL')
-      .leftJoinAndSelect('document.schema', 'schema');
+      .leftJoinAndSelect('document.schema', 'schema')
+      .leftJoinAndSelect('schema.fields', 'fields');
 
     if (schemaId) {
       qb.andWhere('document.schemaId = :schemaId', { schemaId });
@@ -86,6 +102,20 @@ export class DocumentResolver {
       .orderBy('document.updatedAt', 'DESC');
 
     const [results, totalItems] = await qb.getManyAndCount();
+
+    await Promise.all(
+      results.map(async item => {
+        await Promise.all(
+          item.schema.fields.map(async field => {
+            item.data[field.name] = await field.dockiteField!.processOutputRaw({
+              data: item.data,
+              field,
+              fieldData: item.data[field.name] ?? null,
+            });
+          }),
+        );
+      }),
+    );
 
     const totalPages = Math.ceil(totalItems / perPage);
 
@@ -113,11 +143,25 @@ export class DocumentResolver {
 
     const [results, totalItems] = await repository.findAndCount({
       where: { deletedAt: null },
-      relations: ['schema'],
+      relations: ['schema', 'schema.fields'],
       order: { updatedAt: 'DESC' },
       take: perPage,
       skip: perPage * (page - 1),
     });
+
+    await Promise.all(
+      results.map(async item => {
+        await Promise.all(
+          item.schema.fields.map(async field => {
+            item.data[field.name] = await field.dockiteField!.processOutputRaw({
+              data: item.data,
+              field,
+              fieldData: item.data[field.name] ?? null,
+            });
+          }),
+        );
+      }),
+    );
 
     const totalPages = Math.ceil(totalItems / perPage);
 
@@ -151,6 +195,7 @@ export class DocumentResolver {
       .search(term)
       .andWhere('searchEngine.deletedAt IS NULL')
       .leftJoinAndSelect('searchEngine.schema', 'schema')
+      .leftJoinAndSelect('schema.fields', 'fields')
       .take(perPage)
       .skip(perPage * (page - 1))
       .orderBy('searchEngine.updatedAt', 'DESC');
@@ -160,6 +205,20 @@ export class DocumentResolver {
     }
 
     const [results, totalItems] = await qb.getManyAndCount();
+
+    await Promise.all(
+      results.map(async item => {
+        await Promise.all(
+          item.schema.fields.map(async field => {
+            item.data[field.name] = await field.dockiteField!.processOutputRaw({
+              data: item.data,
+              field,
+              fieldData: item.data[field.name] ?? null,
+            });
+          }),
+        );
+      }),
+    );
 
     const totalPages = Math.ceil(totalItems / perPage);
 

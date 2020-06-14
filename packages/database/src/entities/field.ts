@@ -52,8 +52,6 @@ export class Field {
     if (!this.dockiteField) {
       const FieldClass = Object.values(FieldManager).find(field => field.type === this.type);
 
-      console.log('typeorm entities', typeorm);
-
       if (FieldClass && typeof FieldClass === 'function') {
         this.dockiteField = new FieldClass(this, typeorm);
       }

@@ -72,8 +72,6 @@ export class DockiteFieldReference extends DockiteField {
 
     const criteria: { id: string; schemaId: string } = fieldData;
 
-    console.log(this.orm);
-
     const document: Document | undefined = await this.orm
       .getRepository(Document)
       .createQueryBuilder('document')
