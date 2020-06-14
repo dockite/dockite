@@ -1,7 +1,5 @@
 import { DockiteField } from '@dockite/field';
-import {
-  Document, FieldContext, FieldIOContext,
-} from '@dockite/types';
+import { Document } from '@dockite/database';
 import {
   GraphQLInputObjectType,
   GraphQLInputType,
@@ -11,6 +9,7 @@ import {
   GraphQLUnionType,
 } from 'graphql';
 import { startCase } from 'lodash';
+import { FieldIOContext, FieldContext } from '@dockite/types';
 
 const graphqlCase = (value: string): string => startCase(value).replace(/\s/g, '');
 
@@ -73,11 +72,19 @@ export class DockiteFieldReference extends DockiteField {
 
     const criteria: { id: string; schemaId: string } = fieldData;
 
-    const document: Document = await this.repositories.Document.createQueryBuilder('document')
+    console.log(this.orm);
+
+    const document: Document | undefined = await this.orm
+      .getRepository(Document)
+      .createQueryBuilder('document')
       .leftJoinAndSelect('document.schema', 'schema')
       .where('document.id = :id', { id: criteria.id })
       .andWhere('schema.id = :schemaId', { schemaId: criteria.schemaId })
       .getOne();
+
+    if (!document) {
+      return (null as any) as T;
+    }
 
     return ({ id: document.id, schemaName: document.schema.name, ...document.data } as any) as T;
   }

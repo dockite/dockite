@@ -13,11 +13,10 @@ import {
 import { getCustomRepository, getRepository, Not, IsNull } from 'typeorm';
 import { cloneDeep } from 'lodash';
 import { HookContextWithOldData, HookContext } from '@dockite/types';
+import { Document, Schema, SearchEngineRepository } from '@dockite/database';
 
 import { Authenticated } from '../../../common/authorizers';
 import { GlobalContext } from '../../../common/types';
-import { Document, Schema } from '../../../entities';
-import { SearchEngineRepository } from '../../../repositories/SearchEngine';
 
 @ObjectType()
 class ManyDocuments {
@@ -327,7 +326,7 @@ export class DocumentResolver {
         schema.fields.map(field => {
           const fieldData = data[field.name] ?? null;
 
-          return Promise.resolve(field.dockiteField!.onDelete({ field, fieldData, data }));
+          return Promise.resolve(field.dockiteField!.onPermanentDelete({ field, fieldData, data }));
         }),
       );
 

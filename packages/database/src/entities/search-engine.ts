@@ -1,8 +1,8 @@
 import { ViewColumn, ViewEntity, Index, ManyToOne, PrimaryColumn } from 'typeorm';
 
-import { Document } from './Document';
-import { Schema } from './Schema';
-import { Release } from './Release';
+import { Document } from './document';
+import { Schema } from './schema';
+import { Release } from './release';
 
 @ViewEntity({
   expression: conn =>

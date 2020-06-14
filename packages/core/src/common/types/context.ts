@@ -1,6 +1,5 @@
+import { User } from '@dockite/database';
 import { Request, Response } from 'express';
-
-import { User } from '../../entities';
 
 export interface SessionContext {
   req: Request;

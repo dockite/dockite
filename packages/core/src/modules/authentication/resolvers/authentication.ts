@@ -3,9 +3,9 @@ import { compare, hash } from 'bcrypt';
 import { sign } from 'jsonwebtoken';
 import { Arg, Ctx, Mutation, Resolver } from 'type-graphql';
 import { getRepository, Repository } from 'typeorm';
+import { User } from '@dockite/database';
 
 import { GlobalContext } from '../../../common/types';
-import { User } from '../../../entities';
 import { getenv } from '../../../utils';
 import { AuthenticationResponse } from '../types/response';
 

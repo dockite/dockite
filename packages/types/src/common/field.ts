@@ -1,13 +1,12 @@
 import {
-  GraphQLInputType,
-  GraphQLOutputType,
-  GraphQLObjectType,
   GraphQLFieldConfigArgumentMap,
-  GraphQLSchema,
+  GraphQLInputType,
+  GraphQLObjectType,
+  GraphQLOutputType,
 } from 'graphql';
-import { Repository } from 'typeorm';
+import typeorm from 'typeorm';
 
-import { Schema, Field } from '../entities';
+import { Field, Schema } from '../entities';
 
 export interface FieldIOContext {
   dockiteFields: Record<string, DockiteFieldStatic>;
@@ -38,11 +37,7 @@ export interface DockiteFieldStatic {
   description: string;
   defaultOptions: object;
 
-  new (
-    schemaField: Field,
-    repositories: { [id: string]: Repository<any> },
-    schema: GraphQLSchema | null,
-  ): DockiteField;
+  new (schemaField: Field, orm: typeof typeorm): DockiteField;
 }
 
 export interface DockiteField {

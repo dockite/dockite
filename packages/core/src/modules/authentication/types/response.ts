@@ -1,6 +1,6 @@
 import { Field as GraphQLField, ObjectType } from 'type-graphql';
+import { User } from '@dockite/database';
 
-import { User } from '../../../entities';
 import { UserContext } from '../../../common/types';
 
 @ObjectType()

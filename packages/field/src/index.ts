@@ -5,13 +5,8 @@ import {
   HookContext,
   HookContextWithOldData,
 } from '@dockite/types';
-import {
-  GraphQLFieldConfigArgumentMap,
-  GraphQLInputType,
-  GraphQLOutputType,
-  GraphQLSchema,
-} from 'graphql';
-import { Repository } from 'typeorm';
+import { GraphQLFieldConfigArgumentMap, GraphQLInputType, GraphQLOutputType } from 'graphql';
+import typeorm from 'typeorm';
 import { Component } from 'vue';
 
 export abstract class DockiteField {
@@ -23,14 +18,9 @@ export abstract class DockiteField {
 
   public static defaultOptions = {};
 
-  constructor(
-    protected schemaField: Field,
-    protected repositories: { [id: string]: Repository<any> },
-    protected schema: GraphQLSchema | null,
-  ) {
+  constructor(protected schemaField: Field, protected orm: typeof typeorm) {
     this.schemaField = schemaField;
-    this.repositories = repositories;
-    this.schema = schema;
+    this.orm = orm;
   }
 
   public abstract inputType(ctx: FieldIOContext): Promise<GraphQLInputType>;

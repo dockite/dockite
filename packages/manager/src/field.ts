@@ -1,18 +1,16 @@
 import { DockiteFieldStatic } from '@dockite/types';
 import debug from 'debug';
 
-const log = debug('dockite:core:fields');
+const log = debug('dockite:manager:fields');
 
-export interface DockiteFieldManager {
-  [id: string]: DockiteFieldStatic;
-}
+export type DockiteFieldManager = Record<string, DockiteFieldStatic>;
 
-export const dockiteFields: DockiteFieldManager = {};
+export const FieldManager: DockiteFieldManager = {};
 
 export const registerField = (id: string, field: DockiteFieldStatic): void => {
-  if (!dockiteFields[id]) {
+  if (!FieldManager[id]) {
     log(`registering field ${id}`);
-    dockiteFields[id] = field;
+    FieldManager[id] = field;
   } else {
     log(`field ${id} already exists`);
   }

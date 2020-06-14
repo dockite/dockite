@@ -3,17 +3,16 @@
 import { Server } from 'http';
 
 import { DockiteFieldStatic } from '@dockite/types';
+import { SchemaManager, registerField } from '@dockite/manager';
 import { ApolloServer } from 'apollo-server-express';
 import debug from 'debug';
 import express from 'express';
-import { GraphQLSchema } from 'graphql';
 import { set } from 'lodash';
 
 import { EXTERNAL_GRAPHQL_PATH, INTERNAL_GRAPHQL_PATH } from './common/constants/core';
 import { GlobalContext, SessionContext, UserContext } from './common/types';
 import { getConfig } from './config';
 import { DockiteEvents } from './events';
-import { registerField } from './fields';
 import { RootModule } from './modules';
 import { ExternalGraphQLModule } from './modules/external';
 import { getenv, verify } from './utils';
@@ -21,16 +20,6 @@ import { getenv, verify } from './utils';
 // import { InternalGraphQLModule } from './modules/internal';
 
 const log = debug('dockite:core');
-
-export interface SchemaStoreManager {
-  internalSchema: GraphQLSchema | null;
-  externalSchema: GraphQLSchema | null;
-}
-
-export const SchemaStore: SchemaStoreManager = {
-  internalSchema: null,
-  externalSchema: null,
-};
 
 export const start = async (port = process.env.PORT || 3000): Promise<Server> => {
   log('creating server');
@@ -63,8 +52,8 @@ export const start = async (port = process.env.PORT || 3000): Promise<Server> =>
   log('collecting modules');
   const [root, external] = await Promise.all([RootModule(), ExternalGraphQLModule()]);
 
-  SchemaStore.internalSchema = root.schema;
-  SchemaStore.externalSchema = external.schema;
+  SchemaManager.internalSchema = root.schema;
+  SchemaManager.externalSchema = external.schema;
 
   log('creating servers');
   const internalServer = new ApolloServer({
@@ -113,8 +102,8 @@ export const start = async (port = process.env.PORT || 3000): Promise<Server> =>
       ExternalGraphQLModule(),
     ]);
 
-    SchemaStore.internalSchema = updatedInternalSchema.schema;
-    SchemaStore.externalSchema = updatedExternalSchema.schema;
+    SchemaManager.internalSchema = updatedInternalSchema.schema;
+    SchemaManager.externalSchema = updatedExternalSchema.schema;
 
     // We cast these two method calls to any since they're protected in their
     // corresponding type declarations. Without doing so we are unable to hot-patch

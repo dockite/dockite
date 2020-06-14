@@ -8,14 +8,13 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Release as BaseRelease } from '@dockite/types';
 
-import { Document } from './Document';
-import { User } from './User';
+import { Document } from './document';
+import { User } from './user';
 
 @Entity()
 @ObjectType()
-export class Release implements BaseRelease {
+export class Release {
   @PrimaryGeneratedColumn('uuid')
   @GraphQLField()
   public id!: string;

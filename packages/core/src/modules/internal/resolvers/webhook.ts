@@ -1,18 +1,18 @@
+import { Webhook } from '@dockite/database';
+import GraphQLJSON from 'graphql-type-json';
 import {
   Arg,
   Field as GraphQLField,
+  Int,
   Mutation,
+  ObjectType,
   Query,
   Resolver,
-  Int,
-  ObjectType,
 } from 'type-graphql';
 import { getRepository } from 'typeorm';
-import GraphQLJSON from 'graphql-type-json';
 
-import { Webhook } from '../../../entities';
-import { RequestMethods } from '../../../common/types';
 import { Authenticated } from '../../../common/authorizers';
+import { RequestMethods } from '../../../common/types';
 
 @ObjectType()
 class ManyWebhooks {

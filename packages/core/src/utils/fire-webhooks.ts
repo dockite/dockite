@@ -1,11 +1,10 @@
-import { WebhookAction, UserContext } from '@dockite/types';
-import { getRepository, InsertResult } from 'typeorm';
-import Axios, { Method, AxiosError, AxiosResponse } from 'axios';
-import { graphql } from 'graphql';
+import { Webhook, WebhookCall } from '@dockite/database';
+import { SchemaManager } from '@dockite/manager';
+import { UserContext, WebhookAction } from '@dockite/types';
+import Axios, { AxiosError, AxiosResponse, Method } from 'axios';
 import debug from 'debug';
-
-import { Webhook, WebhookCall } from '../entities';
-import { SchemaStore } from '../server';
+import { graphql } from 'graphql';
+import { getRepository, InsertResult } from 'typeorm';
 
 const log = debug('dockite:core:webhooks');
 
@@ -66,10 +65,10 @@ export const fireWebhooks = async (entity: object, action: WebhookAction): Promi
           );
         }
 
-        if (SchemaStore.internalSchema) {
+        if (SchemaManager.internalSchema) {
           log('firing graphql webhooks');
           log(webhook.options.query);
-          return graphql(SchemaStore.internalSchema, webhook.options.query, undefined, {
+          return graphql(SchemaManager.internalSchema, webhook.options.query, undefined, {
             user: {
               id: '00000000-0000-0000-0000-000000000000',
               email: 'webhooks@dockite',

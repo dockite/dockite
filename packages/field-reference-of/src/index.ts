@@ -1,5 +1,6 @@
 import { DockiteField } from '@dockite/field';
-import { Document, FieldContext, FieldIOContext } from '@dockite/types';
+import { FieldContext, FieldIOContext } from '@dockite/types';
+import { Document } from '@dockite/database';
 import {
   GraphQLEnumType,
   GraphQLFieldConfigArgumentMap,
@@ -68,7 +69,11 @@ export class DockiteFieldReferenceOf extends DockiteField {
     const { schemaId, fieldName } = this.schemaField.settings;
     const { page, perPage } = args;
 
-    const qb = this.repositories.Document.createQueryBuilder('document')
+    console.log(this.orm);
+
+    const qb = this.orm
+      .getRepository(Document)
+      .createQueryBuilder('document')
       .leftJoinAndSelect('document.schema', 'schema')
       .andWhere('schema.id = :schemaId', { schemaId })
       .andWhere("document.data -> :field ->> 'id' = :documentId", {

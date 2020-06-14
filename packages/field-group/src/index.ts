@@ -51,7 +51,7 @@ export class DockiteFieldGroup extends DockiteField {
           return null;
         }
 
-        const dockiteField = new FieldClass(this.schemaField, this.repositories, this.schema);
+        const dockiteField = new FieldClass(this.schemaField, this.orm);
 
         const [outputType, outputArgs] = await Promise.all([
           dockiteField.outputType({ dockiteSchemas, graphqlTypes, dockiteFields }),

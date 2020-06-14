@@ -10,8 +10,10 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@dockite/database": "1.0.0",
     "@dockite/field": "1.0.0",
     "@dockite/field-string": "1.0.0",
+    "@dockite/manager": "1.0.0",
     "@dockite/transformer": "1.0.0",
     "@dockite/types": "1.0.0",
     "@graphql-modules/core": "^0.7.14",

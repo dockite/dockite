@@ -1,4 +1,4 @@
 export enum SchemaType {
-  Default = 'Default',
-  Variant = 'Variant',
+  DEFAULT = 'DEFAULT',
+  SINGLETON = 'SINGLETON',
 }
