@@ -1,0 +1,18 @@
+query AllSchemaRevisions($schemaId: String!, $perPage: Int) {
+  allSchemaRevisions(schemaId: $schemaId, perPage: $perPage) {
+    results {
+      id
+      data
+      createdAt
+      schemaId
+      user {
+        id
+        email
+      }
+    }
+    totalItems
+    totalPages
+    currentPage
+    hasNextPage
+  }
+}

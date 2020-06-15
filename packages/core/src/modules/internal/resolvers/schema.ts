@@ -1,6 +1,11 @@
+import { Document, Schema, SchemaRevision, SchemaType } from '@dockite/database';
+import { GlobalContext } from '@dockite/types';
+import { GraphQLError } from 'graphql';
 import GraphQLJSON from 'graphql-type-json';
+import { omit } from 'lodash';
 import {
   Arg,
+  Ctx,
   Field as GraphQLField,
   Int,
   Mutation,
@@ -9,7 +14,6 @@ import {
   Resolver,
 } from 'type-graphql';
 import { getRepository } from 'typeorm';
-import { Document, Schema, SchemaType } from '@dockite/database';
 
 import { Authenticated } from '../../../common/authorizers';
 import { DockiteEvents } from '../../../events';
@@ -123,8 +127,16 @@ export class SchemaResolver {
     groups: any, // eslint-disable-line
     @Arg('settings', _type => GraphQLJSON)
     settings: any, // eslint-disable-line
+    @Ctx()
+    ctx: GlobalContext,
   ): Promise<Schema | null> {
     const repository = getRepository(Schema);
+
+    const { user } = ctx;
+
+    if (!user) {
+      throw new GraphQLError('User not found');
+    }
 
     if (!Object.values(SchemaType).includes(type as SchemaType)) {
       throw new Error('SchemaType provided is invalid');
@@ -137,6 +149,7 @@ export class SchemaResolver {
       type,
       groups: preservedGroups,
       settings,
+      userId: user.id,
     });
 
     const savedSchema = await repository.save(schema);
@@ -158,8 +171,17 @@ export class SchemaResolver {
     groups: any, // eslint-disable-line
     @Arg('settings', _type => GraphQLJSON)
     settings: any, // eslint-disable-line
+    @Ctx()
+    ctx: GlobalContext,
   ): Promise<Schema | null> {
     const repository = getRepository(Schema);
+
+    const { user } = ctx;
+
+    if (!user) {
+      throw new GraphQLError('User not found');
+    }
+
     const schema = await repository.findOneOrFail({
       where: { id: schemaId },
     });
@@ -168,6 +190,8 @@ export class SchemaResolver {
 
     schema.groups = preservedGroups;
     schema.settings = settings;
+
+    await this.createRevision(schema.id, user.id);
 
     const savedSchema = await repository.save(schema);
 
@@ -199,5 +223,23 @@ export class SchemaResolver {
     } catch {
       return false;
     }
+  }
+
+  private async createRevision(id: string, userId: string): Promise<void> {
+    const schemaRepository = getRepository(Schema);
+    const revisionRepository = getRepository(SchemaRevision);
+
+    const previousSchema = await schemaRepository.findOneOrFail(id, { relations: ['fields'] });
+
+    // We need to remove the dockiteField class that's loaded as it contains circular data.
+    previousSchema.fields = previousSchema.fields.map(field => omit(field, 'dockiteField'));
+
+    const revision = revisionRepository.create({
+      data: previousSchema as Record<string, any>,
+      schemaId: id,
+      userId: userId ?? null,
+    });
+
+    await revisionRepository.save(revision);
   }
 }

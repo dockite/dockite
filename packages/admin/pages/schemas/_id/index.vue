@@ -38,6 +38,12 @@
                   Delete
                 </router-link>
               </el-dropdown-item>
+              <el-dropdown-item divided>
+                <router-link :to="`/schemas/${schemaId}/revisions`">
+                  <i class="el-icon-document-copy" />
+                  Revisions
+                </router-link>
+              </el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </el-row>
@@ -49,7 +55,7 @@
         <el-table-column prop="id" label="ID">
           <template slot-scope="scope">
             <router-link :to="`/documents/${scope.row.id}`">
-              {{ scope.row.id.slice(0, 8) + '...' }}
+              {{ scope.row.id.length > 8 ? scope.row.id.slice(0, 8) + '...' : scope.row.id }}
             </router-link>
           </template>
         </el-table-column>

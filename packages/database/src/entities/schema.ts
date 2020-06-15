@@ -1,3 +1,4 @@
+// import debug from 'debug';
 import { GraphQLJSON } from 'graphql-type-json';
 import { Field as GraphQLField, ObjectType, registerEnumType } from 'type-graphql';
 import {
@@ -49,6 +50,12 @@ export class Schema {
   public documents!: Document[];
 
   @OneToMany(
+    _type => Schema,
+    schema => schema.revisions,
+  )
+  public revisions!: Document[];
+
+  @OneToMany(
     _type => Field,
     field => field.schema,
     {
@@ -59,7 +66,11 @@ export class Schema {
   @GraphQLField(_type => [Field], { nullable: true })
   public fields!: Field[];
 
-  @ManyToOne(_type => User)
+  @Column({ nullable: true })
+  @GraphQLField(_type => String, { nullable: true })
+  public userId?: string | null;
+
+  @ManyToOne(_type => User, { nullable: true, onDelete: 'SET NULL' })
   public user!: User;
 
   @CreateDateColumn()

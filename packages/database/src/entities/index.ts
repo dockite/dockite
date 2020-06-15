@@ -2,6 +2,7 @@ export * from './document';
 export * from './field';
 export * from './release';
 export * from './schema';
+export * from './schema-revision';
 export * from './search-engine';
 export * from './user';
 export * from './webhook';
