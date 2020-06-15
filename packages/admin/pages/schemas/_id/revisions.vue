@@ -94,7 +94,6 @@ import { Schema } from '@dockite/types';
 import CodeMirror from 'codemirror';
 import { formatDistanceToNow } from 'date-fns';
 import DiffMatchPatch from 'diff-match-patch';
-import { sortBy } from 'lodash';
 import { Component, Vue, Watch, Ref } from 'nuxt-property-decorator';
 import { Fragment } from 'vue-fragment';
 

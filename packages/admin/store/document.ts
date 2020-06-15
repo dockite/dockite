@@ -84,7 +84,7 @@ export const actions: ActionTree<DocumentState, RootState> = {
     const { data } = await this.$apolloClient.mutate<DeleteDocumentMutationResponse>({
       mutation: DeleteDocumentMutation,
       variables: {
-        documentId: payload.schemaId,
+        id: payload.documentId,
       },
       refetchQueries: [
         { query: AllDocumentsWithSchemaQuery },
