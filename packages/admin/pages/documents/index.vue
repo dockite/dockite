@@ -26,16 +26,16 @@
         <el-table-column label="Identifier">
           <template slot-scope="scope">
             <span v-if="scope.row.data.name">
-              {{ scope.row.data.name }}
+              {{ scope.row.data.name | shortDesc }}
             </span>
             <span v-else-if="scope.row.data.title">
-              {{ scope.row.data.title }}
+              {{ scope.row.data.title | shortDesc }}
             </span>
             <span v-else-if="scope.row.data.identifier">
-              {{ scope.row.data.identifier }}
+              {{ scope.row.data.identifier | shortDesc }}
             </span>
             <span v-else :title="scope.row.data">
-              {{ JSON.stringify(scope.row.data).slice(0, 15) + '...' }}
+              {{ JSON.stringify(scope.row.data) | shortDesc }}
             </span>
           </template>
         </el-table-column>

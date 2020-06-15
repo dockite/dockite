@@ -14,7 +14,7 @@ import {
 import { getCustomRepository, getRepository, Not, IsNull } from 'typeorm';
 import { cloneDeep } from 'lodash';
 import { HookContextWithOldData, HookContext } from '@dockite/types';
-import { Document, Schema, SearchEngineRepository } from '@dockite/database';
+import { Document, Schema, SearchEngineRepository, DocumentRevision } from '@dockite/database';
 
 import { Authenticated } from '../../../common/authorizers';
 import { GlobalContext } from '../../../common/types';
@@ -290,13 +290,14 @@ export class DocumentResolver {
     // locale: string | null,
     @Arg('data', _type => GraphQLJSON)
     data: any | null, // eslint-disable-line
-    @Ctx() _ctx: GlobalContext,
+    @Ctx() ctx: GlobalContext,
   ): Promise<Document | null> {
-    const repository = getRepository(Document);
+    const documentRepository = getRepository(Document);
+    const revisionRepository = getRepository(DocumentRevision);
 
-    // const { id: userId } = ctx.user!; // eslint-disable-line
+    const { id: userId } = ctx.user!; // eslint-disable-line
 
-    const document = await repository.findOne({
+    const document = await documentRepository.findOne({
       where: { id, deletedAt: null },
       relations: ['schema', 'schema.fields'],
     });
@@ -308,6 +309,11 @@ export class DocumentResolver {
     const { schema } = document;
 
     const oldData = cloneDeep(document.data);
+    const revision = revisionRepository.create({
+      documentId: document.id,
+      data: cloneDeep(document.data),
+      userId: document.userId ?? '',
+    });
 
     if (data) {
       document.data = { ...document.data, ...data };
@@ -332,7 +338,12 @@ export class DocumentResolver {
       }),
     );
 
-    const savedDocument = await repository.save(document);
+    document.userId = userId;
+
+    const [savedDocument] = await Promise.all([
+      documentRepository.save(document),
+      revisionRepository.save(revision),
+    ]);
 
     return savedDocument;
   }
@@ -350,8 +361,6 @@ export class DocumentResolver {
 
       const { schema, data } = document;
 
-      document.deletedAt = new Date();
-
       await Promise.all(
         schema.fields.map(field => {
           const fieldData = data[field.name] ?? null;
@@ -360,7 +369,7 @@ export class DocumentResolver {
         }),
       );
 
-      await repository.save(document);
+      await repository.softRemove(document);
 
       return true;
     } catch {
@@ -371,10 +380,11 @@ export class DocumentResolver {
   @Authenticated()
   @Mutation(_returns => Boolean)
   async permanentlyRemoveDocument(@Arg('id') id: string): Promise<boolean> {
-    const repository = getRepository(Document);
+    const documentRepository = getRepository(Document);
+    const revisionRepository = getRepository(DocumentRevision);
 
     try {
-      const document = await repository.findOneOrFail({
+      const document = await documentRepository.findOneOrFail({
         where: { id, deletedAt: Not(IsNull()) },
         relations: ['schema', 'schema.fields'],
       });
@@ -389,7 +399,10 @@ export class DocumentResolver {
         }),
       );
 
-      await repository.remove(document);
+      await Promise.all([
+        documentRepository.remove(document),
+        revisionRepository.delete({ documentId: document.id }),
+      ]);
 
       return true;
     } catch {

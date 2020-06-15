@@ -5,8 +5,10 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  DeleteDateColumn,
 } from 'typeorm';
 
 import { Release } from './release';
@@ -40,7 +42,7 @@ export class Document {
   @GraphQLField(_type => Date)
   public updatedAt!: Date;
 
-  @Column({ type: 'timestamp', nullable: true, default: null })
+  @DeleteDateColumn()
   @GraphQLField(_type => Date, { nullable: true })
   public deletedAt?: Date | null;
 
@@ -72,6 +74,12 @@ export class Document {
     },
   )
   public release!: Release;
+
+  @OneToMany(
+    _type => Document,
+    document => document.revisions,
+  )
+  public revisions!: Document[];
 
   @Column({ nullable: true })
   @GraphQLField(_type => String, { nullable: true })

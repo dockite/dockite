@@ -52,6 +52,17 @@ export interface AllSchemaRevisionsResultItem {
 export interface AllSchemaRevisionsQueryResponse {
   allSchemaRevisions: ManyResultsResponse<AllSchemaRevisionsResultItem>;
 }
+export interface AllDocumentRevisionsResultItem {
+  id: string;
+  data: Record<string, any>;
+  user: User;
+  userId: string;
+  createdAt: Date;
+}
+
+export interface AllDocumentRevisionsQueryResponse {
+  allDocumentRevisions: ManyResultsResponse<AllDocumentRevisionsResultItem>;
+}
 
 export type AllDocumentsWithSchemaResultItem = Omit<Document, 'user' | 'userId' | 'schemaId'>;
 
@@ -152,4 +163,12 @@ export interface DeleteWebhookMutationResponse {
 
 export interface UpdateWebhookMutationResponse {
   updateWebhook: Webhook;
+}
+
+export interface RestoreSchemaRevisionMutationResponse {
+  restoreSchemaRevision: boolean;
+}
+
+export interface RestoreDocumentRevisionMutationResponse {
+  restoreDocumentRevision: boolean;
 }

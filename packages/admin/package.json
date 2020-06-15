@@ -34,6 +34,7 @@
     "codemirror": "^5.54.0",
     "codemirror-graphql": "^0.12.0-alpha.11",
     "date-fns": "^2.13.0",
+    "diff2html": "^3.1.8",
     "element-ui": "^2.4.11",
     "graphql": "^15.0.0",
     "graphql-tag": "^2.10.3",
@@ -45,6 +46,7 @@
     "portal-vue": "^2.1.7",
     "type-graphql": "1.0.0-rc.2",
     "typescript": "^3.9.5",
+    "unidiff": "^1.0.2",
     "vue-fragment": "^1.5.1",
     "webpack-inject-plugin": "^1.5.4"
   },
@@ -53,6 +55,7 @@
     "@nuxtjs/eslint-config-typescript": "1.0.1",
     "@nuxtjs/eslint-module": "^1.0.0",
     "@nuxtjs/stylelint-module": "^3.1.0",
+    "@types/diff2html": "^0.0.5",
     "@vue/test-utils": "^1.0.0-beta.27",
     "babel-eslint": "^10.0.1",
     "babel-jest": "^24.1.0",

@@ -9,6 +9,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  DeleteDateColumn,
 } from 'typeorm';
 
 import { SchemaType } from '../types';
@@ -16,6 +17,7 @@ import { SchemaType } from '../types';
 import { Document } from './document';
 import { Field } from './field';
 import { User } from './user';
+import { SchemaRevision } from './schema-revision';
 
 // Register the enum for type-graphql
 registerEnumType(SchemaType, { name: 'SchemaType' });
@@ -53,7 +55,7 @@ export class Schema {
     _type => Schema,
     schema => schema.revisions,
   )
-  public revisions!: Document[];
+  public revisions!: SchemaRevision[];
 
   @OneToMany(
     _type => Field,
@@ -81,7 +83,7 @@ export class Schema {
   @GraphQLField()
   public updatedAt!: Date;
 
-  @Column({ nullable: true, default: null })
+  @DeleteDateColumn()
   @GraphQLField()
   public deletedAt!: Date;
 }

@@ -1,4 +1,5 @@
 export * from './document';
+export * from './document-revision';
 export * from './field';
 export * from './release';
 export * from './schema';

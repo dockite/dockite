@@ -1,10 +1,10 @@
-query AllSchemaRevisions($schemaId: String!, $perPage: Int) {
-  allSchemaRevisions(schemaId: $schemaId, perPage: $perPage) {
+query AllDocumentRevisions($documentId: String!, $perPage: Int) {
+  allDocumentRevisions(documentId: $documentId, perPage: $perPage) {
     results {
       id
       data
       createdAt
-      schemaId
+      documentId
       user {
         id
         email

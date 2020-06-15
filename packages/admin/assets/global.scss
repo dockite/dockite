@@ -40,3 +40,11 @@ pre.dockite-data--raw {
   line-height: 1;
   padding-top: 4px;
 }
+
+.el-alert--info a {
+  color: darken($--color-info, 15%);
+
+  &:hover {
+    color: darken($--color-info, 22%)
+  }
+}
