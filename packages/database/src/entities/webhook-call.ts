@@ -2,7 +2,7 @@ import GraphQLJSON from 'graphql-type-json';
 import { Field as GraphQLField, ObjectType } from 'type-graphql';
 import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
-import { Webhook } from './Webhook';
+import { Webhook } from './webhook';
 
 type JSONValue = string | number | boolean | null | JSONObject | JSONArray;
 

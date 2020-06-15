@@ -12,10 +12,9 @@
     "express": "^4.17.1",
     "graphql": "^15.0.0",
     "type-graphql": "1.0.0-rc.2",
-    "typeorm": "^0.2.22",
-    "typescript": "^3.9.5"
+    "typeorm": "^0.2.22"
   },
   "devDependencies": {
-    "typescript": "~3.7.5"
+    "typescript": "^3.9.5"
   }
 }

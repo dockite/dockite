@@ -1,5 +1,5 @@
 import { DockiteField } from '@dockite/field';
-import { Document, FieldContext, Schema } from '@dockite/types';
+import { Document } from '@dockite/database';
 import {
   GraphQLInputObjectType,
   GraphQLInputType,
@@ -9,6 +9,7 @@ import {
   GraphQLUnionType,
 } from 'graphql';
 import { startCase } from 'lodash';
+import { FieldIOContext, FieldContext } from '@dockite/types';
 
 const graphqlCase = (value: string): string => startCase(value).replace(/\s/g, '');
 
@@ -39,16 +40,15 @@ export class DockiteFieldReference extends DockiteField {
     return GraphQLString;
   }
 
-  public async outputType(
-    dockiteSchemas: Schema[],
-    objectTypes: Map<string, GraphQLObjectType>,
-  ): Promise<GraphQLOutputType> {
+  public async outputType({
+    dockiteSchemas,
+    graphqlTypes,
+  }: FieldIOContext): Promise<GraphQLOutputType> {
     const schemaIds: string[] = this.schemaField.settings.schemaIds ?? [];
-    // const schemaIds = this
 
     const unionTypes = dockiteSchemas
       .filter((schema) => schemaIds.includes(schema.id))
-      .map((schema) => objectTypes.get(schema.name));
+      .map((schema) => graphqlTypes.get(schema.name));
 
     if (unionTypes.length === 1) {
       const [outputType] = unionTypes;
@@ -65,18 +65,24 @@ export class DockiteFieldReference extends DockiteField {
     });
   }
 
-  public async processOutput<T>({ value }: FieldContext): Promise<T> {
-    if (!value) {
+  public async processOutputGraphQL<T>({ fieldData }: FieldContext): Promise<T> {
+    if (!fieldData) {
       return (null as any) as T;
     }
 
-    const criteria: { id: string; schemaId: string } = value;
+    const criteria: { id: string; schemaId: string } = fieldData;
 
-    const document: Document = await this.repositories.Document.createQueryBuilder('document')
+    const document: Document | undefined = await this.orm
+      .getRepository(Document)
+      .createQueryBuilder('document')
       .leftJoinAndSelect('document.schema', 'schema')
       .where('document.id = :id', { id: criteria.id })
       .andWhere('schema.id = :schemaId', { schemaId: criteria.schemaId })
       .getOne();
+
+    if (!document) {
+      return (null as any) as T;
+    }
 
     return ({ id: document.id, schemaName: document.schema.name, ...document.data } as any) as T;
   }

@@ -9,7 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { WebhookCall } from './WebhookCall';
+import { WebhookCall } from './webhook-call';
 
 interface WebhookOptions {
   listeners: string[];

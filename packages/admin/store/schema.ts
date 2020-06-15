@@ -51,7 +51,7 @@ export const actions: ActionTree<SchemaState, RootState> = {
       mutation: CreateSchemaMutation,
       variables: {
         name: payload.name,
-        type: SchemaType.Default,
+        type: SchemaType.DEFAULT,
         groups: payload.groups,
         settings: {},
       },

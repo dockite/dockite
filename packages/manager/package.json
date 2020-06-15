@@ -1,5 +1,5 @@
 {
-  "name": "@dockite/transformer",
+  "name": "@dockite/manager",
   "version": "1.0.0",
   "main": "lib/index.js",
   "license": "MIT",

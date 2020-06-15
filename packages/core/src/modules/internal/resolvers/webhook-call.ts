@@ -1,3 +1,4 @@
+import { WebhookCall } from '@dockite/database';
 import {
   Arg,
   Field as GraphQLField,
@@ -10,7 +11,6 @@ import {
 import { getRepository } from 'typeorm';
 
 import { Authenticated } from '../../../common/authorizers';
-import { WebhookCall } from '../../../entities';
 
 @ObjectType()
 class ManyWebhookCalls {

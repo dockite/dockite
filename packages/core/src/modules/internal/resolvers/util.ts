@@ -1,7 +1,6 @@
+import { Document } from '@dockite/database';
 import { Arg, Field as GraphQLField, Int, ObjectType, Query, Resolver } from 'type-graphql';
 import { getRepository } from 'typeorm';
-
-import { Document } from '../../../entities';
 
 @ObjectType()
 class ManyReferences {

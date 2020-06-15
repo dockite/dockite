@@ -1,4 +1,3 @@
-import { Schema as BaseSchema, WebhookAction } from '@dockite/types';
 import { GraphQLJSON } from 'graphql-type-json';
 import { Field as GraphQLField, ObjectType, registerEnumType } from 'type-graphql';
 import {
@@ -9,24 +8,20 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-  AfterInsert,
-  AfterUpdate,
-  AfterRemove,
 } from 'typeorm';
 
-import { SchemaType } from '../common/types/schema-type';
-import { fireWebhooks } from '../utils/fire-webhooks';
+import { SchemaType } from '../types';
 
-import { Field } from './Field';
-import { User } from './User';
-import { Document } from './Document';
+import { Document } from './document';
+import { Field } from './field';
+import { User } from './user';
 
 // Register the enum for type-graphql
 registerEnumType(SchemaType, { name: 'SchemaType' });
 
 @Entity()
 @ObjectType()
-export class Schema implements BaseSchema {
+export class Schema {
   @PrimaryGeneratedColumn('uuid')
   @GraphQLField()
   public id!: string;
@@ -35,7 +30,7 @@ export class Schema implements BaseSchema {
   @GraphQLField()
   public name!: string;
 
-  @Column('enum', { enum: SchemaType, default: SchemaType.Default })
+  @Column('enum', { enum: SchemaType, default: SchemaType.DEFAULT })
   @GraphQLField(_type => SchemaType)
   public type!: SchemaType;
 
@@ -78,19 +73,4 @@ export class Schema implements BaseSchema {
   @Column({ nullable: true, default: null })
   @GraphQLField()
   public deletedAt!: Date;
-
-  @AfterInsert()
-  handleAfterInsert(): void {
-    fireWebhooks(this, WebhookAction.SchemaCreate);
-  }
-
-  @AfterUpdate()
-  handleAfterUpdate(): void {
-    fireWebhooks(this, WebhookAction.SchemaUpdate);
-  }
-
-  @AfterRemove()
-  handleAfterRemove(): void {
-    fireWebhooks(this, WebhookAction.SchemaDelete);
-  }
 }

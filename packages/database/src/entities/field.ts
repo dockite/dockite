@@ -1,26 +1,15 @@
-import { DockiteField, Field as BaseField } from '@dockite/types';
+import { FieldManager } from '@dockite/manager';
+import { DockiteField } from '@dockite/types';
 import GraphQLJSON from 'graphql-type-json';
 import { Field as GraphQLField, ObjectType } from 'type-graphql';
-import {
-  AfterLoad,
-  Column,
-  Entity,
-  getRepository,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  Repository,
-} from 'typeorm';
+import { AfterLoad, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import * as typeorm from 'typeorm';
 
-import { dockiteFields } from '../fields';
-import { SchemaStore } from '../server';
-
-import { Schema } from './Schema';
-
-import * as Entities from '.';
+import { Schema } from './schema';
 
 @Entity()
 @ObjectType()
-export class Field implements BaseField {
+export class Field {
   @PrimaryGeneratedColumn('uuid')
   @GraphQLField()
   public id!: string;
@@ -61,19 +50,10 @@ export class Field implements BaseField {
   @AfterLoad()
   public setDockiteField(): void {
     if (!this.dockiteField) {
-      const FieldClass = Object.values(dockiteFields).find(field => field.type === this.type);
+      const FieldClass = Object.values(FieldManager).find(field => field.type === this.type);
 
       if (FieldClass && typeof FieldClass === 'function') {
-        // eslint-disable-next-line
-        const Repositories: { [id: string]: Repository<any> } = {};
-
-        const { internalSchema } = SchemaStore;
-
-        Object.entries(Entities).forEach(([key, val]) => {
-          Repositories[key] = getRepository(val);
-        });
-
-        this.dockiteField = new FieldClass(this, Repositories, internalSchema);
+        this.dockiteField = new FieldClass(this, typeorm);
       }
     }
   }

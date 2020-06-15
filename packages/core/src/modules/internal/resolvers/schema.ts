@@ -9,10 +9,9 @@ import {
   Resolver,
 } from 'type-graphql';
 import { getRepository } from 'typeorm';
+import { Document, Schema, SchemaType } from '@dockite/database';
 
 import { Authenticated } from '../../../common/authorizers';
-import { SchemaType } from '../../../common/types';
-import { Document, Schema } from '../../../entities';
 import { DockiteEvents } from '../../../events';
 
 // const log = debug('dockite:core:resolvers');

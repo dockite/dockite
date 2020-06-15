@@ -1,3 +1,5 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import GraphQLJSON from 'graphql-type-json';
 import {
   Arg,
@@ -9,12 +11,13 @@ import {
   Query,
   Resolver,
 } from 'type-graphql';
-import { getCustomRepository, getRepository } from 'typeorm';
+import { getCustomRepository, getRepository, Not, IsNull } from 'typeorm';
+import { cloneDeep } from 'lodash';
+import { HookContextWithOldData, HookContext } from '@dockite/types';
+import { Document, Schema, SearchEngineRepository } from '@dockite/database';
 
 import { Authenticated } from '../../../common/authorizers';
 import { GlobalContext } from '../../../common/types';
-import { Document } from '../../../entities';
-import { SearchEngineRepository } from '../../../repositories/SearchEngine';
 
 @ObjectType()
 class ManyDocuments {
@@ -49,7 +52,21 @@ export class DocumentResolver {
       relations: ['schema', 'schema.fields'],
     });
 
-    return document ?? null;
+    if (!document) {
+      return null;
+    }
+
+    await Promise.all(
+      document.schema.fields.map(async field => {
+        document.data[field.name] = await field.dockiteField!.processOutputRaw({
+          data: document.data,
+          field,
+          fieldData: document.data[field.name] ?? null,
+        });
+      }),
+    );
+
+    return document;
   }
 
   @Authenticated()
@@ -69,7 +86,8 @@ export class DocumentResolver {
     const qb = repository
       .createQueryBuilder('document')
       .where('document.deletedAt IS NULL')
-      .leftJoinAndSelect('document.schema', 'schema');
+      .leftJoinAndSelect('document.schema', 'schema')
+      .leftJoinAndSelect('schema.fields', 'fields');
 
     if (schemaId) {
       qb.andWhere('document.schemaId = :schemaId', { schemaId });
@@ -84,6 +102,20 @@ export class DocumentResolver {
       .orderBy('document.updatedAt', 'DESC');
 
     const [results, totalItems] = await qb.getManyAndCount();
+
+    await Promise.all(
+      results.map(async item => {
+        await Promise.all(
+          item.schema.fields.map(async field => {
+            item.data[field.name] = await field.dockiteField!.processOutputRaw({
+              data: item.data,
+              field,
+              fieldData: item.data[field.name] ?? null,
+            });
+          }),
+        );
+      }),
+    );
 
     const totalPages = Math.ceil(totalItems / perPage);
 
@@ -111,11 +143,25 @@ export class DocumentResolver {
 
     const [results, totalItems] = await repository.findAndCount({
       where: { deletedAt: null },
-      relations: ['schema'],
+      relations: ['schema', 'schema.fields'],
       order: { updatedAt: 'DESC' },
       take: perPage,
       skip: perPage * (page - 1),
     });
+
+    await Promise.all(
+      results.map(async item => {
+        await Promise.all(
+          item.schema.fields.map(async field => {
+            item.data[field.name] = await field.dockiteField!.processOutputRaw({
+              data: item.data,
+              field,
+              fieldData: item.data[field.name] ?? null,
+            });
+          }),
+        );
+      }),
+    );
 
     const totalPages = Math.ceil(totalItems / perPage);
 
@@ -149,6 +195,7 @@ export class DocumentResolver {
       .search(term)
       .andWhere('searchEngine.deletedAt IS NULL')
       .leftJoinAndSelect('searchEngine.schema', 'schema')
+      .leftJoinAndSelect('schema.fields', 'fields')
       .take(perPage)
       .skip(perPage * (page - 1))
       .orderBy('searchEngine.updatedAt', 'DESC');
@@ -158,6 +205,20 @@ export class DocumentResolver {
     }
 
     const [results, totalItems] = await qb.getManyAndCount();
+
+    await Promise.all(
+      results.map(async item => {
+        await Promise.all(
+          item.schema.fields.map(async field => {
+            item.data[field.name] = await field.dockiteField!.processOutputRaw({
+              data: item.data,
+              field,
+              fieldData: item.data[field.name] ?? null,
+            });
+          }),
+        );
+      }),
+    );
 
     const totalPages = Math.ceil(totalItems / perPage);
 
@@ -179,19 +240,43 @@ export class DocumentResolver {
     @Arg('releaseId', _type => String, { nullable: true }) releaseId: string | null = null,
     @Ctx() ctx: GlobalContext,
   ): Promise<Document | null> {
-    const repository = getRepository(Document);
+    const documentRepository = getRepository(Document);
+    const schemaRepository = getRepository(Schema);
+
+    const schema = await schemaRepository.findOneOrFail({
+      where: { id: schemaId, deletedAt: null },
+      relations: ['fields'],
+    });
 
     const { id: userId } = ctx.user!; // eslint-disable-line
 
-    const document = repository.create({
+    const initialData: Record<string, null> = schema.fields.reduce(
+      (acc, curr) => ({ ...acc, [curr.name]: null }),
+      {},
+    );
+
+    const document = documentRepository.create({
       locale,
-      data,
+      data: { ...initialData, ...data },
       schemaId,
       releaseId,
       userId,
     });
 
-    const savedDocument = await repository.save(document);
+    await Promise.all(
+      schema.fields.map(async field => {
+        const fieldData = data[field.name] ?? null;
+
+        const hookContext: HookContext = { field, fieldData, data: document.data };
+
+        await Promise.resolve([
+          field.dockiteField!.onCreate(hookContext),
+          field.dockiteField!.validateInputRaw(hookContext),
+        ]);
+      }),
+    );
+
+    const savedDocument = await documentRepository.save(document);
 
     return savedDocument;
   }
@@ -199,11 +284,11 @@ export class DocumentResolver {
   @Authenticated()
   @Mutation(_returns => Document, { nullable: true })
   async updateDocument(
-    @Arg('id', _type => String, { nullable: true })
+    @Arg('id', _type => String)
     id: string | null,
     // @Arg('locale', _type => String, { nullable: true })
     // locale: string | null,
-    @Arg('data', _type => GraphQLJSON, { nullable: true })
+    @Arg('data', _type => GraphQLJSON)
     data: any | null, // eslint-disable-line
     @Ctx() _ctx: GlobalContext,
   ): Promise<Document | null> {
@@ -213,15 +298,39 @@ export class DocumentResolver {
 
     const document = await repository.findOne({
       where: { id, deletedAt: null },
+      relations: ['schema', 'schema.fields'],
     });
 
     if (!document) {
       return null;
     }
 
+    const { schema } = document;
+
+    const oldData = cloneDeep(document.data);
+
     if (data) {
-      document.data = data;
+      document.data = { ...document.data, ...data };
     }
+
+    await Promise.all(
+      schema.fields.map(async field => {
+        const fieldData = document.data[field.name] ?? null;
+
+        const hookContext: HookContextWithOldData = {
+          field,
+          fieldData,
+          data: document.data,
+          oldData,
+        };
+
+        await Promise.all([
+          field.dockiteField!.validateInputRaw(hookContext),
+          field.dockiteField!.processInputRaw(hookContext),
+          field.dockiteField!.onUpdate(hookContext),
+        ]);
+      }),
+    );
 
     const savedDocument = await repository.save(document);
 
@@ -234,7 +343,51 @@ export class DocumentResolver {
     const repository = getRepository(Document);
 
     try {
-      const document = await repository.findOneOrFail({ where: { id } });
+      const document = await repository.findOneOrFail({
+        where: { id },
+        relations: ['schema', 'schema.fields'],
+      });
+
+      const { schema, data } = document;
+
+      document.deletedAt = new Date();
+
+      await Promise.all(
+        schema.fields.map(field => {
+          const fieldData = data[field.name] ?? null;
+
+          return Promise.resolve(field.dockiteField!.onSoftDelete({ field, fieldData, data }));
+        }),
+      );
+
+      await repository.save(document);
+
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  @Authenticated()
+  @Mutation(_returns => Boolean)
+  async permanentlyRemoveDocument(@Arg('id') id: string): Promise<boolean> {
+    const repository = getRepository(Document);
+
+    try {
+      const document = await repository.findOneOrFail({
+        where: { id, deletedAt: Not(IsNull()) },
+        relations: ['schema', 'schema.fields'],
+      });
+
+      const { schema, data } = document;
+
+      await Promise.all(
+        schema.fields.map(field => {
+          const fieldData = data[field.name] ?? null;
+
+          return Promise.resolve(field.dockiteField!.onPermanentDelete({ field, fieldData, data }));
+        }),
+      );
 
       await repository.remove(document);
 

@@ -1,3 +1,4 @@
+import { Document, Release } from '@dockite/database';
 import {
   Arg,
   Ctx,
@@ -12,7 +13,6 @@ import { getRepository } from 'typeorm';
 
 import { Authenticated } from '../../../common/authorizers';
 import { GlobalContext } from '../../../common/types';
-import { Document, Release } from '../../../entities';
 
 @ObjectType()
 class ManyReleases {

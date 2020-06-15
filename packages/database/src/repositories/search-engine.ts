@@ -1,6 +1,6 @@
 import { Repository, getRepository, SelectQueryBuilder, EntityRepository } from 'typeorm';
 
-import { SearchEngine } from '../entities/SearchEngine';
+import { SearchEngine } from '../entities/search-engine';
 
 @EntityRepository(SearchEngine)
 export class SearchEngineRepository extends Repository<SearchEngine> {

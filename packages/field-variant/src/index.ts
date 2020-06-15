@@ -1,5 +1,5 @@
 import { DockiteField } from '@dockite/field';
-import { DockiteFieldStatic, Field, GlobalContext, Schema } from '@dockite/types';
+import { Field, FieldIOContext, GlobalContext } from '@dockite/types';
 import {
   GraphQLFieldConfig,
   GraphQLInputType,
@@ -38,11 +38,11 @@ export class DockiteFieldVariant extends DockiteField {
     return GraphQLString;
   }
 
-  public async outputType(
-    dockiteSchemas: Schema[],
-    objectTypes: Map<string, GraphQLObjectType>,
-    dockiteFields: Record<string, DockiteFieldStatic>,
-  ): Promise<GraphQLOutputType> {
+  public async outputType({
+    dockiteSchemas,
+    graphqlTypes,
+    dockiteFields,
+  }: FieldIOContext): Promise<GraphQLOutputType> {
     const fields: Omit<Field, 'id' | 'dockiteField' | 'schema' | 'schemaId'>[] =
       this.schemaField.settings.children ?? [];
 
@@ -54,10 +54,10 @@ export class DockiteFieldVariant extends DockiteField {
           return null;
         }
 
-        const dockiteField = new FieldClass(f as Field, this.repositories, this.schema);
+        const dockiteField = new FieldClass(f as Field, this.orm);
 
         const [outputType, outputArgs] = await Promise.all([
-          dockiteField.outputType(dockiteSchemas, objectTypes, dockiteFields),
+          dockiteField.outputType({ dockiteSchemas, graphqlTypes, dockiteFields }),
           dockiteField.outputArgs(),
         ]);
 
@@ -65,10 +65,16 @@ export class DockiteFieldVariant extends DockiteField {
           name: String(f.name),
           config: {
             type: outputType,
-            resolve: async (root: any, args, context): Promise<any> => {
-              const value = root[f.name];
-              // eslint-disable-next-line
-              return dockiteField.processOutput<typeof outputType>({ value, root, args, context });
+            resolve: async (data: any, args): Promise<any> => {
+              const fieldData = data[f.name];
+              const field = { ...f, id: 'child', schemaId: this.schemaField.id };
+
+              return dockiteField.processOutputGraphQL<typeof outputType>({
+                field,
+                fieldData,
+                data,
+                args,
+              });
             },
             args: outputArgs,
           },

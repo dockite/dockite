@@ -1,18 +1,18 @@
+import { Document, Field } from '@dockite/database';
+import GraphQLJSON from 'graphql-type-json';
+import { omitBy } from 'lodash';
 import {
   Arg,
   Field as GraphQLField,
+  Int,
   Mutation,
+  ObjectType,
   Query,
   Resolver,
-  ObjectType,
-  Int,
 } from 'type-graphql';
 import { getRepository } from 'typeorm';
-import GraphQLJSON from 'graphql-type-json';
-import { omitBy } from 'lodash';
 
 import { Authenticated } from '../../../common/authorizers';
-import { Field, Document } from '../../../entities';
 import { DockiteEvents } from '../../../events';
 
 @ObjectType()
@@ -102,7 +102,7 @@ export class FieldResolver {
       schemaId,
     });
 
-    const [savedField, _] = await Promise.all([
+    const [savedField] = await Promise.all([
       repository.save(field),
       getRepository(Document)
         .createQueryBuilder()
