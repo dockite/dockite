@@ -38,7 +38,7 @@
     "ts-node": "^8.6.2",
     "ts-node-dev": "^1.0.0-pre.44",
     "type-graphql": "1.0.0-rc.2",
-    "typeorm": "^0.2.22",
+    "typeorm": "^0.2.25",
     "typescript": "^3.9.5"
   },
   "devDependencies": {

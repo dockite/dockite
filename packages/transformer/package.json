@@ -14,7 +14,7 @@
     "graphql": "^15.0.0",
     "lodash": "^4.17.15",
     "type-graphql": "1.0.0-rc.2",
-    "typeorm": "^0.2.22"
+    "typeorm": "^0.2.25"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.149",
