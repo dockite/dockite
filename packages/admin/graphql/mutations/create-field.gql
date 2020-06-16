@@ -15,5 +15,11 @@ mutation CreateField(
     settings: $settings
   ) {
     id
+    name
+    title
+    description
+    type
+    settings
+    schemaId
   }
 }

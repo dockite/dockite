@@ -1,5 +1,12 @@
 mutation CreateSchema($name: String!, $type: SchemaType!, $groups: JSON!, $settings: JSON!) {
   createSchema(name: $name, type: $type, groups: $groups, settings: $settings) {
     id
+    name
+    type
+    groups
+    settings
+    userId
+    createdAt
+    updatedAt
   }
 }

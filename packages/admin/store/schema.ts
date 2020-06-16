@@ -1,4 +1,4 @@
-import { SchemaType, Schema, Field } from '@dockite/types';
+import { Field, Schema, SchemaType } from '@dockite/types';
 import { ActionTree, GetterTree, MutationTree } from 'vuex';
 
 import { RootState } from '.';
@@ -6,10 +6,10 @@ import { RootState } from '.';
 import {
   CreateFieldMutationResponse,
   CreateSchemaMutationResponse,
-  UpdateSchemaMutationResponse,
-  UnpersistedField,
   DeleteFieldMutationResponse,
   DeleteSchemaMutationResponse,
+  UnpersistedField,
+  UpdateSchemaMutationResponse,
 } from '~/common/types';
 import CreateFieldMutation from '~/graphql/mutations/create-field.gql';
 import CreateSchemaMutation from '~/graphql/mutations/create-schema.gql';
@@ -18,7 +18,6 @@ import DeleteSchemaMutation from '~/graphql/mutations/delete-schema.gql';
 import UpdateFieldMutation from '~/graphql/mutations/update-field.gql';
 import UpdateSchemaMutation from '~/graphql/mutations/update-schema.gql';
 import AllSchemasQuery from '~/graphql/queries/all-schemas.gql';
-import GetSchemaWithFieldsQuery from '~/graphql/queries/get-schema-with-fields.gql';
 import * as data from '~/store/data';
 
 export interface SchemaState {
@@ -93,10 +92,6 @@ export const actions: ActionTree<SchemaState, RootState> = {
       variables: {
         ...payload.schema,
       },
-      refetchQueries: [
-        { query: AllSchemasQuery },
-        { query: GetSchemaWithFieldsQuery, variables: { id: payload.schema.id } },
-      ],
     });
 
     if (!schemaData?.updateSchema) {
@@ -107,10 +102,6 @@ export const actions: ActionTree<SchemaState, RootState> = {
       this.$apolloClient.mutate<DeleteFieldMutationResponse>({
         mutation: DeleteFieldMutation,
         variables: { id },
-        refetchQueries: [
-          { query: AllSchemasQuery },
-          { query: GetSchemaWithFieldsQuery, variables: { id: payload.schema.id } },
-        ],
       }),
     );
 
@@ -122,10 +113,6 @@ export const actions: ActionTree<SchemaState, RootState> = {
           variables: {
             ...field,
           },
-          refetchQueries: [
-            { query: AllSchemasQuery },
-            { query: GetSchemaWithFieldsQuery, variables: { id: payload.schema.id } },
-          ],
         }),
       );
 
@@ -138,11 +125,11 @@ export const actions: ActionTree<SchemaState, RootState> = {
             ...field,
             schemaId: payload.schema.id,
           },
-          refetchQueries: [{ query: AllSchemasQuery }],
         }),
       );
 
     await Promise.all([...deleteFieldsPromises, ...updateFieldsPromises, ...createFieldsPromises]);
+    this.$apolloClient.resetStore();
 
     this.commit(`${data.namespace}/removeSchemaWithFields`, payload.schema.id);
   },
@@ -153,7 +140,9 @@ export const actions: ActionTree<SchemaState, RootState> = {
       variables: {
         id: payload,
       },
-      refetchQueries: [{ query: AllSchemasQuery }],
+      update: () => {
+        this.$apolloClient.resetStore();
+      },
     });
 
     if (!schemaData?.removeSchema) {

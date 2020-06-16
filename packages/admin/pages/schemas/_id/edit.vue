@@ -26,9 +26,16 @@
                 <el-button type="text" size="mini" @click="fieldToBeEdited = data">
                   Edit
                 </el-button>
-                <el-button type="text" size="mini" @click="handleRemoveField(node, data)">
-                  Remove
-                </el-button>
+                <el-popconfirm
+                  title="Are you sure? All documents will lose any data stored for this field."
+                  confirm-button-text="Delete"
+                  cancel-button-text="Cancel"
+                  @onConfirm="handleRemoveField(node, data)"
+                >
+                  <el-button slot="reference" type="text" size="mini">
+                    Remove
+                  </el-button>
+                </el-popconfirm>
               </span>
             </span>
           </el-tree>

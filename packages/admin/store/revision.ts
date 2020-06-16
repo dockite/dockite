@@ -8,6 +8,7 @@ import {
 } from '~/common/types';
 import RestoreDocumentRevisionMutation from '~/graphql/mutations/restore-document-revision.gql';
 import RestoreSchemaRevisionMutation from '~/graphql/mutations/restore-schema-revision.gql';
+import * as data from '~/store/data';
 
 export interface RevisionState {
   errors: string | string[] | null;
@@ -35,29 +36,43 @@ export const getters: GetterTree<RevisionState, RootState> = {};
 
 export const actions: ActionTree<RevisionState, RootState> = {
   async restoreDocumentRevision(_, payload: RestoreDocumentRevisionPayload): Promise<void> {
-    const { data } = await this.$apolloClient.mutate<RestoreDocumentRevisionMutationResponse>({
+    const { data: revisionData } = await this.$apolloClient.mutate<
+      RestoreDocumentRevisionMutationResponse
+    >({
       mutation: RestoreDocumentRevisionMutation,
       variables: {
         revisionId: payload.revisionId,
         documentId: payload.documentId,
       },
+      update: () => {
+        this.$apolloClient.resetStore();
+      },
     });
 
-    if (!data?.restoreDocumentRevision) {
+    this.commit(`${data.namespace}/removeDocument`, payload.documentId);
+
+    if (!revisionData?.restoreDocumentRevision) {
       throw new Error('Unable to restore document revision');
     }
   },
 
   async restoreSchemaRevision(_, payload: RestoreSchemaRevisionPayload): Promise<void> {
-    const { data } = await this.$apolloClient.mutate<RestoreSchemaRevisionMutationResponse>({
+    const { data: revisionData } = await this.$apolloClient.mutate<
+      RestoreSchemaRevisionMutationResponse
+    >({
       mutation: RestoreSchemaRevisionMutation,
       variables: {
         revisionId: payload.revisionId,
         schemaId: payload.schemaId,
       },
+      update: () => {
+        this.$apolloClient.resetStore();
+      },
     });
 
-    if (!data?.restoreSchemaRevision) {
+    this.commit(`${data.namespace}/removeSchemaWithFields`, payload.schemaId);
+
+    if (!revisionData?.restoreSchemaRevision) {
       throw new Error('Unable to restore schema revision');
     }
   },
