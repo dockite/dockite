@@ -16,37 +16,27 @@
     </portal>
 
     <div v-if="ready" class="update-document-page">
-      <el-form ref="formEl" label-position="top" :model="form" @submit.native.prevent="submit">
-        <el-tabs v-model="currentTab" type="border-card">
-          <el-tab-pane v-for="tab in availableTabs" :key="tab" :label="tab" :name="tab">
-            <component
-              :is="$dockiteFieldManager[field.type].input"
-              v-for="field in getFieldsByGroupName(tab)"
-              :key="field.id"
-              v-model="form[field.name]"
-              :name="field.name"
-              :field-config="field"
-              :form-data="form"
-            >
-            </component>
-          </el-tab-pane>
-        </el-tabs>
-      </el-form>
-      <el-row type="flex" justify="space-between" align="middle" style="margin-top: 1rem;">
-        <el-button type="text" @click="$router.go(-1)">
-          Cancel
-        </el-button>
-        <el-button type="primary" @click="submit">
-          Save and Publish
-        </el-button>
-      </el-row>
-
-      <el-drawer
-        title="Actions"
-        :visible.sync="actionsDrawerVisible"
-        direction="rtl"
-        :destroy-on-close="true"
-        custom-class="dockite-document--actions-drawer"
+      <div style="padding-right: 350px;">
+        <el-form ref="formEl" label-position="top" :model="form" @submit.native.prevent="submit">
+          <el-tabs v-model="currentTab" type="border-card">
+            <el-tab-pane v-for="tab in availableTabs" :key="tab" :label="tab" :name="tab">
+              <component
+                :is="$dockiteFieldManager[field.type].input"
+                v-for="field in getFieldsByGroupName(tab)"
+                :key="field.id"
+                v-model="form[field.name]"
+                :name="field.name"
+                :field-config="field"
+                :form-data="form"
+              >
+              </component>
+            </el-tab-pane>
+          </el-tabs>
+        </el-form>
+      </div>
+      <div
+        class="dockite-document--actions-drawer"
+        :style="`padding-top: calc(1rem + ${heightOffset}px);`"
       >
         <div class="dockite-document--actions-drawer-body">
           <div class="dockite-document--actions-drawer-revisions">
@@ -70,15 +60,24 @@
                 Compare changes
               </router-link>
             </el-alert>
+            <el-alert v-if="revisions.length === 0" type="warning" show-icon :closable="false">
+              <template slot="title">
+                No changes yet!
+              </template>
+              Once changes occur they will appear here with a link to view the differences.
+            </el-alert>
           </div>
-          <el-button>
+          <!-- <el-button size="medium" type="danger" >
+              Delete Document
+            </el-button> -->
+          <el-button size="medium">
             Save as Draft
           </el-button>
-          <el-button type="primary">
+          <el-button type="primary" size="medium" @click="submit">
             Save and Publish
           </el-button>
         </div>
-      </el-drawer>
+      </div>
     </div>
   </fragment>
 </template>
@@ -105,6 +104,8 @@ import * as document from '~/store/document';
 })
 export default class UpdateDocumentPage extends Vue {
   public currentTab = 'Default';
+
+  public heightOffset = 80;
 
   public form: Record<string, any> = {};
 
@@ -175,6 +176,18 @@ export default class UpdateDocumentPage extends Vue {
 
   get revisions(): AllDocumentRevisionsResultItem[] {
     return this.allDocumentRevisions.results.filter(revision => revision.id !== 'current');
+  }
+
+  created(): void {
+    window.document.addEventListener('scroll', this.handleHeightOffset);
+  }
+
+  destroyed(): void {
+    window.document.removeEventListener('scroll', this.handleHeightOffset);
+  }
+
+  public handleHeightOffset(): void {
+    this.heightOffset = Math.max(0, 80 - window.pageYOffset);
   }
 
   public getFieldsByGroupName(name: string): Field[] {
@@ -273,9 +286,20 @@ export default class UpdateDocumentPage extends Vue {
 </script>
 
 <style lang="scss">
-.dockite-document--actions-drawer {
-  max-width: 400px;
+.update-document-page {
   width: 100%;
+}
+
+.dockite-document--actions-drawer {
+  width: 100%;
+  height: 100vh;
+  max-width: 350px;
+  position: fixed;
+  top: 0;
+  right: 0;
+  background: #ffffff;
+  padding: 1rem 0;
+  box-sizing: border-box;
 }
 
 .dockite-document--actions-drawer-body {
