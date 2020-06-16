@@ -9,28 +9,31 @@
         <el-table-column prop="id" label="ID">
           <template slot-scope="scope">
             <router-link :to="`/schemas/${scope.row.id}`">
-              {{ scope.row.id.slice(0, 8) + '...' }}
+              {{ scope.row.id | shortDesc }}
             </router-link>
           </template>
         </el-table-column>
         <el-table-column prop="name" label="Schema">
           <template slot-scope="scope">
             <router-link :to="`/schemas/${scope.row.id}`">
-              {{ scope.row.name }}
+              {{ scope.row.name | shortDesc }}
             </router-link>
           </template>
         </el-table-column>
         <el-table-column prop="createdAt" label="Created" :formatter="cellValueFromNow" />
         <el-table-column prop="updatedAt" label="Updated" :formatter="cellValueFromNow" />
         <el-table-column label="Actions">
-          <template slot-scope="scope">
-            <router-link :to="`/schemas/${scope.row.id}/edit`" style="padding-right: 0.75rem;">
+          <span slot-scope="scope" class="dockite-table--actions">
+            <router-link title="Edit Schema" :to="`/schemas/${scope.row.id}/edit`">
               <i class="el-icon-edit-outline" />
             </router-link>
-            <router-link :to="`/schemas/${scope.row.id}/delete`">
+            <router-link title="Delete Schema" :to="`/schemas/${scope.row.id}/delete`">
               <i class="el-icon-delete" />
             </router-link>
-          </template>
+            <router-link title="View Revisions" :to="`/schemas/${scope.row.id}/revisions`">
+              <i class="el-icon-document-copy" />
+            </router-link>
+          </span>
         </el-table-column>
       </el-table>
       <el-pagination
@@ -96,17 +99,4 @@ export default class AllSchemasPage extends Vue {
 }
 </script>
 
-<style lang="scss">
-.dockite-element--pagination {
-  /* background: #ffffff; */
-  background: transparent;
-
-  li {
-    background: transparent;
-  }
-
-  button {
-    background: transparent;
-  }
-}
-</style>
+<style lang="scss"></style>

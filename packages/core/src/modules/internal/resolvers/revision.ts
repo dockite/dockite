@@ -8,9 +8,15 @@ import {
   Mutation,
   Ctx,
 } from 'type-graphql';
-import { getRepository } from 'typeorm';
+import { getRepository, getCustomRepository } from 'typeorm';
 import { omit, cloneDeep } from 'lodash';
-import { DocumentRevision, SchemaRevision, Schema, Document } from '@dockite/database';
+import {
+  DocumentRevision,
+  SchemaRevision,
+  Schema,
+  Document,
+  SchemaRevisionRepository,
+} from '@dockite/database';
 import { GlobalContext } from '@dockite/types';
 
 import { Authenticated } from '../../../common/authorizers';
@@ -135,6 +141,31 @@ export class RevisionResolver {
       hasNextPage: false,
       totalPages: 1,
     };
+  }
+
+  @Authenticated()
+  @Mutation(_returns => Boolean)
+  async restoreSchemaRevision(
+    @Arg('revisionId', _type => String)
+    revisionId: string,
+    @Arg('schemaId', _type => String)
+    schemaId: string,
+    @Ctx()
+    ctx: GlobalContext,
+  ): Promise<boolean> {
+    try {
+      const { id: userId } = ctx.user!; // eslint-disable-line
+
+      const repository = getCustomRepository(SchemaRevisionRepository);
+
+      await repository.restoreRevision(schemaId, revisionId, userId);
+
+      return true;
+    } catch (err) {
+      console.log(err);
+
+      return false;
+    }
   }
 
   @Authenticated()

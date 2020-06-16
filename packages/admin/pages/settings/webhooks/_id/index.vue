@@ -8,7 +8,7 @@
       <el-table :data="findWebhookCallsByWebhookId.results" style="width: 100%">
         <el-table-column prop="id" label="ID">
           <template slot-scope="scope">
-            {{ scope.row.id.slice(0, 8) + '...' }}
+            {{ scope.row.id | shortDesc }}
           </template>
         </el-table-column>
         <el-table-column label="Success">

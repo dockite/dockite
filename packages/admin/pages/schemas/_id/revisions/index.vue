@@ -3,32 +3,32 @@
     <portal to="header">
       <el-row style="width: 100%" type="flex" justify="space-between" align="middle">
         <h2>
-          Revisions - <strong>{{ schemaName }}</strong>
+          Revisions - <strong>{{ schemaId }}</strong>
         </h2>
       </el-row>
     </portal>
 
-    <div class="all-schema-documents-page">
+    <div class="all-schema-schemas-page">
       <el-table :data="allSchemaRevisions.results" style="width: 100%">
         <el-table-column prop="id" label="ID">
           <template slot-scope="scope">
-            {{ scope.row.id.slice(0, 8) + '...' }}
+            {{ scope.row.id | shortDesc }}
           </template>
         </el-table-column>
 
         <el-table-column prop="user.email" label="Updated By" />
         <el-table-column prop="createdAt" label="Created" :formatter="cellValueFromNow" />
 
-        <el-table-column label="Primary">
+        <el-table-column label="From">
           <template slot-scope="scope">
-            <el-radio v-model="primary" :label="scope.row.id">
+            <el-radio v-if="scope.row.id !== 'current'" v-model="primary" :label="scope.row.id">
               <!-- Without this is will default to displaying the label -->
               <div />
             </el-radio>
           </template>
         </el-table-column>
 
-        <el-table-column label="Secondary">
+        <el-table-column label="To">
           <template slot-scope="scope">
             <el-radio v-model="secondary" :label="scope.row.id">
               <!-- Without this is will default to displaying the label -->
@@ -38,11 +38,20 @@
         </el-table-column>
 
         <el-table-column label="Actions">
-          <template slot-scope="scope">
-            <el-button type="text" @click="revisionToDisplay = scope.row.data">
+          <span slot-scope="scope" class="dockite-table--actions">
+            <el-button title="View Data" type="text" @click="revisionToDisplay = scope.row.data">
               <i class="el-icon-view" />
             </el-button>
-          </template>
+
+            <el-button
+              v-if="scope.row.id !== 'current'"
+              type="text"
+              title="Restore to this revision"
+              @click="restoreToRevision(scope.row.id)"
+            >
+              <i class="el-icon-refresh-left" />
+            </el-button>
+          </span>
         </el-table-column>
       </el-table>
 
@@ -57,9 +66,13 @@
           layout="total"
         />
         <div style="padding: 0 1rem;">
-          <el-button :disabled="!canCompare" type="primary" @click="showDiff = true">
-            Compare
-          </el-button>
+          <router-link
+            :to="`/schemas/${schemaId}/revisions/compare?from=${primary}&to=${secondary}`"
+          >
+            <el-button :disabled="!canCompare" type="primary" @click="showDiff = true">
+              Compare
+            </el-button>
+          </router-link>
         </div>
       </el-row>
 
@@ -75,16 +88,6 @@
           :value="JSON.stringify(revisionToDisplay, null, 2)"
         ></textarea>
       </el-dialog>
-
-      <el-dialog
-        title="Revision Details"
-        custom-class="dockite-dialog--revision-detail"
-        :visible="showDiff"
-        :destroy-on-close="true"
-        @close="showDiff = false"
-      >
-        <div ref="diffDetail" />
-      </el-dialog>
     </div>
   </fragment>
 </template>
@@ -93,33 +96,19 @@
 import { Schema } from '@dockite/types';
 import CodeMirror from 'codemirror';
 import { formatDistanceToNow } from 'date-fns';
-import DiffMatchPatch from 'diff-match-patch';
 import { Component, Vue, Watch, Ref } from 'nuxt-property-decorator';
 import { Fragment } from 'vue-fragment';
 
-import { ManyResultSet, AllSchemaRevisionsResultItem } from '../../../common/types';
+import { ManyResultSet, AllSchemaRevisionsResultItem } from '~/common/types';
+import { stableJSONStringify } from '~/common/utils';
+import * as data from '~/store/data';
+import * as revision from '~/store/revision';
 
 import 'codemirror/addon/merge/merge.css';
 import 'codemirror/addon/merge/merge.js';
 
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/theme/nord.css';
-
-import * as data from '~/store/data';
-
-// That is horrifying
-const stableJSONStringify = (obj: any, space = 2): string => {
-  const keys = [];
-
-  JSON.stringify(obj, (key, value) => {
-    keys.push(key);
-    return value;
-  });
-
-  keys.sort();
-
-  return JSON.stringify(obj, keys, space);
-};
 
 @Component({
   components: {
@@ -181,10 +170,6 @@ export default class SchemaRevisionsPage extends Vue {
     return this.$route.params.id;
   }
 
-  get schemaName(): string {
-    return this.schema?.name ?? '';
-  }
-
   get currentPage(): number {
     if (!this.allSchemaRevisions.currentPage) {
       return 1;
@@ -215,47 +200,41 @@ export default class SchemaRevisionsPage extends Vue {
     });
   }
 
-  public fetchSchemaWithFields(): void {
-    this.$store.dispatch(`${data.namespace}/fetchSchemaWithFieldsById`, {
-      id: this.schemaId,
+  public fetchSchemaById(force = false): Promise<void> {
+    return this.$store.dispatch(`${data.namespace}/fetchSchemaWithFieldsById`, {
+      id: this.$route.params.id,
+      force,
     });
   }
 
-  public fetchSearchDocumentsWithSchema(term: string, page = 1): void {
-    this.$store.dispatch(`${data.namespace}/fetchSearchDocumentsWithSchema`, {
-      term,
-      page,
-      schemaId: this.schemaId,
-    });
+  public async restoreToRevision(revisionId: string): Promise<void> {
+    try {
+      await this.$store.dispatch(`${revision.namespace}/restoreSchemaRevision`, {
+        revisionId,
+        schemaId: this.schemaId,
+      });
+
+      this.$message({
+        message: 'Revision restored successfully',
+        type: 'success',
+      });
+
+      this.$router.replace(`/schemas/${this.schemaId}`);
+    } catch (err) {
+      this.$message({
+        message: 'Revision was unable to be restored',
+        type: 'error',
+      });
+    }
   }
 
   public cellValueFromNow(_row: never, _column: never, cellValue: string, _index: never): string {
     return formatDistanceToNow(new Date(cellValue)) + ' ago';
   }
 
-  created(): void {
-    const win = window as any;
-
-    if (!win.diff_match_patch) {
-      win.diff_match_patch = DiffMatchPatch;
-      win.DIFF_DELETE = -1;
-      win.DIFF_INSERT = 1;
-      win.DIFF_EQUAL = 0;
-    }
-  }
-
-  destroyed(): void {
-    const win = window as any;
-
-    delete win.diff_match_patch;
-    delete win.DIFF_DELETE;
-    delete win.DIFF_INSERT;
-    delete win.DIFF_EQUAL;
-  }
-
   @Watch('schemaId', { immediate: true })
   handleSchemaIdChange(): void {
-    this.fetchSchemaWithFields();
+    this.fetchSchemaById();
     this.fetchAllSchemaRevisions();
   }
 
@@ -273,26 +252,11 @@ export default class SchemaRevisionsPage extends Vue {
       });
     }
   }
-
-  @Watch('showDiff', { immediate: true })
-  handleShowDiffChange(): void {
-    if (this.showDiff) {
-      this.$nextTick(() => {
-        CodeMirror.MergeView(this.diffDetail, {
-          value: this.primaryRevision,
-          origRight: this.secondaryRevision,
-          showDifferences: true,
-          readOnly: true,
-          mode: 'application/json',
-        });
-      });
-    }
-  }
 }
 </script>
 
 <style lang="scss">
-.all-schema-documents-page {
+.all-schema-schemas-page {
   background: #ffffff;
 }
 

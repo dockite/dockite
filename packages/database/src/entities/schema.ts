@@ -63,6 +63,7 @@ export class Schema {
     {
       nullable: true,
       persistence: false,
+      cascade: true,
     },
   )
   @GraphQLField(_type => [Field], { nullable: true })

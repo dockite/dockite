@@ -12,7 +12,7 @@
       <el-table :data="allDocumentRevisions.results" style="width: 100%">
         <el-table-column prop="id" label="ID">
           <template slot-scope="scope">
-            {{ scope.row.id.slice(0, 8) + '...' }}
+            {{ scope.row.id | shortDesc }}
           </template>
         </el-table-column>
 
@@ -21,7 +21,7 @@
 
         <el-table-column label="From">
           <template slot-scope="scope">
-            <el-radio v-model="primary" :label="scope.row.id">
+            <el-radio v-if="scope.row.id !== 'current'" v-model="primary" :label="scope.row.id">
               <!-- Without this is will default to displaying the label -->
               <div />
             </el-radio>
@@ -38,8 +38,8 @@
         </el-table-column>
 
         <el-table-column label="Actions">
-          <template slot-scope="scope">
-            <el-button type="text" @click="revisionToDisplay = scope.row.data">
+          <span slot-scope="scope" class="dockite-table--actions">
+            <el-button title="View Data" type="text" @click="revisionToDisplay = scope.row.data">
               <i class="el-icon-view" />
             </el-button>
 
@@ -51,7 +51,7 @@
             >
               <i class="el-icon-refresh-left" />
             </el-button>
-          </template>
+          </span>
         </el-table-column>
       </el-table>
 
@@ -99,30 +99,16 @@ import { formatDistanceToNow } from 'date-fns';
 import { Component, Vue, Watch, Ref } from 'nuxt-property-decorator';
 import { Fragment } from 'vue-fragment';
 
-import { ManyResultSet, AllDocumentRevisionsResultItem } from '../../../common/types';
+import { ManyResultSet, AllDocumentRevisionsResultItem } from '~/common/types';
+import { stableJSONStringify } from '~/common/utils';
+import * as data from '~/store/data';
+import * as revision from '~/store/revision';
 
 import 'codemirror/addon/merge/merge.css';
 import 'codemirror/addon/merge/merge.js';
 
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/theme/nord.css';
-
-import * as data from '~/store/data';
-import * as revision from '~/store/revision';
-
-// That is horrifying
-const stableJSONStringify = (obj: any, space = 2): string => {
-  const keys = [];
-
-  JSON.stringify(obj, (key, value) => {
-    keys.push(key);
-    return value;
-  });
-
-  keys.sort();
-
-  return JSON.stringify(obj, keys, space);
-};
 
 @Component({
   components: {

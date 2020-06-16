@@ -9,7 +9,7 @@
       </el-row>
     </portal>
 
-    <div class="document-revision-compare-page">
+    <div class="schema-revision-compare-page">
       <!-- eslint-disable-next-line -->
       <div :class="{'dockite-diff--highlight': highlight }" style="background: #ffffff; margin-bottom: 1rem;" v-html="diffHTML" />
       <el-button
@@ -27,14 +27,14 @@
 </template>
 
 <script lang="ts">
-import { Document } from '@dockite/types';
+import { Schema } from '@dockite/types';
 import { formatDistanceToNow } from 'date-fns';
 import { html } from 'diff2html';
 import { Component, Vue, Watch, Ref } from 'nuxt-property-decorator';
 import unidiff from 'unidiff';
 import { Fragment } from 'vue-fragment';
 
-import { ManyResultSet, AllDocumentRevisionsResultItem } from '~/common/types';
+import { ManyResultSet, AllSchemaRevisionsResultItem } from '~/common/types';
 import { stableJSONStringify } from '~/common/utils';
 import * as data from '~/store/data';
 import * as revision from '~/store/revision';
@@ -46,7 +46,7 @@ import 'diff2html/bundles/css/diff2html.min.css';
     Fragment,
   },
 })
-export default class DocumentRevisionsPage extends Vue {
+export default class SchemaRevisionsPage extends Vue {
   public highlight = false;
   public diffHTML = '';
 
@@ -61,16 +61,14 @@ export default class DocumentRevisionsPage extends Vue {
     return this.$route.query.to as string;
   }
 
-  get allDocumentRevisions(): ManyResultSet<AllDocumentRevisionsResultItem> {
+  get allSchemaRevisions(): ManyResultSet<AllSchemaRevisionsResultItem> {
     const state: data.DataState = this.$store.state[data.namespace];
 
-    return state.allDocumentRevisions;
+    return state.allSchemaRevisions;
   }
 
   get primaryRevision(): string {
-    const revision = this.allDocumentRevisions.results.find(
-      revision => revision.id === this.primary,
-    );
+    const revision = this.allSchemaRevisions.results.find(revision => revision.id === this.primary);
 
     if (revision) {
       return stableJSONStringify(revision.data);
@@ -80,7 +78,7 @@ export default class DocumentRevisionsPage extends Vue {
   }
 
   get secondaryRevision(): string {
-    const revision = this.allDocumentRevisions.results.find(
+    const revision = this.allSchemaRevisions.results.find(
       revision => revision.id === this.secondary,
     );
 
@@ -95,46 +93,46 @@ export default class DocumentRevisionsPage extends Vue {
     return this.primary !== null && this.secondary !== null && this.primary !== this.secondary;
   }
 
-  get document(): Document {
-    return this.$store.getters[`${data.namespace}/getDocumentWithFieldsById`](this.documentId);
+  get schema(): Schema {
+    return this.$store.getters[`${data.namespace}/getSchemaWithFieldsById`](this.schemaId);
   }
 
-  get documentId(): string {
+  get schemaId(): string {
     return this.$route.params.id;
   }
 
   get currentPage(): number {
-    if (!this.allDocumentRevisions.currentPage) {
+    if (!this.allSchemaRevisions.currentPage) {
       return 1;
     }
 
-    return this.allDocumentRevisions.currentPage;
+    return this.allSchemaRevisions.currentPage;
   }
 
   get totalPages(): number {
-    if (!this.allDocumentRevisions.totalPages) {
+    if (!this.allSchemaRevisions.totalPages) {
       return 1;
     }
 
-    return this.allDocumentRevisions.totalPages;
+    return this.allSchemaRevisions.totalPages;
   }
 
   get totalItems(): number {
-    if (!this.allDocumentRevisions.totalItems) {
+    if (!this.allSchemaRevisions.totalItems) {
       return 1;
     }
 
-    return this.allDocumentRevisions.totalItems;
+    return this.allSchemaRevisions.totalItems;
   }
 
-  public fetchAllDocumentRevisions(): void {
-    this.$store.dispatch(`${data.namespace}/fetchAllDocumentRevisionsForDocument`, {
-      documentId: this.documentId,
+  public fetchAllSchemaRevisions(): void {
+    this.$store.dispatch(`${data.namespace}/fetchAllSchemaRevisionsForSchema`, {
+      schemaId: this.schemaId,
     });
   }
 
-  public fetchDocumentById(force = false): Promise<void> {
-    return this.$store.dispatch(`${data.namespace}/fetchDocumentById`, {
+  public fetchSchemaById(force = false): Promise<void> {
+    return this.$store.dispatch(`${data.namespace}/fetchSchemaWithFieldsById`, {
       id: this.$route.params.id,
       force,
     });
@@ -142,9 +140,9 @@ export default class DocumentRevisionsPage extends Vue {
 
   public async restoreToRevision(revisionId: string): Promise<void> {
     try {
-      await this.$store.dispatch(`${revision.namespace}/restoreDocumentRevision`, {
+      await this.$store.dispatch(`${revision.namespace}/restoreSchemaRevision`, {
         revisionId,
-        documentId: this.documentId,
+        schemaId: this.schemaId,
       });
 
       this.$message({
@@ -152,7 +150,7 @@ export default class DocumentRevisionsPage extends Vue {
         type: 'success',
       });
 
-      this.$router.replace(`/documents/${this.documentId}`);
+      this.$router.replace(`/schemas/${this.schemaId}`);
     } catch (err) {
       this.$message({
         message: 'Revision was unable to be restored',
@@ -165,15 +163,15 @@ export default class DocumentRevisionsPage extends Vue {
     return formatDistanceToNow(new Date(cellValue)) + ' ago';
   }
 
-  @Watch('documentId', { immediate: true })
-  handleDocumentIdChange(): void {
-    this.fetchDocumentById();
-    this.fetchAllDocumentRevisions();
+  @Watch('schemaId', { immediate: true })
+  handleSchemaIdChange(): void {
+    this.fetchSchemaById();
+    this.fetchAllSchemaRevisions();
   }
 
-  @Watch('allDocumentRevisions', { immediate: true })
-  handleDocumentRevisionsChange(): void {
-    if (this.allDocumentRevisions.results.length > 0) {
+  @Watch('allSchemaRevisions', { immediate: true })
+  handleSchemaRevisionsChange(): void {
+    if (this.allSchemaRevisions.results.length > 0) {
       this.diffHTML = html(
         unidiff.formatLines(unidiff.diffLines(this.primaryRevision, this.secondaryRevision), {
           context: Infinity,
@@ -192,7 +190,7 @@ export default class DocumentRevisionsPage extends Vue {
 </script>
 
 <style lang="scss">
-.all-document-documents-page {
+.all-schema-schemas-page {
   background: #ffffff;
 }
 
