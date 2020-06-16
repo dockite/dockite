@@ -2,7 +2,7 @@
 const path = require('path');
 
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
-const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+// const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 const isDev =
   String(process.env.NODE_ENV)
@@ -74,5 +74,5 @@ module.exports = {
   resolve: {
     extensions: ['.tsx', '.ts', '.mjs', '.js', '.jsx', '.vue', '.json', '.wasm'],
   },
-  plugins: [new VueLoaderPlugin(), new BundleAnalyzerPlugin({ analyzerMode: 'static' })],
+  plugins: [new VueLoaderPlugin()],
 };

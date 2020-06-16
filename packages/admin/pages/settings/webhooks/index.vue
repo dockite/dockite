@@ -14,7 +14,7 @@
         <el-table-column prop="id" label="ID">
           <template slot-scope="scope">
             <router-link :to="`/settings/webhooks/${scope.row.id}`">
-              {{ scope.row.id.slice(0, 8) + '...' }}
+              {{ scope.row.id | shortDesc }}
             </router-link>
           </template>
         </el-table-column>

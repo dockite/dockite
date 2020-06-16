@@ -17,7 +17,7 @@
     "lodash": "^4.17.15",
     "reflect-metadata": "^0.1.13",
     "type-graphql": "1.0.0-rc.2",
-    "typeorm": "^0.2.22"
+    "typeorm": "^0.2.25"
   },
   "devDependencies": {
     "@types/graphql-type-json": "^0.3.2",

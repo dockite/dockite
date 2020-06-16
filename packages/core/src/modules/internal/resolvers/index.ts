@@ -1,6 +1,7 @@
 export * from './dockite';
 export * from './document';
 export * from './field';
+export * from './revision';
 export * from './release';
 export * from './schema';
 export * from './webhook';

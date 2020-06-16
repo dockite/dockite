@@ -62,7 +62,7 @@
           label="ID"
         >
           <template slot-scope="scope">
-            {{ scope.row.id.slice(0, 8) + '...' }}
+            {{ scope.row.id | shortDesc }}
           </template>
         </el-table-column>
         <el-table-column label="Identifier">

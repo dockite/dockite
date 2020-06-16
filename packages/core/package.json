@@ -25,9 +25,10 @@
     "class-validator": "^0.12.2",
     "cosmiconfig": "^6.0.0",
     "debug": "^4.1.1",
+    "diff-match-patch": "^1.0.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "flatted": "^2.0.2",
+    "flatted": "^3.0.2",
     "graphql": "^15.0.0",
     "graphql-type-json": "^0.3.1",
     "jsonwebtoken": "^8.5.1",
@@ -37,7 +38,7 @@
     "ts-node": "^8.6.2",
     "ts-node-dev": "^1.0.0-pre.44",
     "type-graphql": "1.0.0-rc.2",
-    "typeorm": "^0.2.22",
+    "typeorm": "^0.2.25",
     "typescript": "^3.9.5"
   },
   "devDependencies": {

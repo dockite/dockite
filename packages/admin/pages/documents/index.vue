@@ -19,23 +19,23 @@
         <el-table-column prop="id" label="ID">
           <template slot-scope="scope">
             <router-link :to="`/documents/${scope.row.id}`">
-              {{ scope.row.id.slice(0, 8) + '...' }}
+              {{ scope.row.id | shortDesc }}
             </router-link>
           </template>
         </el-table-column>
         <el-table-column label="Identifier">
           <template slot-scope="scope">
-            <span v-if="scope.row.data.name">
-              {{ scope.row.data.name }}
+            <span v-if="scope.row.data.name" :title="scope.row.data.name">
+              {{ scope.row.data.name | shortDesc }}
             </span>
-            <span v-else-if="scope.row.data.title">
-              {{ scope.row.data.title }}
+            <span v-else-if="scope.row.data.title" :title="scope.row.data.title">
+              {{ scope.row.data.title | shortDesc }}
             </span>
-            <span v-else-if="scope.row.data.identifier">
-              {{ scope.row.data.identifier }}
+            <span v-else-if="scope.row.data.identifier" :title="scope.row.data.identifier">
+              {{ scope.row.data.identifier | shortDesc }}
             </span>
-            <span v-else :title="scope.row.data">
-              {{ JSON.stringify(scope.row.data).slice(0, 15) + '...' }}
+            <span v-else :title="JSON.stringify(scope.row.data)">
+              {{ JSON.stringify(scope.row.data) | shortDesc }}
             </span>
           </template>
         </el-table-column>
@@ -49,14 +49,17 @@
         <el-table-column prop="createdAt" label="Created" :formatter="cellValueFromNow" />
         <el-table-column prop="updatedAt" label="Updated" :formatter="cellValueFromNow" />
         <el-table-column label="Actions">
-          <template slot-scope="scope">
-            <router-link :to="`/documents/${scope.row.id}`" style="padding-right: 0.75rem;">
+          <span slot-scope="scope" class="dockite-table--actions">
+            <router-link title="Edit Document" :to="`/documents/${scope.row.id}`">
               <i class="el-icon-edit-outline" />
             </router-link>
-            <router-link :to="`/documents/${scope.row.id}/delete`">
+            <router-link title="Delete Document" :to="`/documents/${scope.row.id}/delete`">
               <i class="el-icon-delete" />
             </router-link>
-          </template>
+            <router-link title="View Revisions" :to="`/documents/${scope.row.id}/revisions`">
+              <i class="el-icon-document-copy" />
+            </router-link>
+          </span>
         </el-table-column>
       </el-table>
       <el-row type="flex" justify="space-between">

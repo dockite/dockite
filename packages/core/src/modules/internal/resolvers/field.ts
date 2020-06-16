@@ -1,4 +1,4 @@
-import { Document, Field } from '@dockite/database';
+import { Field } from '@dockite/database';
 import GraphQLJSON from 'graphql-type-json';
 import { omitBy } from 'lodash';
 import {
@@ -102,18 +102,7 @@ export class FieldResolver {
       schemaId,
     });
 
-    const [savedField] = await Promise.all([
-      repository.save(field),
-      getRepository(Document)
-        .createQueryBuilder()
-        .update()
-        .set({
-          data: () => `data || '{ "${field.name}": null }'`,
-        })
-        .where('schemaId = :schemaId', { schemaId: field.schemaId })
-        .andWhere('document.data ->> :fieldName IS NULL', { fieldName: field.name })
-        .execute(),
-    ]);
+    const savedField = await repository.save(field);
 
     DockiteEvents.emit('reload');
 
@@ -171,17 +160,7 @@ export class FieldResolver {
     try {
       const field = await repository.findOneOrFail(id);
 
-      await Promise.all([
-        repository.delete(field.id),
-        getRepository(Document)
-          .createQueryBuilder()
-          .update()
-          .set({
-            data: () => `data - '${field.name}'`,
-          })
-          .where('schemaId = :schemaId', { schemaId: field.schemaId })
-          .execute(),
-      ]);
+      await repository.delete(field.id);
 
       DockiteEvents.emit('reload');
 

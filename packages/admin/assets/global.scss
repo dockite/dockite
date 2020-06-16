@@ -40,3 +40,21 @@ pre.dockite-data--raw {
   line-height: 1;
   padding-top: 4px;
 }
+
+.el-alert--info a {
+  color: darken($--color-info, 15%);
+
+  &:hover {
+    color: darken($--color-info, 22%)
+  }
+}
+
+.dockite-table--actions {
+  a {
+    padding-right: 0.75rem;
+
+    &:last-child {
+      padding-right: 0;
+    }
+  }
+}

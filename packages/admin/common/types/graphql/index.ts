@@ -1,4 +1,4 @@
-import { DockiteFieldStatic, Document, Schema, Webhook, WebhookCall } from '@dockite/types';
+import { DockiteFieldStatic, Document, Schema, Webhook, WebhookCall, User } from '@dockite/types';
 
 export interface ManyResultsResponse<T> {
   results: T[];
@@ -39,6 +39,29 @@ export type AllSchemasResultItem = Omit<Schema, 'user' | 'fields' | 'deletedAt'>
 
 export interface AllSchemasQueryResponse {
   allSchemas: ManyResultsResponse<AllSchemasResultItem>;
+}
+
+export interface AllSchemaRevisionsResultItem {
+  id: string;
+  data: Record<string, any>;
+  user: User;
+  userId: string;
+  createdAt: Date;
+}
+
+export interface AllSchemaRevisionsQueryResponse {
+  allSchemaRevisions: ManyResultsResponse<AllSchemaRevisionsResultItem>;
+}
+export interface AllDocumentRevisionsResultItem {
+  id: string;
+  data: Record<string, any>;
+  user: User;
+  userId: string;
+  createdAt: Date;
+}
+
+export interface AllDocumentRevisionsQueryResponse {
+  allDocumentRevisions: ManyResultsResponse<AllDocumentRevisionsResultItem>;
 }
 
 export type AllDocumentsWithSchemaResultItem = Omit<Document, 'user' | 'userId' | 'schemaId'>;
@@ -140,4 +163,12 @@ export interface DeleteWebhookMutationResponse {
 
 export interface UpdateWebhookMutationResponse {
   updateWebhook: Webhook;
+}
+
+export interface RestoreSchemaRevisionMutationResponse {
+  restoreSchemaRevision: boolean;
+}
+
+export interface RestoreDocumentRevisionMutationResponse {
+  restoreDocumentRevision: boolean;
 }

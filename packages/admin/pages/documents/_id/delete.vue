@@ -25,7 +25,7 @@
           <el-button @click.prevent="$router.go(-1)">
             Cancel
           </el-button>
-          <el-button type="danger">
+          <el-button type="danger" @click="handleDeleteDocument">
             Delete
           </el-button>
         </el-row>
@@ -40,6 +40,7 @@ import { Component, Vue, Watch } from 'nuxt-property-decorator';
 import { Fragment } from 'vue-fragment';
 
 import * as data from '~/store/data';
+import * as document from '~/store/document';
 
 @Component({
   components: {
@@ -61,6 +62,20 @@ export default class EditDocumentPage extends Vue {
 
   public fetchDocumentById(): void {
     this.$store.dispatch(`${data.namespace}/fetchDocumentById`, { id: this.documentId });
+  }
+
+  public async handleDeleteDocument(): Promise<void> {
+    await this.$store.dispatch(`${document.namespace}/deleteDocument`, {
+      documentId: this.documentId,
+      schemaId: this.document?.schemaId,
+    });
+
+    this.$message({
+      message: 'Document deleted successfully',
+      type: 'success',
+    });
+
+    this.$router.push(`/schemas/${this.document?.schemaId}`);
   }
 
   @Watch('documentId', { immediate: true })

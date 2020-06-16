@@ -21,8 +21,14 @@ import {
   FindWebhookCallsResultItem,
   SearchDocumentsWithSchemaResultItem,
   SearchDocumentsWithSchemaQueryResponse,
+  AllSchemaRevisionsResultItem,
+  AllSchemaRevisionsQueryResponse,
+  AllDocumentRevisionsQueryResponse,
+  AllDocumentRevisionsResultItem,
 } from '~/common/types';
+import AllDocumentRevisionsQuery from '~/graphql/queries/all-document-revisions.gql';
 import AllDocumentsWithSchemaQuery from '~/graphql/queries/all-documents-with-schema.gql';
+import AllSchemaRevisionsQuery from '~/graphql/queries/all-schema-revisions.gql';
 import AllSchemasQuery from '~/graphql/queries/all-schemas.gql';
 import AllWebhooksQuery from '~/graphql/queries/all-webhooks.gql';
 import AvailableFieldsQuery from '~/graphql/queries/available-fields.gql';
@@ -34,6 +40,8 @@ import SearchDocumentsWithSchemaQuery from '~/graphql/queries/search-documents-w
 
 export interface DataState {
   allSchemas: ManyResultSet<AllSchemasResultItem>;
+  allSchemaRevisions: ManyResultSet<AllSchemaRevisionsResultItem>;
+  allDocumentRevisions: ManyResultSet<AllDocumentRevisionsResultItem>;
   allWebhooks: ManyResultSet<AllWebhooksResultItem>;
   allDocumentsWithSchema: ManyResultSet<AllDocumentsWithSchemaResultItem>;
   searchDocumentsWithSchema: ManyResultSet<SearchDocumentsWithSchemaResultItem>;
@@ -62,6 +70,20 @@ export const state = (): DataState => ({
     hasNextPage: null,
   },
   allDocumentsWithSchema: {
+    results: [],
+    totalItems: null,
+    totalPages: null,
+    currentPage: null,
+    hasNextPage: null,
+  },
+  allSchemaRevisions: {
+    results: [],
+    totalItems: null,
+    totalPages: null,
+    currentPage: null,
+    hasNextPage: null,
+  },
+  allDocumentRevisions: {
     results: [],
     totalItems: null,
     totalPages: null,
@@ -137,6 +159,43 @@ export const actions: ActionTree<DataState, RootState> = {
     }
 
     commit('setAllDocumentsWithSchema', data);
+  },
+
+  async fetchAllSchemaRevisionsForSchema(
+    { commit },
+    payload: { schemaId: string; perPage?: Number },
+  ): Promise<void> {
+    const { data } = await this.$apolloClient.query<AllSchemaRevisionsQueryResponse>({
+      query: AllSchemaRevisionsQuery,
+      variables: {
+        schemaId: payload.schemaId,
+        perPage: payload.perPage ?? null,
+      },
+    });
+
+    if (!data.allSchemaRevisions) {
+      throw new Error('graphql: allSchemaRevisions could not be fetched');
+    }
+
+    commit('setAllSchemaRevisionsForSchema', data);
+  },
+  async fetchAllDocumentRevisionsForDocument(
+    { commit },
+    payload: { documentId: string; perPage?: Number },
+  ): Promise<void> {
+    const { data } = await this.$apolloClient.query<AllDocumentRevisionsQueryResponse>({
+      query: AllDocumentRevisionsQuery,
+      variables: {
+        documentId: payload.documentId,
+        perPage: payload.perPage ?? null,
+      },
+    });
+
+    if (!data.allDocumentRevisions) {
+      throw new Error('graphql: allDocumentRevisions could not be fetched');
+    }
+
+    commit('setAllDocumentRevisionsForDocument', data);
   },
 
   async fetchSearchDocumentsWithSchema(
@@ -255,6 +314,14 @@ export const actions: ActionTree<DataState, RootState> = {
 export const mutations: MutationTree<DataState> = {
   setAllSchemas(state, payload: AllSchemasQueryResponse) {
     state.allSchemas = { ...payload.allSchemas };
+  },
+
+  setAllSchemaRevisionsForSchema(state, payload: AllSchemaRevisionsQueryResponse): void {
+    state.allSchemaRevisions = { ...payload.allSchemaRevisions };
+  },
+
+  setAllDocumentRevisionsForDocument(state, payload: AllDocumentRevisionsQueryResponse): void {
+    state.allDocumentRevisions = { ...payload.allDocumentRevisions };
   },
 
   setAllDocumentsWithSchema(state, payload: AllDocumentsWithSchemaQueryResponse): void {

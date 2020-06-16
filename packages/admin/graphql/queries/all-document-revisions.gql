@@ -1,0 +1,20 @@
+query AllDocumentRevisions($documentId: String!, $perPage: Int) {
+  allDocumentRevisions(documentId: $documentId, perPage: $perPage) {
+    results {
+      id
+      data
+      createdAt
+      documentId
+      user {
+        id
+        email
+        firstName
+        lastName
+      }
+    }
+    totalItems
+    totalPages
+    currentPage
+    hasNextPage
+  }
+}
