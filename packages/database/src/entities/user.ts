@@ -3,9 +3,15 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  AfterLoad,
 } from 'typeorm';
+import { flatMap } from 'lodash';
+
+import { Role } from './role';
 
 @Entity()
 @ObjectType()
@@ -29,6 +35,18 @@ export class User {
   @GraphQLField()
   public email!: string;
 
+  @GraphQLField(_type => [Role])
+  @ManyToMany(_type => Role, { eager: true })
+  @JoinTable()
+  public roles!: Role[];
+
+  @Column({ type: 'jsonb', default: () => "'[]'" })
+  @GraphQLField(_type => [String])
+  public scopes!: string[];
+
+  @GraphQLField(_type => [String])
+  public normalizedScopes!: string[];
+
   @CreateDateColumn()
   @GraphQLField()
   public createdAt!: Date;
@@ -40,4 +58,21 @@ export class User {
   @Column({ default: false })
   @GraphQLField()
   public verified!: boolean;
+
+  public can(action: string, ...alternatives: string[]): boolean {
+    const [actionType] = action.split(':').reverse();
+
+    return this.normalizedScopes.some(
+      scope => scope === `*:${actionType}` || scope === action || alternatives.includes(scope),
+    );
+  }
+
+  @AfterLoad()
+  handleNormalizeScopes(): void {
+    const additionalScopes = flatMap(this.roles, role => role.scopes);
+
+    const allScopes = [...this.scopes, ...additionalScopes];
+
+    this.normalizedScopes = [...new Set(allScopes)];
+  }
 }

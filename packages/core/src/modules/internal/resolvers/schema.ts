@@ -121,6 +121,8 @@ export class SchemaResolver {
   async createSchema(
     @Arg('name')
     name: string,
+    @Arg('title', _type => String)
+    title: string,
     @Arg('type', _type => SchemaType)
     type: SchemaType,
     @Arg('groups', _type => GraphQLJSON)
@@ -145,7 +147,8 @@ export class SchemaResolver {
     const preservedGroups = Object.keys(groups).map(key => ({ [key]: groups[key] }));
 
     const schema = repository.create({
-      name,
+      name: name.toLowerCase(),
+      title,
       type,
       groups: preservedGroups,
       settings,
@@ -167,6 +170,8 @@ export class SchemaResolver {
   async updateSchema(
     @Arg('id')
     schemaId: string,
+    @Arg('title', _type => String, { nullable: true })
+    title: string | null,
     @Arg('groups', _type => GraphQLJSON)
     groups: any, // eslint-disable-line
     @Arg('settings', _type => GraphQLJSON)
@@ -185,6 +190,10 @@ export class SchemaResolver {
     const schema = await repository.findOneOrFail({
       where: { id: schemaId },
     });
+
+    if (title) {
+      schema.title = title;
+    }
 
     const preservedGroups = Object.keys(groups).map(key => ({ [key]: groups[key] }));
 
@@ -209,13 +218,19 @@ export class SchemaResolver {
     @Arg('id')
     id: string,
   ): Promise<boolean> {
-    const repository = getRepository(Schema);
+    const schemaRepository = getRepository(Schema);
+    const documentRepository = getRepository(Document);
 
     try {
-      const deletedAt = new Date();
+      const [schema, documents] = await Promise.all([
+        schemaRepository.findOneOrFail(id),
+        documentRepository.find({ where: { schemaId: id } }),
+      ]);
 
-      await repository.update({ id }, { deletedAt });
-      await getRepository(Document).update({ schemaId: id }, { deletedAt });
+      await Promise.all([
+        schemaRepository.softRemove(schema),
+        documentRepository.softRemove(documents),
+      ]);
 
       DockiteEvents.emit('reload');
 

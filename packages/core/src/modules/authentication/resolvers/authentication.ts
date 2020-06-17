@@ -43,6 +43,10 @@ export class Authentication {
       });
 
       ctx.res.setHeader('authorization', `Bearer ${token}`);
+      ctx.res.cookie('refreshToken', token, {
+        httpOnly: true,
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 3),
+      });
 
       return { user, token };
     } catch (err) {

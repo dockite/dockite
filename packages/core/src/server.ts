@@ -3,7 +3,7 @@
 import { Server } from 'http';
 
 import { DockiteFieldStatic } from '@dockite/types';
-import { SchemaManager, registerField } from '@dockite/manager';
+import { SchemaManager, registerField, registerScopes } from '@dockite/manager';
 import { ApolloServer } from 'apollo-server-express';
 import debug from 'debug';
 import express from 'express';
@@ -16,6 +16,7 @@ import { DockiteEvents } from './events';
 import { RootModule } from './modules';
 import { ExternalGraphQLModule } from './modules/external';
 import { getenv, verify } from './utils';
+import { scopes } from './common/scopes';
 
 // import { InternalGraphQLModule } from './modules/internal';
 
@@ -32,6 +33,7 @@ export const start = async (port = process.env.PORT || 3000): Promise<Server> =>
 
   log('loading fields');
   const config = getConfig();
+
   if (config.fields) {
     const importedFields = await Promise.all(config.fields.map(entry => import(entry)));
 
@@ -41,6 +43,9 @@ export const start = async (port = process.env.PORT || 3000): Promise<Server> =>
       });
     });
   }
+
+  log('assigning scopes');
+  registerScopes(...scopes);
 
   const app = express();
 
