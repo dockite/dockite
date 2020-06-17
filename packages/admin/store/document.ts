@@ -10,8 +10,6 @@ import {
 import CreateDocumentMutation from '~/graphql/mutations/create-document.gql';
 import DeleteDocumentMutation from '~/graphql/mutations/delete-document.gql';
 import UpdateDocumentMutation from '~/graphql/mutations/update-document.gql';
-import AllDocumentsWithSchemaQuery from '~/graphql/queries/all-documents-with-schema.gql';
-import FindDocumentsBySchemaIdQuery from '~/graphql/queries/find-documents-by-schema-id.gql';
 import * as data from '~/store/data';
 
 export interface DocumentState {
@@ -48,10 +46,6 @@ export const actions: ActionTree<DocumentState, RootState> = {
         data: payload.data,
         locale: DEFAULT_LOCALE,
       },
-      refetchQueries: [
-        { query: AllDocumentsWithSchemaQuery },
-        { query: FindDocumentsBySchemaIdQuery, variables: { id: payload.schemaId } },
-      ],
     });
 
     if (!data?.createDocument) {
@@ -67,10 +61,6 @@ export const actions: ActionTree<DocumentState, RootState> = {
         data: payload.data,
         locale: DEFAULT_LOCALE,
       },
-      refetchQueries: [
-        { query: AllDocumentsWithSchemaQuery },
-        { query: FindDocumentsBySchemaIdQuery, variables: { id: payload.schemaId } },
-      ],
     });
 
     if (!documentData?.updateDocument) {
@@ -86,10 +76,10 @@ export const actions: ActionTree<DocumentState, RootState> = {
       variables: {
         id: payload.documentId,
       },
-      refetchQueries: [
-        { query: AllDocumentsWithSchemaQuery },
-        { query: FindDocumentsBySchemaIdQuery, variables: { id: payload.schemaId } },
-      ],
+      // TODO: Update to cache eviction with @apollo/client 3.0.0
+      update: () => {
+        this.$apolloClient.resetStore();
+      },
     });
 
     if (!data?.removeDocument) {

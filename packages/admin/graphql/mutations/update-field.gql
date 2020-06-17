@@ -15,5 +15,11 @@ mutation UpdateField(
     settings: $settings
   ) {
     id
+    name
+    title
+    description
+    type
+    settings
+    schemaId
   }
 }

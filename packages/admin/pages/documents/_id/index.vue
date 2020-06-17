@@ -326,6 +326,6 @@ export default class UpdateDocumentPage extends Vue {
 .dockite-document--actions-drawer-revisions {
   flex: 1;
   overflow-y: auto;
-  padding-bottom: 1rem;
+  margin-bottom: 1rem;
 }
 </style>

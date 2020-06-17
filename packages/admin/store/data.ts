@@ -167,6 +167,7 @@ export const actions: ActionTree<DataState, RootState> = {
   ): Promise<void> {
     const { data } = await this.$apolloClient.query<AllSchemaRevisionsQueryResponse>({
       query: AllSchemaRevisionsQuery,
+      fetchPolicy: 'no-cache',
       variables: {
         schemaId: payload.schemaId,
         perPage: payload.perPage ?? null,
@@ -185,6 +186,7 @@ export const actions: ActionTree<DataState, RootState> = {
   ): Promise<void> {
     const { data } = await this.$apolloClient.query<AllDocumentRevisionsQueryResponse>({
       query: AllDocumentRevisionsQuery,
+      fetchPolicy: 'no-cache',
       variables: {
         documentId: payload.documentId,
         perPage: payload.perPage ?? null,
@@ -301,6 +303,7 @@ export const actions: ActionTree<DataState, RootState> = {
     const { data } = await this.$apolloClient.query<FindWebhookCallsQueryResponse>({
       query: FindWebhookCallsByWebhookIdQuery,
       variables: { id: payload.webhookId, page: payload.page ?? 1 },
+      fetchPolicy: 'no-cache',
     });
 
     if (!data.findWebhookCalls) {

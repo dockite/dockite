@@ -10,7 +10,6 @@ import {
 import CreateWebhookMutation from '~/graphql/mutations/create-webhook.gql';
 import DeleteWebhookMutation from '~/graphql/mutations/delete-document.gql';
 import UpdateWebhookMutation from '~/graphql/mutations/update-document.gql';
-import AllWebhooksQuery from '~/graphql/queries/all-webhooks.gql';
 
 export interface WebhookState {
   errors: null | string | string[];
@@ -49,7 +48,6 @@ export const actions: ActionTree<WebhookState, RootState> = {
         method: payload.method,
         options: payload.options,
       },
-      refetchQueries: [{ query: AllWebhooksQuery }],
     });
 
     if (!data?.createWebhook) {
@@ -67,7 +65,6 @@ export const actions: ActionTree<WebhookState, RootState> = {
         method: payload.method,
         options: payload.options,
       },
-      refetchQueries: [{ query: AllWebhooksQuery }],
     });
 
     if (!documentData?.updateWebhook) {
@@ -81,7 +78,9 @@ export const actions: ActionTree<WebhookState, RootState> = {
       variables: {
         documentId: payload.webhookId,
       },
-      refetchQueries: [{ query: AllWebhooksQuery }],
+      update: () => {
+        this.$apolloClient.resetStore();
+      },
     });
 
     if (!data?.removeWebhook) {
