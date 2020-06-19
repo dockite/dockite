@@ -379,13 +379,6 @@ export default class EditSchemaPage extends Vue {
 </script>
 
 <style lang="scss">
-.dockite-text--subtitle {
-  border-left: 4px solid #eeeeee;
-  padding-left: 0.5rem;
-  color: rgba(0, 0, 0, 0.66);
-  font-style: italic;
-}
-
 .dockite-button--dashed {
   border-style: dashed;
 }

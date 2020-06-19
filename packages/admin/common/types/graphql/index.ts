@@ -16,6 +16,13 @@ export interface LoginMutationResponse {
   };
 }
 
+export interface RegisterFirstUserMutationResponse {
+  registerFirstUser: {
+    token: string;
+    user: User;
+  };
+}
+
 export interface MeQueryResponse {
   me: {
     id: string;

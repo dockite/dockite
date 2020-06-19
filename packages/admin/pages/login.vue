@@ -3,7 +3,14 @@
     <logo class="dockite-login-form--logo" />
 
     <el-card class="dockite-login-form--container">
-      <el-form ref="form" :model="loginForm" :rules="loginFormRules" @submit.native.prevent="login">
+      <first-user v-if="newInstallation" />
+      <el-form
+        v-else
+        ref="form"
+        :model="loginForm"
+        :rules="loginFormRules"
+        @submit.native.prevent="login"
+      >
         <el-form-item :label="$t('login.labels.email')" prop="email">
           <el-input ref="email" v-model="loginForm.email" type="email" />
         </el-form-item>
@@ -26,22 +33,39 @@ import { Component, Vue, Ref } from 'nuxt-property-decorator';
 
 import { PASSWORD_MIN_LEN } from '~/common/constants';
 import Logo from '~/components/base/logo.vue';
+import FirstUser from '~/components/login/first-user.vue';
+import NewInstallationQuery from '~/graphql/queries/new-installation.gql';
 import { namespace } from '~/store/auth';
+
+interface NewInstallationQueryResponse {
+  newInstallation: boolean;
+}
 
 @Component({
   layout: 'auth',
   components: {
     Logo,
+    FirstUser,
   },
 })
 export default class LoginPage extends Vue {
   @Ref()
   readonly email!: Input;
 
+  public newInstallation = false;
+
   public loginForm = {
     email: '',
     password: '',
   };
+
+  async fetch(): Promise<void> {
+    const { data } = await this.$apolloClient.query<NewInstallationQueryResponse>({
+      query: NewInstallationQuery,
+    });
+
+    this.newInstallation = data.newInstallation;
+  }
 
   get loginFormRules(): Record<string, Record<string, any>[]> {
     const $t = this.$t.bind(this);

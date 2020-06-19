@@ -81,13 +81,6 @@ export default class CreateSchemaStepThreeComponent extends Vue {
 </script>
 
 <style lang="scss" scoped>
-.dockite-text--subtitle {
-  border-left: 4px solid #eeeeee;
-  padding-left: 0.5rem;
-  color: rgba(0, 0, 0, 0.66);
-  font-style: italic;
-}
-
 ul,
 li {
   margin: 0;

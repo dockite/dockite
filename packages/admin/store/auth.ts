@@ -3,8 +3,13 @@ import { ActionTree, GetterTree, MutationTree } from 'vuex';
 
 import { RootState } from '.';
 
-import { LoginMutationResponse, MeQueryResponse } from '~/common/types';
+import {
+  LoginMutationResponse,
+  RegisterFirstUserMutationResponse,
+  MeQueryResponse,
+} from '~/common/types';
 import LoginMutation from '~/graphql/mutations/login.gql';
+import RegisterFirstUserMutation from '~/graphql/mutations/register-first-user.gql';
 import MeQuery from '~/graphql/queries/me.gql';
 
 interface JWTToken {
@@ -20,6 +25,13 @@ export interface AuthState {
 
 export interface LoginActionPayload {
   email: string;
+  password: string;
+}
+
+export interface RegisterActionPayload {
+  email: string;
+  firstName: string;
+  lastName: string;
   password: string;
 }
 
@@ -51,7 +63,7 @@ export const getters: GetterTree<AuthState, RootState> = {
 };
 
 export const actions: ActionTree<AuthState, RootState> = {
-  async init({ dispatch, commit }) {
+  async init({ dispatch, commit }): Promise<void> {
     const token = window.localStorage.getItem('apollo-token');
     if (token) {
       commit('setToken', token);
@@ -64,7 +76,7 @@ export const actions: ActionTree<AuthState, RootState> = {
     }
   },
 
-  async login({ commit }, payload: LoginActionPayload) {
+  async login({ commit }, payload: LoginActionPayload): Promise<void> {
     const { data } = await this.$apolloClient.mutate<LoginMutationResponse>({
       mutation: LoginMutation,
       variables: { ...payload },
@@ -75,8 +87,26 @@ export const actions: ActionTree<AuthState, RootState> = {
     }
 
     await this.$apolloHelpers.onLogin(data.login.token);
+
     commit('setToken', data.login.token);
     commit('setUser', data.login.user);
+    commit('setAuthenticated', true);
+  },
+
+  async registerFirstUser({ commit }, payload: RegisterActionPayload): Promise<void> {
+    const { data } = await this.$apolloClient.mutate<RegisterFirstUserMutationResponse>({
+      mutation: RegisterFirstUserMutation,
+      variables: { ...payload },
+    });
+
+    if (!data?.registerFirstUser) {
+      throw new Error('not data.registerFirstUser');
+    }
+
+    await this.$apolloHelpers.onLogin(data.registerFirstUser.token);
+
+    commit('setToken', data.registerFirstUser.token);
+    commit('setUser', data.registerFirstUser.user);
     commit('setAuthenticated', true);
   },
 
@@ -86,7 +116,7 @@ export const actions: ActionTree<AuthState, RootState> = {
     commit('setAuthenticated', false);
   },
 
-  async fetchUser({ commit }) {
+  async fetchUser({ commit }): Promise<void> {
     const { data } = await this.$apolloClient.query<MeQueryResponse>({
       query: MeQuery,
     });
@@ -100,7 +130,7 @@ export const actions: ActionTree<AuthState, RootState> = {
 };
 
 export const mutations: MutationTree<AuthState> = {
-  setToken(state, payload: string) {
+  setToken(state, payload: string): void {
     state.token = payload;
 
     const [, claims] = payload.split('.');
@@ -110,13 +140,16 @@ export const mutations: MutationTree<AuthState> = {
     window.localStorage.setItem('apollo-token', state.token);
     window.localStorage.setItem('apollo-token-decoded', atob(claims));
   },
-  setUser(state, payload: User) {
+
+  setUser(state, payload: User): void {
     state.user = payload;
   },
-  setAuthenticated(state, payload: boolean) {
+
+  setAuthenticated(state, payload: boolean): void {
     state.authenticated = payload;
   },
-  clearToken() {
+
+  clearToken(): void {
     window.localStorage.removeItem('apollo-token');
     window.localStorage.removeItem('apollo-token-decoded');
   },

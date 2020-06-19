@@ -88,6 +88,7 @@
 <script lang="ts">
 import { User } from '@dockite/database';
 import { formatDistanceToNow } from 'date-fns';
+import { debounce } from 'lodash';
 import { Component, Vue, Watch } from 'nuxt-property-decorator';
 import { Fragment } from 'vue-fragment';
 
@@ -155,7 +156,7 @@ export default class AllDocumentsPage extends Vue {
   }
 
   get canViewAllDocuments(): boolean {
-    return this.$ability.can(this.user.normalizedScopes ?? [], 'internal:document:read');
+    return this.$ability.can(this.user?.normalizedScopes ?? [], 'internal:document:read');
   }
 
   public fetchAllDocumentsWithSchema(page = 1): void {
@@ -172,6 +173,11 @@ export default class AllDocumentsPage extends Vue {
   public fetchSearchDocumentsWithSchema(term: string, page = 1): void {
     this.$store.dispatch(`${data.namespace}/fetchSearchDocumentsWithSchema`, { term, page });
   }
+
+  public fetchSearchDocumentsWithSchemaDebounced = debounce(
+    this.fetchSearchDocumentsWithSchema,
+    200,
+  );
 
   public cellValueFromNow(_row: never, _column: never, cellValue: string, _index: never): string {
     return formatDistanceToNow(new Date(cellValue)) + ' ago';
@@ -190,7 +196,7 @@ export default class AllDocumentsPage extends Vue {
   @Watch('term')
   public handleTermChange(newTerm: string): void {
     if (newTerm !== '') {
-      this.fetchSearchDocumentsWithSchema(newTerm);
+      this.fetchSearchDocumentsWithSchemaDebounced(newTerm);
     }
   }
 

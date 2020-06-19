@@ -1,4 +1,4 @@
-import { Document } from '@dockite/database';
+import { Document, User } from '@dockite/database';
 import { Arg, Field as GraphQLField, Int, ObjectType, Query, Resolver } from 'type-graphql';
 import { getRepository } from 'typeorm';
 
@@ -62,5 +62,14 @@ export class UtilResolver {
       hasNextPage: page < totalPages,
       totalPages,
     };
+  }
+
+  @Query(_returns => Boolean)
+  async newInstallation(): Promise<boolean> {
+    const userCount = await getRepository(User).count({
+      withDeleted: true,
+    });
+
+    return userCount === 0;
   }
 }

@@ -149,11 +149,4 @@ export default class CreateSchemaStepOneComponent extends Vue {
 }
 </script>
 
-<style>
-.dockite-text--subtitle {
-  border-left: 4px solid #eeeeee;
-  padding-left: 0.5rem;
-  color: rgba(0, 0, 0, 0.66);
-  font-style: italic;
-}
-</style>
+<style></style>
