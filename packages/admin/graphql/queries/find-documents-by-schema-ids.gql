@@ -1,5 +1,5 @@
-query FindDocumentsBySchemaId($id: String!, $page: Int!) {
-  findDocuments(schemaId: $id, page: $page) {
+query FindDocumentsBySchemaIds($ids: [String!], $page: Int!) {
+  findDocuments(schemaIds: $ids, page: $page) {
     results {
       id
       locale

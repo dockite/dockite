@@ -14,8 +14,18 @@
       :rules="stepOneFormRules"
       @submit.native.prevent="handleNextStep"
     >
+      <el-form-item label="Schema Title" style="margin-bottom: 1rem;" prop="schemaName">
+        <el-input v-model="syncTitle" autofocus="autofocus" />
+      </el-form-item>
       <el-form-item label="Schema Name" style="margin-bottom: 1rem;" prop="schemaName">
-        <el-input :value="value" autofocus="autofocus" @input="handleNameChange" />
+        <el-input v-model="syncName" :disabled="!overrideSchemaName" />
+        <small>
+          The schema name determines the name of the generated GraphQL type. For most purposes the
+          generated name is fine but you can override it to meet your needs.</small
+        >
+      </el-form-item>
+      <el-form-item label="Override Schema Name" style="margin-bottom: 1rem;">
+        <el-switch v-model="overrideSchemaName" />
       </el-form-item>
     </el-form>
   </div>
@@ -23,6 +33,7 @@
 
 <script lang="ts">
 import { Form } from 'element-ui';
+import { startCase } from 'lodash';
 import { Component, Vue, Prop } from 'nuxt-property-decorator';
 import { Fragment } from 'vue-fragment';
 
@@ -39,17 +50,41 @@ const SCHEMA_NAME_MAX_LEN = 26;
 })
 export default class CreateSchemaStepOneComponent extends Vue {
   @Prop()
-  readonly value!: string;
+  readonly name!: string;
+
+  @Prop()
+  readonly title!: string;
+
+  public overrideSchemaName = false;
 
   get user(): string {
     return this.$store.getters[`${auth.namespace}/fullName`];
   }
 
-  get stepOneForm(): { schemaName: string } {
-    const schemaName = this.value;
+  get syncTitle(): string {
+    return this.title;
+  }
 
+  set syncTitle(value: string) {
+    this.$emit('update:title', value);
+
+    if (!this.overrideSchemaName) {
+      this.syncName = this.graphqlCase(value);
+    }
+  }
+
+  get syncName(): string {
+    return this.name;
+  }
+
+  set syncName(value: string) {
+    this.$emit('update:name', value);
+  }
+
+  get stepOneForm(): { name: string; title: string } {
     return {
-      schemaName,
+      name: this.name,
+      title: this.title,
     };
   }
 
@@ -57,7 +92,25 @@ export default class CreateSchemaStepOneComponent extends Vue {
     const $t = this.$t.bind(this);
 
     return {
-      schemaName: [
+      name: [
+        {
+          required: true,
+          message: $t('validationMessages.required', ['Schema Name']),
+          trigger: 'blur',
+        },
+        {
+          max: SCHEMA_NAME_MAX_LEN,
+          message: $t('validationMessages.max.chars', [SCHEMA_NAME_MAX_LEN]),
+          trigger: 'blur',
+        },
+        {
+          pattern: /[A-Za-z][0-9A-Za-z\s]*/,
+          message:
+            'Schema Name must start with an alpha character and can only contain alpha-numeric characters and spaces.',
+          trigger: 'blur',
+        },
+      ],
+      title: [
         {
           required: true,
           message: $t('validationMessages.required', ['Schema Name']),
@@ -86,21 +139,14 @@ export default class CreateSchemaStepOneComponent extends Vue {
     }
   }
 
-  public handleNameChange(value: string): void {
-    this.$emit('input', value);
-  }
-
   public handleNextStep(): void {
     this.$emit('next-step');
+  }
+
+  public graphqlCase(value: string): string {
+    return startCase(value).replace(/\s/g, '');
   }
 }
 </script>
 
-<style>
-.dockite-text--subtitle {
-  border-left: 4px solid #eeeeee;
-  padding-left: 0.5rem;
-  color: rgba(0, 0, 0, 0.66);
-  font-style: italic;
-}
-</style>
+<style></style>

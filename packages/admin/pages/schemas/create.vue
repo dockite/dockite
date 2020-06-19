@@ -15,7 +15,8 @@
         <step-one
           v-show="step === 0"
           ref="step-1"
-          v-model="createSchemaForm.name"
+          :name.sync="createSchemaForm.name"
+          :title.sync="createSchemaForm.title"
           @next-step="stepForwards"
         />
         <step-two v-show="step === 1" ref="step-2" @field-data="handleFieldData" />
@@ -53,6 +54,7 @@ interface StepFormComponent extends Vue {
 
 interface CreateSchemaForm {
   name: string;
+  title: string;
   fields: Omit<Field, 'id' | 'schemaId' | 'dockiteField' | 'schema'>[];
   groups: Record<string, string[]>;
 }
@@ -71,6 +73,7 @@ export default class CreateSchemaPage extends Vue {
 
   public createSchemaForm: CreateSchemaForm = {
     name: '',
+    title: '',
     fields: [],
     groups: {},
   };

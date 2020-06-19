@@ -19,7 +19,7 @@ import {
 } from '@dockite/database';
 import { GlobalContext } from '@dockite/types';
 
-import { Authenticated } from '../../../common/authorizers';
+import { Authenticated, Authorized } from '../../../common/decorators';
 
 @ObjectType()
 class ManySchemaRevisions {
@@ -59,6 +59,8 @@ class ManyDocumentRevisions {
 
 @Resolver()
 export class RevisionResolver {
+  @Authenticated()
+  @Authorized('internal:schema:read', { derriveAlternativeScopes: false })
   @Query(_returns => ManySchemaRevisions, { nullable: true })
   public async allSchemaRevisions(
     @Arg('schemaId', _type => String)
@@ -102,6 +104,8 @@ export class RevisionResolver {
     };
   }
 
+  @Authenticated()
+  @Authorized('internal:document:read', { derriveAlternativeScopes: false })
   @Query(_returns => ManyDocumentRevisions, { nullable: true })
   public async allDocumentRevisions(
     @Arg('documentId', _type => String)
@@ -144,6 +148,7 @@ export class RevisionResolver {
   }
 
   @Authenticated()
+  @Authorized('internal:schema:update', { derriveAlternativeScopes: false })
   @Mutation(_returns => Boolean)
   async restoreSchemaRevision(
     @Arg('revisionId', _type => String)
@@ -169,6 +174,7 @@ export class RevisionResolver {
   }
 
   @Authenticated()
+  @Authorized('internal:document:update', { derriveAlternativeScopes: false })
   @Mutation(_returns => Boolean)
   async restoreDocumentRevision(
     @Arg('revisionId', _type => String)

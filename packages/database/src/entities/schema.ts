@@ -33,6 +33,10 @@ export class Schema {
   @GraphQLField()
   public name!: string;
 
+  @Column()
+  @GraphQLField()
+  public title!: string;
+
   @Column('enum', { enum: SchemaType, default: SchemaType.DEFAULT })
   @GraphQLField(_type => SchemaType)
   public type!: SchemaType;

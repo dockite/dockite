@@ -33,6 +33,7 @@ import AllSchemasQuery from '~/graphql/queries/all-schemas.gql';
 import AllWebhooksQuery from '~/graphql/queries/all-webhooks.gql';
 import AvailableFieldsQuery from '~/graphql/queries/available-fields.gql';
 import FindDocumentsBySchemaIdQuery from '~/graphql/queries/find-documents-by-schema-id.gql';
+import FindDocumentsBySchemaIdsQuery from '~/graphql/queries/find-documents-by-schema-ids.gql';
 import FindWebhookCallsByWebhookIdQuery from '~/graphql/queries/find-webhook-calls-by-webhook-id.gql';
 import GetDocumentQuery from '~/graphql/queries/get-document.gql';
 import GetSchemaWithFieldsQuery from '~/graphql/queries/get-schema-with-fields.gql';
@@ -48,6 +49,7 @@ export interface DataState {
   getDocument: Record<string, Document>;
   getSchemaWithFields: Record<string, Schema>;
   findDocumentsBySchemaId: ManyResultSet<FindDocumentResultItem>;
+  findDocumentsBySchemaIds: ManyResultSet<FindDocumentResultItem>;
   availableFields: DockiteFieldStatic[];
   findWebhookCallsByWebhookId: ManyResultSet<FindWebhookCallsResultItem>;
 }
@@ -100,6 +102,13 @@ export const state = (): DataState => ({
   getDocument: {},
   getSchemaWithFields: {},
   findDocumentsBySchemaId: {
+    results: [],
+    totalItems: null,
+    totalPages: null,
+    currentPage: null,
+    hasNextPage: null,
+  },
+  findDocumentsBySchemaIds: {
     results: [],
     totalItems: null,
     totalPages: null,
@@ -272,6 +281,22 @@ export const actions: ActionTree<DataState, RootState> = {
     commit('setFindDocumentsBySchemaId', data);
   },
 
+  async fetchFindDocumentsBySchemaIds(
+    { commit },
+    payload: { schemaIds: string[]; page?: number },
+  ): Promise<void> {
+    const { data } = await this.$apolloClient.query<FindDocumentsQueryResponse>({
+      query: FindDocumentsBySchemaIdsQuery,
+      variables: { ids: payload.schemaIds, page: payload.page ?? 1 },
+    });
+
+    if (!data.findDocuments) {
+      throw new Error('graphql: allDocumentsWithSchema could not be fetched');
+    }
+
+    commit('setFindDocumentsBySchemaIds', data);
+  },
+
   async fetchAvailableFields({ commit }): Promise<void> {
     const { data } = await this.$apolloClient.query<AvailableFieldsQueryResponse>({
       query: AvailableFieldsQuery,
@@ -363,6 +388,10 @@ export const mutations: MutationTree<DataState> = {
 
   setFindDocumentsBySchemaId(state, payload: FindDocumentsQueryResponse): void {
     state.findDocumentsBySchemaId = { ...payload.findDocuments };
+  },
+
+  setFindDocumentsBySchemaIds(state, payload: FindDocumentsQueryResponse): void {
+    state.findDocumentsBySchemaIds = { ...payload.findDocuments };
   },
 
   setAvailableFields(state, payload: AvailableFieldsQueryResponse): void {

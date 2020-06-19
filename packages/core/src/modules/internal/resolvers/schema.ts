@@ -15,10 +15,8 @@ import {
 } from 'type-graphql';
 import { getRepository } from 'typeorm';
 
-import { Authenticated } from '../../../common/authorizers';
+import { Authenticated, Authorized } from '../../../common/decorators';
 import { DockiteEvents } from '../../../events';
-
-// const log = debug('dockite:core:resolvers');
 
 @ObjectType()
 class ManySchemas {
@@ -41,6 +39,7 @@ class ManySchemas {
 @Resolver(_of => Schema)
 export class SchemaResolver {
   @Authenticated()
+  @Authorized('internal:schema:read')
   @Query(_returns => Schema, { nullable: true })
   async getSchema(
     @Arg('id', _type => String, { nullable: true }) id: string | null,
@@ -78,20 +77,14 @@ export class SchemaResolver {
    * TODO: Move this to and Connection/Edge model
    */
   @Authenticated()
+  @Authorized('internal:schema:read')
   @Query(_returns => ManySchemas)
-  async allSchemas(
-    @Arg('page', _type => Int, { defaultValue: 1 })
-    page: number,
-    @Arg('perPage', _type => Int, { defaultValue: 20 })
-    perPage: number,
-  ): Promise<ManySchemas> {
+  async allSchemas(): Promise<ManySchemas> {
     const repository = getRepository(Schema);
 
     const [results, totalItems] = await repository.findAndCount({
       where: { deletedAt: null },
       relations: ['fields'],
-      take: perPage,
-      skip: perPage * (page - 1),
     });
 
     results.forEach(schema => {
@@ -102,14 +95,12 @@ export class SchemaResolver {
       );
     });
 
-    const totalPages = Math.ceil(totalItems / perPage);
-
     return {
       results,
-      currentPage: page,
+      currentPage: 1,
       totalItems,
-      totalPages,
-      hasNextPage: page < totalPages,
+      totalPages: 1,
+      hasNextPage: false,
     };
   }
 
@@ -117,10 +108,13 @@ export class SchemaResolver {
    * TODO: Perform light validation on fields, settings, groups
    */
   @Authenticated()
+  @Authorized('internal:schema:create', { derriveAlternativeScopes: false })
   @Mutation(_returns => Schema)
   async createSchema(
     @Arg('name')
     name: string,
+    @Arg('title', _type => String)
+    title: string,
     @Arg('type', _type => SchemaType)
     type: SchemaType,
     @Arg('groups', _type => GraphQLJSON)
@@ -145,7 +139,8 @@ export class SchemaResolver {
     const preservedGroups = Object.keys(groups).map(key => ({ [key]: groups[key] }));
 
     const schema = repository.create({
-      name,
+      name: name.toLowerCase(),
+      title,
       type,
       groups: preservedGroups,
       settings,
@@ -163,10 +158,13 @@ export class SchemaResolver {
    * TODO: Perform light validation on fields, settings, groups
    */
   @Authenticated()
+  @Authorized('internal:schema:update', { derriveAlternativeScopes: false })
   @Mutation(_returns => Schema)
   async updateSchema(
     @Arg('id')
-    schemaId: string,
+    id: string,
+    @Arg('title', _type => String, { nullable: true })
+    title: string | null,
     @Arg('groups', _type => GraphQLJSON)
     groups: any, // eslint-disable-line
     @Arg('settings', _type => GraphQLJSON)
@@ -183,8 +181,12 @@ export class SchemaResolver {
     }
 
     const schema = await repository.findOneOrFail({
-      where: { id: schemaId },
+      where: { id },
     });
+
+    if (title) {
+      schema.title = title;
+    }
 
     const preservedGroups = Object.keys(groups).map(key => ({ [key]: groups[key] }));
 
@@ -204,18 +206,25 @@ export class SchemaResolver {
    * TODO: Possibly add a check for if the Schema exists and throw
    */
   @Authenticated()
+  @Authorized('internal:schema:delete', { derriveAlternativeScopes: false })
   @Mutation(_returns => Boolean)
   async removeSchema(
     @Arg('id')
     id: string,
   ): Promise<boolean> {
-    const repository = getRepository(Schema);
+    const schemaRepository = getRepository(Schema);
+    const documentRepository = getRepository(Document);
 
     try {
-      const deletedAt = new Date();
+      const [schema, documents] = await Promise.all([
+        schemaRepository.findOneOrFail(id),
+        documentRepository.find({ where: { schemaId: id } }),
+      ]);
 
-      await repository.update({ id }, { deletedAt });
-      await getRepository(Document).update({ schemaId: id }, { deletedAt });
+      await Promise.all([
+        schemaRepository.softRemove(schema),
+        documentRepository.softRemove(documents),
+      ]);
 
       DockiteEvents.emit('reload');
 

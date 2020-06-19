@@ -1,6 +1,8 @@
-import { Document } from '@dockite/database';
+import { Document, User } from '@dockite/database';
 import { Arg, Field as GraphQLField, Int, ObjectType, Query, Resolver } from 'type-graphql';
 import { getRepository } from 'typeorm';
+
+import { Authenticated } from '../../../common/decorators';
 
 @ObjectType()
 class ManyReferences {
@@ -22,6 +24,7 @@ class ManyReferences {
 
 @Resolver()
 export class UtilResolver {
+  @Authenticated()
   @Query(_returns => ManyReferences, { nullable: true })
   public async resolveReferenceOf(
     @Arg('documentId', _type => String)
@@ -59,5 +62,14 @@ export class UtilResolver {
       hasNextPage: page < totalPages,
       totalPages,
     };
+  }
+
+  @Query(_returns => Boolean)
+  async newInstallation(): Promise<boolean> {
+    const userCount = await getRepository(User).count({
+      withDeleted: true,
+    });
+
+    return userCount === 0;
   }
 }

@@ -10,4 +10,4 @@ export interface GlobalContext extends SessionContext {
   user?: UserContext;
 }
 
-export type UserContext = Omit<User, 'password'>;
+export type UserContext = Omit<User, 'password' | 'handleNormalizeScopes' | 'can'>;

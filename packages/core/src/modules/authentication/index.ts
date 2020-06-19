@@ -4,7 +4,7 @@ import { GraphQLModule } from '@graphql-modules/core';
 import debug from 'debug';
 import { buildTypeDefsAndResolvers } from 'type-graphql';
 
-import { authChecker } from '../../common/authorizers';
+import { authChecker } from '../../common/decorators';
 import { GlobalContext } from '../../common/types';
 
 import * as resolvers from './resolvers';

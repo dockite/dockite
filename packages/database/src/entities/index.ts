@@ -2,6 +2,7 @@ export * from './document';
 export * from './document-revision';
 export * from './field';
 export * from './release';
+export * from './role';
 export * from './schema';
 export * from './schema-revision';
 export * from './search-engine';

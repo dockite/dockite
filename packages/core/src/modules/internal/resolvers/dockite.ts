@@ -1,9 +1,9 @@
 /* eslint-disable max-classes-per-file */
-import { ObjectType, Field, Query, Resolver } from 'type-graphql';
-import { GraphQLJSON } from 'graphql-type-json';
 import { FieldManager } from '@dockite/manager';
+import { GraphQLJSON } from 'graphql-type-json';
+import { Field, ObjectType, Query, Resolver } from 'type-graphql';
 
-import { Authenticated } from '../../../common/authorizers';
+import { Authenticated } from '../../../common/decorators';
 
 @ObjectType()
 class DockiteFieldStatic {

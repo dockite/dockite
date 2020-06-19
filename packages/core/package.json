@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@dockite/ability": "1.0.0",
     "@dockite/database": "1.0.0",
     "@dockite/field": "1.0.0",
     "@dockite/field-string": "1.0.0",

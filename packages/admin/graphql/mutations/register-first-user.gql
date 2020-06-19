@@ -1,0 +1,29 @@
+mutation RegisterFirstUser(
+  $email: String!
+  $firstName: String!
+  $lastName: String!
+  $password: String!
+) {
+  registerFirstUser(
+    email: $email
+    firstName: $firstName
+    lastName: $lastName
+    password: $password
+  ) {
+    user {
+      id
+      firstName
+      lastName
+      email
+      roles {
+        name
+      }
+      scopes
+      normalizedScopes
+      createdAt
+      updatedAt
+      verified
+    }
+    token
+  }
+}

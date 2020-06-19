@@ -94,11 +94,4 @@ export default class DeleteSchemaPage extends Vue {
 .dockite-document--detail {
   padding-bottom: 1.5rem;
 }
-
-.dockite-text--subtitle {
-  border-left: 4px solid #eeeeee;
-  padding-left: 0.5rem;
-  color: rgba(0, 0, 0, 0.66);
-  font-style: italic;
-}
 </style>
