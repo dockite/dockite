@@ -33,6 +33,7 @@ const config: Configuration = {
    ** Plugins to load before mounting the App
    */
   plugins: [
+    '~/plugins/ability.ts',
     '~/plugins/element-ui.ts',
     '~/plugins/nuxt-apollo.ts',
     '~/plugins/vuex-init.ts',

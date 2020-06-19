@@ -26,6 +26,7 @@ export interface SchemaState {
 
 interface CreateSchemaWithFields {
   name: string;
+  title: string;
   fields: UnpersistedField[];
   groups: Record<string, string[]>;
 }
@@ -50,6 +51,7 @@ export const actions: ActionTree<SchemaState, RootState> = {
       mutation: CreateSchemaMutation,
       variables: {
         name: payload.name,
+        title: payload.title,
         type: SchemaType.DEFAULT,
         groups: payload.groups,
         settings: {},

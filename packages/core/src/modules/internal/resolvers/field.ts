@@ -12,7 +12,7 @@ import {
 } from 'type-graphql';
 import { getRepository } from 'typeorm';
 
-import { Authenticated } from '../../../common/authorizers';
+import { Authenticated, Authorized } from '../../../common/decorators';
 import { DockiteEvents } from '../../../events';
 
 @ObjectType()
@@ -36,6 +36,7 @@ class ManyFields {
 @Resolver(_of => Field)
 export class FieldResolver {
   @Authenticated()
+  @Authorized('internal:schema:update', { derriveAlternativeScopes: false })
   @Query(_returns => Field, { nullable: true })
   async getField(@Arg('id') id: string): Promise<Field | null> {
     const repository = getRepository(Field);
@@ -51,6 +52,10 @@ export class FieldResolver {
    * TODO: Move this to and Connection/Edge model
    */
   @Authenticated()
+  @Authorized('internal:schema:read', {
+    derriveAlternativeScopes: true,
+    fieldsOrArgsToPeek: ['schemaId'],
+  })
   @Query(_returns => ManyFields)
   async allFields(
     @Arg('page', _type => Int, { defaultValue: 1 })
@@ -81,6 +86,7 @@ export class FieldResolver {
    * TODO: Perform light validation on fields, settings, groups
    */
   @Authenticated()
+  @Authorized('internal:schema:update', { derriveAlternativeScopes: false })
   @Mutation(_returns => Field)
   async createField(
     @Arg('name') name: string,
@@ -110,6 +116,7 @@ export class FieldResolver {
   }
 
   @Authenticated()
+  @Authorized('internal:schema:update', { derriveAlternativeScopes: false })
   @Mutation(_returns => Field)
   async updateField(
     @Arg('id') id: string,
@@ -153,6 +160,7 @@ export class FieldResolver {
    * TODO: Possibly add a check for if the Field exists and throw
    */
   @Authenticated()
+  @Authorized('internal:schema:update', { derriveAlternativeScopes: false })
   @Mutation(_returns => Boolean)
   async removeField(@Arg('id') id: string): Promise<boolean> {
     const repository = getRepository(Field);

@@ -1,7 +1,7 @@
 import { Connection, LessThan } from 'typeorm';
+import { Release, Document } from '@dockite/database';
 
 import { connect } from '../database';
-import { Release, Document } from '../entities';
 import { ONE_MINUTE } from '../common/constants/base';
 
 let connection: Connection | null = null;

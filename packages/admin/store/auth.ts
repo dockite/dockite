@@ -1,4 +1,4 @@
-import { User } from '@dockite/types';
+import { User } from '@dockite/database';
 import { ActionTree, GetterTree, MutationTree } from 'vuex';
 
 import { RootState } from '.';
@@ -13,7 +13,7 @@ interface JWTToken {
 
 export interface AuthState {
   authenticated: boolean;
-  user: Omit<User, 'password'> | null;
+  user: User | null;
   token: string | null;
   tokenDecoded: JWTToken | null;
 }
@@ -110,7 +110,7 @@ export const mutations: MutationTree<AuthState> = {
     window.localStorage.setItem('apollo-token', state.token);
     window.localStorage.setItem('apollo-token-decoded', atob(claims));
   },
-  setUser(state, payload: Omit<User, 'password'>) {
+  setUser(state, payload: User) {
     state.user = payload;
   },
   setAuthenticated(state, payload: boolean) {

@@ -1,5 +1,5 @@
-mutation CreateSchema($name: String!, $type: SchemaType!, $groups: JSON!, $settings: JSON!) {
-  createSchema(name: $name, type: $type, groups: $groups, settings: $settings) {
+mutation CreateSchema($name: String!, $title: String!, $type: SchemaType!, $groups: JSON!, $settings: JSON!) {
+  createSchema(name: $name, title: $title, type: $type, groups: $groups, settings: $settings) {
     id
     name
     type

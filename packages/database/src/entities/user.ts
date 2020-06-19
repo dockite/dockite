@@ -59,14 +59,6 @@ export class User {
   @GraphQLField()
   public verified!: boolean;
 
-  public can(action: string, ...alternatives: string[]): boolean {
-    const [actionType] = action.split(':').reverse();
-
-    return this.normalizedScopes.some(
-      scope => scope === `*:${actionType}` || scope === action || alternatives.includes(scope),
-    );
-  }
-
   @AfterLoad()
   handleNormalizeScopes(): void {
     const additionalScopes = flatMap(this.roles, role => role.scopes);

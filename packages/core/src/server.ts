@@ -78,6 +78,7 @@ export const start = async (port = process.env.PORT || 3000): Promise<Server> =>
     },
     introspection: true,
     playground: true,
+    tracing: true,
   });
 
   const externalServer = new ApolloServer({
@@ -85,6 +86,7 @@ export const start = async (port = process.env.PORT || 3000): Promise<Server> =>
     context: (ctx: SessionContext): SessionContext => ctx,
     introspection: true,
     playground: true,
+    tracing: true,
   });
 
   log('attaching servers');

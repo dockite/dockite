@@ -1,4 +1,5 @@
-import { DockiteFieldStatic, Document, Schema, Webhook, WebhookCall, User } from '@dockite/types';
+import { User, Schema, Document, Webhook, WebhookCall } from '@dockite/database';
+import { DockiteFieldStatic } from '@dockite/types';
 
 export interface ManyResultsResponse<T> {
   results: T[];
@@ -11,15 +12,7 @@ export interface ManyResultsResponse<T> {
 export interface LoginMutationResponse {
   login: {
     token: string;
-    user: {
-      id: string;
-      firstName: string;
-      lastName: string;
-      email: string;
-      createdAt: Date;
-      updatedAt: Date;
-      verified: boolean;
-    };
+    user: User;
   };
 }
 

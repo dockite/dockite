@@ -2,6 +2,8 @@ import { Document } from '@dockite/database';
 import { Arg, Field as GraphQLField, Int, ObjectType, Query, Resolver } from 'type-graphql';
 import { getRepository } from 'typeorm';
 
+import { Authenticated } from '../../../common/decorators';
+
 @ObjectType()
 class ManyReferences {
   @GraphQLField(_type => [Document])
@@ -22,6 +24,7 @@ class ManyReferences {
 
 @Resolver()
 export class UtilResolver {
+  @Authenticated()
   @Query(_returns => ManyReferences, { nullable: true })
   public async resolveReferenceOf(
     @Arg('documentId', _type => String)

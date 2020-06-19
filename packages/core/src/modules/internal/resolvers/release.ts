@@ -11,7 +11,7 @@ import {
 } from 'type-graphql';
 import { getRepository } from 'typeorm';
 
-import { Authenticated } from '../../../common/authorizers';
+import { Authenticated, Authorized } from '../../../common/decorators';
 import { GlobalContext } from '../../../common/types';
 
 @ObjectType()
@@ -35,6 +35,7 @@ class ManyReleases {
 @Resolver(_of => Release)
 export class ReleaseResolver {
   @Authenticated()
+  @Authorized('internal:release:read', { derriveAlternativeScopes: false })
   @Query(_returns => Release, { nullable: true })
   async getRelease(@Arg('id') id: string): Promise<Release | null> {
     const repository = getRepository(Release);
@@ -48,6 +49,7 @@ export class ReleaseResolver {
    * TODO: Move this to and Connection/Edge model
    */
   @Authenticated()
+  @Authorized('internal:release:read', { derriveAlternativeScopes: false })
   @Query(_returns => ManyReleases)
   async allReleases(
     @Arg('page', _type => Int, { defaultValue: 1 })
@@ -74,6 +76,7 @@ export class ReleaseResolver {
   }
 
   @Authenticated()
+  @Authorized('internal:release:create', { derriveAlternativeScopes: false })
   @Mutation(_returns => Release)
   async createRelease(
     @Arg('name') name: string,
@@ -99,6 +102,7 @@ export class ReleaseResolver {
   }
 
   @Authenticated()
+  @Authorized('internal:release:publish', { derriveAlternativeScopes: false })
   @Mutation(_returns => Boolean)
   async publishRelease(@Arg('id') id: string, @Ctx() ctx: GlobalContext): Promise<boolean> {
     const repository = getRepository(Release);
@@ -128,6 +132,7 @@ export class ReleaseResolver {
   }
 
   @Authenticated()
+  @Authorized('internal:release:delete', { derriveAlternativeScopes: false })
   @Mutation(_returns => Boolean)
   async removeRelease(@Arg('id') id: string): Promise<boolean> {
     const repository = getRepository(Release);

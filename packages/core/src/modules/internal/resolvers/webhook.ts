@@ -11,7 +11,7 @@ import {
 } from 'type-graphql';
 import { getRepository } from 'typeorm';
 
-import { Authenticated } from '../../../common/authorizers';
+import { Authenticated, Authorized } from '../../../common/decorators';
 import { RequestMethods } from '../../../common/types';
 
 @ObjectType()
@@ -35,6 +35,7 @@ class ManyWebhooks {
 @Resolver(_of => Webhook)
 export class WebhookResolver {
   @Authenticated()
+  @Authorized('internal:webhook:read', { derriveAlternativeScopes: false })
   @Query(_returns => Webhook, { nullable: true })
   async getWebhook(@Arg('id') id: string): Promise<Webhook | null> {
     const repository = getRepository(Webhook);
@@ -48,6 +49,7 @@ export class WebhookResolver {
    * TODO: Move this to and Connection/Edge model
    */
   @Authenticated()
+  @Authorized('internal:webhook:read', { derriveAlternativeScopes: false })
   @Query(_returns => ManyWebhooks)
   async allWebhooks(
     @Arg('page', _type => Int, { defaultValue: 1 })
@@ -75,6 +77,7 @@ export class WebhookResolver {
   }
 
   @Authenticated()
+  @Authorized('internal:webhook:create', { derriveAlternativeScopes: false })
   @Mutation(_returns => Webhook)
   async createWebhook(
     @Arg('name') name: string,
@@ -101,6 +104,7 @@ export class WebhookResolver {
   }
 
   @Authenticated()
+  @Authorized('internal:webhook:delete', { derriveAlternativeScopes: false })
   @Mutation(_returns => Boolean)
   async removeWebhook(@Arg('id') id: string): Promise<boolean> {
     const repository = getRepository(Webhook);

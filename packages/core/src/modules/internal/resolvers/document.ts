@@ -16,7 +16,7 @@ import { cloneDeep } from 'lodash';
 import { HookContextWithOldData, HookContext } from '@dockite/types';
 import { Document, Schema, SearchEngineRepository, DocumentRevision } from '@dockite/database';
 
-import { Authenticated } from '../../../common/authorizers';
+import { Authenticated, Authorized } from '../../../common/decorators';
 import { GlobalContext } from '../../../common/types';
 
 @ObjectType()
@@ -40,6 +40,10 @@ class ManyDocuments {
 @Resolver(_of => Document)
 export class DocumentResolver {
   @Authenticated()
+  @Authorized('internal:document:read', {
+    resourceType: 'schema',
+    fieldsOrArgsToPeek: ['schemaId'],
+  })
   @Query(_returns => Document, { nullable: true })
   async getDocument(
     @Arg('id')
@@ -70,6 +74,10 @@ export class DocumentResolver {
   }
 
   @Authenticated()
+  @Authorized('internal:document:read', {
+    resourceType: 'schema',
+    fieldsOrArgsToPeek: ['schemaId'],
+  })
   @Query(_type => ManyDocuments)
   async findDocuments(
     @Arg('schemaId', _type => String, { nullable: true })
@@ -132,6 +140,7 @@ export class DocumentResolver {
    * TODO: Move this to and Connection/Edge model
    */
   @Authenticated()
+  @Authorized('internal:document:read', { derriveAlternativeScopes: false })
   @Query(_returns => ManyDocuments)
   async allDocuments(
     @Arg('page', _type => Int, { defaultValue: 1 })
@@ -178,6 +187,9 @@ export class DocumentResolver {
    * TODO: Move this to and Connection/Edge model
    */
   @Authenticated()
+  @Authorized('internal:document:read', {
+    resourceType: 'schema',
+  })
   @Query(_returns => ManyDocuments)
   async searchDocuments(
     @Arg('term', _type => String)
@@ -232,6 +244,10 @@ export class DocumentResolver {
   }
 
   @Authenticated()
+  @Authorized('internal:document:create', {
+    resourceType: 'schema',
+    fieldsOrArgsToPeek: ['schemaId'],
+  })
   @Mutation(_returns => Document)
   async createDocument(
     @Arg('locale') locale: string,
@@ -282,6 +298,9 @@ export class DocumentResolver {
   }
 
   @Authenticated()
+  @Authorized('internal:document:update', {
+    resourceType: 'schema',
+  })
   @Mutation(_returns => Document, { nullable: true })
   async updateDocument(
     @Arg('id', _type => String)
@@ -349,6 +368,9 @@ export class DocumentResolver {
   }
 
   @Authenticated()
+  @Authorized('internal:document:delete', {
+    resourceType: 'schema',
+  })
   @Mutation(_returns => Boolean)
   async removeDocument(@Arg('id') id: string): Promise<boolean> {
     const repository = getRepository(Document);

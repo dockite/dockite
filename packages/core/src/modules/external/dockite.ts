@@ -2,7 +2,7 @@ import { createSchema } from '@dockite/transformer';
 import { GraphQLSchema } from 'graphql';
 import { getRepository } from 'typeorm';
 import { Document, Schema } from '@dockite/database';
-import { FieldManager, registerScopes } from '@dockite/manager';
+import { FieldManager, registerScopes, registerScopeResourceId } from '@dockite/manager';
 
 // TODO: Tidy this area, createSchema likely does not need access to all the items it currently does.
 export const createExtraGraphQLSchema = async (): Promise<GraphQLSchema> => {
@@ -14,11 +14,13 @@ export const createExtraGraphQLSchema = async (): Promise<GraphQLSchema> => {
     const schemaName = schema.name.toLowerCase();
 
     registerScopes(
-      `${schemaName}:create`,
-      `${schemaName}:read`,
-      `${schemaName}:update`,
-      `${schemaName}:delete`,
+      `schema:${schemaName}:create`,
+      `schema:${schemaName}:read`,
+      `schema:${schemaName}:update`,
+      `schema:${schemaName}:delete`,
     );
+
+    registerScopeResourceId(schema.id, schemaName);
   });
 
   const documentRepository = getRepository(Document);

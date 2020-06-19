@@ -5,6 +5,11 @@ mutation login($email: String!, $password: String!) {
       firstName
       lastName
       email
+      roles {
+        name
+      }
+      scopes
+      normalizedScopes
       createdAt
       updatedAt
       verified

@@ -4,6 +4,11 @@ query me {
     firstName
     lastName
     email
+    roles {
+      name
+    }
+    scopes
+    normalizedScopes
     createdAt
     updatedAt
     verified
