@@ -34,7 +34,7 @@
 </template>
 
 <script lang="ts">
-// import { Document } from '@dockite/types';
+// import { Document } from '@dockite/database';
 import { Component, Vue, Watch } from 'nuxt-property-decorator';
 import { Fragment } from 'vue-fragment';
 

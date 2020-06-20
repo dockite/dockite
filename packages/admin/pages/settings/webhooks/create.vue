@@ -58,7 +58,8 @@
 </template>
 
 <script lang="ts">
-import { WebhookAction, Webhook } from '@dockite/types';
+import { Webhook } from '@dockite/database';
+import { WebhookAction } from '@dockite/types';
 import CodeMirror from 'codemirror';
 import { Form } from 'element-ui';
 import { Component, Vue, Ref, Watch } from 'nuxt-property-decorator';
@@ -77,7 +78,7 @@ import Logo from '~/components/base/logo.vue';
 import * as auth from '~/store/auth';
 import * as webhook from '~/store/webhook';
 
-type WebhookForm = Omit<Webhook, 'id' | 'createdAt' | 'updatedAt'>;
+type WebhookForm = Omit<Webhook, 'id' | 'createdAt' | 'updatedAt' | 'calls'>;
 
 @Component({
   components: {

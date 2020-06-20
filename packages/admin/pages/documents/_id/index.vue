@@ -83,7 +83,7 @@
 </template>
 
 <script lang="ts">
-import { Schema, Field, Document } from '@dockite/types';
+import { Schema, Field, Document } from '@dockite/database';
 import { Form } from 'element-ui';
 import { sortBy, cloneDeep } from 'lodash';
 import { Component, Vue, Watch, Ref } from 'nuxt-property-decorator';
@@ -133,7 +133,7 @@ export default class UpdateDocumentPage extends Vue {
   }
 
   get schemaName(): string {
-    return this.schema?.name ?? '';
+    return this.schema?.title ?? '';
   }
 
   get schema(): Schema | null {

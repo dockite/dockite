@@ -65,7 +65,8 @@
 </template>
 
 <script lang="ts">
-import { Field, DockiteFieldStatic } from '@dockite/types';
+import { Field } from '@dockite/database';
+import { DockiteFieldStatic } from '@dockite/types';
 import { Form } from 'element-ui';
 import { TreeData } from 'element-ui/types/tree';
 import { Component, Vue, Prop, Watch, Ref } from 'nuxt-property-decorator';

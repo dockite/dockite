@@ -27,7 +27,7 @@
 </template>
 
 <script lang="ts">
-import { Document } from '@dockite/types';
+import { Document } from '@dockite/database';
 import { formatDistanceToNow } from 'date-fns';
 import { html } from 'diff2html';
 import { Component, Vue, Watch, Ref } from 'nuxt-property-decorator';

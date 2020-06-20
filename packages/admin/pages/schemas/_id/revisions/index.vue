@@ -93,7 +93,7 @@
 </template>
 
 <script lang="ts">
-import { Schema } from '@dockite/types';
+import { Schema } from '@dockite/database';
 import CodeMirror from 'codemirror';
 import { formatDistanceToNow } from 'date-fns';
 import { Component, Vue, Watch, Ref } from 'nuxt-property-decorator';

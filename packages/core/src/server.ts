@@ -8,6 +8,10 @@ import { ApolloServer } from 'apollo-server-express';
 import debug from 'debug';
 import express from 'express';
 import { set } from 'lodash';
+import cookieParser from 'cookie-parser';
+import { User } from '@dockite/database';
+import { getRepository } from 'typeorm';
+import { sign } from 'jsonwebtoken';
 
 import { EXTERNAL_GRAPHQL_PATH, INTERNAL_GRAPHQL_PATH } from './common/constants/core';
 import { GlobalContext, SessionContext, UserContext } from './common/types';
@@ -50,6 +54,7 @@ export const start = async (port = process.env.PORT || 3000): Promise<Server> =>
   const app = express();
 
   app.use(express.json());
+  app.use(cookieParser());
 
   // app.use('/admin', express.static(path.dirname(require.resolve('@dockite/ui'))));
   // app.all('/admin*', (_req, res) => res.sendFile(require.resolve('@dockite/ui')));
@@ -63,16 +68,53 @@ export const start = async (port = process.env.PORT || 3000): Promise<Server> =>
   log('creating servers');
   const internalServer = new ApolloServer({
     schema: root.schema,
-    context: ({ req, res }: SessionContext): GlobalContext => {
+    context: async ({ req, res }: SessionContext): Promise<GlobalContext> => {
       try {
-        const authorization = req.headers.authorization || '';
+        const authorization = req.headers.authorization ?? '';
         const bearerSplit = authorization.split('Bearer');
         const token = bearerSplit[bearerSplit.length - 1].trim();
 
         const user = verify<UserContext>(token, getenv('APP_SECRET', 'secret'));
 
         return { req, res, user };
-      } catch {
+      } catch (_) {
+        if (!req.cookies.refreshToken) {
+          return { req, res, user: undefined };
+        }
+      }
+
+      try {
+        const refresh = verify<UserContext>(
+          req.cookies.refreshToken,
+          getenv('APP_SECRET', 'secret'),
+        );
+
+        const user = await getRepository(User).findOneOrFail(refresh.id);
+
+        const [bearerToken, refreshToken] = await Promise.all([
+          Promise.resolve(
+            sign({ ...user }, getenv('APP_SECRET', 'secret'), {
+              expiresIn: '15m',
+            }),
+          ),
+          Promise.resolve(
+            sign({ ...user }, getenv('APP_SECRET', 'secret'), {
+              expiresIn: '3d',
+            }),
+          ),
+        ]);
+
+        res.cookie('refreshToken', refreshToken, {
+          httpOnly: true,
+          expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 3),
+        });
+
+        res.setHeader('authorization', `Bearer ${bearerToken}`);
+
+        return { req, res, user };
+      } catch (err) {
+        log('unable to refresh user session', err);
+
         return { req, res, user: undefined };
       }
     },
@@ -90,8 +132,16 @@ export const start = async (port = process.env.PORT || 3000): Promise<Server> =>
   });
 
   log('attaching servers');
-  internalServer.applyMiddleware({ app, path: `/${INTERNAL_GRAPHQL_PATH}` });
-  externalServer.applyMiddleware({ app, path: `/${EXTERNAL_GRAPHQL_PATH}` });
+  internalServer.applyMiddleware({
+    app,
+    path: `/${INTERNAL_GRAPHQL_PATH}`,
+    cors: { origin: true, credentials: true },
+  });
+  externalServer.applyMiddleware({
+    app,
+    path: `/${EXTERNAL_GRAPHQL_PATH}`,
+    cors: { origin: true, credentials: true },
+  });
 
   /**
    * As bad as this is, it's the only way to hot-reload a

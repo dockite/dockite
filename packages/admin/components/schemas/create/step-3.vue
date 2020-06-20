@@ -39,7 +39,7 @@
 </template>
 
 <script lang="ts">
-import { Field } from '@dockite/types';
+import { Field } from '@dockite/database';
 import { Component, Vue, Prop } from 'nuxt-property-decorator';
 import { Fragment } from 'vue-fragment';
 
