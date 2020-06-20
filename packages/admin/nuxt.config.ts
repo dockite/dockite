@@ -1,10 +1,15 @@
 import path from 'path';
 
 import { Configuration } from '@nuxt/types';
+import { NormalModuleReplacementPlugin } from 'webpack';
 import WebpackInjectPlugin, { ENTRY_ORDER } from 'webpack-inject-plugin';
 
 const config: Configuration = {
   mode: 'spa',
+  env: {
+    GRAPHQL_ENDPOINT:
+      process.env.GRAPHQL_ENDPOINT ?? 'http://localhost:3000/dockite/graphql/internal',
+  },
   /*
    ** Headers of the page
    */
@@ -33,9 +38,9 @@ const config: Configuration = {
    ** Plugins to load before mounting the App
    */
   plugins: [
+    '~/plugins/apollo.ts',
     '~/plugins/ability.ts',
     '~/plugins/element-ui.ts',
-    '~/plugins/nuxt-apollo.ts',
     '~/plugins/vuex-init.ts',
     '~/plugins/portal-vue.ts',
     '~/plugins/vue-filters.ts',
@@ -74,29 +79,12 @@ const config: Configuration = {
     '@nuxtjs/axios',
     '@nuxtjs/pwa',
     '@nuxtjs/dotenv',
-    // '@nuxtjs/auth',
-    '@nuxtjs/apollo',
   ],
   /*
    ** Axios module configuration
    ** See https://axios.nuxtjs.org/options
    */
   axios: {},
-  /*
-   ** Apollo module configuration
-   ** See https://github.com/nuxt-community/apollo-module
-   */
-  apollo: {
-    includeNodeModules: true,
-    tokenName: 'apollo-token',
-    authenticationType: 'Bearer',
-    clientConfigs: {
-      default: {
-        // TODO: read this from the rc file
-        httpEndpoint: 'http://localhost:3000/dockite/graphql/internal',
-      },
-    },
-  },
   /*
    ** Build configuration
    */
@@ -117,6 +105,36 @@ const config: Configuration = {
       },
     },
     extend(config, { isClient }) {
+      config.resolve = config.resolve ?? {};
+
+      config.resolve.extensions = [
+        ...new Set([...(config.resolve.extensions ?? []), '.graphql', '.gql']),
+      ];
+
+      config.module = config.module ?? { rules: [] };
+
+      if (!config.module.rules.some(rule => rule.use === 'graphql-tag/loader')) {
+        config.module.rules.push({
+          use: 'graphql-tag/loader',
+          test: /\.g(raph)?ql$/,
+          exclude: /node_modules/,
+        });
+      }
+
+      config.plugins = config.plugins ?? [];
+
+      config.plugins.push(
+        new NormalModuleReplacementPlugin(/type-graphql$/, (resource: any) => {
+          resource.request = resource.request.replace(
+            /type-graphql/,
+            'type-graphql/dist/browser-shim.js',
+          );
+        }),
+        new NormalModuleReplacementPlugin(/typeorm$/, (resource: any) => {
+          resource.request = resource.request.replace(/typeorm/, 'typeorm/typeorm-model-shim.js');
+        }),
+      );
+
       if (isClient) {
         const fields = [
           '@dockite/field-string',

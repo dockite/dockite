@@ -15,6 +15,8 @@
     "paths": {
       "~/*": ["./*"],
       "@/*": ["./*"],
+      "typeorm": ["./node_modules/typeorm/typeorm-model-shim.js"],
+      "type-graphql": ["./node_modules/type-graphql/dist/browser-shim.ts"],
       // "element-ui": [".sink.d.ts"]
     },
     "skipLibCheck": true,

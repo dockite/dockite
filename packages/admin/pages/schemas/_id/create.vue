@@ -34,7 +34,7 @@
 </template>
 
 <script lang="ts">
-import { Schema, Field } from '@dockite/types';
+import { Schema, Field } from '@dockite/database';
 import { Form } from 'element-ui';
 import { sortBy } from 'lodash';
 import { Component, Vue, Watch, Ref } from 'nuxt-property-decorator';
@@ -66,7 +66,7 @@ export default class CreateSchemaDocumentPage extends Vue {
   }
 
   get schemaName(): string {
-    return this.schema?.name ?? '';
+    return this.schema?.title ?? '';
   }
 
   get schema(): Schema | null {

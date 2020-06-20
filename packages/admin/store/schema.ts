@@ -1,4 +1,4 @@
-import { Field, Schema, SchemaType } from '@dockite/types';
+import { Field, Schema, SchemaType } from '@dockite/database';
 import { ActionTree, GetterTree, MutationTree } from 'vuex';
 
 import { RootState } from '.';

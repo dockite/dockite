@@ -59,7 +59,7 @@
 </template>
 
 <script lang="ts">
-import { WebhookCall } from '@dockite/types';
+import { WebhookCall } from '@dockite/database';
 import CodeMirror from 'codemirror';
 import { formatDistanceToNow } from 'date-fns';
 import { Component, Vue, Watch, Ref } from 'nuxt-property-decorator';

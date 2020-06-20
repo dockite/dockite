@@ -251,7 +251,7 @@ export class DocumentResolver {
   @Mutation(_returns => Document)
   async createDocument(
     @Arg('locale') locale: string,
-    @Arg('data', _type => GraphQLJSON) data: any, // eslint-disable-line
+    @Arg('data', _type => GraphQLJSON) data: any,
     @Arg('schemaId') schemaId: string,
     @Arg('releaseId', _type => String, { nullable: true }) releaseId: string | null = null,
     @Ctx() ctx: GlobalContext,

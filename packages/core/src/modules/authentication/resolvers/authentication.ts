@@ -38,18 +38,27 @@ export class Authentication {
 
       delete user.password;
 
-      const token = sign({ ...user }, getenv('APP_SECRET', 'secret'), {
-        expiresIn: '1h',
-      });
+      const [bearerToken, refreshToken] = await Promise.all([
+        Promise.resolve(
+          sign({ ...user }, getenv('APP_SECRET', 'secret'), {
+            expiresIn: '15m',
+          }),
+        ),
+        Promise.resolve(
+          sign({ ...user }, getenv('APP_SECRET', 'secret'), {
+            expiresIn: '3d',
+          }),
+        ),
+      ]);
 
-      ctx.res.setHeader('authorization', `Bearer ${token}`);
+      ctx.res.setHeader('authorization', `Bearer ${bearerToken}`);
 
-      ctx.res.cookie('refreshToken', token, {
+      ctx.res.cookie('refreshToken', refreshToken, {
         httpOnly: true,
         expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 3),
       });
 
-      return { user, token };
+      return { user, token: bearerToken };
     } catch (err) {
       throw new AuthenticationError('Authentication failed.');
     }
@@ -88,17 +97,26 @@ export class Authentication {
     Object.assign(user, firstUser);
     user.handleNormalizeScopes();
 
-    const token = sign({ ...user }, getenv('APP_SECRET', 'secret'), {
-      expiresIn: '1h',
-    });
+    const [bearerToken, refreshToken] = await Promise.all([
+      Promise.resolve(
+        sign({ ...user }, getenv('APP_SECRET', 'secret'), {
+          expiresIn: '15m',
+        }),
+      ),
+      Promise.resolve(
+        sign({ ...user }, getenv('APP_SECRET', 'secret'), {
+          expiresIn: '3d',
+        }),
+      ),
+    ]);
 
-    ctx.res.setHeader('authorization', `Bearer ${token}`);
+    ctx.res.setHeader('authorization', `Bearer ${bearerToken}`);
 
-    ctx.res.cookie('refreshToken', token, {
+    ctx.res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 3),
     });
 
-    return { user, token };
+    return { user, token: bearerToken };
   }
 }

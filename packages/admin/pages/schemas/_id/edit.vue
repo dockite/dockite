@@ -76,7 +76,7 @@
 </template>
 
 <script lang="ts">
-import { Schema, Field } from '@dockite/types';
+import { Schema, Field } from '@dockite/database';
 import { TreeNode } from 'element-ui/types/tree';
 import { cloneDeep, sortBy } from 'lodash';
 import { Component, Vue, Watch } from 'nuxt-property-decorator';

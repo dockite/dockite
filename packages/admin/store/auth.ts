@@ -68,8 +68,6 @@ export const actions: ActionTree<AuthState, RootState> = {
     if (token) {
       commit('setToken', token);
 
-      await this.$apolloHelpers.onLogin(token);
-
       await dispatch('fetchUser');
 
       commit('setAuthenticated', true);
@@ -86,8 +84,6 @@ export const actions: ActionTree<AuthState, RootState> = {
       throw new Error('not data.login');
     }
 
-    await this.$apolloHelpers.onLogin(data.login.token);
-
     commit('setToken', data.login.token);
     commit('setUser', data.login.user);
     commit('setAuthenticated', true);
@@ -103,8 +99,6 @@ export const actions: ActionTree<AuthState, RootState> = {
       throw new Error('not data.registerFirstUser');
     }
 
-    await this.$apolloHelpers.onLogin(data.registerFirstUser.token);
-
     commit('setToken', data.registerFirstUser.token);
     commit('setUser', data.registerFirstUser.user);
     commit('setAuthenticated', true);
@@ -114,6 +108,8 @@ export const actions: ActionTree<AuthState, RootState> = {
     commit('clearToken');
     commit('setUser', null);
     commit('setAuthenticated', false);
+
+    this.$apolloClient.clearStore();
   },
 
   async fetchUser({ commit }): Promise<void> {
