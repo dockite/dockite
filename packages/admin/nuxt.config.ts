@@ -131,7 +131,10 @@ const config: Configuration = {
           );
         }),
         new NormalModuleReplacementPlugin(/typeorm$/, (resource: any) => {
-          resource.request = resource.request.replace(/typeorm/, 'typeorm/typeorm-model-shim.js');
+          resource.request = resource.request.replace(
+            /typeorm/,
+            path.resolve('./types/typeorm-shim.js'),
+          );
         }),
       );
 

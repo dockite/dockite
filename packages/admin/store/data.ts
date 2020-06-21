@@ -134,7 +134,7 @@ export const getters: GetterTree<DataState, RootState> = {
   getSchemaNameById: state => (id: string): string => {
     const schema = state.allSchemas.results.find(schema => schema.id === id);
 
-    return schema ? schema.name : '';
+    return schema ? schema.title : '';
   },
 
   getSchemaWithFieldsById: state => (id: string): Schema | null => {

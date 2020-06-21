@@ -44,10 +44,10 @@
             </span>
           </template>
         </el-table-column>
-        <el-table-column prop="schema.name" label="Schema">
+        <el-table-column prop="schema.title" label="Schema">
           <template slot-scope="scope">
             <router-link v-if="scope.row.schema" :to="`/schemas/${scope.row.schema.id}`">
-              {{ scope.row.schema.name }}
+              {{ scope.row.schema.title }}
             </router-link>
           </template>
         </el-table-column>

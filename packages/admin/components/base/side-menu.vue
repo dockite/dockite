@@ -35,7 +35,7 @@
             :key="schema.id"
             :index="`/schemas/${schema.id}`"
           >
-            <span slot="title">{{ schema.name }}</span>
+            <span slot="title">{{ schema.title }}</span>
           </el-menu-item>
         </el-menu-item-group>
       </el-submenu>
