@@ -12,6 +12,7 @@ query allDocumentsWithSchema($page: Int!) {
       schema {
         id
         name
+        title
         type
         groups
         settings

@@ -11,6 +11,7 @@ query FindDocumentsBySchemaIds($ids: [String!], $page: Int!) {
       schema {
         id
         name
+        title
         type
         groups
         settings

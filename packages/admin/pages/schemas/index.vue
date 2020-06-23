@@ -13,10 +13,10 @@
             </router-link>
           </template>
         </el-table-column>
-        <el-table-column prop="name" label="Schema">
+        <el-table-column prop="title" label="Schema">
           <template slot-scope="scope">
             <router-link :to="`/schemas/${scope.row.id}`">
-              {{ scope.row.name | shortDesc }}
+              {{ scope.row.title | shortDesc }}
             </router-link>
           </template>
         </el-table-column>

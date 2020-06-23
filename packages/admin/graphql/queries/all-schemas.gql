@@ -3,6 +3,7 @@ query allSchemas {
     results {
       id
       name
+      title
       type
       groups
       settings
