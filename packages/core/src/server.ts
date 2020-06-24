@@ -6,7 +6,7 @@ import { DockiteFieldStatic } from '@dockite/types';
 import { SchemaManager, registerField, registerScopes } from '@dockite/manager';
 import { ApolloServer } from 'apollo-server-express';
 import debug from 'debug';
-import express from 'express';
+import express, { Express } from 'express';
 import { set } from 'lodash';
 import cookieParser from 'cookie-parser';
 import { User } from '@dockite/database';
@@ -26,7 +26,7 @@ import { scopes } from './common/scopes';
 
 const log = debug('dockite:core');
 
-export const start = async (port = process.env.PORT || 3000): Promise<Server> => {
+export const createServer = async (): Promise<Express> => {
   log('creating server');
 
   // TODO: Implement once @types/node allows it
@@ -176,6 +176,12 @@ export const start = async (port = process.env.PORT || 3000): Promise<Server> =>
     set(externalServer, 'schema', updatedExternalSchema.schema);
     set(externalServer, 'schemaDerivedData', externalDerrivedData);
   });
+
+  return app;
+};
+
+export const start = async (port = process.env.PORT || 3000): Promise<Server> => {
+  const app = await createServer();
 
   log(
     `access your graphql server from either http://localhost:${port}/${INTERNAL_GRAPHQL_PATH} or http://localhost:${port}/${INTERNAL_GRAPHQL_PATH}`,
