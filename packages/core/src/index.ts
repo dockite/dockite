@@ -15,9 +15,16 @@ getConfig();
 
 const startTime = Date.now();
 
-export default connect().then(() =>
-  start().then(() => console.log('Time taken', (Date.now() - startTime) / 1000, 'seconds')),
-);
+export const serve = (): Promise<void> =>
+  connect().then(() =>
+    start().then(() => console.log('Time taken', (Date.now() - startTime) / 1000, 'seconds')),
+  );
+
+export default ((): void => {
+  if (typeof module !== 'undefined' && !module.parent) {
+    serve();
+  }
+})();
 
 export const create = async (): Promise<Express> => {
   await connect();

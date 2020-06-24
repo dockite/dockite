@@ -3,6 +3,7 @@
   "version": "0.2.0",
   "description": "My superb Nuxt.js project",
   "author": "Dockite",
+  "main": "dist/index.html",
   "scripts": {
     "dev": "nuxt-ts",
     "build": "nuxt-ts build",

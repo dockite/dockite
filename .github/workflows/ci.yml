@@ -8,6 +8,7 @@ on:
 
 jobs:
   build:
+    if: github.event.pusher.name != 'actions-user'
     runs-on: ubuntu-latest
     strategy:
       matrix:
