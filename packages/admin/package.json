@@ -1,9 +1,8 @@
 {
   "name": "@dockite/admin",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "My superb Nuxt.js project",
   "author": "Dockite",
-  "private": true,
   "scripts": {
     "dev": "nuxt-ts",
     "build": "nuxt-ts build",
@@ -18,9 +17,9 @@
     }
   },
   "dependencies": {
-    "@dockite/ability": "1.0.0",
-    "@dockite/database": "1.0.0",
-    "@dockite/types": "1.0.0",
+    "@dockite/ability": "0.0.1",
+    "@dockite/database": "0.0.1",
+    "@dockite/types": "0.0.1",
     "@nuxt/typescript-runtime": "^0.4.0",
     "@nuxtjs/auth": "^4.9.1",
     "@nuxtjs/axios": "^5.10.3",

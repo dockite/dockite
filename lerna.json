@@ -4,5 +4,13 @@
   "packages": [
     "packages/*"
   ],
-  "version": "0.0.1"
+  "command": {
+    "publish": {
+      "npmClient": "npm"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "version": "independent"
 }

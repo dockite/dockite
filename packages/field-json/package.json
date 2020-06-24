@@ -1,6 +1,6 @@
 {
   "name": "@dockite/field-json",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
@@ -14,8 +14,8 @@
   "dependencies": {
     "@babel/plugin-proposal-class-properties": "^7.10.1",
     "@babel/plugin-proposal-decorators": "^7.10.1",
-    "@dockite/field": "1.0.0",
-    "@dockite/types": "1.0.0",
+    "@dockite/field": "0.0.1",
+    "@dockite/types": "0.0.1",
     "ant-design-vue": "^1.4.12",
     "codemirror": "^5.52.2",
     "diff-match-patch": "^1.0.4",
