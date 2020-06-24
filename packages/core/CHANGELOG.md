@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.1](https://github.com/dockite/dockite/compare/@dockite/core@0.2.0...@dockite/core@0.2.1) (2020-06-24)
+
+
+### Bug Fixes
+
+* split dockite entrypoints ([3fa30c7](https://github.com/dockite/dockite/commit/3fa30c7dfb1da1bef2a4265180aab371b32e32ee))
+
+
+
+
+
 # 0.2.0 (2020-06-24)
 
 
