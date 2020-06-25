@@ -11,6 +11,7 @@ const SCHEMA_SCOPES = [
   'internal:schema:create',
   'internal:schema:read',
   'internal:schema:update',
+  'internal:schema:import',
   'internal:schema:delete',
 ];
 

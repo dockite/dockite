@@ -95,15 +95,15 @@ export interface AvailableFieldsQueryResponse {
 }
 
 export interface CreateSchemaMutationResponse {
-  createSchema: {
-    id: string;
-  };
+  createSchema: Schema;
 }
 
 export interface UpdateSchemaMutationResponse {
-  updateSchema: {
-    id: string;
-  };
+  updateSchema: Schema;
+}
+
+export interface ImportSchemaMutationResponse {
+  importSchema: Schema;
 }
 
 export interface DeleteSchemaMutationResponse {

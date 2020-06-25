@@ -67,7 +67,6 @@ export const fireWebhooks = async (entity: object, action: WebhookAction): Promi
 
         if (SchemaManager.internalSchema) {
           log('firing graphql webhooks');
-          log(webhook.options.query);
           return graphql(SchemaManager.internalSchema, webhook.options.query, undefined, {
             user: {
               id: '00000000-0000-0000-0000-000000000000',
@@ -80,15 +79,12 @@ export const fireWebhooks = async (entity: object, action: WebhookAction): Promi
             } as UserContext,
           }).then(
             result => {
-              log(result);
-
               return Axios({
                 url: webhook.url,
                 method: webhook.method as Method,
                 data: webhook.method.toLowerCase() === 'get' ? undefined : JSON.stringify(result),
               }).then(
                 (response: AxiosResponse) => {
-                  log(response);
                   return webhookCallRepository.insert({
                     executedAt: new Date(),
                     request: {
@@ -104,7 +100,6 @@ export const fireWebhooks = async (entity: object, action: WebhookAction): Promi
                   });
                 },
                 (error: AxiosError) => {
-                  log(error);
                   return webhookCallRepository.insert({
                     executedAt: new Date(),
                     request: {

@@ -20,6 +20,7 @@
     "@graphql-modules/core": "^0.7.14",
     "@typescript-eslint/eslint-plugin": "^2.20.0",
     "@typescript-eslint/parser": "^2.20.0",
+    "ajv": "^6.12.2",
     "apollo-server-express": "^2.10.1",
     "axios": "^0.19.2",
     "bcrypt": "^4.0.0",

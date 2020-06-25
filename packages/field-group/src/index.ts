@@ -87,7 +87,7 @@ export class DockiteFieldGroup extends DockiteField {
     >[];
 
     const objectType = new GraphQLObjectType({
-      name: String(this.schemaField.name),
+      name: `${this.schemaField.schema?.name || 'Unknown'}_${String(this.schemaField.name)}`,
       fields: cleanedFields.reduce((a, b) => ({ ...a, [b.name]: b.config }), {}),
     });
 

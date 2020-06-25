@@ -1,7 +1,23 @@
 <template>
   <fragment>
     <portal to="header">
-      <h2>All Schemas</h2>
+      <el-row type="flex" justify="space-between" align="middle">
+        <h2>All Schemas</h2>
+        <el-dropdown>
+          <el-button size="medium">
+            Actions
+            <i class="el-icon-arrow-down el-icon--right" />
+          </el-button>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item>
+              <router-link :to="`/schemas/import`">
+                <i class="el-icon-upload2" />
+                Import Schema
+              </router-link>
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+      </el-row>
     </portal>
 
     <div class="all-documents-page">
