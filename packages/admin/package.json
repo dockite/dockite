@@ -1,6 +1,6 @@
 {
   "name": "@dockite/admin",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "My superb Nuxt.js project",
   "author": "Dockite",
   "main": "dist/index.html",
@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@dockite/ability": "^0.2.0",
-    "@dockite/database": "^0.2.0",
+    "@dockite/database": "^0.3.0",
     "@dockite/types": "^0.2.0",
     "@nuxt/typescript-runtime": "^0.4.0",
     "@nuxtjs/auth": "^4.9.1",
