@@ -10,11 +10,13 @@ import {
   DeleteSchemaMutationResponse,
   UnpersistedField,
   UpdateSchemaMutationResponse,
+  ImportSchemaMutationResponse,
 } from '~/common/types';
 import CreateFieldMutation from '~/graphql/mutations/create-field.gql';
 import CreateSchemaMutation from '~/graphql/mutations/create-schema.gql';
 import DeleteFieldMutation from '~/graphql/mutations/delete-field.gql';
 import DeleteSchemaMutation from '~/graphql/mutations/delete-schema.gql';
+import ImportSchemaMutation from '~/graphql/mutations/import-schema.gql';
 import UpdateFieldMutation from '~/graphql/mutations/update-field.gql';
 import UpdateSchemaMutation from '~/graphql/mutations/update-schema.gql';
 import AllSchemasQuery from '~/graphql/queries/all-schemas.gql';
@@ -153,6 +155,25 @@ export const actions: ActionTree<SchemaState, RootState> = {
 
     await this.dispatch(`${data.namespace}/fetchAllSchemas`, true);
     this.commit(`${data.namespace}/removeSchemaWithFields`, payload);
+  },
+
+  async importSchema(_, payload: { schemaId?: string; payload: string }) {
+    const { data: schemaData } = await this.$apolloClient.mutate<ImportSchemaMutationResponse>({
+      mutation: ImportSchemaMutation,
+      variables: {
+        schemaId: payload.schemaId ?? null,
+        payload: payload.payload,
+      },
+      update: () => {
+        this.$apolloClient.resetStore();
+      },
+    });
+
+    if (!schemaData?.importSchema) {
+      throw new Error('Unable to delete schema');
+    }
+
+    await this.dispatch(`${data.namespace}/fetchAllSchemas`, true);
   },
 };
 

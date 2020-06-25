@@ -7,7 +7,7 @@ import { FieldManager, registerScopes, registerScopeResourceId } from '@dockite/
 // TODO: Tidy this area, createSchema likely does not need access to all the items it currently does.
 export const createExtraGraphQLSchema = async (): Promise<GraphQLSchema> => {
   const dockiteSchemas = await getRepository(Schema).find({
-    relations: ['fields'],
+    relations: ['fields', 'fields.schema'],
   });
 
   dockiteSchemas.forEach(schema => {

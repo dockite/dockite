@@ -44,6 +44,12 @@
                   Revisions
                 </router-link>
               </el-dropdown-item>
+              <el-dropdown-item>
+                <router-link :to="`/schemas/${schemaId}/import`">
+                  <i class="el-icon-upload2" />
+                  Import Schema
+                </router-link>
+              </el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </el-row>

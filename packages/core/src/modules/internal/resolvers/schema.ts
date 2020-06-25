@@ -1,4 +1,10 @@
-import { Document, Schema, SchemaRevision, SchemaType } from '@dockite/database';
+import {
+  Document,
+  Schema,
+  SchemaRevision,
+  SchemaType,
+  SchemaImportRepository,
+} from '@dockite/database';
 import { GlobalContext } from '@dockite/types';
 import { GraphQLError } from 'graphql';
 import GraphQLJSON from 'graphql-type-json';
@@ -13,10 +19,12 @@ import {
   Query,
   Resolver,
 } from 'type-graphql';
-import { getRepository } from 'typeorm';
+import { getRepository, getCustomRepository } from 'typeorm';
+import { ValidationError, AuthenticationError } from 'apollo-server-express';
 
 import { Authenticated, Authorized } from '../../../common/decorators';
 import { DockiteEvents } from '../../../events';
+import { ajv, validator as schemaImportValidator } from '../validation/schema-import';
 
 @ObjectType()
 class ManySchemas {
@@ -200,6 +208,38 @@ export class SchemaResolver {
     DockiteEvents.emit('reload');
 
     return savedSchema;
+  }
+
+  /**
+   * TODO: Perform light validation on fields, settings, groups
+   */
+  @Authenticated()
+  @Authorized('internal:schema:import', { derriveAlternativeScopes: false })
+  @Mutation(_returns => Schema)
+  async importSchema(
+    @Arg('schemaId', _type => String, { nullable: true })
+    schemaId: string | null,
+    @Arg('payload', _type => GraphQLJSON)
+    payload: string, // eslint-disable-line
+    @Ctx()
+    ctx: GlobalContext,
+  ): Promise<Schema | null> {
+    const repository = getCustomRepository(SchemaImportRepository);
+
+    const parsedPayload: Schema = JSON.parse(payload);
+
+    const valid = schemaImportValidator(parsedPayload);
+
+    if (!valid) {
+      console.log(schemaImportValidator.errors);
+      throw new ValidationError('Payload provided is invalid');
+    }
+
+    if (!ctx.user) {
+      throw new AuthenticationError('Not authenticated');
+    }
+
+    return repository.importSchema(schemaId, parsedPayload, ctx.user.id);
   }
 
   /**

@@ -2,10 +2,9 @@ import { cloneDeep, omit } from 'lodash';
 import { EntityRepository, getRepository, Repository } from 'typeorm';
 
 import { Field, Schema, SchemaRevision } from '../entities';
-import { SearchEngine } from '../entities/search-engine';
 
-@EntityRepository(SearchEngine)
-export class SchemaRevisionRepository extends Repository<SearchEngine> {
+@EntityRepository(Schema)
+export class SchemaRevisionRepository extends Repository<Schema> {
   public async restoreRevision(
     schemaId: string,
     revisionId: string,
