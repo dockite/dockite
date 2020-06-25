@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    if: github.event.pusher.name != 'actions-user'
+    if: "!contains(github.event.head_commit.message, 'chore(release): publish packages')"
     runs-on: ubuntu-latest
     strategy:
       matrix:
