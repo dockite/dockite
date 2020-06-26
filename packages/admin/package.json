@@ -51,6 +51,7 @@
     "nuxt-property-decorator": "^2.7.2",
     "portal-vue": "^2.1.7",
     "sass-loader": "^8.0.2",
+    "ts-loader": "^6.2.2",
     "type-graphql": "1.0.0-rc.2",
     "typescript": "^3.9.5",
     "unidiff": "^1.0.2",
