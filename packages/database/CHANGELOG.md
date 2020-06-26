@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.3.1-alpha.0](https://github.com/dockite/dockite/compare/@dockite/database@0.3.0...@dockite/database@0.3.1-alpha.0) (2020-06-26)
+
+
+### Bug Fixes
+
+* add typeorm shims to database package ([5d529d6](https://github.com/dockite/dockite/commit/5d529d6e61f151e704e6889b2dac74da68f2dd23))
+
+
+
+
+
 # [0.3.0](https://github.com/dockite/dockite/compare/@dockite/database@0.2.0...@dockite/database@0.3.0) (2020-06-25)
 
 
