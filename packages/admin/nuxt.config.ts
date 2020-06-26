@@ -132,7 +132,10 @@ const config: Configuration = {
         new NormalModuleReplacementPlugin(/typeorm$/, (resource: any) => {
           resource.request = resource.request.replace(
             /typeorm/,
-            '@dockite/database/extra/typeorm-shim.js',
+            path.join(
+              path.dirname(require.resolve('@dockite/database')),
+              'extra/typeorm-model-shim.js',
+            ),
           );
         }),
       );
