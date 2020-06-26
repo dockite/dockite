@@ -76,7 +76,6 @@ const config: Configuration = {
         fallbackLocale: 'en',
       },
     ],
-    '@nuxtjs/axios',
     '@nuxtjs/pwa',
     '@nuxtjs/dotenv',
   ],
