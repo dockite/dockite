@@ -6,10 +6,12 @@ import { getRepository, Repository } from 'typeorm';
 import { User, Role } from '@dockite/database';
 
 import { GlobalContext } from '../../../common/types';
-import { getenv } from '../../../utils';
 import { AuthenticationResponse } from '../types/response';
+import { getConfig } from '../../../config';
 
 // const log = debug('dockite:core:authentication:resolver');
+
+const config = getConfig();
 
 @Resolver()
 export class Authentication {
@@ -40,12 +42,12 @@ export class Authentication {
 
       const [bearerToken, refreshToken] = await Promise.all([
         Promise.resolve(
-          sign({ ...user }, getenv('APP_SECRET', 'secret'), {
+          sign({ ...user }, config.app.secret ?? '', {
             expiresIn: '15m',
           }),
         ),
         Promise.resolve(
-          sign({ ...user }, getenv('APP_SECRET', 'secret'), {
+          sign({ ...user }, config.app.secret ?? '', {
             expiresIn: '3d',
           }),
         ),
@@ -99,12 +101,12 @@ export class Authentication {
 
     const [bearerToken, refreshToken] = await Promise.all([
       Promise.resolve(
-        sign({ ...user }, getenv('APP_SECRET', 'secret'), {
+        sign({ ...user }, config.app.secret ?? '', {
           expiresIn: '15m',
         }),
       ),
       Promise.resolve(
-        sign({ ...user }, getenv('APP_SECRET', 'secret'), {
+        sign({ ...user }, config.app.secret ?? '', {
           expiresIn: '3d',
         }),
       ),

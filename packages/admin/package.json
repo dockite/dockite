@@ -1,9 +1,9 @@
 {
   "name": "@dockite/admin",
-  "version": "0.3.0",
-  "description": "My superb Nuxt.js project",
+  "version": "0.3.1-alpha.3",
+  "description": "",
   "author": "Dockite",
-  "main": "dist/index.html",
+  "main": "nuxt.config.ts",
   "scripts": {
     "dev": "nuxt-ts",
     "build": "nuxt-ts build",
@@ -19,14 +19,13 @@
   },
   "dependencies": {
     "@dockite/ability": "^0.2.0",
-    "@dockite/database": "^0.3.0",
+    "@dockite/database": "^0.3.1-alpha.0",
     "@dockite/types": "^0.2.0",
-    "@nuxt/typescript-runtime": "^0.4.0",
-    "@nuxtjs/auth": "^4.9.1",
-    "@nuxtjs/axios": "^5.10.3",
     "@nuxtjs/dotenv": "^1.4.0",
     "@nuxtjs/pwa": "^3.0.0-0",
     "@types/codemirror": "^0.0.95",
+    "@types/diff2html": "^0.0.5",
+    "@types/lodash": "^4.14.149",
     "@types/vfile-message": "^2.0.0",
     "apollo-cache-inmemory": "^1.6.6",
     "apollo-client": "^2.6.10",
@@ -35,6 +34,7 @@
     "apollo-link-http": "^1.5.17",
     "codemirror": "^5.54.0",
     "codemirror-graphql": "^0.12.0-alpha.11",
+    "cosmiconfig": "^6.0.0",
     "date-fns": "^2.13.0",
     "diff2html": "^3.1.8",
     "element-ui": "^2.4.11",
@@ -43,21 +43,19 @@
     "jsonlint-mod": "^1.7.5",
     "lodash": "^4.17.15",
     "normalize.css": "^8.0.1",
-    "nuxt": "^2.0.0",
+    "nuxt": "^2.13.2",
     "nuxt-i18n": "^6.11.1",
     "nuxt-property-decorator": "^2.7.2",
     "portal-vue": "^2.1.7",
     "type-graphql": "1.0.0-rc.2",
     "typescript": "^3.9.5",
     "unidiff": "^1.0.2",
-    "vue-fragment": "^1.5.1",
-    "webpack": "^4.43.0",
-    "webpack-inject-plugin": "^1.5.4"
+    "vue-fragment": "^1.5.1"
   },
   "devDependencies": {
     "@nuxt/typescript-build": "^0.6.0",
+    "@nuxt/typescript-runtime": "^0.4.0",
     "@nuxtjs/eslint-config-typescript": "1.0.1",
-    "@nuxtjs/eslint-module": "^1.0.0",
     "@nuxtjs/stylelint-module": "^3.1.0",
     "@types/diff2html": "^0.0.5",
     "@vue/test-utils": "^1.0.0-beta.27",
@@ -74,7 +72,10 @@
     "prettier": "^1.19.1",
     "sass-loader": "^8.0.2",
     "stylelint": "^10.1.0",
+    "ts-loader": "^6.2.2",
     "ts-jest": "^25.0.0",
-    "vue-jest": "^4.0.0-0"
+    "vue-jest": "^4.0.0-0",
+    "webpack": "^4.43.0",
+    "webpack-inject-plugin": "^1.5.4"
   }
 }

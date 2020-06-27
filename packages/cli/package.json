@@ -1,0 +1,76 @@
+{
+  "name": "@dockite/cli",
+  "version": "0.0.1",
+  "author": "Dockite",
+  "bin": {
+    "dockite": "./bin/run"
+  },
+  "bugs": "https://github.com/Mythie/dockite/issues",
+  "dependencies": {
+    "@dockite/admin": "^0.3.1-alpha.3",
+    "@nuxt/typescript-build": "^0.6.0",
+    "@nuxt/typescript-runtime": "^0.4.0",
+    "@nuxtjs/stylelint-module": "^3.1.0",
+    "@oclif/command": "^1",
+    "@oclif/config": "^1",
+    "@oclif/errors": "^1",
+    "@oclif/plugin-help": "^3",
+    "@types/diff2html": "^0.0.5",
+    "@vue/test-utils": "^1.0.0-beta.27",
+    "babel-eslint": "^10.0.1",
+    "babel-jest": "^24.1.0",
+    "cli-ux": "^5.4.6",
+    "eslint-config-prettier": "^6.10.0",
+    "eslint-plugin-nuxt": ">=0.4.2",
+    "eslint-plugin-prettier": "^3.1.2",
+    "eslint": "^6.8.0",
+    "husky": "^4.0.0",
+    "jest": "^24.1.0",
+    "lint-staged": "^10.0.0",
+    "node-sass": "^4.14.1",
+    "nuxt": "^2.13.2",
+    "prettier": "^1.19.1",
+    "sass-loader": "^8.0.2",
+    "stylelint": "^10.1.0",
+    "ts-jest": "^25.0.0",
+    "ts-loader": "^6.2.2",
+    "ts-node": "^8.6.2",
+    "tslib": "^1",
+    "typescript": "^3.9.5",
+    "unzipper": "^0.10.11",
+    "vue-jest": "^4.0.0-0",
+    "webpack-inject-plugin": "^1.5.4",
+    "webpack": "^4.43.0"
+  },
+  "devDependencies": {
+    "@oclif/dev-cli": "^1",
+    "@types/node": "^10",
+    "@types/unzipper": "^0.10.3",
+    "eslint": "^5.13",
+    "globby": "^10"
+  },
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "files": [
+    "/bin",
+    "/lib"
+  ],
+  "homepage": "https://github.com/dockite/dockite",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "oclif": {
+    "commands": "./lib/commands",
+    "bin": "dockite",
+    "plugins": [
+      "@oclif/plugin-help"
+    ]
+  },
+  "repository": "dockite/dockite",
+  "scripts": {
+    "posttest": "eslint . --ext .ts --config .eslintrc",
+    "prepack": "rm -rf lib && tsc -b",
+    "test": "echo NO TESTS"
+  },
+  "types": "lib/index.d.ts"
+}

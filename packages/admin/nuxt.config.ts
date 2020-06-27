@@ -1,27 +1,49 @@
-import path from 'path';
+import * as path from 'path';
 
 import { Configuration } from '@nuxt/types';
+import { cosmiconfigSync } from 'cosmiconfig';
 import { NormalModuleReplacementPlugin } from 'webpack';
 import WebpackInjectPlugin, { ENTRY_ORDER } from 'webpack-inject-plugin';
+
+let dockiteConfig: {
+  app: {
+    title: string;
+    description: string;
+    graphqlEndpoint: string;
+  };
+  fields: string[];
+} = {
+  app: {
+    title: 'Dockite',
+    description: 'The simpler HeadlessCMS',
+    graphqlEndpoint: '/dockite/graphql/internal',
+  },
+  fields: [],
+};
+
+const result = cosmiconfigSync('dockite').search();
+
+if (result) {
+  dockiteConfig = { ...dockiteConfig, ...result.config };
+}
 
 const config: Configuration = {
   mode: 'spa',
   env: {
-    GRAPHQL_ENDPOINT:
-      process.env.GRAPHQL_ENDPOINT ?? 'http://localhost:3000/dockite/graphql/internal',
+    GRAPHQL_ENDPOINT: dockiteConfig.app.graphqlEndpoint,
   },
   /*
    ** Headers of the page
    */
   head: {
-    title: process.env.npm_package_name || '',
+    title: dockiteConfig.app.title,
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       {
         hid: 'description',
         name: 'description',
-        content: process.env.npm_package_description || '',
+        content: dockiteConfig.app.description,
       },
     ],
     link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
@@ -76,7 +98,6 @@ const config: Configuration = {
         fallbackLocale: 'en',
       },
     ],
-    '@nuxtjs/axios',
     '@nuxtjs/pwa',
     '@nuxtjs/dotenv',
   ],
@@ -133,25 +154,16 @@ const config: Configuration = {
         new NormalModuleReplacementPlugin(/typeorm$/, (resource: any) => {
           resource.request = resource.request.replace(
             /typeorm/,
-            path.resolve('./types/typeorm-shim.js'),
+            path.join(
+              path.dirname(require.resolve('@dockite/database')),
+              'extra/typeorm-model-shim.js',
+            ),
           );
         }),
       );
 
       if (isClient) {
-        const fields = [
-          '@dockite/field-string',
-          '@dockite/field-boolean',
-          '@dockite/field-number',
-          '@dockite/field-datetime',
-          '@dockite/field-json',
-          '@dockite/field-colorpicker',
-          '@dockite/field-reference',
-          '@dockite/field-reference-of',
-          '@dockite/field-code',
-          '@dockite/field-group',
-          '@dockite/field-variant',
-        ];
+        const fields = dockiteConfig.fields;
 
         const injectables: string[] = [];
 
@@ -163,6 +175,7 @@ const config: Configuration = {
           const ui = path.join(dirname, 'ui', 'index.js');
           const abs = path.resolve(ui);
 
+          console.log(`dockite:admin:fields adding ${field}`);
           injectables.push(`import('${abs}')`);
         });
 

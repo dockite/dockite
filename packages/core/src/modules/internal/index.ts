@@ -13,8 +13,7 @@ import * as resolvers from './resolvers';
 const log = debug('dockite:core:internal');
 const tlog = debug('dockite:core:internal:timer');
 
-// eslint-disable-next-line
-export const getRegisteredInternalModules = (): any[] => {
+export const getRegisteredInternalModules = (): Promise<any>[] => {
   return getModules('internal');
 };
 

@@ -18,7 +18,7 @@ const refreshTokenLink = new ApolloLink((operation, forward) => {
       const tokenDecoded = JSON.parse(atob(claims));
 
       window.localStorage.setItem('apollo-token', token);
-      window.localStorage.setItem('apollo-token-decoded', atob(tokenDecoded));
+      window.localStorage.setItem('apollo-token-decoded', tokenDecoded);
     }
 
     return response;
