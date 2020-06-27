@@ -12,7 +12,7 @@ const log = debug('dockite:core:external');
 const tlog = debug('dockite:core:external:timer');
 
 // eslint-disable-next-line
-export const getRegisteredExternalModules = (): any[] => {
+export const getRegisteredExternalModules = (): Promise<any>[] => {
   return getModules('external');
 };
 

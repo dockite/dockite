@@ -4,13 +4,8 @@ import debug from 'debug';
 
 import { getConfig } from './config';
 import * as subscribers from './subscribers';
-import { getenv } from './utils';
 
 const log = debug('dockite:core:db');
-
-const useSSL = (): boolean => {
-  return ['t', 'true'].includes(getenv('PG_SSL', 'false').toLowerCase());
-};
 
 const config = getConfig();
 
@@ -27,12 +22,13 @@ export const connect = async (): Promise<Connection> => {
   log('creating database connection');
   const connection = await createConnection({
     type: 'postgres',
-    host: getenv('PG_HOST', 'localhost'),
-    username: getenv('PG_USERNAME', 'dockite'),
-    password: getenv('PG_PASSWORD', 'password'),
-    database: getenv('PG_DATABASE', 'dockite'),
+    host: config.database.host,
+    username: config.database.username,
+    password: config.database.password,
+    database: config.database.database,
+    port: config.database.port,
     subscribers: Object.values(subscribers),
-    ssl: useSSL(),
+    ssl: config.database.ssl ?? false,
     synchronize: true,
     entities: [...Object.values(entities), ...externalEntities],
     logging: ['query', 'error'],

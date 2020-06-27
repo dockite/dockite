@@ -3,21 +3,7 @@ import debug from 'debug';
 
 import { CoreConfiguration } from './common/types/config';
 
-let config: CoreConfiguration = {
-  fields: [
-    '@dockite/field-string',
-    '@dockite/field-boolean',
-    '@dockite/field-number',
-    '@dockite/field-datetime',
-    '@dockite/field-json',
-    '@dockite/field-colorpicker',
-    '@dockite/field-reference',
-    '@dockite/field-reference-of',
-    '@dockite/field-code',
-    '@dockite/field-group',
-    '@dockite/field-variant',
-  ],
-};
+let config: CoreConfiguration;
 
 let hasLoadedConfig = false;
 

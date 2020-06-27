@@ -1,10 +1,18 @@
 export interface CoreConfiguration {
-  entities?: string[];
-  modules?: ModuleConfiguration[];
-  fields?: string[];
-}
+  app: {
+    secret: string;
+  };
 
-export interface ModuleConfiguration {
-  type: 'internal' | 'external';
-  location: string;
+  database: {
+    host: string;
+    username: string;
+    password: string;
+    database: string;
+    port: number;
+    ssl?: boolean;
+  };
+
+  entities?: string[];
+  modules?: Record<'internal' | 'external', string[]>;
+  fields?: string[];
 }

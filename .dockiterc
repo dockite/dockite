@@ -1,0 +1,33 @@
+{
+  "app": {
+    "secret": "secret",
+    "title": "Dockite",
+    "description": "The simpler HeadlessCMS",
+    "graphqlEndpoint": "http://localhost:3000/dockite/graphql/internal"
+  },
+  "database": {
+    "host": "localhost",
+    "username": "dockite",
+    "password": "password",
+    "database": "dockite",
+    "port": 5432
+  },
+  "entities": [],
+  "fields": [
+    "@dockite/field-boolean",
+    "@dockite/field-code",
+    "@dockite/field-colorpicker",
+    "@dockite/field-datetime",
+    "@dockite/field-group",
+    "@dockite/field-json",
+    "@dockite/field-number",
+    "@dockite/field-reference",
+    "@dockite/field-reference",
+    "@dockite/field-string",
+    "@dockite/field-variant"
+  ],
+  "modules": {
+    "internal": [],
+    "external": []
+  }
+}

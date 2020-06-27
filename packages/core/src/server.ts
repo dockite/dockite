@@ -2,25 +2,25 @@
 // import path from 'path';
 import { Server } from 'http';
 
+import { User } from '@dockite/database';
+import { registerField, registerScopes, SchemaManager } from '@dockite/manager';
 import { DockiteFieldStatic } from '@dockite/types';
-import { SchemaManager, registerField, registerScopes } from '@dockite/manager';
 import { ApolloServer } from 'apollo-server-express';
+import cookieParser from 'cookie-parser';
 import debug from 'debug';
 import express, { Express } from 'express';
-import { set } from 'lodash';
-import cookieParser from 'cookie-parser';
-import { User } from '@dockite/database';
-import { getRepository } from 'typeorm';
 import { sign } from 'jsonwebtoken';
+import { set } from 'lodash';
+import { getRepository } from 'typeorm';
 
 import { EXTERNAL_GRAPHQL_PATH, INTERNAL_GRAPHQL_PATH } from './common/constants/core';
+import { scopes } from './common/scopes';
 import { GlobalContext, SessionContext, UserContext } from './common/types';
 import { getConfig } from './config';
 import { DockiteEvents } from './events';
 import { RootModule } from './modules';
 import { ExternalGraphQLModule } from './modules/external';
-import { getenv, verify } from './utils';
-import { scopes } from './common/scopes';
+import { verify } from './utils';
 
 // import { InternalGraphQLModule } from './modules/internal';
 
@@ -74,7 +74,7 @@ export const createServer = async (): Promise<Express> => {
         const bearerSplit = authorization.split('Bearer');
         const token = bearerSplit[bearerSplit.length - 1].trim();
 
-        const user = verify<UserContext>(token, getenv('APP_SECRET', 'secret'));
+        const user = verify<UserContext>(token, config.app.secret ?? '');
 
         return { req, res, user };
       } catch (_) {
@@ -84,21 +84,18 @@ export const createServer = async (): Promise<Express> => {
       }
 
       try {
-        const refresh = verify<UserContext>(
-          req.cookies.refreshToken,
-          getenv('APP_SECRET', 'secret'),
-        );
+        const refresh = verify<UserContext>(req.cookies.refreshToken, config.app.secret ?? '');
 
         const user = await getRepository(User).findOneOrFail(refresh.id);
 
         const [bearerToken, refreshToken] = await Promise.all([
           Promise.resolve(
-            sign({ ...user }, getenv('APP_SECRET', 'secret'), {
+            sign({ ...user }, config.app.secret ?? '', {
               expiresIn: '15m',
             }),
           ),
           Promise.resolve(
-            sign({ ...user }, getenv('APP_SECRET', 'secret'), {
+            sign({ ...user }, config.app.secret ?? '', {
               expiresIn: '3d',
             }),
           ),
