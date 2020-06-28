@@ -1,5 +1,3 @@
-import path from 'path';
-
 import { GraphQLModule } from '@graphql-modules/core';
 import debug from 'debug';
 import { buildTypeDefsAndResolvers } from 'type-graphql';
@@ -33,7 +31,6 @@ export const InternalGraphQLModule = async (): Promise<GraphQLModule<
   const typeDefsAndResolvers = await buildTypeDefsAndResolvers({
     authChecker,
     resolvers: resolverPromises,
-    emitSchemaFile: path.join(__dirname, './schema.gql'),
   });
 
   log('collecting registered modules');

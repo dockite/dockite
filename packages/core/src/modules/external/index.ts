@@ -32,7 +32,6 @@ export const ExternalGraphQLModule = async (): Promise<GraphQLModule<
   const externalSchema = await buildTypeDefsAndResolvers({
     resolvers: resolverPromises,
     // authChecker,
-    // emitSchemaFile: path.join(__dirname, './schema.gql'),
   });
 
   log('collecting registered modules');
