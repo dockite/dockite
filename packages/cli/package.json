@@ -46,7 +46,6 @@
     "@oclif/dev-cli": "^1",
     "@types/node": "^10",
     "@types/unzipper": "^0.10.3",
-    "eslint": "^5.13",
     "globby": "^10"
   },
   "engines": {

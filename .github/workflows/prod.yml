@@ -58,6 +58,7 @@ jobs:
     - run: git config --local user.email "action@github.com"
     - run: git config --local user.name "GitHub Action"
 
+    - run: 'lerna version -m "chore(release): publish packages" --conventional-commits --conventional-graduate --no-push --yes'
     - run: 'lerna version -m "chore(release): publish packages" --conventional-commits --no-push --yes'
     - run: yarn config set access public
     - run: npm config set access public
