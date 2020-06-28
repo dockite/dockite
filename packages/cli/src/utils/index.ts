@@ -27,6 +27,8 @@ export async function buildAdminUI(distPath?: string): Promise<void> {
   register({
     project: path.join(path.dirname(require.resolve('@dockite/admin')), 'tsconfig.json'),
     transpileOnly: true,
+    // eslint-disable-next-line
+    ignore: ['/node_modules\/(?!@dockite\/admin.*)/'],
   });
 
   const loadOptions = {

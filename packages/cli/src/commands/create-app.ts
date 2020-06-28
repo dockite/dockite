@@ -7,9 +7,8 @@ import * as zlib from 'zlib';
 
 import { Command } from '@oclif/command';
 import cli from 'cli-ux';
+import * as chalk from 'chalk';
 import * as unzipper from 'unzipper';
-
-import { buildAdminUI } from '../utils';
 
 export default class CreateApp extends Command {
   static description = 'Create a Dockite application';
@@ -91,10 +90,13 @@ export default class CreateApp extends Command {
     });
 
     cli.action.stop();
-    cli.action.start('Building the Admin UI');
+    console.log('');
 
-    await buildAdminUI(path.join(appPath, 'dist'));
+    console.log(`${chalk.bold(args.appName)} is now created.`);
+    console.log('Get started by running:');
 
-    cli.action.stop();
+    console.log(chalk.green(`cd ${args.appName}`));
+    console.log(chalk.green('yarn install'));
+    console.log(chalk.green('dockite build'));
   }
 }

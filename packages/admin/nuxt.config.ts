@@ -5,14 +5,16 @@ import { cosmiconfigSync } from 'cosmiconfig';
 import { NormalModuleReplacementPlugin } from 'webpack';
 import WebpackInjectPlugin, { ENTRY_ORDER } from 'webpack-inject-plugin';
 
-let dockiteConfig: {
+interface DockiteConfig {
   app: {
     title: string;
     description: string;
     graphqlEndpoint: string;
   };
   fields: string[];
-} = {
+}
+
+let dockiteConfig: DockiteConfig = {
   app: {
     title: 'Dockite',
     description: 'The simpler HeadlessCMS',
@@ -110,7 +112,7 @@ const config: Configuration = {
    ** Build configuration
    */
   build: {
-    transpile: [/^element-ui/],
+    transpile: [/^element-ui/, /^@dockite/],
     babel: {
       presets({ isServer }) {
         const targets = isServer ? { node: '10' } : { ie: '11' };
@@ -128,6 +130,11 @@ const config: Configuration = {
     extend(config, { isClient }) {
       config.resolve = config.resolve ?? {};
 
+      module.paths.push(path.join(process.cwd(), 'node_modules'));
+
+      config.resolve.modules = config.resolve.modules ?? [];
+      config.resolve.modules.push(path.join(process.cwd(), 'node_modules'));
+
       config.resolve.extensions = [
         ...new Set([...(config.resolve.extensions ?? []), '.graphql', '.gql']),
       ];
@@ -136,9 +143,8 @@ const config: Configuration = {
 
       if (!config.module.rules.some(rule => rule.use === 'graphql-tag/loader')) {
         config.module.rules.push({
-          use: 'graphql-tag/loader',
+          loader: 'graphql-tag/loader',
           test: /\.g(raph)?ql$/,
-          exclude: /node_modules/,
         });
       }
 
