@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.5](https://github.com/dockite/dockite/compare/@dockite/field-reference-of@0.2.1...@dockite/field-reference-of@0.2.5) (2020-06-28)
+
+**Note:** Version bump only for package @dockite/field-reference-of
+
+
+
+
+
 ## [0.2.4](https://github.com/dockite/dockite/compare/@dockite/field-reference-of@0.2.1...@dockite/field-reference-of@0.2.4) (2020-06-28)
 
 **Note:** Version bump only for package @dockite/field-reference-of

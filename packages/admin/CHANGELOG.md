@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.3.4](https://github.com/dockite/dockite/compare/@dockite/admin@0.3.0...@dockite/admin@0.3.4) (2020-06-28)
+
+
+### Bug Fixes
+
+* **cli:** resolve node module resolution ([576b89a](https://github.com/dockite/dockite/commit/576b89aea7a519c942c089fad9e2a296cef97200))
+
+
+
+
+
 ## [0.3.3](https://github.com/dockite/dockite/compare/@dockite/admin@0.3.0...@dockite/admin@0.3.3) (2020-06-28)
 
 
