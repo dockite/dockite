@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.3.5](https://github.com/dockite/dockite/compare/@dockite/core@0.3.4...@dockite/core@0.3.5) (2020-06-28)
+
+
+### Bug Fixes
+
+* **core:** disable typegraphql emit ([fd921f0](https://github.com/dockite/dockite/commit/fd921f011c998f2120b29f368c2729222659c65d))
+
+
+
+
+
 ## [0.3.4](https://github.com/dockite/dockite/compare/@dockite/core@0.3.0...@dockite/core@0.3.4) (2020-06-28)
 
 **Note:** Version bump only for package @dockite/core
