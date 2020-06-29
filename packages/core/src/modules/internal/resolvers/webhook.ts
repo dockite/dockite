@@ -45,9 +45,7 @@ export class WebhookResolver {
     return webhook ?? null;
   }
 
-  /**
-   * TODO: Move this to and Connection/Edge model
-   */
+
   @Authenticated()
   @Authorized('internal:webhook:read', { derriveAlternativeScopes: false })
   @Query(_returns => ManyWebhooks)

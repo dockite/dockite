@@ -45,9 +45,7 @@ export class ReleaseResolver {
     return release ?? null;
   }
 
-  /**
-   * TODO: Move this to and Connection/Edge model
-   */
+
   @Authenticated()
   @Authorized('internal:release:read', { derriveAlternativeScopes: false })
   @Query(_returns => ManyReleases)
