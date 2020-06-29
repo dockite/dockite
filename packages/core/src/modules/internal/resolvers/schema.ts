@@ -81,9 +81,7 @@ export class SchemaResolver {
     return schema;
   }
 
-  /**
-   * TODO: Move this to and Connection/Edge model
-   */
+
   @Authenticated()
   @Authorized('internal:schema:read')
   @Query(_returns => ManySchemas)

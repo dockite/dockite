@@ -136,9 +136,6 @@ export class DocumentResolver {
     };
   }
 
-  /**
-   * TODO: Move this to and Connection/Edge model
-   */
   @Authenticated()
   @Authorized('internal:document:read', { derriveAlternativeScopes: false })
   @Query(_returns => ManyDocuments)
@@ -183,9 +180,6 @@ export class DocumentResolver {
     };
   }
 
-  /**
-   * TODO: Move this to and Connection/Edge model
-   */
   @Authenticated()
   @Authorized('internal:document:read', {
     resourceType: 'schema',

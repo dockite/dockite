@@ -48,9 +48,7 @@ export class FieldResolver {
     return field ?? null;
   }
 
-  /**
-   * TODO: Move this to and Connection/Edge model
-   */
+
   @Authenticated()
   @Authorized('internal:schema:read', {
     derriveAlternativeScopes: true,
