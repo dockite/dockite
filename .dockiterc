@@ -3,6 +3,7 @@
     "secret": "secret",
     "title": "Dockite",
     "description": "The simpler HeadlessCMS",
+    "url": "https://localhost:4000",
     "graphqlEndpoint": "http://localhost:3000/dockite/graphql/internal"
   },
   "database": {
@@ -11,6 +12,14 @@
     "password": "password",
     "database": "dockite",
     "port": 5432
+  },
+  "mail": {
+    "host": "smtp.mailgun.org",
+    "username": "user@mailgun.org",
+    "password": "password",
+    "port": 587,
+    "secure": false,
+    "fromAddress": "dockite@dockite.app"
   },
   "entities": [],
   "fields": [
