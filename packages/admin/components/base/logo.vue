@@ -24,7 +24,7 @@ import { Component, Prop, Vue } from 'nuxt-property-decorator';
 @Component
 export default class LogoThumbnailComponent extends Vue {
   @Prop({ default: '#2B6CB0' })
-  readonly fillColor: string;
+  readonly fillColor!: string;
 }
 </script>
 
