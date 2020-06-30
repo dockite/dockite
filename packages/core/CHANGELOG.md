@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.0](https://github.com/dockite/dockite/compare/@dockite/core@0.3.5...@dockite/core@0.4.0-alpha.0) (2020-06-30)
+
+
+### Bug Fixes
+
+* **core:** store connection for cases of reinstantiation ([c59555f](https://github.com/dockite/dockite/commit/c59555ffaec5112256665aeebcac4355598d0b33))
+
+
+### Features
+
+* add user management system ([a157c84](https://github.com/dockite/dockite/commit/a157c845c25cfd3c34a2abe3c251c0e2f74ce530))
+* **core:** add user management resolvers ([815853b](https://github.com/dockite/dockite/commit/815853b927d007ee26717cc8ee81bb4c9ae466c8))
+
+
+
+
+
 ## [0.3.5](https://github.com/dockite/dockite/compare/@dockite/core@0.3.4...@dockite/core@0.3.5) (2020-06-28)
 
 
