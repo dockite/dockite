@@ -1,0 +1,29 @@
+mutation CreateUser(
+  $email: String!
+  $password: String!
+  $firstName: String!
+  $lastName: String!
+  $scopes: [String!]!
+  $roles: [String!]!
+) {
+  createUser(
+    email: $email
+    password: $password
+    firstName: $firstName
+    lastName: $lastName
+    scopes: $scopes
+    roles: $roles
+  ) {
+    id
+    email
+    firstName
+    lastName
+    roles {
+      name
+    }
+    scopes
+    normalizedScopes
+    createdAt
+    updatedAt
+  }
+}

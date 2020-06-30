@@ -1,0 +1,6 @@
+mutation CreateRole($name: String!, $scopes: [String!]!) {
+  createRole(name: $name, roles: $roles) {
+    name
+    scopes
+  }
+}

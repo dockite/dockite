@@ -1,4 +1,4 @@
-import { User, Schema, Document, Webhook, WebhookCall } from '@dockite/database';
+import { User, Schema, Document, Webhook, WebhookCall, Role } from '@dockite/database';
 import { DockiteFieldStatic } from '@dockite/types';
 
 export interface ManyResultsResponse<T> {
@@ -80,6 +80,14 @@ export interface GetDocumentQueryResponse {
   getDocument: Document;
 }
 
+export interface GetUserQueryResponse {
+  getUser: Omit<User, 'handleNormalizeScopes'>;
+}
+
+export interface GetRoleQueryResponse {
+  getRole: Role;
+}
+
 export interface GetSchemaWithFieldsQueryResponse {
   getSchema: Schema;
 }
@@ -147,6 +155,22 @@ export interface AllWebhooksQueryResponse {
   allWebhooks: ManyResultsResponse<AllWebhooksResultItem>;
 }
 
+export type AllUsersResultItem = User;
+
+export interface AllUsersQueryResponse {
+  allUsers: ManyResultsResponse<AllUsersResultItem>;
+}
+
+export type AllRolesResultItem = Role;
+
+export interface AllRolesQueryResponse {
+  allRoles: ManyResultsResponse<AllRolesResultItem>;
+}
+
+export interface AllScopesQueryResponse {
+  allScopes: string[];
+}
+
 export type FindWebhookCallsResultItem = WebhookCall;
 
 export interface FindWebhookCallsQueryResponse {
@@ -159,6 +183,28 @@ export interface CreateWebhookMutationResponse {
 
 export interface DeleteWebhookMutationResponse {
   removeWebhook: boolean;
+}
+
+export interface UpdateUserMutationResponse {
+  updateUser: User;
+}
+export interface CreateUserMutationResponse {
+  createUser: User;
+}
+
+export interface DeleteUserMutationResponse {
+  removeUser: boolean;
+}
+
+export interface UpdateRoleMutationResponse {
+  updateRole: Role;
+}
+export interface CreateRoleMutationResponse {
+  createRole: Role;
+}
+
+export interface DeleteRoleMutationResponse {
+  removeRole: boolean;
 }
 
 export interface UpdateWebhookMutationResponse {

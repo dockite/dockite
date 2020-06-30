@@ -1,0 +1,8 @@
+mutation UpdateRole($name: String!, $scopes: [String!]!) {
+  updateRole(name: $name, scopes: $scopes) {
+    name
+    scopes
+    createdAt
+    updatedAt
+  }
+}

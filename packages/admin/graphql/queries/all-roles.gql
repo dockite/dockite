@@ -1,0 +1,14 @@
+query AllRoles($page: Int!, $perPage: Int) {
+  allRoles(page: $page, perPage: $perPage) {
+    results {
+      name
+      scopes
+      createdAt
+      updatedAt
+    }
+    totalItems
+    currentPage
+    totalPages
+    hasNextPage
+  }
+}
