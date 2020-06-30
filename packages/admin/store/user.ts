@@ -6,9 +6,11 @@ import {
   CreateUserMutationResponse,
   DeleteUserMutationResponse,
   UpdateUserMutationResponse,
+  ResetUserPasswordMutationResponse,
 } from '~/common/types';
 import CreateUserMutation from '~/graphql/mutations/create-user.gql';
 import DeleteUserMutation from '~/graphql/mutations/delete-user.gql';
+import ResetUserPasswordMutation from '~/graphql/mutations/reset-user-password.gql';
 import UpdateUserMutation from '~/graphql/mutations/update-user.gql';
 import * as data from '~/store/data';
 
@@ -99,6 +101,21 @@ export const actions: ActionTree<UserState, RootState> = {
 
     if (!deleteData?.removeUser) {
       throw new Error('Unable to delete user');
+    }
+  },
+
+  async resetUserPassword(_, payload: string): Promise<void> {
+    const { data: resetPasswordData } = await this.$apolloClient.mutate<
+      ResetUserPasswordMutationResponse
+    >({
+      mutation: ResetUserPasswordMutation,
+      variables: {
+        email: payload,
+      },
+    });
+
+    if (!resetPasswordData?.resetUserPassword) {
+      throw new Error('Unable to reset user password');
     }
   },
 };
