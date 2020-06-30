@@ -51,6 +51,16 @@
           <span slot="title">Settings</span>
         </template>
 
+        <el-menu-item index="/settings/users">
+          <i class="el-icon-user"></i>
+          <span slot="title">{{ $t('sideMenu.users') }}</span>
+        </el-menu-item>
+
+        <el-menu-item index="/settings/roles">
+          <i class="el-icon-lock"></i>
+          <span slot="title">{{ $t('sideMenu.roles') }}</span>
+        </el-menu-item>
+
         <el-menu-item index="/settings/webhooks">
           <i class="el-icon-connection"></i>
           <span slot="title">{{ $t('sideMenu.webhooks') }}</span>

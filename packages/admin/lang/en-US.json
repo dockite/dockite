@@ -22,6 +22,8 @@
     "home": "Home",
     "documents": "Documents",
     "schemas": "Schemas",
-    "webhooks": "Webhooks"
+    "webhooks": "Webhooks",
+    "users": "Users",
+    "roles": "Roles"
   }
 }
