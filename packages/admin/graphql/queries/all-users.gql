@@ -1,0 +1,21 @@
+query AllUsers($page: Int!) {
+  allUsers(page: $page) {
+    results {
+      id
+      email
+      firstName
+      lastName
+      roles {
+        name
+      }
+      scopes
+      normalizedScopes
+      createdAt
+      updatedAt
+    }
+    totalItems
+    currentPage
+    totalPages
+    hasNextPage
+  }
+}

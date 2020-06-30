@@ -16,6 +16,7 @@ import {
   Query,
   Resolver,
   Ctx,
+  FieldResolver,
 } from 'type-graphql';
 import { getRepository } from 'typeorm';
 import { GlobalContext } from '@dockite/types';
@@ -174,7 +175,7 @@ export class UserResolver {
   }
 
   @Authenticated()
-  @Authorized('internal:user:create', {
+  @Authorized('internal:user:update', {
     derriveAlternativeScopes: false,
   })
   @Mutation(_returns => User)
@@ -193,7 +194,7 @@ export class UserResolver {
     const userRepository = getRepository(User);
     const roleRepository = getRepository(Role);
 
-    const user = await userRepository.findOneOrFail(email, { relations: ['roles'] });
+    const user = await userRepository.findOneOrFail({ where: { email }, relations: ['roles'] });
 
     if (firstName) {
       user.firstName = firstName;
@@ -266,12 +267,12 @@ export class UserResolver {
     derriveAlternativeScopes: false,
   })
   @Mutation(_returns => Boolean)
-  async removeUser(@Arg('email') email: string): Promise<boolean> {
+  async removeUser(@Arg('id') id: string): Promise<boolean> {
     const repository = getRepository(User);
 
     try {
       const user = await repository.findOneOrFail({
-        where: { email },
+        where: { id },
       });
 
       await repository.remove(user);
@@ -280,5 +281,10 @@ export class UserResolver {
     } catch {
       return false;
     }
+  }
+
+  @FieldResolver()
+  public password(): string {
+    return 'secret';
   }
 }

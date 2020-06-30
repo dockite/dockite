@@ -12,11 +12,6 @@
     "lint": "eslint --ext .ts,.js,.vue --ignore-path .gitignore .",
     "test": "jest"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
   "dependencies": {
     "@dockite/ability": "^0.2.0",
     "@dockite/database": "^0.3.4",
