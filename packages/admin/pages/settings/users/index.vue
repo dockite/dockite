@@ -29,7 +29,11 @@
         <el-table-column prop="updatedAt" label="Updated" :formatter="cellValueFromNow" />
         <el-table-column label="Actions">
           <template slot-scope="scope">
-            <router-link :to="`/settings/users/${scope.row.id}`" style="padding-right: 0.75rem;">
+            <router-link
+              :to="`/settings/users/${scope.row.id}`"
+              style="padding-right: 0.75rem;"
+              title="Update User"
+            >
               <i class="el-icon-edit-outline" />
             </router-link>
 
@@ -39,10 +43,24 @@
               cancel-button-text="No"
               @onConfirm="handleRemoveUser(scope.row.id)"
             >
-              <el-button slot="reference" type="text">
+              <el-button
+                slot="reference"
+                type="text"
+                title="Delete User"
+                style="padding-right: 0.75rem;"
+              >
                 <i class="el-icon-delete" />
               </el-button>
             </el-popconfirm>
+
+            <el-button
+              slot="reference"
+              type="text"
+              title="Reset Password"
+              @click="handleResetUserPassword(scope.row.email)"
+            >
+              <i class="el-icon-unlock" />
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -107,6 +125,15 @@ export default class AllUsersPage extends Vue {
   public async handleRemoveUser(id: string): Promise<void> {
     await this.$store.dispatch(`${user.namespace}/deleteUser`, { userId: id });
     this.fetchAllUsers();
+  }
+
+  public async handleResetUserPassword(email: string): Promise<void> {
+    await this.$store.dispatch(`${user.namespace}/resetUserPassword`, email);
+
+    this.$message({
+      message: `The password for ${email} has been successfully reset, they will receive an email with instructions.`,
+      type: 'success',
+    });
   }
 
   mounted(): void {

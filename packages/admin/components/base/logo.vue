@@ -1,6 +1,6 @@
 <template>
   <svg viewBox="0 0 460 150" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect width="460" height="150" rx="7" fill="#2B6CB0" />
+    <rect width="460" height="150" rx="7" :fill="fillColor" />
     <path
       d="M395.65 7.97749L431.5 25L424.297 73.2149L383.923 45.8917L395.65 7.97749Z"
       fill="white"
@@ -19,10 +19,13 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator';
+import { Component, Prop, Vue } from 'nuxt-property-decorator';
 
 @Component
-export default class LogoComponent extends Vue {}
+export default class LogoThumbnailComponent extends Vue {
+  @Prop({ default: '#2B6CB0' })
+  readonly fillColor: string;
+}
 </script>
 
 <style></style>

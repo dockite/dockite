@@ -224,7 +224,7 @@ export class UserResolver {
     derriveAlternativeScopes: false,
   })
   @Mutation(_returns => User)
-  async resetPassword(
+  async resetUserPassword(
     @Arg('email')
     email: string,
   ): Promise<User | null> {

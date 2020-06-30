@@ -8,6 +8,9 @@
       :text-color="textColor"
       :active-text-color="activeTextColor"
     >
+      <div v-show="!isCollapse" style="height: 50px; padding: 1rem 1rem 0.5rem 1rem; ">
+        <logo fill-color="transparent" height="100%" />
+      </div>
       <el-menu-item index="/">
         <i class="el-icon-s-home"></i>
         <span slot="title">{{ $t('sideMenu.home') }}</span>
@@ -92,11 +95,17 @@ import { Fragment } from 'vue-fragment';
 import { AllSchemasResultItem, ManyResultSet } from '../../common/types';
 
 import { NAV_BACKGROUND_COLOR, NAV_ACTIVE_TEXT_COLOR, NAV_TEXT_COLOR } from '~/common/constants';
+import LogoThumbnail from '~/components/base/logo-thumbnail.vue';
+import Logo from '~/components/base/logo.vue';
 import { namespace } from '~/store/auth';
 import * as data from '~/store/data';
 
 @Component({
-  components: { Fragment },
+  components: {
+    Fragment,
+    Logo,
+    LogoThumbnail,
+  },
 })
 export default class SideMenuComponent extends Vue {
   public isCollapse = false;

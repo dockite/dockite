@@ -196,6 +196,10 @@ export interface DeleteUserMutationResponse {
   removeUser: boolean;
 }
 
+export interface ResetUserPasswordMutationResponse {
+  resetUserPassword: User;
+}
+
 export interface UpdateRoleMutationResponse {
   updateRole: Role;
 }
