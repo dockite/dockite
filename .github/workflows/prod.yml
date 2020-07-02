@@ -2,7 +2,7 @@ name: Dockite CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, develop ]
 
 jobs:
   build:
@@ -23,13 +23,64 @@ jobs:
 
     - run: lerna bootstrap
     - run: lerna run build --scope @dockite/types
-    - run: lerna run build --scope @dockite/manager
+    - run: lerna run build --scope @dockite/manager --scope @dockite/where-builder
     - run: lerna run build --ignore @dockite/admin --ignore @dockite/core --ignore @dockite/field-* --parallel
     - run: lerna run build --scope @dockite/field-* --parallel
     - run: lerna run build --scope @dockite/core --scope @dockite/admin --parallel
 
-  publish:
+  publish-dev:
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/develop'
+    needs: build
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        persist-credentials: false
+        fetch-depth: 0
+
+    - name: Use Node.js 14.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: '14.x'
+        registry-url: 'https://registry.npmjs.org'
+        scope: '@octocat'
+        always-auth: true
+
+    - run: yarn global add lerna
+    - run: echo "::add-path::$(yarn global bin)"
+
+    - run: lerna bootstrap
+    - run: lerna run build --scope @dockite/types
+    - run: lerna run build --scope @dockite/manager --scope @dockite/where-builder --parallel
+    - run: lerna run build --ignore @dockite/admin --ignore @dockite/core --ignore @dockite/field-* --parallel
+    - run: lerna run build --scope @dockite/field-* --parallel
+    - run: lerna run build --scope @dockite/core --scope @dockite/admin --parallel
+
+    # Actions bot was stealing my commits >:(
+    - run: git config --local user.email "me@lucasjamessmith.me"
+    - run: git config --local user.name "Mythie"
+
+    - run: 'lerna version -m "chore(release): publish packages" --conventional-commits --conventional-prerelease --no-push --yes'
+    - run: yarn config set access public
+    - run: npm config set access public
+    - run: |
+        npm config set //registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN
+        lerna publish from-git --yes
+      env:
+        CI: true
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        branch: develop
+        github_token: ${{ secrets.GH_PAT }}
+        tags: true
+
+
+  publish-prod:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
     needs: build
     steps:
     - uses: actions/checkout@v2
