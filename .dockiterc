@@ -31,7 +31,7 @@
     "@dockite/field-json",
     "@dockite/field-number",
     "@dockite/field-reference",
-    "@dockite/field-reference",
+    "@dockite/field-reference-of",
     "@dockite/field-string",
     "@dockite/field-variant"
   ],

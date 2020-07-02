@@ -8,6 +8,7 @@
       <el-steps :active="step" simple class="dockite-steps--create-schema" finish-status="success">
         <el-step title="Name" />
         <el-step title="Fields" />
+        <el-step title="Settings" />
         <el-step title="Review" />
       </el-steps>
 
@@ -20,7 +21,13 @@
           @next-step="stepForwards"
         />
         <step-two v-show="step === 1" ref="step-2" @field-data="handleFieldData" />
-        <step-three v-show="step === 2" ref="step-3" v-bind="createSchemaForm" />
+        <step-three
+          v-show="step === 2"
+          ref="step-3"
+          v-model="createSchemaForm.settings"
+          :schema="createSchemaForm"
+        />
+        <step-four v-show="step === 3" ref="step-4" v-bind="createSchemaForm" />
       </div>
 
       <div class="dockite-schema--stepper">
@@ -42,11 +49,12 @@ import Logo from '~/components/base/logo.vue';
 import StepOne from '~/components/schemas/create/step-1.vue';
 import StepTwo from '~/components/schemas/create/step-2.vue';
 import StepThree from '~/components/schemas/create/step-3.vue';
+import StepFour from '~/components/schemas/create/step-4.vue';
 import * as auth from '~/store/auth';
 import * as schema from '~/store/schema';
 
 const MIN_STEP = 0;
-const MAX_STEP = 2;
+const MAX_STEP = 3;
 
 interface StepFormComponent extends Vue {
   submit(): Promise<void>;
@@ -57,6 +65,7 @@ interface CreateSchemaForm {
   title: string;
   fields: Omit<Field, 'id' | 'schemaId' | 'dockiteField' | 'schema'>[];
   groups: Record<string, string[]>;
+  settings: Record<string, any>;
 }
 
 @Component({
@@ -66,6 +75,7 @@ interface CreateSchemaForm {
     StepOne,
     StepTwo,
     StepThree,
+    StepFour,
   },
 })
 export default class CreateSchemaPage extends Vue {
@@ -76,6 +86,7 @@ export default class CreateSchemaPage extends Vue {
     title: '',
     fields: [],
     groups: {},
+    settings: {},
   };
 
   get user(): string {
