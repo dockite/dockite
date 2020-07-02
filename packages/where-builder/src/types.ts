@@ -1,6 +1,8 @@
 import { WhereExpression } from 'typeorm';
 
 export const SupportedOperators = [
+  '$like',
+  '$ilike',
   '$eq',
   '$ne',
   '$gt',
@@ -11,8 +13,6 @@ export const SupportedOperators = [
   '$lt_date',
   '$lte',
   '$lte_date',
-  '$like',
-  '$ilike',
   '$regex',
   '$array_contains',
   '$null',
