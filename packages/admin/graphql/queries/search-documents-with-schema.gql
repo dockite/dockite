@@ -1,5 +1,5 @@
-query searchDocumentsWithSchema($term: String!, $schemaId: String, $page: Int = 1) {
-  searchDocuments(term: $term, schemaId: $schemaId, page: $page) {
+query searchDocumentsWithSchema($term: String!, $schemaId: String, $page: Int = 1, $sort: SortInputType) {
+  searchDocuments(term: $term, schemaId: $schemaId, page: $page, sort: $sort) {
     results {
       id
       locale

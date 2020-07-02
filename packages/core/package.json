@@ -17,6 +17,7 @@
     "@dockite/manager": "^0.2.0",
     "@dockite/transformer": "^0.2.0",
     "@dockite/types": "^0.2.0",
+    "@dockite/where-builder": "^0.1.0",
     "@graphql-modules/core": "^0.7.14",
     "@typescript-eslint/eslint-plugin": "^2.20.0",
     "@typescript-eslint/parser": "^2.20.0",

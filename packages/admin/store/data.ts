@@ -1,38 +1,39 @@
-import { Document, Schema, User, Role } from '@dockite/database';
-import { DockiteFieldStatic } from '@dockite/types';
+import { Document, Role, Schema, User } from '@dockite/database';
+import { DockiteFieldStatic, DockiteGraphqlSortInput } from '@dockite/types';
+import { AndQuery, Constraint } from '@dockite/where-builder';
 import Vue from 'vue';
 import { ActionTree, GetterTree, MutationTree } from 'vuex';
 
 import { RootState } from '.';
 
 import {
-  AllDocumentsWithSchemaQueryResponse,
-  AllDocumentsWithSchemaResultItem,
-  AllSchemasQueryResponse,
-  AllSchemasResultItem,
-  FindDocumentResultItem,
-  FindDocumentsQueryResponse,
-  GetDocumentQueryResponse,
-  GetUserQueryResponse,
-  AvailableFieldsQueryResponse,
-  GetSchemaWithFieldsQueryResponse,
-  ManyResultSet,
-  AllWebhooksQueryResponse,
-  AllWebhooksResultItem,
-  FindWebhookCallsQueryResponse,
-  FindWebhookCallsResultItem,
-  SearchDocumentsWithSchemaResultItem,
-  SearchDocumentsWithSchemaQueryResponse,
-  AllSchemaRevisionsResultItem,
-  AllSchemaRevisionsQueryResponse,
   AllDocumentRevisionsQueryResponse,
   AllDocumentRevisionsResultItem,
-  AllUsersResultItem,
-  AllUsersQueryResponse,
+  AllDocumentsWithSchemaQueryResponse,
+  AllDocumentsWithSchemaResultItem,
   AllRolesQueryResponse,
   AllRolesResultItem,
+  AllSchemaRevisionsQueryResponse,
+  AllSchemaRevisionsResultItem,
+  AllSchemasQueryResponse,
+  AllSchemasResultItem,
   AllScopesQueryResponse,
+  AllUsersQueryResponse,
+  AllUsersResultItem,
+  AllWebhooksQueryResponse,
+  AllWebhooksResultItem,
+  AvailableFieldsQueryResponse,
+  FindDocumentResultItem,
+  FindDocumentsQueryResponse,
+  FindWebhookCallsQueryResponse,
+  FindWebhookCallsResultItem,
+  GetDocumentQueryResponse,
   GetRoleQueryResponse,
+  GetSchemaWithFieldsQueryResponse,
+  GetUserQueryResponse,
+  ManyResultSet,
+  SearchDocumentsWithSchemaQueryResponse,
+  SearchDocumentsWithSchemaResultItem,
 } from '~/common/types';
 import AllDocumentRevisionsQuery from '~/graphql/queries/all-document-revisions.gql';
 import AllDocumentsWithSchemaQuery from '~/graphql/queries/all-documents-with-schema.gql';
@@ -51,6 +52,19 @@ import GetRoleQuery from '~/graphql/queries/get-role.gql';
 import GetSchemaWithFieldsQuery from '~/graphql/queries/get-schema-with-fields.gql';
 import GetUserQuery from '~/graphql/queries/get-user.gql';
 import SearchDocumentsWithSchemaQuery from '~/graphql/queries/search-documents-with-schema.gql';
+
+interface PaginationPayload {
+  page: number;
+  perPage: number;
+}
+
+interface SortablePayload {
+  sort: DockiteGraphqlSortInput;
+}
+
+interface FilterablePayload {
+  filters: Constraint[];
+}
 
 export interface DataState {
   allSchemas: ManyResultSet<AllSchemasResultItem>;
@@ -210,10 +224,13 @@ export const actions: ActionTree<DataState, RootState> = {
     commit('setAllSchemas', data);
   },
 
-  async fetchAllDocumentsWithSchema({ commit }, payload = 1): Promise<void> {
+  async fetchAllDocumentsWithSchema(
+    { commit },
+    payload: PaginationPayload & SortablePayload,
+  ): Promise<void> {
     const { data } = await this.$apolloClient.query<AllDocumentsWithSchemaQueryResponse>({
       query: AllDocumentsWithSchemaQuery,
-      variables: { page: payload },
+      variables: { ...payload },
     });
 
     if (!data.allDocuments) {
@@ -225,7 +242,7 @@ export const actions: ActionTree<DataState, RootState> = {
 
   async fetchAllSchemaRevisionsForSchema(
     { commit },
-    payload: { schemaId: string; perPage?: Number },
+    payload: { schemaId: string } & PaginationPayload,
   ): Promise<void> {
     const { data } = await this.$apolloClient.query<AllSchemaRevisionsQueryResponse>({
       query: AllSchemaRevisionsQuery,
@@ -244,7 +261,7 @@ export const actions: ActionTree<DataState, RootState> = {
   },
   async fetchAllDocumentRevisionsForDocument(
     { commit },
-    payload: { documentId: string; perPage?: Number },
+    payload: { documentId: string } & PaginationPayload,
   ): Promise<void> {
     const { data } = await this.$apolloClient.query<AllDocumentRevisionsQueryResponse>({
       query: AllDocumentRevisionsQuery,
@@ -264,7 +281,7 @@ export const actions: ActionTree<DataState, RootState> = {
 
   async fetchSearchDocumentsWithSchema(
     { commit },
-    payload: { term: string; schemaId?: string; page?: number },
+    payload: { term: string; schemaId?: string } & PaginationPayload & SortablePayload,
   ): Promise<void> {
     const { data } = await this.$apolloClient.query<SearchDocumentsWithSchemaQueryResponse>({
       query: SearchDocumentsWithSchemaQuery,
@@ -320,11 +337,26 @@ export const actions: ActionTree<DataState, RootState> = {
 
   async fetchFindDocumentsBySchemaId(
     { commit },
-    payload: { schemaId: string; page?: number },
+    payload: { schemaId: string } & SortablePayload & FilterablePayload & PaginationPayload,
   ): Promise<void> {
+    const variables: {
+      id: string;
+      page: number;
+      sort?: DockiteGraphqlSortInput;
+      where?: AndQuery;
+    } = {
+      id: payload.schemaId,
+      page: payload.page ?? 1,
+      sort: payload.sort,
+    };
+
+    if (payload.filters.length > 0) {
+      variables.where = { AND: payload.filters };
+    }
+
     const { data } = await this.$apolloClient.query<FindDocumentsQueryResponse>({
       query: FindDocumentsBySchemaIdQuery,
-      variables: { id: payload.schemaId, page: payload.page ?? 1 },
+      variables,
     });
 
     if (!data.findDocuments) {
@@ -336,15 +368,15 @@ export const actions: ActionTree<DataState, RootState> = {
 
   async fetchFindDocumentsBySchemaIds(
     { commit },
-    payload: { schemaIds: string[]; page?: number },
+    payload: { schemaIds: string[] } & Partial<PaginationPayload> & SortablePayload,
   ): Promise<void> {
     const { data } = await this.$apolloClient.query<FindDocumentsQueryResponse>({
       query: FindDocumentsBySchemaIdsQuery,
-      variables: { ids: payload.schemaIds, page: payload.page ?? 1 },
+      variables: { ids: payload.schemaIds, page: payload.page ?? 1, sort: payload.sort },
     });
 
     if (!data.findDocuments) {
-      throw new Error('graphql: allDocumentsWithSchema could not be fetched');
+      throw new Error('graphql: fetchFindDocumentsBySchemaIds could not be fetched');
     }
 
     commit('setFindDocumentsBySchemaIds', data);
@@ -404,7 +436,7 @@ export const actions: ActionTree<DataState, RootState> = {
     commit('setUser', data);
   },
 
-  async fetchAllRoles({ commit }, payload?: { page?: number; perPage?: number }): Promise<void> {
+  async fetchAllRoles({ commit }, payload?: PaginationPayload): Promise<void> {
     let variables = { page: 1, perPage: 20 };
 
     if (payload) {
@@ -457,7 +489,7 @@ export const actions: ActionTree<DataState, RootState> = {
 
   async fetchFindWebhookCallsByWebhookId(
     { commit },
-    payload: { webhookId: string; page?: number },
+    payload: { webhookId: string } & Partial<PaginationPayload>,
   ): Promise<void> {
     const { data } = await this.$apolloClient.query<FindWebhookCallsQueryResponse>({
       query: FindWebhookCallsByWebhookIdQuery,

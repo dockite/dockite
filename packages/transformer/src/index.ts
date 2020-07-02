@@ -8,6 +8,7 @@ import {
   GlobalContext,
   Schema,
 } from '@dockite/types';
+import { WhereBuilder, WhereBuilderInputType } from '@dockite/where-builder';
 import debug from 'debug';
 import {
   GraphQLBoolean,
@@ -193,13 +194,18 @@ export const createQueriesForEntity = async <T extends Document>(
       args: {
         page: { type: GraphQLInt, defaultValue: 1 },
         perPage: { type: GraphQLInt, defaultValue: 25 },
+        where: { type: WhereBuilderInputType },
       },
-      async resolve(_context, { page, perPage }): Promise<FindManyResult<any>> {
+      async resolve(_context, { where, page, perPage }): Promise<FindManyResult<any>> {
         const qb = repository
           .createQueryBuilder('document')
-          .where('document.schemaId = :schemaId', { schemaId: entity.id })
-          .take(perPage)
-          .skip(perPage * (page - 1));
+          .where('document.schemaId = :schemaId', { schemaId: entity.id });
+
+        if (where) {
+          WhereBuilder.Build(qb, where);
+        }
+
+        qb.take(perPage).skip(perPage * (page - 1));
 
         const [results, totalItems] = await qb.getManyAndCount();
 
