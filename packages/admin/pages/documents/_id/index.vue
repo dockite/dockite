@@ -28,6 +28,8 @@
                 :name="field.name"
                 :field-config="field"
                 :form-data="form"
+                :schema="schema"
+                :groups="groups"
               >
               </component>
             </el-tab-pane>
