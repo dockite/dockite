@@ -55,8 +55,9 @@ jobs:
     - run: lerna run build --scope @dockite/field-* --parallel
     - run: lerna run build --scope @dockite/core --scope @dockite/admin --parallel
 
-    - run: git config --local user.email "action@github.com"
-    - run: git config --local user.name "GitHub Action"
+    # Actions bot was stealing my commits >:(
+    - run: git config --local user.email "me@lucasjamessmith.me"
+    - run: git config --local user.name "Mythie"
 
     - run: 'lerna version -m "chore(release): publish packages" --conventional-commits --conventional-graduate --no-push --yes'
     - run: 'lerna version -m "chore(release): publish packages" --conventional-commits --no-push --yes'
