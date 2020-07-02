@@ -1,79 +1,44 @@
 <template>
   <div class="create-schema-step-1-component">
-    <h3>Finally, lets review the Schema</h3>
+    <h3>Next, lets configre the Settings</h3>
 
     <p class="dockite-text--subtitle">
-      We've given our Schema a name and added the fields we desire. Before we create the Schema
-      let's quickly take a second to ensure it is all correct.
+      Next up lets configure the schema, we can define the fields that will be displayed in views
+      and other useful details that will help manage our content.
     </p>
 
-    <h2 style="margin-top: 1.5rem;">
-      Details for <strong>{{ name }}</strong>
-    </h2>
-    <el-collapse :value="['groups', 'fields']">
-      <el-collapse-item name="groups" title="Groups">
-        <ul>
-          <li v-for="group in Object.keys(groups)" :key="group">
-            <span>
-              {{ group }}
-            </span>
-
-            <el-tag size="mini"> {{ groups[group].length }} Fields </el-tag>
-          </li>
-        </ul>
-      </el-collapse-item>
-      <el-collapse-item name="fields" title="Fields">
-        <ul>
-          <li v-for="field in fields" :key="field.name">
-            <span>
-              {{ field.title }}
-            </span>
-
-            <el-tag size="mini">type:{{ field.type }}</el-tag>
-            <el-tag size="mini">group:{{ getGroupByFieldName(field.name) }}</el-tag>
-          </li>
-        </ul>
-      </el-collapse-item>
-    </el-collapse>
+    <schema-settings v-model="settings" :schema="schema" />
   </div>
 </template>
 
 <script lang="ts">
-import { Field } from '@dockite/database';
+import { Schema } from '@dockite/database';
 import { Component, Vue, Prop } from 'nuxt-property-decorator';
 import { Fragment } from 'vue-fragment';
 
 import Logo from '~/components/base/logo.vue';
-import * as auth from '~/store/auth';
+import SchemaSettings from '~/components/schemas/schema-settings.vue';
 
 @Component({
   components: {
     Fragment,
     Logo,
+    SchemaSettings,
   },
 })
 export default class CreateSchemaStepThreeComponent extends Vue {
   @Prop({ required: true })
-  readonly name!: string;
+  readonly value!: Record<string, any>;
 
   @Prop({ required: true })
-  readonly fields!: Omit<Field, 'id' | 'schemaId' | 'dockiteField' | 'schema'>[];
+  readonly schema!: Schema;
 
-  @Prop({ required: true })
-  readonly groups!: Record<string, string[]>;
-
-  get user(): string {
-    return this.$store.getters[`${auth.namespace}/fullName`];
+  get settings(): Record<string, any> {
+    return this.value;
   }
 
-  public getGroupByFieldName(fieldName: string): string {
-    for (const group of Object.keys(this.groups)) {
-      if (this.groups[group].some(field => field === fieldName)) {
-        return group;
-      }
-    }
-
-    return '';
+  set settings(newValue: Record<string, any>) {
+    this.$emit('input', newValue);
   }
 
   public submit(): void {}
