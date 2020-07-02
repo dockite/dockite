@@ -23,20 +23,22 @@
   },
   "entities": [],
   "fields": [
+    "@dockite/field-s3-image",
+    "@dockite/field-string",
+    "@dockite/field-number",
     "@dockite/field-boolean",
-    "@dockite/field-code",
     "@dockite/field-colorpicker",
     "@dockite/field-datetime",
-    "@dockite/field-group",
     "@dockite/field-json",
-    "@dockite/field-number",
+    "@dockite/field-group",
     "@dockite/field-reference",
     "@dockite/field-reference-of",
-    "@dockite/field-string",
     "@dockite/field-variant"
   ],
   "modules": {
-    "internal": [],
+    "internal": [
+      "@dockite/module-s3-presign"
+    ],
     "external": []
   }
 }

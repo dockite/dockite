@@ -6,7 +6,22 @@ const config = getConfig();
 export const getModules = (type: 'internal' | 'external' = 'internal'): Promise<any>[] => {
   if (config.modules && config.modules[type] && config.modules[type].length > 0) {
     return config.modules[type].map(
-      (mod): Promise<any> => import(mod).then(res => Promise.resolve(res)),
+      (mod): Promise<any> =>
+        import(mod)
+          .then(res => {
+            if (res.default) {
+              return Promise.resolve(res.default);
+            }
+
+            return Promise.resolve(res);
+          })
+          .then(res => {
+            if (typeof res === 'function') {
+              return res();
+            }
+
+            return res;
+          }),
     );
   }
 
