@@ -5,7 +5,7 @@
     </portal>
 
     <div class="import-schema-page">
-      <import-editor v-model="payload" style="height: 60vh;" />
+      <json-editor v-model="payload" style="height: 60vh;" />
       <div style="padding-top: 1rem;" />
       <el-row type="flex" justify="space-between" align="middle">
         <el-button type="text" @click="$router.go(-1)">Cancel</el-button>
@@ -23,14 +23,14 @@ import { omit } from 'lodash';
 import { Component, Vue, Watch } from 'nuxt-property-decorator';
 import { Fragment } from 'vue-fragment';
 
-import ImportEditor from '~/components/schemas/import-editor.vue';
+import JsonEditor from '~/components/base/json-editor.vue';
 import * as data from '~/store/data';
 import * as schema from '~/store/schema';
 
 @Component({
   components: {
     Fragment,
-    ImportEditor,
+    JsonEditor,
   },
 })
 export default class ImportSchemaWithIdPage extends Vue {

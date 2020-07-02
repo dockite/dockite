@@ -1,6 +1,10 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { Document, DocumentRevision, Schema, SearchEngineRepository } from '@dockite/database';
+import { HookContext, HookContextWithOldData } from '@dockite/types';
+import { QueryBuilder, WhereBuilder, WhereBuilderInputType } from '@dockite/where-builder';
 import GraphQLJSON from 'graphql-type-json';
+import { cloneDeep } from 'lodash';
 import {
   Arg,
   Ctx,
@@ -11,13 +15,13 @@ import {
   Query,
   Resolver,
 } from 'type-graphql';
-import { getCustomRepository, getRepository, Not, IsNull } from 'typeorm';
-import { cloneDeep } from 'lodash';
-import { HookContextWithOldData, HookContext } from '@dockite/types';
-import { Document, Schema, SearchEngineRepository, DocumentRevision } from '@dockite/database';
+import { FindManyOptions, getCustomRepository, getRepository, IsNull, Not } from 'typeorm';
 
 import { Authenticated, Authorized } from '../../../common/decorators';
 import { GlobalContext } from '../../../common/types';
+import { strToColumnPath } from '../../../utils';
+
+import { SortInputType } from './inputs/sort';
 
 @ObjectType()
 class ManyDocuments {
@@ -84,10 +88,14 @@ export class DocumentResolver {
     schemaId: string | null,
     @Arg('schemaIds', _type => [String], { nullable: true })
     schemaIds: string | null,
+    @Arg('where', _type => WhereBuilderInputType, { nullable: true })
+    where: QueryBuilder | null,
     @Arg('page', _type => Int, { defaultValue: 1 })
     page: number,
     @Arg('perPage', _type => Int, { defaultValue: 20 })
     perPage: number,
+    @Arg('sort', _type => SortInputType, { nullable: true })
+    sort: SortInputType | null,
   ): Promise<ManyDocuments> {
     const repository = getRepository(Document);
 
@@ -105,9 +113,27 @@ export class DocumentResolver {
       qb.andWhere('document.schemaId IN (:...schemaIds)', { schemaIds });
     }
 
-    qb.take(perPage)
-      .skip(perPage * (page - 1))
-      .orderBy('document.updatedAt', 'DESC');
+    if (where) {
+      WhereBuilder.Build(qb, where);
+    }
+
+    if (sort) {
+      const columnPath = strToColumnPath(sort.name);
+
+      // This handle the case where typeorm can't add abritary orderBy's to a query
+      // by adding the column to order by to the select column we can avoid breaking typeorm
+      // and successfully get our results.
+      if (sort.name.startsWith('data')) {
+        qb.addSelect(`document.${strToColumnPath(sort.name)}`, 'sorter');
+        qb.orderBy('sorter', sort.direction);
+      } else {
+        qb.orderBy(`document.${columnPath}`, sort.direction);
+      }
+    } else {
+      qb.orderBy('document.updatedAt', 'DESC');
+    }
+
+    qb.take(perPage).skip(perPage * (page - 1));
 
     const [results, totalItems] = await qb.getManyAndCount();
 
@@ -136,6 +162,7 @@ export class DocumentResolver {
     };
   }
 
+  // TODO: Update to query builder
   @Authenticated()
   @Authorized('internal:document:read', { derriveAlternativeScopes: false })
   @Query(_returns => ManyDocuments)
@@ -144,16 +171,23 @@ export class DocumentResolver {
     page: number,
     @Arg('perPage', _type => Int, { defaultValue: 20 })
     perPage: number,
+    @Arg('sort', _type => SortInputType, { nullable: true })
+    sort: SortInputType | null,
   ): Promise<ManyDocuments> {
     const repository = getRepository(Document);
 
-    const [results, totalItems] = await repository.findAndCount({
-      where: { deletedAt: null },
+    const findOptions: FindManyOptions = {
       relations: ['schema', 'schema.fields'],
       order: { updatedAt: 'DESC' },
       take: perPage,
       skip: perPage * (page - 1),
-    });
+    };
+
+    if (sort) {
+      findOptions.order = { [sort.name]: sort.direction };
+    }
+
+    const [results, totalItems] = await repository.findAndCount(findOptions);
 
     await Promise.all(
       results.map(async item => {
@@ -194,6 +228,8 @@ export class DocumentResolver {
     page: number,
     @Arg('perPage', _type => Int, { defaultValue: 20 })
     perPage: number,
+    @Arg('sort', _type => SortInputType, { nullable: true })
+    sort: SortInputType | null,
   ): Promise<ManyDocuments> {
     const repository = getCustomRepository(SearchEngineRepository);
 
@@ -203,8 +239,13 @@ export class DocumentResolver {
       .leftJoinAndSelect('searchEngine.schema', 'schema')
       .leftJoinAndSelect('schema.fields', 'fields')
       .take(perPage)
-      .skip(perPage * (page - 1))
-      .orderBy('searchEngine.updatedAt', 'DESC');
+      .skip(perPage * (page - 1));
+
+    if (sort) {
+      qb.orderBy(`searchEngine.${strToColumnPath(sort.name)}`, sort.direction);
+    } else {
+      qb.orderBy('searchEngine.updatedAt', 'DESC');
+    }
 
     if (schemaId && schemaId !== '') {
       qb.andWhere('searchEngine.schemaId = :schemaId', { schemaId });

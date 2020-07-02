@@ -25,15 +25,6 @@ export default class ImportEditorComponent extends Vue {
 
   public editor!: CodeMirror.EditorFromTextArea;
 
-  public loadScript(location: string): Promise<void> {
-    return new Promise(resolve => {
-      const script = window.document.createElement('script');
-      script.src = location;
-      script.onload = () => resolve();
-      window.document.body.appendChild(script);
-    });
-  }
-
   mounted(): void {
     if (!this.editor) {
       (window as any).jsonlint = jsonlint;

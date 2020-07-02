@@ -22,22 +22,22 @@
 
     <div class="all-documents-page">
       <el-table :data="allSchemas.results" style="width: 100%">
-        <el-table-column prop="id" label="ID">
+        <el-table-column prop="id" label="ID" sortable>
           <template slot-scope="scope">
             <router-link :to="`/schemas/${scope.row.id}`">
               {{ scope.row.id | shortDesc }}
             </router-link>
           </template>
         </el-table-column>
-        <el-table-column prop="title" label="Schema">
+        <el-table-column prop="title" label="Schema" sortable>
           <template slot-scope="scope">
             <router-link :to="`/schemas/${scope.row.id}`">
               {{ scope.row.title | shortDesc }}
             </router-link>
           </template>
         </el-table-column>
-        <el-table-column prop="createdAt" label="Created" :formatter="cellValueFromNow" />
-        <el-table-column prop="updatedAt" label="Updated" :formatter="cellValueFromNow" />
+        <el-table-column prop="createdAt" label="Created" :formatter="cellValueFromNow" sortable />
+        <el-table-column prop="updatedAt" label="Updated" :formatter="cellValueFromNow" sortable />
         <el-table-column label="Actions">
           <span slot-scope="scope" class="dockite-table--actions">
             <router-link title="Edit Schema" :to="`/schemas/${scope.row.id}/edit`">

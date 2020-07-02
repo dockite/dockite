@@ -16,3 +16,13 @@ export enum RequestMethod {
   POST = 'POST',
   PUT = 'PUT',
 }
+
+export enum TableSortDirection {
+  ASC = 'ascending',
+  DESC = 'descending',
+}
+
+export interface TableSortChangeEvent {
+  prop: string;
+  order: TableSortDirection;
+}

@@ -20,8 +20,9 @@
         :loading="documents.results.length === 0"
         :data="documents.results"
         style="width: 100%"
+        @sort-change="handleSortChange"
       >
-        <el-table-column prop="id" label="ID">
+        <el-table-column prop="id" label="ID" sortable="custom">
           <template slot-scope="scope">
             <router-link :to="`/documents/${scope.row.id}`">
               {{ scope.row.id | shortDesc }}
@@ -51,8 +52,18 @@
             </router-link>
           </template>
         </el-table-column>
-        <el-table-column prop="createdAt" label="Created" :formatter="cellValueFromNow" />
-        <el-table-column prop="updatedAt" label="Updated" :formatter="cellValueFromNow" />
+        <el-table-column
+          prop="createdAt"
+          label="Created"
+          :formatter="cellValueFromNow"
+          sortable="custom"
+        />
+        <el-table-column
+          prop="updatedAt"
+          label="Updated"
+          :formatter="cellValueFromNow"
+          sortable="custom"
+        />
         <el-table-column label="Actions">
           <span slot-scope="scope" class="dockite-table--actions">
             <router-link title="Edit Document" :to="`/documents/${scope.row.id}`">
@@ -87,6 +98,8 @@
 
 <script lang="ts">
 import { User } from '@dockite/database';
+import { DockiteGraphqlSortInput } from '@dockite/types';
+import { DockiteSortDirection } from '@dockite/types/src';
 import { formatDistanceToNow } from 'date-fns';
 import { debounce } from 'lodash';
 import { Component, Vue, Watch } from 'nuxt-property-decorator';
@@ -96,6 +109,8 @@ import {
   ManyResultSet,
   FindDocumentResultItem,
   AllDocumentsWithSchemaResultItem,
+  TableSortChangeEvent,
+  TableSortDirection,
 } from '../../common/types';
 
 import * as auth from '~/store/auth';
@@ -109,6 +124,10 @@ import * as data from '~/store/data';
 export default class AllDocumentsPage extends Vue {
   public term = '';
 
+  public termDebounced = '';
+
+  public sortConfig: DockiteGraphqlSortInput | null = null;
+
   get documents(): ManyResultSet<FindDocumentResultItem | AllDocumentsWithSchemaResultItem> {
     const state: data.DataState = this.$store.state[data.namespace];
 
@@ -116,7 +135,11 @@ export default class AllDocumentsPage extends Vue {
       return state.findDocumentsBySchemaIds;
     }
 
-    return this.term === '' ? state.allDocumentsWithSchema : state.searchDocumentsWithSchema;
+    if (this.term !== '') {
+      return state.searchDocumentsWithSchema;
+    }
+
+    return state.allDocumentsWithSchema;
   }
 
   get user(): User | null {
@@ -159,54 +182,77 @@ export default class AllDocumentsPage extends Vue {
     return this.$ability.can(this.user?.normalizedScopes ?? [], 'internal:document:read');
   }
 
-  public fetchAllDocumentsWithSchema(page = 1): void {
-    this.$store.dispatch(`${data.namespace}/fetchAllDocumentsWithSchema`, page);
+  get fetchTriggers(): object {
+    return {
+      schemaIds: this.schemaIds,
+      term: this.termDebounced,
+      sort: this.sortConfig,
+    };
   }
 
-  public fetchFindDocumentsBySchemaIds(page = 1): void {
-    this.$store.dispatch(`${data.namespace}/fetchFindDocumentsBySchemaIds`, {
-      schemaIds: this.schemaIds,
+  public fetchDocuments(page = 1): void {
+    if (!this.canViewAllDocuments) {
+      this.$store.dispatch(`${data.namespace}/fetchFindDocumentsBySchemaIds`, {
+        schemaIds: this.schemaIds,
+        page,
+        sort: this.sortConfig,
+      });
+
+      return;
+    }
+
+    if (this.termDebounced !== '') {
+      this.$store.dispatch(`${data.namespace}/fetchSearchDocumentsWithSchema`, {
+        term: this.termDebounced,
+        page,
+        sort: this.sortConfig,
+      });
+
+      return;
+    }
+
+    this.$store.dispatch(`${data.namespace}/fetchAllDocumentsWithSchema`, {
       page,
+      sort: this.sortConfig,
     });
   }
 
-  public fetchSearchDocumentsWithSchema(term: string, page = 1): void {
-    this.$store.dispatch(`${data.namespace}/fetchSearchDocumentsWithSchema`, { term, page });
+  public updateTerm(newTerm: string): void {
+    this.termDebounced = newTerm;
   }
 
-  public fetchSearchDocumentsWithSchemaDebounced = debounce(
-    this.fetchSearchDocumentsWithSchema,
-    200,
-  );
+  public updateTermDebounced = debounce(this.updateTerm, 200);
 
   public cellValueFromNow(_row: never, _column: never, cellValue: string, _index: never): string {
     return formatDistanceToNow(new Date(cellValue)) + ' ago';
   }
 
   public handlePageChange(newPage: number): void {
-    if (this.term === '') {
-      this.canViewAllDocuments
-        ? this.fetchAllDocumentsWithSchema(newPage)
-        : this.fetchFindDocumentsBySchemaIds(newPage);
+    this.fetchDocuments(newPage);
+  }
+
+  public handleSortChange({ prop, order }: TableSortChangeEvent): void {
+    if (order === null) {
+      this.sortConfig = null;
     } else {
-      this.fetchSearchDocumentsWithSchema(this.term, newPage);
+      this.sortConfig = {
+        name: prop,
+        direction:
+          order === TableSortDirection.DESC ? DockiteSortDirection.DESC : DockiteSortDirection.ASC,
+      };
     }
   }
 
   @Watch('term')
   public handleTermChange(newTerm: string): void {
     if (newTerm !== '') {
-      this.fetchSearchDocumentsWithSchemaDebounced(newTerm);
+      this.updateTermDebounced(newTerm);
     }
   }
 
-  @Watch('schemaIds', { immediate: true })
-  handleSchemaIdsChange(): void {
-    if (this.schemaIds.length > 0) {
-      this.canViewAllDocuments
-        ? this.fetchAllDocumentsWithSchema()
-        : this.fetchFindDocumentsBySchemaIds();
-    }
+  @Watch('fetchTriggers', { immediate: true, deep: true })
+  handleFetchTriggersChange(): void {
+    this.fetchDocuments();
   }
 }
 </script>

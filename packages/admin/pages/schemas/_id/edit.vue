@@ -1,9 +1,15 @@
 <template>
   <fragment>
     <portal to="header">
-      <h2>
-        Edit Schema - <strong>{{ schemaName }}</strong>
-      </h2>
+      <el-row type="flex" justify="space-between" align="middle">
+        <h2>
+          Edit Schema - <strong>{{ schemaName }}</strong>
+        </h2>
+
+        <el-button @click="showSchemaSettings = true">
+          Setttings
+        </el-button>
+      </el-row>
     </portal>
 
     <div class="edit-schema-component">
@@ -62,6 +68,18 @@
         @submit="fieldToBeEdited = null"
       />
 
+      <el-dialog
+        title="Schema Settings"
+        :visible="showSchemaSettings !== false"
+        :destroy-on-close="true"
+        @close="showSchemaSettings = false"
+      >
+        <schema-settings v-model="schemaSettings" :schema="schema" />
+        <span slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="showSchemaSettings = false">Confirm</el-button>
+        </span>
+      </el-dialog>
+
       <el-row type="flex" justify="space-between" style="margin-top: 1rem;">
         <el-button type="text" @click="$router.go(-1)">
           Cancel
@@ -87,6 +105,7 @@ import { UnpersistedField, FieldTreeData } from '../../../common/types';
 import Logo from '~/components/base/logo.vue';
 import AddField from '~/components/fields/add-field.vue';
 import EditField from '~/components/fields/edit-field.vue';
+import SchemaSettings from '~/components/schemas/schema-settings.vue';
 import * as auth from '~/store/auth';
 import * as data from '~/store/data';
 import * as schema from '~/store/schema';
@@ -99,6 +118,7 @@ const ALLOWED_DROP_TYPES = ['group', 'variant', 'string'];
     Logo,
     AddField,
     EditField,
+    SchemaSettings,
   },
 })
 export default class EditSchemaPage extends Vue {
@@ -108,9 +128,11 @@ export default class EditSchemaPage extends Vue {
 
   public fieldToBeEdited: UnpersistedField | null = null;
 
-  public groupFieldData: Record<string, FieldTreeData[]> = {
-    Default: [],
-  };
+  public showSchemaSettings = false;
+
+  public schemaSettings: Record<string, any> = {};
+
+  public groupFieldData: Record<string, FieldTreeData[]> = {};
 
   public deletedFields: string[] = [];
 
@@ -195,6 +217,7 @@ export default class EditSchemaPage extends Vue {
         schema: {
           ...this.schema,
           groups,
+          settings: this.schemaSettings,
         },
         fields: fieldData,
         deletedFields: this.deletedFields,
@@ -366,7 +389,19 @@ export default class EditSchemaPage extends Vue {
   @Watch('schema', { immediate: true })
   public handleSchemaChange(): void {
     if (this.schema !== null) {
+      const groups = Object.keys(this.schema.groups);
+
+      this.currentTab = groups[0];
+
+      groups.forEach(group => {
+        this.groupFieldData = {
+          ...this.groupFieldData,
+          [group]: [],
+        };
+      });
+
       this.transformSchemaToFieldTreeData();
+      this.schemaSettings = { ...this.schema.settings };
     }
   }
 

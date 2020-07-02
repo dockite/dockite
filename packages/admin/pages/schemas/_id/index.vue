@@ -57,32 +57,60 @@
     </portal>
 
     <div class="all-schema-documents-page">
-      <el-table :data="findDocumentsBySchemaId.results" style="width: 100%">
-        <el-table-column prop="id" label="ID">
+      <el-table
+        v-if="schema && findDocumentsBySchemaId.results"
+        :data="findDocumentsBySchemaId.results"
+        style="width: 100%"
+        @sort-change="handleSortChange"
+      >
+        <el-table-column sortable="custom" prop="id" label="ID">
           <template slot-scope="scope">
             <router-link :to="`/documents/${scope.row.id}`">
               {{ scope.row.id | shortDesc }}
             </router-link>
           </template>
         </el-table-column>
-        <el-table-column label="Identifier">
+        <el-table-column
+          v-for="field in fieldsToDisplay"
+          :key="field.name"
+          sortable="custom"
+          :label="field.title"
+          :prop="`data.${field.name}`"
+        >
+          <template slot="header" slot-scope="{ column }">
+            {{ column.label }} {{ filters.some(f => f.name === field.name) ? '*' : '' }}
+
+            <!-- You gotta stop it from propogating twice for "reasons" -->
+            <el-popover v-if="term === ''" width="250" trigger="click" @click.native.stop>
+              <span slot="reference" class="el-table__column-filter-trigger" @click.stop>
+                <i class="el-icon-arrow-down el-icon-arrow-up"></i>
+              </span>
+
+              <filter-input
+                :options="supportedOperators"
+                :prop="field.name"
+                @add-filter="handleFilterAdd"
+                @remove-filter="handleFilterRemove"
+              />
+            </el-popover>
+          </template>
+
           <template slot-scope="scope">
-            <span v-if="scope.row.data.name" :title="scope.row.data.name">
-              {{ scope.row.data.name | shortDesc }}
-            </span>
-            <span v-else-if="scope.row.data.title" :title="scope.row.data.title">
-              {{ scope.row.data.title | shortDesc }}
-            </span>
-            <span v-else-if="scope.row.data.identifier" :title="scope.row.data.identifier">
-              {{ scope.row.data.identifier | shortDesc }}
-            </span>
-            <span v-else :title="JSON.stringify(scope.row.data)">
-              {{ JSON.stringify(scope.row.data) | shortDesc }}
-            </span>
+            {{ scope.row.data[field.name] }}
           </template>
         </el-table-column>
-        <el-table-column prop="createdAt" label="Created" :formatter="cellValueFromNow" />
-        <el-table-column prop="updatedAt" label="Updated" :formatter="cellValueFromNow" />
+        <el-table-column
+          sortable="custom"
+          prop="createdAt"
+          label="Created"
+          :formatter="cellValueFromNow"
+        />
+        <el-table-column
+          sortable="custom"
+          prop="updatedAt"
+          label="Updated"
+          :formatter="cellValueFromNow"
+        />
         <el-table-column label="Actions">
           <span slot-scope="scope" class="dockite-table--actions">
             <router-link title="Edit Document" :to="`/documents/${scope.row.id}`">
@@ -117,6 +145,9 @@
 </template>
 
 <script lang="ts">
+import { Schema, Field } from '@dockite/database';
+import { DockiteGraphqlSortInput, DockiteSortDirection } from '@dockite/types';
+import { SupportedOperators, Constraint } from '@dockite/where-builder';
 import { formatDistanceToNow } from 'date-fns';
 import { Component, Vue, Watch } from 'nuxt-property-decorator';
 import { Fragment } from 'vue-fragment';
@@ -125,17 +156,27 @@ import {
   ManyResultSet,
   FindDocumentResultItem,
   SearchDocumentsWithSchemaResultItem,
+  TableSortChangeEvent,
+  TableSortDirection,
 } from '../../../common/types';
 
+import FilterInput from '~/components/base/filter-input.vue';
 import * as data from '~/store/data';
 
 @Component({
   components: {
     Fragment,
+    FilterInput,
   },
 })
 export default class SchemaDocumentsPage extends Vue {
   public term = '';
+
+  public filters: Constraint[] = [];
+
+  public sortConfig: DockiteGraphqlSortInput | null = null;
+
+  public supportedOperators = SupportedOperators;
 
   get findDocumentsBySchemaId(): ManyResultSet<
     FindDocumentResultItem | SearchDocumentsWithSchemaResultItem
@@ -151,6 +192,20 @@ export default class SchemaDocumentsPage extends Vue {
 
   get schemaName(): string {
     return this.$store.getters[`${data.namespace}/getSchemaNameById`](this.schemaId);
+  }
+
+  get schema(): Schema {
+    return this.$store.getters[`${data.namespace}/getSchemaWithFieldsById`](this.schemaId);
+  }
+
+  get fieldsToDisplay(): Field[] {
+    if (this.schema?.settings?.fieldsToDisplay) {
+      return this.schema.settings.fieldsToDisplay
+        .map((field: string) => this.schema.fields.find(f => f.name === field))
+        .filter((field: Field) => !!field);
+    }
+
+    return [];
   }
 
   get currentPage(): number {
@@ -181,6 +236,8 @@ export default class SchemaDocumentsPage extends Vue {
     this.$store.dispatch(`${data.namespace}/fetchFindDocumentsBySchemaId`, {
       schemaId: this.schemaId,
       page,
+      filters: this.filters,
+      sort: this.sortConfig,
     });
   }
 
@@ -189,6 +246,7 @@ export default class SchemaDocumentsPage extends Vue {
       term,
       page,
       schemaId: this.schemaId,
+      sort: this.sortConfig,
     });
   }
 
@@ -204,9 +262,39 @@ export default class SchemaDocumentsPage extends Vue {
     }
   }
 
+  public handleFilterAdd(constraint: Constraint): void {
+    this.filters = [...this.filters.filter(f => f.name !== constraint.name), constraint];
+  }
+
+  public handleFilterRemove(name: string): void {
+    this.filters = this.filters.filter(f => f.name !== name);
+  }
+
+  public handleSortChange({ prop, order }: TableSortChangeEvent): void {
+    if (order === null) {
+      this.sortConfig = null;
+    } else {
+      this.sortConfig = {
+        name: prop,
+        direction:
+          order === TableSortDirection.DESC ? DockiteSortDirection.DESC : DockiteSortDirection.ASC,
+      };
+    }
+
+    this.fetchFindDocumentsBySchemaId(1);
+  }
+
+  @Watch('filters')
+  handleFilterChange(): void {
+    this.fetchFindDocumentsBySchemaId(1);
+  }
+
   @Watch('schemaId', { immediate: true })
   handleSchemaIdChange(): void {
-    this.fetchFindDocumentsBySchemaId();
+    this.fetchFindDocumentsBySchemaId(1);
+    this.$store.dispatch(`${data.namespace}/fetchSchemaWithFieldsById`, {
+      id: this.$route.params.id,
+    });
   }
 
   @Watch('term')
