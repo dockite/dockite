@@ -1,6 +1,6 @@
 {
   "name": "@dockite/core",
-  "version": "0.4.0-alpha.0",
+  "version": "0.4.0-alpha.1",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
@@ -17,7 +17,7 @@
     "@dockite/manager": "^0.2.0",
     "@dockite/transformer": "^0.2.0",
     "@dockite/types": "^0.2.0",
-    "@dockite/where-builder": "0.2.0-alpha.0",
+    "@dockite/where-builder": "^0.2.0-alpha.1",
     "@graphql-modules/core": "^0.7.14",
     "@typescript-eslint/eslint-plugin": "^2.20.0",
     "@typescript-eslint/parser": "^2.20.0",
