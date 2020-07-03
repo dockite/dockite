@@ -1,6 +1,6 @@
 {
   "name": "@dockite/field-datetime",
-  "version": "0.2.0",
+  "version": "0.2.1-alpha.0",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
@@ -14,7 +14,6 @@
     "@dockite/field": "^0.2.0",
     "@dockite/types": "^0.2.0",
     "@types/graphql-iso-date": "^3.3.3",
-    "ant-design-vue": "^1.4.12",
     "graphql": "^15.0.0",
     "graphql-iso-date": "^3.6.1",
     "reflect-metadata": "^0.1.13",

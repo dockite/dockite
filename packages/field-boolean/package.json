@@ -1,6 +1,6 @@
 {
   "name": "@dockite/field-boolean",
-  "version": "0.2.0",
+  "version": "0.2.1-alpha.0",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
@@ -13,7 +13,6 @@
     "@babel/plugin-proposal-decorators": "^7.10.1",
     "@dockite/field": "^0.2.0",
     "@dockite/types": "^0.2.0",
-    "ant-design-vue": "^1.4.12",
     "graphql": "^15.0.0",
     "reflect-metadata": "^0.1.13",
     "type-graphql": "1.0.0-rc.2",
