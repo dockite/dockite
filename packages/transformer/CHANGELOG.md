@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.1](https://github.com/dockite/dockite/compare/@dockite/transformer@0.2.0...@dockite/transformer@0.3.0-alpha.1) (2020-07-03)
+
+
+### Features
+
+* add filtering and sorting ([a8e27b1](https://github.com/dockite/dockite/commit/a8e27b14ada9ec485411520f4c62db8d7958c681))
+
+
+
+
+
 # 0.2.0 (2020-06-24)
 
 
