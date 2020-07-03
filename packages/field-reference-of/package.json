@@ -1,6 +1,6 @@
 {
   "name": "@dockite/field-reference-of",
-  "version": "0.2.5",
+  "version": "0.2.6-alpha.0",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
@@ -14,7 +14,6 @@
     "@dockite/database": "^0.3.4",
     "@dockite/field": "^0.2.0",
     "@dockite/types": "^0.2.0",
-    "ant-design-vue": "^1.4.12",
     "apollo-client": "^2.6.10",
     "graphql": "^15.0.0",
     "graphql-tag": "^2.10.3",
