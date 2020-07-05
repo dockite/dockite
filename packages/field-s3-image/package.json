@@ -11,8 +11,8 @@
   "dependencies": {
     "@babel/plugin-proposal-class-properties": "^7.10.1",
     "@babel/plugin-proposal-decorators": "^7.10.1",
-    "@dockite/field": "^0.2.0",
-    "@dockite/types": "^0.2.0",
+    "@dockite/field": "0.2.1-alpha.1",
+    "@dockite/types": "0.3.0-alpha.1",
     "apollo-client": "^2.6.10",
     "axios": "^0.19.2",
     "graphql": "^15.0.0",

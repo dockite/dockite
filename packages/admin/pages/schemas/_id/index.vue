@@ -202,7 +202,7 @@ export default class SchemaDocumentsPage extends Vue {
     if (this.schema?.settings?.fieldsToDisplay) {
       return this.schema.settings.fieldsToDisplay
         .map((field: string) => this.schema.fields.find(f => f.name === field))
-        .filter((field: Field) => !!field);
+        .filter((field: Field | undefined) => !!field) as Field[];
     }
 
     return [];

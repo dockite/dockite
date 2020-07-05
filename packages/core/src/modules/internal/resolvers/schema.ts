@@ -1,11 +1,12 @@
 import {
   Document,
   Schema,
+  SchemaImportRepository,
   SchemaRevision,
   SchemaType,
-  SchemaImportRepository,
 } from '@dockite/database';
 import { GlobalContext } from '@dockite/types';
+import { AuthenticationError, ValidationError } from 'apollo-server-express';
 import { GraphQLError } from 'graphql';
 import GraphQLJSON from 'graphql-type-json';
 import { omit } from 'lodash';
@@ -19,12 +20,11 @@ import {
   Query,
   Resolver,
 } from 'type-graphql';
-import { getRepository, getCustomRepository } from 'typeorm';
-import { ValidationError, AuthenticationError } from 'apollo-server-express';
+import { getCustomRepository, getRepository } from 'typeorm';
 
 import { Authenticated, Authorized } from '../../../common/decorators';
 import { DockiteEvents } from '../../../events';
-import { ajv, validator as schemaImportValidator } from '../validation/schema-import';
+import { validator as schemaImportValidator } from '../validation/schema-import';
 
 @ObjectType()
 class ManySchemas {
@@ -80,7 +80,6 @@ export class SchemaResolver {
 
     return schema;
   }
-
 
   @Authenticated()
   @Authorized('internal:schema:read')

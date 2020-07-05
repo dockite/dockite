@@ -8,9 +8,9 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@dockite/field": "^0.2.0",
+    "@dockite/field": "0.2.1-alpha.1",
     "@dockite/manager": "^0.2.0",
-    "@dockite/types": "^0.2.0",
+    "@dockite/types": "0.3.0-alpha.1",
     "debug": "^4.1.1",
     "graphql": "^15.0.0",
     "graphql-type-json": "^0.3.1",

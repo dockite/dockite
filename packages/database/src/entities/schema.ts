@@ -22,6 +22,13 @@ import { SchemaRevision } from './schema-revision';
 // Register the enum for type-graphql
 registerEnumType(SchemaType, { name: 'SchemaType' });
 
+interface SchemaSettings extends Record<string, any> {
+  fieldsToDisplay: string[];
+  enableMutations: boolean;
+  enableCreateMutation: boolean;
+  enableUpdateMutation: boolean;
+  enableDeleteMutation: boolean;
+}
 @Entity()
 @ObjectType()
 export class Schema {
@@ -47,7 +54,7 @@ export class Schema {
 
   @Column({ type: 'jsonb' })
   @GraphQLField(_type => GraphQLJSON)
-  public settings!: any; // eslint-disable-line
+  public settings!: SchemaSettings; // eslint-disable-line
 
   @OneToMany(
     _type => Schema,

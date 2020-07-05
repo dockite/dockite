@@ -14,8 +14,8 @@
   "dependencies": {
     "@babel/plugin-proposal-class-properties": "^7.10.1",
     "@babel/plugin-proposal-decorators": "^7.10.1",
-    "@dockite/field": "^0.2.0",
-    "@dockite/types": "^0.2.0",
+    "@dockite/field": "0.2.1-alpha.1",
+    "@dockite/types": "0.3.0-alpha.1",
     "codemirror": "^5.52.2",
     "codemirror-graphql": "^0.11.6",
     "diff-match-patch": "^1.0.4",
