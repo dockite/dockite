@@ -14,6 +14,7 @@ import {
 import { Release } from './release';
 import { Schema } from './schema';
 import { User } from './user';
+import { DocumentRevision } from './document-revision';
 
 @Entity()
 @ObjectType()
@@ -79,11 +80,15 @@ export class Document {
     _type => Document,
     document => document.revisions,
   )
-  public revisions!: Document[];
+  public revisions!: DocumentRevision[];
 
   @Column({ nullable: true })
   @GraphQLField(_type => String, { nullable: true })
-  public userId?: string | null;
+  public userId?: string;
+
+  @Column({ nullable: true })
+  @GraphQLField(_type => String, { nullable: true })
+  public externalUserId?: string;
 
   @ManyToOne(_type => User, { nullable: true, onDelete: 'SET NULL' })
   public user!: User;

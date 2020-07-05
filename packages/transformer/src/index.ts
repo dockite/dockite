@@ -1,164 +1,271 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-/* eslint-disable no-param-reassign */
+import { can } from '@dockite/ability';
+import { Schema, Document, User, DocumentRevision } from '@dockite/database';
 import {
   DockiteFieldStatic,
-  Document,
-  Field,
-  FindManyResult,
   GlobalContext,
-  Schema,
+  FindManyResult,
+  DockiteGraphqlSortInputType,
 } from '@dockite/types';
-import { WhereBuilder, WhereBuilderInputType } from '@dockite/where-builder';
-import debug from 'debug';
 import {
-  GraphQLBoolean,
-  GraphQLFieldConfig,
   GraphQLFieldConfigMap,
-  GraphQLInt,
-  GraphQLList,
   GraphQLObjectType,
-  GraphQLSchema,
-  GraphQLString,
   Source,
+  GraphQLString,
+  GraphQLSchema,
+  GraphQLList,
+  GraphQLInt,
+  GraphQLBoolean,
+  GraphQLNonNull,
+  GraphQLInputObjectType,
+  GraphQLInputFieldConfigMap,
+  GraphQLResolveInfo,
+  GraphQLSchemaConfig,
 } from 'graphql';
-import { startCase } from 'lodash';
-import { Repository } from 'typeorm';
+import { cloneDeep, omit } from 'lodash';
+import debug from 'debug';
+import typeorm from 'typeorm';
+import { WhereBuilderInputType, WhereBuilder } from '@dockite/where-builder';
+
+import { strToColumnPath } from './util';
+
+type MaybePromise<T> = T | Promise<T>;
 
 const log = debug('dockite:transformer');
 
-// This turns any text into mostly GraphQL compliant strings.
-// TODO: Deprecate this once schemas have an option for both name and title
-const graphqlCase = (value: string): string => startCase(value).replace(/\s/g, '');
+let anonymousUser: User;
 
-// This is the shape of a field config item which
-// is used for building the corresponding GraphQL types.
-interface FieldConfigItem<Source, Context> {
-  name: string;
-  config: GraphQLFieldConfig<Source, Context>;
+interface ConfigBagItem {
+  schema: Schema;
+  schemas: Schema[];
+  fieldConfigMap: GraphQLFieldConfigMap<Source, GlobalContext>;
+  graphqlObjectType: GraphQLObjectType;
+  objectTypeMap: Map<string, GraphQLObjectType>;
+  dockiteFieldsMap: Record<string, DockiteFieldStatic>;
+  orm: typeof typeorm;
+  externalAuthenticationModule: {
+    authenticated: (
+      req: Express.Request,
+      info: GraphQLResolveInfo,
+      resolverName: string,
+      schema: Schema,
+    ) => MaybePromise<string | boolean>;
+    authorized: (
+      req: Express.Request,
+      info: GraphQLResolveInfo,
+      resolverName: string,
+      schema: Schema,
+    ) => MaybePromise<boolean>;
+  };
 }
 
-// The shape of a field resolver function which
-// is used for populating the fields of an object
-// type post-instantiation.
-type FieldResolverFn = (
-  dockiteSchemas: Schema[],
-  types: Map<string, GraphQLObjectType>,
-  dockiteFields: Record<string, DockiteFieldStatic>,
-) => Promise<void>;
-
 /**
- * Provided an entity and a map for storing fields, build and return a function
- * that will resolve each field and then add them types map.
- *
- * @param entity
- * @param typeFields
+ * Determines if a user is authenticated and authorized using the external
+ * authentication package.
  */
-const makeFieldResolverFn = (
-  entity: Schema,
-  typeFields: GraphQLFieldConfigMap<Source, GlobalContext>,
-): FieldResolverFn => {
-  return async (
-    dockiteSchemas: Schema[],
-    graphqlTypes: Map<string, GraphQLObjectType>,
-    dockiteFields: Record<string, DockiteFieldStatic>,
-  ): Promise<void> => {
-    const fieldsMap: FieldConfigItem<Source, GlobalContext>[] = await Promise.all(
-      entity.fields.map(async (field: Field) => {
-        const [outputType, outputArgs] = await Promise.all([
-          field.dockiteField!.outputType({
-            dockiteSchemas,
-            graphqlTypes,
-            dockiteFields,
-          }),
-          field.dockiteField!.outputArgs(),
-        ]);
+const isAuthenticatedAndAuthorized = async (
+  config: ConfigBagItem,
+  ctx: GlobalContext,
+  info: GraphQLResolveInfo,
+  resolverName: string,
+): Promise<string | boolean> => {
+  const { externalAuthenticationModule, schema } = config;
+  let authenticated: string | boolean = false;
 
-        return {
-          name: String(field.name),
-          config: {
-            type: outputType,
-            resolve: async (data: Record<string, any>, args): Promise<any> => {
-              const fieldData = data[field.name];
-
-              return field.dockiteField!.processOutputGraphQL<typeof outputType>({
-                field,
-                fieldData,
-                data,
-                args,
-              });
-            },
-            args: outputArgs,
-          },
-        } as FieldConfigItem<Source, GlobalContext>;
-      }),
+  try {
+    authenticated = await externalAuthenticationModule.authenticated(
+      ctx.req,
+      info,
+      resolverName,
+      schema,
     );
+  } catch (err) {
+    log('authenticated', err);
+  }
 
-    typeFields.id = {
-      type: GraphQLString,
-    };
+  if (!authenticated) {
+    return false;
+  }
 
-    // Then add all non-null fields
-    fieldsMap.forEach(field => {
-      if (field.config !== null) {
-        typeFields[String(field.name)] = field.config;
-      }
-    });
-  };
+  let authorized = false;
+
+  try {
+    authorized = await externalAuthenticationModule.authorized(ctx.req, info, resolverName, schema);
+  } catch (err) {
+    log('authorized', err);
+  }
+
+  if (!authorized) {
+    return false;
+  }
+
+  return authenticated;
 };
 
 /**
- * Provided a schema this method will create an GraphQL object type
- * for it containing all of it's associated fields and corresponding
- * resolvers for said fields.
+ * Given a schema, create the corresponding GraphQLObjectType
+ * which will be used in resolvers and the Query object.
  *
- * @param entity The schema to create an object type for
+ * @param schema The schema entity
  */
-const createObjectType = async (
-  entity: Schema,
+const createGraphQLObjectTypeForSchema = async (
+  schema: Schema,
 ): Promise<{
-  fieldResolver: FieldResolverFn;
-  object: GraphQLObjectType;
+  fieldConfigMap: GraphQLFieldConfigMap<Source, GlobalContext>;
+  graphqlObjectType: GraphQLObjectType;
 }> => {
-  log(`Building object type for ${entity.name}`);
-  // Build our empty field map
-  const typeFields: GraphQLFieldConfigMap<Source, GlobalContext> = {};
+  log(`creating object type for ${schema.name}`);
 
-  // Retrieve our field configs from the registered dockite-fields
-  const fieldResolver = makeFieldResolverFn(entity, typeFields);
+  // Create an empty field config map which will later be assigned fields
+  // after graphql object type creation.
+  const fieldConfigMap: GraphQLFieldConfigMap<Source, GlobalContext> = {};
 
-  // Finally return the built object type
-  const payload = {
-    fieldResolver,
-    object: new GraphQLObjectType({
-      name: graphqlCase(entity.name),
-      fields: typeFields,
-    }),
-  };
+  // Create the graphql object type without any fields.
+  const graphqlObjectType = new GraphQLObjectType({
+    name: String(schema.name),
+    fields: fieldConfigMap,
+  });
 
-  return payload;
+  // Return both items
+  return { fieldConfigMap, graphqlObjectType };
 };
 
 /**
- * Provided a schema, its corresponding GraphQL Object and access to
- * retrieve documents from the database this method will create the required
- * queries for retreiving either a singlular or multiple schema items.
+ * Given the current config for a schema, create the corresponding input
+ * type.
  *
- * @param entity
- * @param repository
- * @param type
+ * @param config The configuration object containing all relevant data
+ * for producing an InputObjectType
  */
-export const createQueriesForEntity = async <T extends Document>(
-  entity: Schema,
-  repository: Repository<T>,
-  type: GraphQLObjectType,
+const createGraphQLInputObjectTypesForSchema = async (
+  config: ConfigBagItem,
+): Promise<{
+  create: GraphQLInputObjectType;
+  update: GraphQLInputObjectType;
+  delete: GraphQLInputObjectType;
+}> => {
+  const { schema } = config;
+
+  const deleteInput = new GraphQLInputObjectType({
+    name: `Delete${schema.name}InputType`,
+    fields: {
+      id: { type: GraphQLString },
+    },
+  });
+
+  const inputTypeFieldMap: GraphQLInputFieldConfigMap = {};
+
+  await Promise.all(
+    schema.fields.map(async field => {
+      if (!field.dockiteField) {
+        throw new Error(
+          `dockiteField wasn't assigned to ${field.name} of ${schema.name} during load.`,
+        );
+      }
+
+      // Resolves typescript dereferencing shenanigans
+      const { dockiteField } = field;
+
+      // Collect the GraphQL output type and arguments from the field.
+      const inputType = await dockiteField.inputType({
+        dockiteSchemas: config.schemas,
+        dockiteFields: config.dockiteFieldsMap,
+        graphqlTypes: config.objectTypeMap,
+      });
+
+      // Finally add the field to the map
+      inputTypeFieldMap[field.name] = {
+        type: GraphQLNonNull(inputType),
+      };
+    }),
+  );
+
+  const createInput = new GraphQLInputObjectType({
+    name: `Create${schema.name}InputType`,
+    fields: cloneDeep(inputTypeFieldMap),
+  });
+
+  inputTypeFieldMap.id = {
+    type: GraphQLNonNull(GraphQLString),
+  };
+
+  const updateInput = new GraphQLInputObjectType({
+    name: `Update${schema.name}InputType`,
+    fields: cloneDeep(inputTypeFieldMap),
+  });
+
+  return {
+    create: createInput,
+    update: updateInput,
+    delete: deleteInput,
+  };
+};
+
+const makeFieldsForGraphQLObjectType = async (fieldConfig: ConfigBagItem): Promise<void> => {
+  const { schema, fieldConfigMap } = fieldConfig;
+
+  // First we assign an id field to the schema which
+  // will contain the document id
+  fieldConfigMap.id = {
+    type: GraphQLString,
+  };
+
+  // Next we attempt to assign each schema field to the object type
+  await Promise.all(
+    schema.fields.map(async field => {
+      // If dockiteField isn't assigned something has gone horribly wrong.
+      if (!field.dockiteField) {
+        throw new Error(
+          `dockiteField wasn't assigned to ${field.name} of ${schema.name} during load.`,
+        );
+      }
+
+      // Resolves typescript dereferencing shenanigans
+      const { dockiteField } = field;
+
+      // Collect the GraphQL output type and arguments from the field.
+      const [outputType, outputArgs] = await Promise.all([
+        dockiteField.outputType({
+          dockiteSchemas: fieldConfig.schemas,
+          dockiteFields: fieldConfig.dockiteFieldsMap,
+          graphqlTypes: fieldConfig.objectTypeMap,
+        }),
+
+        dockiteField.outputArgs(),
+      ]);
+
+      // Finally add the field to the map
+      fieldConfigMap[field.name] = {
+        type: outputType,
+        args: outputArgs,
+        resolve: async (data: Record<string, any>, args): Promise<any> => {
+          const fieldData = data[field.name];
+
+          return dockiteField.processOutputGraphQL<typeof outputType>({
+            data,
+            fieldData,
+            field,
+            args,
+          });
+        },
+      };
+    }),
+  );
+};
+
+const createGraphQLQueriesForSchema = async (
+  config: ConfigBagItem,
 ): Promise<GraphQLFieldConfigMap<Source, GlobalContext>> => {
-  const allQuery = `all${graphqlCase(entity.name)}`;
-  const getQuery = `get${graphqlCase(entity.name)}`;
+  const { schema, orm, graphqlObjectType } = config;
+
+  const allQuery = `all${schema.name}`;
+  const getQuery = `get${schema.name}`;
+
+  const repository = orm.getRepository(Document);
 
   const findManyObjectType = new GraphQLObjectType({
-    name: `Many${graphqlCase(entity.name)}`,
+    name: `Many${schema.name}`,
     fields: {
-      results: { type: new GraphQLList(type) },
+      results: { type: new GraphQLList(graphqlObjectType) },
       totalItems: { type: GraphQLInt },
       currentPage: { type: GraphQLInt },
       totalPages: { type: GraphQLInt },
@@ -168,41 +275,102 @@ export const createQueriesForEntity = async <T extends Document>(
 
   const queries: GraphQLFieldConfigMap<Source, GlobalContext> = {
     [getQuery]: {
-      type,
+      type: graphqlObjectType,
       args: {
-        id: { type: GraphQLString },
-        name: { type: GraphQLString },
+        id: { type: new GraphQLNonNull(GraphQLString) },
       },
-      async resolve(_context, { id, name }): Promise<object> {
-        if (id) {
-          const document = await repository.findOneOrFail(id);
-          return { id: document.id, ...document.data };
+      async resolve(_source, args, ctx, info): Promise<object> {
+        const { id } = args;
+
+        if (schema.settings.enableQueryAuthentication) {
+          if (ctx.user) {
+            const user = await orm.getRepository(User).findOneOrFail(ctx.user.id);
+
+            if (
+              !can(
+                user.normalizedScopes,
+                'internal:document:delete',
+                `schema:${schema.name.toLowerCase()}:delete`,
+              )
+            ) {
+              throw new Error('You are not authorized to perform this action');
+            }
+          } else {
+            const authenticated = await isAuthenticatedAndAuthorized(config, ctx, info, getQuery);
+
+            if (!authenticated) {
+              throw new Error('You are not authorized to perform this action');
+            }
+          }
         }
 
-        if (name) {
-          const document = await repository.findOneOrFail({ where: { name } });
-          return { id: document.id, ...document.data };
-        }
+        const document = await repository.findOneOrFail(id);
 
-        throw new Error(`${entity.name} not found`);
+        return { id: document.id, ...document.data };
       },
     },
 
     [allQuery]: {
       type: findManyObjectType,
-      description: entity.settings.description ?? `Retrieves all ${entity.name}`,
+      description: schema.settings.description ?? `Retrieves all ${schema.name}`,
       args: {
         page: { type: GraphQLInt, defaultValue: 1 },
         perPage: { type: GraphQLInt, defaultValue: 25 },
         where: { type: WhereBuilderInputType },
+        sort: { type: DockiteGraphqlSortInputType },
       },
-      async resolve(_context, { where, page, perPage }): Promise<FindManyResult<any>> {
+      async resolve(_context, args, ctx, info): Promise<FindManyResult<any>> {
+        const { sort, where, page, perPage } = args;
+
+        if (schema.settings.enableQueryAuthentication) {
+          if (ctx.user) {
+            const user = await orm.getRepository(User).findOneOrFail(ctx.user.id);
+
+            if (
+              !can(
+                user.normalizedScopes,
+                'internal:document:delete',
+                `schema:${schema.name.toLowerCase()}:delete`,
+              )
+            ) {
+              throw new Error('You are not authorized to perform this action');
+            }
+          } else {
+            const authenticated = await isAuthenticatedAndAuthorized(config, ctx, info, allQuery);
+
+            if (!authenticated) {
+              throw new Error('You are not authorized to perform this action');
+            }
+          }
+        }
+
         const qb = repository
           .createQueryBuilder('document')
-          .where('document.schemaId = :schemaId', { schemaId: entity.id });
+          .where('document.schemaId = :schemaId', { schemaId: schema.id });
 
         if (where) {
           WhereBuilder.Build(qb, where);
+        }
+
+        if (sort) {
+          // Throw on any invalid input
+          if (!/^[_A-Za-z][_0-9A-Za-z]*(\.[_A-Za-z][_0-9A-Za-z]*)*$/.test(sort.name)) {
+            throw new Error('Invalid sorting name provided');
+          }
+
+          const columnPath = strToColumnPath(sort.name);
+
+          // This handle the case where typeorm can't add abritary orderBy's to a query
+          // by adding the column to order by to the select column we can avoid breaking typeorm
+          // and successfully get our results.
+          if (sort.name.startsWith('data')) {
+            qb.addSelect(`document.${strToColumnPath(sort.name)}`, 'typeorm_sorter_fix');
+            qb.orderBy('typeorm_sorter_fix', sort.direction);
+          } else {
+            qb.orderBy(`document.${columnPath}`, sort.direction);
+          }
+        } else {
+          qb.orderBy('document.updatedAt', 'DESC');
         }
 
         qb.take(perPage).skip(perPage * (page - 1));
@@ -225,60 +393,355 @@ export const createQueriesForEntity = async <T extends Document>(
   return queries;
 };
 
-/**
- * Provided an array of Schemas, a map of DockiteFields and access to retrieve
- * documents from the database this method will create a GraphQL Schema for each
- * Schema entity including its corresponding fields and resolvers.
- *
- * @param dockiteSchemas
- * @param documentRepository
- * @param dockiteFields
- */
-export const createSchema = async <T extends Document>(
-  dockiteSchemas: Schema[],
-  documentRepository: Repository<T>,
-  dockiteFields: Record<string, DockiteFieldStatic>,
+const createGraphQLMutationsForSchema = async (
+  config: ConfigBagItem,
+): Promise<GraphQLFieldConfigMap<Source, GlobalContext>> => {
+  const { schema, graphqlObjectType, orm } = config;
+
+  const createMutation = `create${schema.name}`;
+  const updateMutation = `update${schema.name}`;
+  const deleteMutation = `delete${schema.name}`;
+
+  const documentRepository = orm.getRepository(Document);
+  const documentRevisionRepository = orm.getRepository(DocumentRevision);
+
+  if (!anonymousUser) {
+    anonymousUser = await orm.getRepository(User).findOneOrFail({
+      where: { email: 'anonymous@dockite.app' },
+    });
+  }
+
+  const mutations: GraphQLFieldConfigMap<Source, GlobalContext> = {};
+
+  if (schema.settings.enableMutations) {
+    log(`creating mutations for ${schema.name}`);
+
+    const inputTypes = await createGraphQLInputObjectTypesForSchema(config);
+
+    if (schema.settings.enableCreateMutation) {
+      mutations[createMutation] = {
+        type: graphqlObjectType,
+        args: {
+          input: { type: inputTypes.create },
+        },
+        async resolve(_context, args, ctx, info): Promise<object> {
+          let internalUserId = anonymousUser.id;
+          let externalUserId = '';
+
+          const { input } = args;
+
+          if (ctx.user) {
+            internalUserId = ctx.user.id;
+
+            const user = await orm.getRepository(User).findOneOrFail(ctx.user.id);
+
+            if (
+              !can(
+                user.normalizedScopes,
+                'internal:document:create',
+                `schema:${schema.name.toLowerCase()}:create`,
+              )
+            ) {
+              throw new Error('You are not authorized to perform this action');
+            }
+          } else {
+            const authenticated = await isAuthenticatedAndAuthorized(
+              config,
+              ctx,
+              info,
+              createMutation,
+            );
+
+            if (!authenticated) {
+              throw new Error('You are not authorized to perform this action');
+            }
+
+            externalUserId = String(authenticated);
+          }
+
+          await Promise.all(
+            schema.fields.map(async field => {
+              if (!field.dockiteField) {
+                throw new Error(
+                  `dockiteField wasn't assigned to ${field.name} of ${schema.name} during load.`,
+                );
+              }
+
+              await field.dockiteField.validateInputGraphQL({
+                data: input,
+                fieldData: input[field.name],
+                field,
+              });
+
+              await field.dockiteField.onCreate({
+                data: input,
+                fieldData: input[field.name],
+                field,
+              });
+
+              input[field.name] = await field.dockiteField.processInputGraphQL<any>({
+                data: input,
+                field,
+                fieldData: input[field.name],
+              });
+            }),
+          );
+
+          const document = documentRepository.create({
+            data: omit(input, 'id'),
+            locale: 'en-AU',
+            schemaId: schema.id,
+            userId: internalUserId,
+            externalUserId,
+          });
+
+          const createdDocument = await documentRepository.save(document);
+
+          return { ...createdDocument.data, id: createdDocument.id };
+        },
+      };
+    }
+
+    if (schema.settings.enableUpdateMutation) {
+      mutations[updateMutation] = {
+        type: graphqlObjectType,
+        description: schema.settings.description ?? `Retrieves all ${schema.name}`,
+        args: {
+          input: { type: inputTypes.update },
+        },
+        async resolve(_context, args, ctx, info): Promise<object> {
+          const { input } = args;
+
+          try {
+            let internalUserId = anonymousUser.id;
+            let externalUserId = '';
+
+            if (ctx.user) {
+              internalUserId = ctx.user.id;
+
+              const user = await orm.getRepository(User).findOneOrFail(ctx.user.id);
+
+              if (
+                !can(
+                  user.normalizedScopes,
+                  'internal:document:update',
+                  `schema:${schema.name.toLowerCase()}:update`,
+                )
+              ) {
+                throw new Error('You are not authorized to perform this action');
+              }
+            } else {
+              const authenticated = await isAuthenticatedAndAuthorized(
+                config,
+                ctx,
+                info,
+                createMutation,
+              );
+
+              if (!authenticated) {
+                throw new Error('You are not authorized to perform this action');
+              }
+
+              externalUserId = String(authenticated);
+            }
+
+            const document = await documentRepository.findOneOrFail(input.id);
+
+            await Promise.all(
+              schema.fields.map(async field => {
+                if (!field.dockiteField) {
+                  throw new Error(
+                    `dockiteField wasn't assigned to ${field.name} of ${schema.name} during load.`,
+                  );
+                }
+
+                await field.dockiteField.validateInputGraphQL({
+                  data: input,
+                  fieldData: input[field.name],
+                  field,
+                  oldData: cloneDeep(document.data),
+                });
+
+                await field.dockiteField.onUpdate({
+                  data: input,
+                  fieldData: input[field.name],
+                  field,
+                  oldData: cloneDeep(document.data),
+                });
+
+                input[field.name] = await field.dockiteField.processInputGraphQL<any>({
+                  data: input,
+                  field,
+                  fieldData: input[field.name],
+                });
+              }),
+            );
+
+            const revision = documentRevisionRepository.create({
+              documentId: document.id,
+              data: cloneDeep(document.data),
+              userId: document.userId ?? '',
+            });
+
+            document.data = omit(input, 'id');
+            document.userId = internalUserId;
+            document.externalUserId = externalUserId;
+
+            const [updatedDocument] = await Promise.all([
+              documentRepository.save(document),
+              documentRevisionRepository.save(revision),
+            ]);
+
+            return { ...updatedDocument.data, id: updatedDocument.id };
+          } catch (err) {
+            throw new Error(`The ${schema.title} with id: ${input.id} does not exist.`);
+          }
+        },
+      };
+    }
+
+    if (schema.settings.enableDeleteMutation) {
+      mutations[deleteMutation] = {
+        type: graphqlObjectType,
+        description: schema.settings.description ?? `Retrieves all ${schema.name}`,
+        args: {
+          input: { type: inputTypes.update },
+        },
+        async resolve(_context, args, ctx, info): Promise<object> {
+          const { input } = args;
+
+          try {
+            if (ctx.user) {
+              const user = await orm.getRepository(User).findOneOrFail(ctx.user.id);
+
+              if (
+                !can(
+                  user.normalizedScopes,
+                  'internal:document:delete',
+                  `schema:${schema.name.toLowerCase()}:delete`,
+                )
+              ) {
+                throw new Error('You are not authorized to perform this action');
+              }
+            } else {
+              const authenticated = await isAuthenticatedAndAuthorized(
+                config,
+                ctx,
+                info,
+                createMutation,
+              );
+
+              if (!authenticated) {
+                throw new Error('You are not authorized to perform this action');
+              }
+            }
+
+            const document = await documentRepository.findOneOrFail(input.id);
+
+            await Promise.all(
+              schema.fields.map(async field => {
+                if (!field.dockiteField) {
+                  throw new Error(
+                    `dockiteField wasn't assigned to ${field.name} of ${schema.name} during load.`,
+                  );
+                }
+
+                await field.dockiteField.onSoftDelete({
+                  data: input,
+                  fieldData: input[field.name],
+                  field,
+                });
+              }),
+            );
+
+            await documentRepository.remove(document);
+
+            return { ...document.data, id: document.id };
+          } catch (err) {
+            throw new Error(`The ${schema.title} with id: ${input.id} does not exist.`);
+          }
+        },
+      };
+    }
+  }
+
+  return mutations;
+};
+
+export const createSchema = async (
+  orm: typeof typeorm,
+  schemas: Schema[],
+  dockiteFieldsMap: Record<string, DockiteFieldStatic>,
+  externalAuthenticationModule: {
+    authenticated: (
+      req: Express.Request,
+      info: GraphQLResolveInfo,
+      resolverName: string,
+      schema: Schema,
+    ) => MaybePromise<string | boolean>;
+    authorized: (
+      req: Express.Request,
+      info: GraphQLResolveInfo,
+      resolverName: string,
+      schema: Schema,
+    ) => MaybePromise<boolean>;
+  },
 ): Promise<GraphQLSchema> => {
-  const objectTypeManager = new Map<string, GraphQLObjectType>();
-  const fieldResolvers: FieldResolverFn[] = [];
+  const ObjectTypeMap = new Map<string, GraphQLObjectType>();
+  const ConfigBag: ConfigBagItem[] = [];
 
+  // First create a GraphQLObjectType for each schema
+  // leaving its fields empty so they can be added afterwards.
+  // This resolves any issues with fields needing to know and view
+  // other schema object types during generation time.
   await Promise.all(
-    dockiteSchemas.map(schema =>
-      createObjectType(schema).then(result => {
-        objectTypeManager.set(schema.name, result.object);
-        fieldResolvers.push(result.fieldResolver);
-      }),
-    ),
-  );
+    schemas.map(async schema => {
+      const result = await createGraphQLObjectTypeForSchema(schema);
 
-  await Promise.all(
-    fieldResolvers.map(fieldResolver =>
-      fieldResolver(dockiteSchemas, objectTypeManager, dockiteFields),
-    ),
-  );
+      ObjectTypeMap.set(schema.name, result.graphqlObjectType);
 
-  const queries = await Promise.all(
-    dockiteSchemas.map(schema =>
-      createQueriesForEntity(
+      ConfigBag.push({
         schema,
-        documentRepository,
-        objectTypeManager.get(schema.name) as GraphQLObjectType,
-      ),
-    ),
+        schemas,
+        objectTypeMap: ObjectTypeMap,
+        dockiteFieldsMap,
+        orm,
+        ...result,
+        externalAuthenticationModule,
+      });
+    }),
   );
 
-  let queryFields = {};
+  await Promise.all(
+    ConfigBag.map(async config => {
+      await makeFieldsForGraphQLObjectType(config);
+    }),
+  );
 
-  queries.forEach(q => {
-    queryFields = { ...queryFields, ...q };
-  });
+  const queryConfigCollection = await Promise.all(
+    ConfigBag.map(config => createGraphQLQueriesForSchema(config)),
+  );
 
-  const gqlSchema = new GraphQLSchema({
+  const mutationConfigCollection = await Promise.all(
+    ConfigBag.map(config => createGraphQLMutationsForSchema(config)),
+  );
+
+  const queryConfig = queryConfigCollection.reduce((acc, curr) => ({ ...acc, ...curr }), {});
+  const mutationConfig = mutationConfigCollection.reduce((acc, curr) => ({ ...acc, ...curr }), {});
+
+  const schemaConfig: GraphQLSchemaConfig = {
     query: new GraphQLObjectType({
       name: 'Query',
-      fields: queryFields,
+      fields: queryConfig,
     }),
-  });
+  };
 
-  return gqlSchema;
+  if (Object.keys(mutationConfig).length > 0) {
+    schemaConfig.mutation = new GraphQLObjectType({
+      name: 'Mutation',
+      fields: mutationConfig,
+    });
+  }
+
+  return new GraphQLSchema(schemaConfig);
 };

@@ -10,13 +10,13 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@dockite/ability": "^0.2.0",
-    "@dockite/database": "^0.3.4",
-    "@dockite/field": "^0.2.0",
+    "@dockite/ability": "0.2.1-alpha.1",
+    "@dockite/database": "0.3.5-alpha.1",
+    "@dockite/field": "0.2.1-alpha.1",
     "@dockite/field-string": "^0.2.0",
     "@dockite/manager": "^0.2.0",
-    "@dockite/transformer": "^0.2.0",
-    "@dockite/types": "^0.3.0-alpha.1",
+    "@dockite/transformer": "0.3.0-alpha.1",
+    "@dockite/types": "0.3.0-alpha.1",
     "@dockite/where-builder": "^0.2.0-alpha.1",
     "@graphql-modules/core": "^0.7.14",
     "@typescript-eslint/eslint-plugin": "^2.20.0",

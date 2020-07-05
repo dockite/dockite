@@ -1,3 +1,5 @@
+import crypto from 'crypto';
+
 import { AuthenticationError, ForbiddenError } from 'apollo-server-express';
 import { compare, hash } from 'bcrypt';
 import { sign } from 'jsonwebtoken';
@@ -93,8 +95,20 @@ export class Authentication {
       roles: [role],
     });
 
+    const anonymousUser = this.userRepository.create({
+      id: '99999999-9999-9999-9999-9999999999999',
+      firstName: 'Anonymous',
+      lastName: 'User',
+      email: 'anonymous@dockite.app',
+      password: await hash(crypto.randomBytes(10).toString('hex'), 10),
+    });
+
     await getRepository(Role).save(role);
-    const firstUser = await this.userRepository.save(user);
+
+    const [firstUser] = await Promise.all([
+      this.userRepository.save(user),
+      this.userRepository.save(anonymousUser),
+    ]);
 
     Object.assign(user, firstUser);
     user.handleNormalizeScopes();

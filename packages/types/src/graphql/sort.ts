@@ -22,6 +22,6 @@ export const DockiteGraphqlSortInputType = new GraphQLInputObjectType({
   name: 'DockiteGraphqlSortInputType',
   fields: {
     name: { type: GraphQLString },
-    direction: { type: GraphQLString },
+    direction: { type: DockiteGraphqlSortDirection },
   },
 });
