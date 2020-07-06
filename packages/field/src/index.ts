@@ -4,6 +4,7 @@ import {
   FieldIOContext,
   HookContext,
   HookContextWithOldData,
+  DockiteFieldStatic,
 } from '@dockite/types';
 import { GraphQLFieldConfigArgumentMap, GraphQLInputType, GraphQLOutputType } from 'graphql';
 import typeorm from 'typeorm';
@@ -18,9 +19,14 @@ export abstract class DockiteField {
 
   public static defaultOptions = {};
 
-  constructor(protected schemaField: Field, protected orm: typeof typeorm) {
+  constructor(
+    protected schemaField: Field,
+    protected orm: typeof typeorm,
+    protected fieldManager: Record<string, DockiteFieldStatic>,
+  ) {
     this.schemaField = schemaField;
     this.orm = orm;
+    this.fieldManager = fieldManager;
   }
 
   public abstract inputType(ctx: FieldIOContext): Promise<GraphQLInputType>;
@@ -37,16 +43,16 @@ export abstract class DockiteField {
     return this.processInput(ctx);
   }
 
-  public validateInputRaw(_ctx: HookContextWithOldData): Promise<void> {
-    return Promise.resolve();
+  public validateInputRaw(ctx: HookContextWithOldData): Promise<void> {
+    return this.validateInput(ctx);
   }
 
   public processInputGraphQL<T>(ctx: FieldContext): Promise<T> {
     return this.processInput(ctx);
   }
 
-  public validateInputGraphQL(_ctx: HookContextWithOldData): Promise<void> {
-    return Promise.resolve();
+  public validateInputGraphQL(ctx: HookContextWithOldData): Promise<void> {
+    return this.validateInput(ctx);
   }
 
   public abstract outputType(ctx: FieldIOContext): Promise<GraphQLOutputType>;

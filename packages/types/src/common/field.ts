@@ -37,7 +37,11 @@ export interface DockiteFieldStatic {
   description: string;
   defaultOptions: object;
 
-  new (schemaField: Field, orm: typeof typeorm): DockiteField;
+  new (
+    schemaField: Field,
+    orm: typeof typeorm,
+    fieldManager: Record<string, DockiteFieldStatic>,
+  ): DockiteField;
 }
 
 export interface DockiteField {
