@@ -1,19 +1,25 @@
+/* eslint-disable no-param-reassign */
 import { DockiteField } from '@dockite/field';
-import { Field, FieldIOContext, GlobalContext } from '@dockite/types';
 import {
-  GraphQLFieldConfig,
+  Field,
+  FieldIOContext,
+  GlobalContext,
+  HookContext,
+  HookContextWithOldData,
+} from '@dockite/types';
+import {
+  GraphQLFieldConfigMap,
+  GraphQLInputFieldConfigMap,
+  GraphQLInputObjectType,
   GraphQLInputType,
   GraphQLList,
+  GraphQLNonNull,
   GraphQLObjectType,
   GraphQLOutputType,
   Source,
 } from 'graphql';
-import { GraphQLJSON } from 'graphql-type-json';
 
-interface FieldConfig<Source, Context> {
-  name: string;
-  config: GraphQLFieldConfig<Source, Context>;
-}
+type ChildField = Omit<Field, 'id' | 'schema' | 'schemaId' | 'dockiteField'>;
 
 export class DockiteFieldGroup extends DockiteField {
   public static type = 'group';
@@ -24,64 +30,61 @@ export class DockiteFieldGroup extends DockiteField {
 
   public static defaultOptions = {};
 
-  public async inputType(): Promise<GraphQLInputType> {
-    return GraphQLJSON;
-  }
+  private getMappedChildFields(): Omit<Field, 'id'>[] {
+    const staticFields = Object.values(this.fieldManager);
 
-  public async outputType({
-    dockiteSchemas,
-    graphqlTypes,
-    dockiteFields,
-  }: FieldIOContext): Promise<GraphQLOutputType> {
-    const fields: Omit<Field, 'id' | 'dockiteField' | 'schema' | 'schemaId'>[] =
-      this.schemaField.settings.children ?? [];
+    return (this.schemaField.settings.children ?? []).map(
+      (child: ChildField): Omit<Field, 'id'> => {
+        const mappedChild: Omit<Field, 'id'> = {
+          ...child,
+          schemaId: this.schemaField.id,
+          schema: this.schemaField.schema,
+        };
 
-    const fieldPromises = fields.map(
-      async (f): Promise<null | FieldConfig<Source, GlobalContext>> => {
-        const FieldClass = Object.values(dockiteFields).find(df => df.type === f.type);
+        const FieldClass = staticFields.find(staticField => staticField.type === child.type);
 
-        if (!FieldClass) {
-          return null;
+        if (FieldClass) {
+          mappedChild.dockiteField = new FieldClass(
+            mappedChild as Field,
+            this.orm,
+            this.fieldManager,
+          );
         }
 
-        const dockiteField = new FieldClass(this.schemaField, this.orm);
-
-        const [outputType, outputArgs] = await Promise.all([
-          dockiteField.outputType({ dockiteSchemas, graphqlTypes, dockiteFields }),
-          dockiteField.outputArgs(),
-        ]);
-
-        return {
-          name: String(f.name),
-          config: {
-            type: outputType,
-            resolve: async (data: any, args): Promise<any> => {
-              const fieldData = data[f.name];
-              const field = { ...f, id: 'child', schemaId: this.schemaField.id };
-
-              return dockiteField.processOutputGraphQL<typeof outputType>({
-                field,
-                fieldData,
-                data,
-                args,
-              });
-            },
-            args: outputArgs,
-          },
-        } as FieldConfig<Source, GlobalContext>;
+        return mappedChild;
       },
     );
+  }
 
-    const resolvedFields = await Promise.all(fieldPromises);
+  public async inputType(ctx: FieldIOContext): Promise<GraphQLInputType> {
+    // Then map each child to corresponding field type
+    const childFields: Omit<Field, 'id'>[] = this.getMappedChildFields();
 
-    const cleanedFields = resolvedFields.filter(f => f !== null) as FieldConfig<
-      Source,
-      GlobalContext
-    >[];
+    // Next construct the fields for the GraphQLInputObjectType
+    const inputTypeConfigMap: GraphQLInputFieldConfigMap = {};
 
-    const objectType = new GraphQLObjectType({
-      name: `${this.schemaField.schema?.name || 'Unknown'}_${String(this.schemaField.name)}`,
-      fields: cleanedFields.reduce((a, b) => ({ ...a, [b.name]: b.config }), {}),
+    // Then for each child field gather their input type and assign the field
+    // to the GraphQLInputObjectType
+    await Promise.all(
+      childFields.map(async child => {
+        if (!child.dockiteField) {
+          throw new Error(`dockiteFiled failed to map for ${this.schemaField.name}.${child.name}`);
+        }
+
+        const inputType = await child.dockiteField.inputType(ctx);
+
+        if (inputType !== null) {
+          inputTypeConfigMap[child.name] = {
+            type: GraphQLNonNull(inputType),
+          };
+        }
+      }),
+    );
+
+    // Finally construct and return the GraphQLInputObjectType
+    const objectType = new GraphQLInputObjectType({
+      name: `${this.schemaField.schema?.name ?? 'Unknown'}${this.schemaField.name}InputType`,
+      fields: inputTypeConfigMap,
     });
 
     if (this.schemaField.settings.repeatable) {
@@ -89,5 +92,225 @@ export class DockiteFieldGroup extends DockiteField {
     }
 
     return objectType;
+  }
+
+  public async processInput<T>(ctx: HookContextWithOldData): Promise<T> {
+    const childFields = this.getMappedChildFields();
+
+    await Promise.all(
+      childFields.map(async child => {
+        if (!child.dockiteField) {
+          throw new Error(`dockiteFiled failed to map for ${this.schemaField.name}.${child.name}`);
+        }
+
+        const oldData = (ctx.oldData ?? {})[this.schemaField.name];
+
+        const childCtx: HookContextWithOldData = {
+          ...ctx,
+          data: ctx.data[this.schemaField.name],
+          fieldData: ctx.data[this.schemaField.name][child.name],
+          field: child as Field,
+          oldData,
+        };
+
+        ctx.data[this.schemaField.name][child.name] = await child.dockiteField.processInput(
+          childCtx,
+        );
+      }),
+    );
+
+    return (ctx.data[this.schemaField.name] as any) as T;
+  }
+
+  public async outputType(ctx: FieldIOContext): Promise<GraphQLOutputType> {
+    // Then map each child to corresponding field type
+    const childFields: Omit<Field, 'id'>[] = this.getMappedChildFields();
+
+    // Next construct the fields for the GraphQLObjectType
+    const outputTypeConfigMap: GraphQLFieldConfigMap<Source, GlobalContext> = {};
+
+    // Then for each child field gather their input type and assign the field
+    // to the GraphQLObjectType
+    await Promise.all(
+      childFields.map(async child => {
+        if (!child.dockiteField) {
+          throw new Error(`dockiteFiled failed to map for ${this.schemaField.name}.${child.name}`);
+        }
+
+        const { dockiteField } = child;
+
+        const [outputType, outputArgs] = await Promise.all([
+          dockiteField.outputType(ctx),
+          dockiteField.outputArgs(),
+        ]);
+
+        if (outputType !== null) {
+          outputTypeConfigMap[child.name] = {
+            type: outputType,
+            args: outputArgs,
+            resolve: async (data: Record<string, any>, args): Promise<any> => {
+              const fieldData = data[child.name];
+
+              const field = { ...child, id: 'child' };
+
+              return dockiteField.processOutputGraphQL<any>({
+                field,
+                fieldData,
+                data,
+                args,
+              });
+            },
+          };
+        }
+      }),
+    );
+
+    // Finally construct and return the GraphQLObjectType
+    const objectType = new GraphQLObjectType({
+      name: `${this.schemaField.schema?.name ?? 'Unknown'}${this.schemaField.name}`,
+      fields: outputTypeConfigMap,
+    });
+
+    if (this.schemaField.settings.repeatable) {
+      return new GraphQLList(objectType);
+    }
+
+    return objectType;
+  }
+
+  public async processOutput<T>(ctx: HookContext): Promise<T> {
+    const childFields = this.getMappedChildFields();
+
+    await Promise.all(
+      childFields.map(async child => {
+        if (!child.dockiteField) {
+          throw new Error(`dockiteFiled failed to map for ${this.schemaField.name}.${child.name}`);
+        }
+
+        const childCtx: HookContextWithOldData = {
+          ...ctx,
+          data: ctx.data[this.schemaField.name],
+          fieldData: ctx.data[this.schemaField.name][child.name],
+          field: child as Field,
+        };
+
+        ctx.data[this.schemaField.name][child.name] = await child.dockiteField.processOutput(
+          childCtx,
+        );
+      }),
+    );
+
+    return (ctx.data[this.schemaField.name] as any) as T;
+  }
+
+  public async validateInput(ctx: HookContextWithOldData): Promise<void> {
+    const childFields = this.getMappedChildFields();
+
+    await Promise.all(
+      childFields.map(async child => {
+        if (!child.dockiteField) {
+          throw new Error(`dockiteFiled failed to map for ${this.schemaField.name}.${child.name}`);
+        }
+
+        const oldData = (ctx.oldData ?? {})[this.schemaField.name];
+
+        const childCtx: HookContextWithOldData = {
+          ...ctx,
+          data: ctx.data[this.schemaField.name],
+          fieldData: ctx.data[this.schemaField.name][child.name],
+          field: child as Field,
+          oldData,
+        };
+
+        await child.dockiteField.validateInput(childCtx);
+      }),
+    );
+  }
+
+  public async onCreate(ctx: HookContext): Promise<void> {
+    const childFields = this.getMappedChildFields();
+
+    await Promise.all(
+      childFields.map(async child => {
+        if (!child.dockiteField) {
+          throw new Error(`dockiteFiled failed to map for ${this.schemaField.name}.${child.name}`);
+        }
+
+        const childCtx: HookContextWithOldData = {
+          ...ctx,
+          data: ctx.data[this.schemaField.name],
+          fieldData: ctx.data[this.schemaField.name][child.name],
+          field: child as Field,
+        };
+
+        await child.dockiteField.onCreate(childCtx);
+      }),
+    );
+  }
+
+  public async onUpdate(ctx: HookContextWithOldData): Promise<void> {
+    const childFields = this.getMappedChildFields();
+
+    await Promise.all(
+      childFields.map(async child => {
+        if (!child.dockiteField) {
+          throw new Error(`dockiteFiled failed to map for ${this.schemaField.name}.${child.name}`);
+        }
+
+        const oldData = (ctx.oldData ?? {})[this.schemaField.name];
+
+        const childCtx: HookContextWithOldData = {
+          ...ctx,
+          data: ctx.data[this.schemaField.name],
+          fieldData: ctx.data[this.schemaField.name][child.name],
+          field: child as Field,
+          oldData,
+        };
+
+        await child.dockiteField.onUpdate(childCtx);
+      }),
+    );
+  }
+
+  public async onSoftDelete(ctx: HookContext): Promise<void> {
+    const childFields = this.getMappedChildFields();
+
+    await Promise.all(
+      childFields.map(async child => {
+        if (!child.dockiteField) {
+          throw new Error(`dockiteFiled failed to map for ${this.schemaField.name}.${child.name}`);
+        }
+
+        const childCtx: HookContextWithOldData = {
+          ...ctx,
+          data: ctx.data[this.schemaField.name],
+          fieldData: ctx.data[this.schemaField.name][child.name],
+          field: child as Field,
+        };
+
+        await child.dockiteField.onSoftDelete(childCtx);
+      }),
+    );
+  }
+
+  public async onPermanentDelete(ctx: HookContext): Promise<void> {
+    const childFields = this.getMappedChildFields();
+
+    await Promise.all(
+      childFields.map(async child => {
+        if (!child.dockiteField) {
+          throw new Error(`dockiteFiled failed to map for ${this.schemaField.name}.${child.name}`);
+        }
+
+        const childCtx: HookContextWithOldData = {
+          ...ctx,
+          data: ctx.data[this.schemaField.name],
+          fieldData: ctx.data[this.schemaField.name][child.name],
+          field: child as Field,
+        };
+
+        await child.dockiteField.onPermanentDelete(childCtx);
+      }),
+    );
   }
 }
