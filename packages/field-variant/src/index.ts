@@ -5,7 +5,6 @@ import {
   GraphQLInputType,
   GraphQLObjectType,
   GraphQLOutputType,
-  GraphQLString,
   GraphQLUnionType,
   Source,
 } from 'graphql';
@@ -30,12 +29,6 @@ export class DockiteFieldVariant extends DockiteField {
 
   public async inputType(): Promise<GraphQLInputType> {
     return GraphQLJSON;
-  }
-
-  // public async processInput<Input, Output>(data: Input): Promise<Output> {}
-
-  public async where(): Promise<GraphQLInputType> {
-    return GraphQLString;
   }
 
   public async outputType({

@@ -6,6 +6,7 @@ import {
   GraphQLOutputType,
   GraphQLString,
   GraphQLList,
+  GraphQLInputObjectType,
 } from 'graphql';
 
 import { FieldSettings } from './types';
@@ -33,7 +34,20 @@ const DockiteFieldS3ImageType = new GraphQLObjectType({
   },
 });
 
+const DockiteFieldS3ImageInputType = new GraphQLInputObjectType({
+  name: 'DockiteFieldS3ImageInputType',
+  fields: {
+    name: { type: GraphQLString },
+    url: { type: GraphQLString },
+    alt: { type: GraphQLString },
+    size: { type: GraphQLInt },
+    type: { type: GraphQLString },
+    checksum: { type: GraphQLString },
+  },
+});
+
 const MultipleDockiteFieldS3ImageType = new GraphQLList(DockiteFieldS3ImageType);
+const MultipleDockiteFieldS3ImageInputType = new GraphQLList(DockiteFieldS3ImageInputType);
 
 export class DockiteFieldS3Image extends DockiteField {
   public static type = 's3-image';
@@ -62,14 +76,12 @@ export class DockiteFieldS3Image extends DockiteField {
   };
 
   public async inputType(): Promise<GraphQLInputType> {
-    return GraphQLString;
-  }
+    if ((this.schemaField.settings as FieldSettings).multiple) {
+      return MultipleDockiteFieldS3ImageInputType;
+    }
 
-  public async where(): Promise<GraphQLInputType> {
-    return GraphQLString;
+    return DockiteFieldS3ImageInputType;
   }
-
-  // public async processInput<Input, Output>(data: Input): Promise<Output> {}
 
   public async outputType(): Promise<GraphQLOutputType> {
     if ((this.schemaField.settings as FieldSettings).multiple) {

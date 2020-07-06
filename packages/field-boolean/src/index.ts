@@ -21,12 +21,6 @@ export class DockiteFieldBoolean extends DockiteField {
     return DockiteFieldBooleanType;
   }
 
-  // public async processInput<Input, Output>(data: Input): Promise<Output> {}
-
-  public async where(): Promise<GraphQLInputType> {
-    return DockiteFieldBooleanType;
-  }
-
   public async outputType(): Promise<GraphQLOutputType> {
     return DockiteFieldBooleanType;
   }

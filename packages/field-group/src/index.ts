@@ -1,12 +1,11 @@
 import { DockiteField } from '@dockite/field';
-import { Field, GlobalContext, FieldIOContext } from '@dockite/types';
+import { Field, FieldIOContext, GlobalContext } from '@dockite/types';
 import {
   GraphQLFieldConfig,
   GraphQLInputType,
   GraphQLList,
   GraphQLObjectType,
   GraphQLOutputType,
-  GraphQLString,
   Source,
 } from 'graphql';
 import { GraphQLJSON } from 'graphql-type-json';
@@ -27,12 +26,6 @@ export class DockiteFieldGroup extends DockiteField {
 
   public async inputType(): Promise<GraphQLInputType> {
     return GraphQLJSON;
-  }
-
-  // public async processInput<Input, Output>(data: Input): Promise<Output> {}
-
-  public async where(): Promise<GraphQLInputType> {
-    return GraphQLString;
   }
 
   public async outputType({

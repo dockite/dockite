@@ -20,12 +20,6 @@ export class DockiteFieldJSON extends DockiteField {
     return DockiteFieldJSONType;
   }
 
-  // public async processInput<Input, Output>(data: Input): Promise<Output> {}
-
-  public async where(): Promise<GraphQLInputType> {
-    return DockiteFieldJSONType;
-  }
-
   public async outputType(): Promise<GraphQLOutputType> {
     return DockiteFieldJSONType;
   }

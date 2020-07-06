@@ -34,12 +34,6 @@ export class DockiteFieldReference extends DockiteField {
     return DockiteFieldReferenceInputType;
   }
 
-  // public async processInput<Input, Output>(data: Input): Promise<Output> {}
-
-  public async where(): Promise<GraphQLInputType> {
-    return GraphQLString;
-  }
-
   public async outputType({
     dockiteSchemas,
     graphqlTypes,

@@ -55,8 +55,6 @@ export interface DockiteField {
 
   validateInputGraphQL(ctx: HookContextWithOldData): Promise<void>;
 
-  where(): Promise<GraphQLInputType>;
-
   outputType(ctx: FieldIOContext): Promise<GraphQLOutputType>;
 
   outputArgs(): Promise<GraphQLFieldConfigArgumentMap>;

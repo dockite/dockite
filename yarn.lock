@@ -1094,26 +1094,6 @@
     type-graphql "1.0.0-rc.2"
     typeorm "^0.2.25"
 
-"@dockite/field-string@^0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@dockite/field-string/-/field-string-0.2.0.tgz#2451f935dbebfe304594fb82c931d201937a577c"
-  integrity sha512-LMPnUXJFJvledYOCYz18TIeptu+J92MjdyCTgBW7c7BP3E1iKJxnIO1MBm1jwyK7uNpl3cIGiARo5mz1YmzdHw==
-  dependencies:
-    "@babel/plugin-proposal-class-properties" "^7.10.1"
-    "@babel/plugin-proposal-decorators" "^7.10.1"
-    "@dockite/field" "^0.2.0"
-    "@dockite/types" "^0.2.0"
-    ant-design-vue "^1.4.12"
-    graphql "^15.0.0"
-    reflect-metadata "^0.1.13"
-    type-graphql "1.0.0-rc.2"
-    typeorm "^0.2.25"
-    typescript "^3.9.5"
-    validator "^13.0.0"
-    vue "^2.6.11"
-    vue-fragment "^1.5.1"
-    vue-property-decorator "^8.4.2"
-
 "@dockite/field@^0.2.0":
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/@dockite/field/-/field-0.2.0.tgz#77dd02c855d413b725f148aced96f872dae75edb"

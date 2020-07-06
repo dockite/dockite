@@ -30,12 +30,6 @@ export class DockiteFieldDatetime extends DockiteField {
     return this.graphqlType();
   }
 
-  // public async processInput<Input, Output>(data: Input): Promise<Output> {}
-
-  public async where(): Promise<GraphQLInputType> {
-    return this.graphqlType();
-  }
-
   public async outputType(): Promise<GraphQLOutputType> {
     return this.graphqlType();
   }

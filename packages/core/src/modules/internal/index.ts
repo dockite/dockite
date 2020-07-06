@@ -35,7 +35,6 @@ export const InternalGraphQLModule = async (): Promise<GraphQLModule<
 
   log('collecting registered modules');
   const modules = await Promise.all(getRegisteredInternalModules());
-  log(modules);
 
   log('creating graphql module');
   tlog('ending');
