@@ -69,13 +69,17 @@
           <span slot="title">{{ $t('sideMenu.webhooks') }}</span>
         </el-menu-item>
       </el-submenu>
+      <el-menu-item index="/account">
+        <i class="el-icon-user"></i>
+        <span slot="title">{{ $t('sideMenu.account') }}</span>
+      </el-menu-item>
       <el-menu-item index="#logout" @click.native.prevent="logout">
         <i class="el-icon-refresh-left"></i>
         <span slot="title">Logout</span>
       </el-menu-item>
-      <el-menu-item index="#collapse" @click.native.prevent="isCollapse = !isCollapse">
+      <el-menu-item @click.native.prevent="isCollapse = !isCollapse">
         <i :class="{ 'el-icon-d-arrow-left': !isCollapse, 'el-icon-d-arrow-right': isCollapse }" />
-        <span slot="title">{{ isCollapse ? 'Expand' : 'Collapse' }}</span>
+        <!-- <span slot="title">{{ isCollapse ? 'Expand' : 'Collapse' }}</span> -->
       </el-menu-item>
     </el-menu>
 

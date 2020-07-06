@@ -22,7 +22,9 @@
             {{ crumb.title | startCaseUnlessUUID }}
           </el-breadcrumb-item>
         </el-breadcrumb>
-        <nuxt />
+        <transition name="el-fade-in-linear">
+          <nuxt />
+        </transition>
       </el-main>
     </el-container>
   </el-container>
