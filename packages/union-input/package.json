@@ -1,0 +1,18 @@
+{
+  "name": "@dockite/union-input",
+  "version": "0.1.0",
+  "main": "lib/index.js",
+  "license": "MIT",
+  "scripts": {
+    "lint": "exit 0",
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "graphql": "^15.0.0",
+    "lodash": "^4.17.15"
+  },
+  "devDependencies": {
+    "typescript": "^3.9.5"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "rules": {
+    // We want to allow import cycling here as it mostly surrounds typings
+    "import/no-cycle": "off"
+  }
+}
