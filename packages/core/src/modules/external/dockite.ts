@@ -4,8 +4,14 @@ import { createSchema } from '@dockite/transformer';
 import { GraphQLSchema } from 'graphql';
 import * as typeorm from 'typeorm';
 
+import { getConfig } from '../../config';
+
+const config = getConfig();
+
 // TODO: Tidy this area, createSchema likely does not need access to all the items it currently does.
 export const createExtraGraphQLSchema = async (): Promise<GraphQLSchema> => {
+  const externalAuth = await import(config.externalAuthPackage ?? './dummy-auth');
+
   const dockiteSchemas = await typeorm.getRepository(Schema).find({
     relations: ['fields', 'fields.schema'],
   });
@@ -25,7 +31,7 @@ export const createExtraGraphQLSchema = async (): Promise<GraphQLSchema> => {
 
   const dockiteSchemasFiltered = dockiteSchemas.filter(schema => schema.fields.length > 0);
 
-  const schema = await createSchema(typeorm, dockiteSchemasFiltered, FieldManager);
+  const schema = await createSchema(typeorm, dockiteSchemasFiltered, FieldManager, externalAuth);
 
   return schema;
 };

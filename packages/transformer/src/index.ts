@@ -24,6 +24,7 @@ import {
 import { cloneDeep, omit } from 'lodash';
 import debug from 'debug';
 import typeorm from 'typeorm';
+import { Express } from 'express';
 import { WhereBuilderInputType, WhereBuilder } from '@dockite/where-builder';
 
 import { strToColumnPath } from './util';

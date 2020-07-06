@@ -20,12 +20,6 @@ export class DockiteFieldColorPicker extends DockiteField {
     return DockiteFieldColorType;
   }
 
-  // public async processInput<Input, Output>(data: Input): Promise<Output> {}
-
-  public async where(): Promise<GraphQLInputType> {
-    return DockiteFieldColorType;
-  }
-
   public async outputType(): Promise<GraphQLOutputType> {
     return DockiteFieldColorType;
   }

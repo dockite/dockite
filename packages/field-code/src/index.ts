@@ -32,12 +32,6 @@ export class DockiteFieldCode extends DockiteField {
     return DockiteFieldCodeInputType;
   }
 
-  // public async processInput<Input, Output>(data: Input): Promise<Output> {}
-
-  public async where(): Promise<GraphQLInputType> {
-    return GraphQLString;
-  }
-
   public async outputType(): Promise<GraphQLOutputType> {
     return DockiteFieldCodeType;
   }

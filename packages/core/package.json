@@ -13,7 +13,6 @@
     "@dockite/ability": "0.2.1-alpha.1",
     "@dockite/database": "0.3.5-alpha.1",
     "@dockite/field": "0.2.1-alpha.1",
-    "@dockite/field-string": "^0.2.0",
     "@dockite/manager": "^0.2.0",
     "@dockite/transformer": "0.3.0-alpha.1",
     "@dockite/types": "0.3.0-alpha.1",

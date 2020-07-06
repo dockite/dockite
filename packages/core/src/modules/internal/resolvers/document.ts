@@ -320,10 +320,10 @@ export class DocumentResolver {
 
         const hookContext: HookContext = { field, fieldData, data: document.data };
 
-        await Promise.resolve([
-          field.dockiteField!.onCreate(hookContext),
-          field.dockiteField!.validateInputRaw(hookContext),
-        ]);
+        await field.dockiteField!.validateInputRaw(hookContext);
+        data[field.name] = await field.dockiteField!.processInputRaw(hookContext);
+
+        await field.dockiteField!.onCreate(hookContext);
       }),
     );
 
@@ -343,7 +343,7 @@ export class DocumentResolver {
     // @Arg('locale', _type => String, { nullable: true })
     // locale: string | null,
     @Arg('data', _type => GraphQLJSON)
-    data: any | null, // eslint-disable-line
+    data: any, // eslint-disable-line
     @Ctx() ctx: GlobalContext,
   ): Promise<Document | null> {
     const documentRepository = getRepository(Document);
@@ -384,11 +384,10 @@ export class DocumentResolver {
           oldData,
         };
 
-        await Promise.all([
-          field.dockiteField!.validateInputRaw(hookContext),
-          field.dockiteField!.processInputRaw(hookContext),
-          field.dockiteField!.onUpdate(hookContext),
-        ]);
+        await field.dockiteField!.validateInputRaw(hookContext);
+        data[field.name] = await field.dockiteField!.processInputRaw(hookContext);
+
+        await field.dockiteField!.onUpdate(hookContext);
       }),
     );
 
@@ -419,10 +418,10 @@ export class DocumentResolver {
       const { schema, data } = document;
 
       await Promise.all(
-        schema.fields.map(field => {
+        schema.fields.map(async field => {
           const fieldData = data[field.name] ?? null;
 
-          return Promise.resolve(field.dockiteField!.onSoftDelete({ field, fieldData, data }));
+          await field.dockiteField!.onSoftDelete({ field, fieldData, data });
         }),
       );
 

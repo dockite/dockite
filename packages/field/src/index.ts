@@ -49,8 +49,6 @@ export abstract class DockiteField {
     return Promise.resolve();
   }
 
-  public abstract where(): Promise<GraphQLInputType>;
-
   public abstract outputType(ctx: FieldIOContext): Promise<GraphQLOutputType>;
 
   public outputArgs(): Promise<GraphQLFieldConfigArgumentMap> {

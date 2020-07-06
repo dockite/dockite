@@ -21,12 +21,6 @@ export class DockiteFieldString extends DockiteField {
     return DockiteFieldStringType;
   }
 
-  // public async processInput<Input, Output>(data: Input): Promise<Output> {}
-
-  public async where(): Promise<GraphQLInputType> {
-    return DockiteFieldStringType;
-  }
-
   public async outputType(): Promise<GraphQLOutputType> {
     return DockiteFieldStringType;
   }
