@@ -38,6 +38,7 @@
           :is="$dockiteFieldManager[selectedField.type].input"
           v-model="fieldData[selectedField.name]"
           :name="`${name}.${selectedField.name}`"
+          :schema="schema"
           :field-config="selectedField"
           :form-data="formData"
         />
@@ -48,7 +49,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { Field } from '@dockite/types';
+import { Field, Schema } from '@dockite/types';
 
 type UnpersistedField = Omit<Field, 'id' | 'schemaId' | 'dockiteField' | 'schema'>;
 
@@ -67,6 +68,9 @@ export default class GroupFieldInputComponent extends Vue {
 
   @Prop({ required: true })
   readonly fieldConfig!: Field;
+
+  @Prop({ required: true })
+  readonly schema!: Schema;
 
   public rules: object[] = [];
 
