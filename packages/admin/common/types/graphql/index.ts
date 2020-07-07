@@ -200,6 +200,10 @@ export interface ResetUserPasswordMutationResponse {
   resetUserPassword: User;
 }
 
+export interface UpdateUserPasswordMutationResponse {
+  updatePassword: boolean;
+}
+
 export interface UpdateRoleMutationResponse {
   updateRole: Role;
 }
