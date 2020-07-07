@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.2](https://github.com/dockite/dockite/compare/@dockite/core@0.3.5...@dockite/core@0.4.0-alpha.2) (2020-07-07)
+
+
+### Bug Fixes
+
+* remove where method from field packages ([4ba0ceb](https://github.com/dockite/dockite/commit/4ba0ceb0a97b4704a0be3d9637d6782bc5c4bc62))
+* **core:** store connection for cases of reinstantiation ([e78486a](https://github.com/dockite/dockite/commit/e78486aa010d73d28ca3a471cefda0c00a1105ea))
+
+
+### Features
+
+* **admin,core:** add api keys ([9e542d5](https://github.com/dockite/dockite/commit/9e542d5c10f9ebe8fccb2c2489fddc2b7f2bbb72))
+* **core:** add password reset resolver ([411d0aa](https://github.com/dockite/dockite/commit/411d0aab2ff80eb3d9e9d3af1b408bac146f21e7))
+* add filtering and sorting ([a8e27b1](https://github.com/dockite/dockite/commit/a8e27b14ada9ec485411520f4c62db8d7958c681))
+* add s3 image upload field ([bd2ea37](https://github.com/dockite/dockite/commit/bd2ea37016f996795b742748e1ada80667127c94))
+* **admin:** admin password resets ([f79178b](https://github.com/dockite/dockite/commit/f79178b5cf730f82f798bc29a0297da0c3d37806))
+* add user management system ([a58ee82](https://github.com/dockite/dockite/commit/a58ee823044da2de002c06b93ca23c28b311a234))
+* **core:** add user management resolvers ([bafc9c3](https://github.com/dockite/dockite/commit/bafc9c3b57e1e7435d6ade6134394db76a4c05ca))
+
+
+
+
+
 # [0.4.0-alpha.1](https://github.com/dockite/dockite/compare/@dockite/core@0.3.5...@dockite/core@0.4.0-alpha.1) (2020-07-03)
 
 

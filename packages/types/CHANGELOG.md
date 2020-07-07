@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.2](https://github.com/dockite/dockite/compare/@dockite/types@0.2.0...@dockite/types@0.3.0-alpha.2) (2020-07-07)
+
+
+### Bug Fixes
+
+* remove where method from field packages ([4ba0ceb](https://github.com/dockite/dockite/commit/4ba0ceb0a97b4704a0be3d9637d6782bc5c4bc62))
+
+
+### Features
+
+* **field-group:** add nested field hooks ([0db6eca](https://github.com/dockite/dockite/commit/0db6ecaff7f3f883302b135bc88e3fb8639999aa))
+* add filtering and sorting ([a8e27b1](https://github.com/dockite/dockite/commit/a8e27b14ada9ec485411520f4c62db8d7958c681))
+* add s3 image upload field ([bd2ea37](https://github.com/dockite/dockite/commit/bd2ea37016f996795b742748e1ada80667127c94))
+
+
+
+
+
 # [0.3.0-alpha.1](https://github.com/dockite/dockite/compare/@dockite/types@0.2.0...@dockite/types@0.3.0-alpha.1) (2020-07-03)
 
 
