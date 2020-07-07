@@ -7,10 +7,12 @@ import {
   DeleteUserMutationResponse,
   UpdateUserMutationResponse,
   ResetUserPasswordMutationResponse,
+  UpdateUserPasswordMutationResponse,
 } from '~/common/types';
 import CreateUserMutation from '~/graphql/mutations/create-user.gql';
 import DeleteUserMutation from '~/graphql/mutations/delete-user.gql';
 import ResetUserPasswordMutation from '~/graphql/mutations/reset-user-password.gql';
+import UpdateUserPasswordMutation from '~/graphql/mutations/update-password.gql';
 import UpdateUserMutation from '~/graphql/mutations/update-user.gql';
 import * as data from '~/store/data';
 
@@ -116,6 +118,21 @@ export const actions: ActionTree<UserState, RootState> = {
 
     if (!resetPasswordData?.resetUserPassword) {
       throw new Error('Unable to reset user password');
+    }
+  },
+
+  async updateUserPassword(_, payload: string): Promise<void> {
+    const { data: updateUserPasswordData } = await this.$apolloClient.mutate<
+      UpdateUserPasswordMutationResponse
+    >({
+      mutation: UpdateUserPasswordMutation,
+      variables: {
+        password: payload,
+      },
+    });
+
+    if (!updateUserPasswordData?.updatePassword) {
+      throw new Error('Unable to update user password');
     }
   },
 };
