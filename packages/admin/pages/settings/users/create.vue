@@ -75,7 +75,13 @@ import * as user from '~/store/user';
 
 type UserForm = Omit<
   User,
-  'id' | 'createdAt' | 'updatedAt' | 'normalizedScopes' | 'handleNormalizeScopes' | 'verified'
+  | 'id'
+  | 'apiKeys'
+  | 'createdAt'
+  | 'updatedAt'
+  | 'normalizedScopes'
+  | 'handleNormalizeScopes'
+  | 'verified'
 >;
 
 @Component({

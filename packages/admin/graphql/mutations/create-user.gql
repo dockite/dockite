@@ -23,6 +23,7 @@ mutation CreateUser(
     }
     scopes
     normalizedScopes
+    apiKeys
     createdAt
     updatedAt
   }

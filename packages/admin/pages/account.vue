@@ -47,6 +47,8 @@
           </div>
         </el-form-item>
       </el-form>
+
+      <api-keys v-show="$can('internal:apikey:create')" />
     </div>
   </fragment>
 </template>
@@ -56,12 +58,14 @@ import { User } from '@dockite/database';
 import { Component, Vue } from 'nuxt-property-decorator';
 import { Fragment } from 'vue-fragment';
 
+import ApiKeys from '~/components/account/api-keys.vue';
 import NewPassword from '~/components/account/new-password.vue';
 import Logo from '~/components/base/logo.vue';
 import * as auth from '~/store/auth';
 
 @Component({
   components: {
+    ApiKeys,
     Fragment,
     Logo,
     NewPassword,

@@ -9,13 +9,13 @@ const refreshTokenLink = new ApolloLink((operation, forward) => {
   return forward(operation).map(response => {
     const context = operation.getContext();
 
-    const { headers } = context.response;
+    const { headers } = context;
 
-    if (headers.get('authorization')) {
-      const [, token] = headers.get('authorization').split('Bearer ');
+    if (headers.authorization) {
+      const [, token] = headers.authorization.split('Bearer ');
       const [, claims] = token.split('.');
 
-      const tokenDecoded = JSON.parse(atob(claims));
+      const tokenDecoded = atob(claims);
 
       window.localStorage.setItem('apollo-token', token);
       window.localStorage.setItem('apollo-token-decoded', tokenDecoded);

@@ -8,12 +8,17 @@ import {
   UpdateUserMutationResponse,
   ResetUserPasswordMutationResponse,
   UpdateUserPasswordMutationResponse,
+  CreateAPIKeyMutationResponse,
+  RemoveAPIKeyMutationResponse,
 } from '~/common/types';
+import CreateAPIKeyMutation from '~/graphql/mutations/create-api-key.gql';
 import CreateUserMutation from '~/graphql/mutations/create-user.gql';
+import DeleteAPIKeyMutation from '~/graphql/mutations/delete-api-key.gql';
 import DeleteUserMutation from '~/graphql/mutations/delete-user.gql';
 import ResetUserPasswordMutation from '~/graphql/mutations/reset-user-password.gql';
 import UpdateUserPasswordMutation from '~/graphql/mutations/update-password.gql';
 import UpdateUserMutation from '~/graphql/mutations/update-user.gql';
+import * as auth from '~/store/auth';
 import * as data from '~/store/data';
 
 export interface UserState {
@@ -134,6 +139,37 @@ export const actions: ActionTree<UserState, RootState> = {
     if (!updateUserPasswordData?.updatePassword) {
       throw new Error('Unable to update user password');
     }
+  },
+
+  async createAPIKey(_): Promise<void> {
+    const { data: createAPIKeyData } = await this.$apolloClient.mutate<
+      CreateAPIKeyMutationResponse
+    >({
+      mutation: CreateAPIKeyMutation,
+    });
+
+    if (!createAPIKeyData?.createAPIKey) {
+      throw new Error('Unable to create api key');
+    }
+
+    this.commit(`${auth.namespace}/setUser`, createAPIKeyData.createAPIKey);
+  },
+
+  async removeAPIKey(_, payload: string): Promise<void> {
+    const { data: createAPIKeyData } = await this.$apolloClient.mutate<
+      RemoveAPIKeyMutationResponse
+    >({
+      mutation: DeleteAPIKeyMutation,
+      variables: {
+        apiKey: payload,
+      },
+    });
+
+    if (!createAPIKeyData?.removeAPIKey) {
+      throw new Error('Unable to create api key');
+    }
+
+    this.commit(`${auth.namespace}/setUser`, createAPIKeyData.removeAPIKey);
   },
 };
 

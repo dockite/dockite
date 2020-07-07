@@ -226,3 +226,11 @@ export interface RestoreSchemaRevisionMutationResponse {
 export interface RestoreDocumentRevisionMutationResponse {
   restoreDocumentRevision: boolean;
 }
+
+export interface CreateAPIKeyMutationResponse {
+  createAPIKey: User;
+}
+
+export interface RemoveAPIKeyMutationResponse {
+  removeAPIKey: User;
+}

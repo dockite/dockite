@@ -21,6 +21,7 @@ mutation UpdateUser(
     }
     scopes
     normalizedScopes
+    apiKeys
     createdAt
     updatedAt
   }

@@ -1,5 +1,5 @@
-query me {
-  me {
+mutation DeleteAPIKey($apiKey: String!) {
+  removeAPIKey(apiKey: $apiKey) {
     id
     firstName
     lastName

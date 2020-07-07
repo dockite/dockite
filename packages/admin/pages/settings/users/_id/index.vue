@@ -75,6 +75,7 @@ interface UserForm
     User,
     | 'id'
     | 'password'
+    | 'apiKeys'
     | 'createdAt'
     | 'updatedAt'
     | 'normalizedScopes'
