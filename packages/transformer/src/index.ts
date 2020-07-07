@@ -606,7 +606,7 @@ const createGraphQLMutationsForSchema = async (
         type: graphqlObjectType,
         description: schema.settings.description ?? `Retrieves all ${schema.name}`,
         args: {
-          input: { type: inputTypes.update },
+          input: { type: inputTypes.delete },
         },
         async resolve(_context, args, ctx, info): Promise<object> {
           const { input } = args;
