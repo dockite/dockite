@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.0](https://github.com/dockite/dockite/compare/@dockite/field-group@0.3.0...@dockite/field-group@0.4.0-alpha.0) (2020-07-07)
+
+
+### Bug Fixes
+
+* remove where method from field packages ([4ba0ceb](https://github.com/dockite/dockite/commit/4ba0ceb0a97b4704a0be3d9637d6782bc5c4bc62))
+
+
+### Features
+
+* **field-group:** add nested field hooks ([0db6eca](https://github.com/dockite/dockite/commit/0db6ecaff7f3f883302b135bc88e3fb8639999aa))
+
+
+
+
+
 ## [0.3.1-alpha.1](https://github.com/dockite/dockite/compare/@dockite/field-group@0.3.0...@dockite/field-group@0.3.1-alpha.1) (2020-07-03)
 
 **Note:** Version bump only for package @dockite/field-group

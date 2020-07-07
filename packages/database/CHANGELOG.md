@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.0](https://github.com/dockite/dockite/compare/@dockite/database@0.3.4...@dockite/database@0.4.0-alpha.0) (2020-07-07)
+
+
+### Features
+
+* **admin,core:** add api keys ([9e542d5](https://github.com/dockite/dockite/commit/9e542d5c10f9ebe8fccb2c2489fddc2b7f2bbb72))
+* **field-group:** add nested field hooks ([0db6eca](https://github.com/dockite/dockite/commit/0db6ecaff7f3f883302b135bc88e3fb8639999aa))
+
+
+
+
+
 ## [0.3.5-alpha.1](https://github.com/dockite/dockite/compare/@dockite/database@0.3.4...@dockite/database@0.3.5-alpha.1) (2020-07-03)
 
 **Note:** Version bump only for package @dockite/database
