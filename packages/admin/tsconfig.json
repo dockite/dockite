@@ -20,7 +20,7 @@
       // "element-ui": [".sink.d.ts"]
     },
     "skipLibCheck": true,
-    "types": ["@types/node", "@nuxt/types", "nuxt-i18n", "vue-i18n"]
+    "types": ["@types/node", "@nuxt/types", "nuxt-i18n"]
   },
   "exclude": ["node_modules", ".nuxt", "dist"]
 }
