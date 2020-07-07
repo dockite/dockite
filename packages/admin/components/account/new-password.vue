@@ -1,16 +1,19 @@
 <template>
-  <el-form-item :rules="rules" label="Update Password">
+  <el-form-item :required="true" label="Update Password" :class="{ 'is-error': error !== '' }">
     <el-row type="flex" justify="space-between">
       <el-input v-model="password" type="password" placeholder="Password"></el-input>
       <el-button style="margin-left: 1rem;" @click="handleUpdatePassword">
         Update
       </el-button>
     </el-row>
+    <div v-if="error !== ''" class="el-form-item__error">
+      {{ error }}
+    </div>
   </el-form-item>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator';
+import { Component, Vue, Watch } from 'nuxt-property-decorator';
 import { Fragment } from 'vue-fragment';
 
 import * as auth from '~/store/auth';
@@ -24,23 +27,25 @@ import * as user from '~/store/user';
 export default class IndexPage extends Vue {
   public password = '';
 
+  public error = '';
+
   get user(): string {
     return this.$store.getters[`${auth.namespace}/fullName`];
   }
 
-  get rules(): object[] {
-    return [
-      {
-        required: true,
-        trigger: 'blur',
-        message: 'New Password is required',
-      },
-      {
-        min: 6,
-        trigger: 'blur',
-        message: 'New Password must contain atleast 6 characters',
-      },
-    ];
+  @Watch('password')
+  handlePasswordChange(password: string): void {
+    if (password.length === 0) {
+      this.error = 'New Password is required';
+      return;
+    }
+
+    if (password.length < 6) {
+      this.error = 'New Password must contain atleast 6 characters';
+      return;
+    }
+
+    this.error = '';
   }
 
   public async handleUpdatePassword(): Promise<void> {

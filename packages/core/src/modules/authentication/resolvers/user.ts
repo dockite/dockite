@@ -283,6 +283,36 @@ export class UserResolver {
     }
   }
 
+  @Authenticated()
+  @Mutation(_returns => Boolean)
+  async updatePassword(
+    @Arg('password') password: string,
+    @Ctx()
+    ctx: GlobalContext,
+  ): Promise<boolean> {
+    const repository = getRepository(User);
+
+    if (!ctx.user) {
+      return false;
+    }
+
+    try {
+      const { id } = ctx.user;
+
+      const user = await repository.findOneOrFail(id);
+
+      user.password = await hash(password, 10);
+
+      await repository.save(user);
+
+      return true;
+    } catch (err) {
+      console.log(err);
+
+      return false;
+    }
+  }
+
   @FieldResolver()
   public password(): string {
     return 'secret';
