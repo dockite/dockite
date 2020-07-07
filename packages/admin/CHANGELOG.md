@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.4](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.3...@dockite/admin@0.4.0-alpha.4) (2020-07-07)
+
+
+### Bug Fixes
+
+* **admin:** include vue-i18n types ([0065a15](https://github.com/dockite/dockite/commit/0065a1500ecfd5fbbff39a280ab30c53b546b6ed))
+
+
+
+
+
 # [0.4.0-alpha.3](https://github.com/dockite/dockite/compare/@dockite/admin@0.3.4...@dockite/admin@0.4.0-alpha.3) (2020-07-07)
 
 

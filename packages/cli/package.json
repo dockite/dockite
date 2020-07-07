@@ -1,13 +1,13 @@
 {
   "name": "@dockite/cli",
-  "version": "0.0.7-alpha.1",
+  "version": "0.0.7-alpha.2",
   "author": "Dockite",
   "bin": {
     "dockite": "./bin/run"
   },
   "bugs": "https://github.com/Mythie/dockite/issues",
   "dependencies": {
-    "@dockite/admin": "^0.4.0-alpha.3",
+    "@dockite/admin": "^0.4.0-alpha.4",
     "@nuxt/typescript-build": "^0.6.0",
     "@nuxt/typescript-runtime": "^0.4.0",
     "@nuxt/webpack": "^2.13.2",
