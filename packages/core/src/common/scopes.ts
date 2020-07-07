@@ -1,4 +1,4 @@
-const GLOBAL_SCOPES = ['*:create', '*:read', '*:update', '*:delete'];
+const GLOBAL_SCOPES = ['*', '*:create', '*:read', '*:update', '*:delete'];
 
 const DOCUMENT_SCOPES = [
   'internal:document:create',
@@ -36,8 +36,11 @@ const WEBHOOK_SCOPES = [
   'internal:webhook:delete',
 ];
 
+const API_KEY_SCOPES = ['internal:apikey:create', 'internal:apikey:delete'];
+
 export const scopes = [
   ...GLOBAL_SCOPES,
+  ...API_KEY_SCOPES,
   ...DOCUMENT_SCOPES,
   ...SCHEMA_SCOPES,
   ...USER_SCOPES,

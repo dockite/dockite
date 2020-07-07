@@ -2,25 +2,22 @@
 // import path from 'path';
 import { Server } from 'http';
 
-import { User } from '@dockite/database';
 import { registerField, registerScopes, SchemaManager } from '@dockite/manager';
 import { DockiteFieldStatic } from '@dockite/types';
 import { ApolloServer } from 'apollo-server-express';
 import cookieParser from 'cookie-parser';
 import debug from 'debug';
 import express, { Express } from 'express';
-import { sign } from 'jsonwebtoken';
 import { set } from 'lodash';
-import { getRepository } from 'typeorm';
 
 import { EXTERNAL_GRAPHQL_PATH, INTERNAL_GRAPHQL_PATH } from './common/constants/core';
 import { scopes } from './common/scopes';
-import { GlobalContext, SessionContext, UserContext } from './common/types';
+import { SessionContext } from './common/types';
 import { getConfig } from './config';
 import { DockiteEvents } from './events';
 import { RootModule } from './modules';
 import { ExternalGraphQLModule } from './modules/external';
-import { verify } from './utils';
+import { createGlobalContext } from './utils';
 
 // import { InternalGraphQLModule } from './modules/internal';
 
@@ -68,53 +65,7 @@ export const createServer = async (): Promise<Express> => {
   log('creating servers');
   const internalServer = new ApolloServer({
     schema: root.schema,
-    context: async ({ req, res }: SessionContext): Promise<GlobalContext> => {
-      try {
-        const authorization = req.headers.authorization ?? '';
-        const bearerSplit = authorization.split('Bearer');
-        const token = bearerSplit[bearerSplit.length - 1].trim();
-
-        const user = verify<UserContext>(token, config.app.secret ?? '');
-
-        return { req, res, user };
-      } catch (_) {
-        if (!req.cookies.refreshToken) {
-          return { req, res, user: undefined };
-        }
-      }
-
-      try {
-        const refresh = verify<UserContext>(req.cookies.refreshToken, config.app.secret ?? '');
-
-        const user = await getRepository(User).findOneOrFail(refresh.id);
-
-        const [bearerToken, refreshToken] = await Promise.all([
-          Promise.resolve(
-            sign({ ...user }, config.app.secret ?? '', {
-              expiresIn: '15m',
-            }),
-          ),
-          Promise.resolve(
-            sign({ ...user }, config.app.secret ?? '', {
-              expiresIn: '3d',
-            }),
-          ),
-        ]);
-
-        res.cookie('refreshToken', refreshToken, {
-          httpOnly: true,
-          expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 3),
-        });
-
-        res.setHeader('authorization', `Bearer ${bearerToken}`);
-
-        return { req, res, user };
-      } catch (err) {
-        log('unable to refresh user session', err);
-
-        return { req, res, user: undefined };
-      }
-    },
+    context: createGlobalContext,
     introspection: true,
     playground: true,
     // tracing: true,

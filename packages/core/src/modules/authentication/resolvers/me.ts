@@ -1,6 +1,7 @@
 import { User } from '@dockite/database';
 import { UserContext } from '@dockite/types';
 import { Ctx, Query, Resolver, FieldResolver, Root } from 'type-graphql';
+import { getRepository } from 'typeorm';
 
 import { Authenticated } from '../../../common/decorators';
 import { GlobalContext } from '../../../common/types';
@@ -12,7 +13,7 @@ export class MeResolver {
   async me(@Ctx() ctx: GlobalContext): Promise<UserContext | null> {
     if (!ctx.user) return null;
 
-    return ctx.user;
+    return getRepository(User).findOneOrFail(ctx.user.id, { relations: ['roles'] });
   }
 
   @FieldResolver(_type => Date, { nullable: true })

@@ -1,5 +1,5 @@
-query me {
-  me {
+mutation CreateAPIKey {
+  createAPIKey {
     id
     firstName
     lastName

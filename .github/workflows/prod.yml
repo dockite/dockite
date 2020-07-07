@@ -22,11 +22,7 @@ jobs:
     - run: echo "::add-path::$(yarn global bin)"
 
     - run: lerna bootstrap
-    - run: lerna run build --scope @dockite/types
-    - run: lerna run build --scope @dockite/manager --scope @dockite/where-builder
-    - run: lerna run build --ignore @dockite/admin --ignore @dockite/core --ignore @dockite/field-* --parallel
-    - run: lerna run build --scope @dockite/field-* --parallel
-    - run: lerna run build --scope @dockite/core --scope @dockite/admin --parallel
+    - run: lerna run build
 
   publish-dev:
     runs-on: ubuntu-latest
@@ -50,11 +46,7 @@ jobs:
     - run: echo "::add-path::$(yarn global bin)"
 
     - run: lerna bootstrap
-    - run: lerna run build --scope @dockite/types
-    - run: lerna run build --scope @dockite/manager --scope @dockite/where-builder --parallel
-    - run: lerna run build --ignore @dockite/admin --ignore @dockite/core --ignore @dockite/field-* --parallel
-    - run: lerna run build --scope @dockite/field-* --parallel
-    - run: lerna run build --scope @dockite/core --scope @dockite/admin --parallel
+    - run: lerna run build
 
     # Actions bot was stealing my commits >:(
     - run: git config --local user.email "me@lucasjamessmith.me"
@@ -100,11 +92,7 @@ jobs:
     - run: echo "::add-path::$(yarn global bin)"
 
     - run: lerna bootstrap
-    - run: lerna run build --scope @dockite/types
-    - run: lerna run build --scope @dockite/manager
-    - run: lerna run build --ignore @dockite/admin --ignore @dockite/core --ignore @dockite/field-* --parallel
-    - run: lerna run build --scope @dockite/field-* --parallel
-    - run: lerna run build --scope @dockite/core --scope @dockite/admin --parallel
+    - run: lerna run build
 
     # Actions bot was stealing my commits >:(
     - run: git config --local user.email "me@lucasjamessmith.me"

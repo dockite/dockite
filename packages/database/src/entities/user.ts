@@ -44,6 +44,10 @@ export class User {
   @GraphQLField(_type => [String])
   public scopes!: string[];
 
+  @Column({ type: 'jsonb', default: () => "'[]'" })
+  @GraphQLField(_type => [String])
+  public apiKeys!: string[];
+
   @GraphQLField(_type => [String])
   public normalizedScopes!: string[];
 

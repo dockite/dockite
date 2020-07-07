@@ -10,6 +10,7 @@ mutation login($email: String!, $password: String!) {
       }
       scopes
       normalizedScopes
+      apiKeys
       createdAt
       updatedAt
       verified

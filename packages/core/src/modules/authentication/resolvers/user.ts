@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import * as crypto from 'crypto';
 import * as path from 'path';
+import { performance } from 'perf_hooks';
 import { promises as fs } from 'fs';
 
 import { Role, User } from '@dockite/database';
@@ -311,6 +312,66 @@ export class UserResolver {
 
       return false;
     }
+  }
+
+  @Authenticated()
+  @Authorized('internal:apikey:create', { derriveAlternativeScopes: false })
+  @Mutation(_returns => User)
+  async createAPIKey(
+    @Ctx()
+    ctx: GlobalContext,
+  ): Promise<User> {
+    const repository = getRepository(User);
+
+    if (!ctx.user) {
+      throw new ForbiddenError('You must be authenticated to perform this action');
+    }
+    const { id } = ctx.user;
+
+    const user = await repository.findOneOrFail(id, { relations: ['roles'] });
+
+    user.apiKeys.push(
+      crypto
+        .createHash('sha256')
+        .update(performance.now().toString())
+        .digest('hex')
+        .slice(0, 40),
+    );
+
+    await repository.save(user);
+
+    return user;
+  }
+
+  @Authenticated()
+  @Authorized('internal:apikey:delete', { derriveAlternativeScopes: false })
+  @Mutation(_returns => User)
+  async removeAPIKey(
+    @Arg('apiKey')
+    apiKey: string,
+    @Ctx()
+    ctx: GlobalContext,
+  ): Promise<User> {
+    const repository = getRepository(User);
+
+    if (!ctx.user) {
+      throw new ForbiddenError('You must be authenticated to perform this action');
+    }
+    const { id } = ctx.user;
+
+    const user = await repository.findOneOrFail(id, { relations: ['roles'] });
+
+    const index = user.apiKeys.indexOf(apiKey);
+
+    if (index < 0) {
+      throw new Error('API Key provided does not exist for current user');
+    }
+
+    user.apiKeys.splice(index, 1);
+
+    await repository.save(user);
+
+    return user;
   }
 
   @FieldResolver()
