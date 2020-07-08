@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.6](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.5...@dockite/admin@0.4.0-alpha.6) (2020-07-08)
+
+
+### Bug Fixes
+
+* **admin,cli:** disable typechecking during cli build ([b82ae10](https://github.com/dockite/dockite/commit/b82ae10b1de883f762f4bce3f98f6a2a9b2e457e))
+
+
+
+
+
 # [0.4.0-alpha.5](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.4...@dockite/admin@0.4.0-alpha.5) (2020-07-07)
 
 **Note:** Version bump only for package @dockite/admin
