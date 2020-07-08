@@ -77,7 +77,7 @@ const config: Configuration = {
     [
       '@nuxt/typescript-build',
       {
-        typecheck: !process.env.CI,
+        typecheck: !process.env.CLI_BUILD,
       },
     ],
     '@nuxtjs/stylelint-module',
