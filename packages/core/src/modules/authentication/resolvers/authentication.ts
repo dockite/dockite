@@ -1,15 +1,15 @@
 import crypto from 'crypto';
 
+import { Role, User } from '@dockite/database';
 import { AuthenticationError, ForbiddenError } from 'apollo-server-express';
 import { compare, hash } from 'bcrypt';
 import { sign } from 'jsonwebtoken';
 import { Arg, Ctx, Mutation, Resolver } from 'type-graphql';
 import { getRepository, Repository } from 'typeorm';
-import { User, Role } from '@dockite/database';
 
 import { GlobalContext } from '../../../common/types';
-import { AuthenticationResponse } from '../types/response';
 import { getConfig } from '../../../config';
+import { AuthenticationResponse } from '../types/response';
 
 // const log = debug('dockite:core:authentication:resolver');
 
@@ -96,7 +96,7 @@ export class Authentication {
     });
 
     const anonymousUser = this.userRepository.create({
-      id: '99999999-9999-9999-9999-9999999999999',
+      id: '99999999-9999-4999-9999-999999999999',
       firstName: 'Anonymous',
       lastName: 'User',
       email: 'anonymous@dockite.app',
