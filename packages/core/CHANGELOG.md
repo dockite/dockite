@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.4](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.3...@dockite/core@0.4.0-alpha.4) (2020-07-08)
+
+
+### Bug Fixes
+
+* **core:** fix invalid uuid ([4188ee5](https://github.com/dockite/dockite/commit/4188ee5c0a53b1c3e5b51b1813b367915ab7519d))
+
+
+
+
+
 # [0.4.0-alpha.3](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.2...@dockite/core@0.4.0-alpha.3) (2020-07-07)
 
 **Note:** Version bump only for package @dockite/core
