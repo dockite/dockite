@@ -1,0 +1,14 @@
+mutation CreateSingleton($name: String!, $title: String!, $groups: JSON!, $settings: JSON!, $data: JSON!) {
+  createSingleton(name: $name, title: $title, groups: $groups, settings: $settings, data: $data) {
+    id
+    title
+    name
+    type
+    groups
+    settings
+    data
+    userId
+    createdAt
+    updatedAt
+  }
+}

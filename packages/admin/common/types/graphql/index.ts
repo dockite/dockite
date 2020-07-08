@@ -1,4 +1,4 @@
-import { User, Schema, Document, Webhook, WebhookCall, Role } from '@dockite/database';
+import { User, Schema, Document, Webhook, WebhookCall, Role, Singleton } from '@dockite/database';
 import { DockiteFieldStatic } from '@dockite/types';
 
 export interface ManyResultsResponse<T> {
@@ -37,8 +37,14 @@ export interface MeQueryResponse {
 
 export type AllSchemasResultItem = Omit<Schema, 'user' | 'fields' | 'deletedAt'>;
 
+export type AllSingletonsResultItem = Omit<Singleton, 'user' | 'fields' | 'deletedAt'>;
+
 export interface AllSchemasQueryResponse {
   allSchemas: ManyResultsResponse<AllSchemasResultItem>;
+}
+
+export interface AllSingletonsQueryResponse {
+  allSingletons: ManyResultsResponse<AllSingletonsResultItem>;
 }
 
 export interface AllSchemaRevisionsResultItem {
@@ -92,6 +98,10 @@ export interface GetSchemaWithFieldsQueryResponse {
   getSchema: Schema;
 }
 
+export interface GetSingletonWithFieldsQueryResponse {
+  getSingleton: Singleton;
+}
+
 export type FindDocumentResultItem = Omit<AllDocumentsWithSchemaResultItem, 'schema'>;
 
 export interface FindDocumentsQueryResponse {
@@ -106,16 +116,32 @@ export interface CreateSchemaMutationResponse {
   createSchema: Schema;
 }
 
+export interface CreateSingletonMutationResponse {
+  createSingleton: Singleton;
+}
+
 export interface UpdateSchemaMutationResponse {
   updateSchema: Schema;
+}
+
+export interface UpdateSingletonMutationResponse {
+  updateSingleton: Singleton;
 }
 
 export interface ImportSchemaMutationResponse {
   importSchema: Schema;
 }
 
+export interface ImportSingletonMutationResponse {
+  importSingleton: Singleton;
+}
+
 export interface DeleteSchemaMutationResponse {
   removeSchema: boolean;
+}
+
+export interface DeleteSingletonMutationResponse {
+  removeSingleton: boolean;
 }
 
 export interface CreateFieldMutationResponse {

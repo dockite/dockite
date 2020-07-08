@@ -57,8 +57,8 @@ export class Schema {
   public settings!: SchemaSettings; // eslint-disable-line
 
   @OneToMany(
-    _type => Schema,
-    schema => schema.documents,
+    _type => Document,
+    document => document.schema,
   )
   public documents!: Document[];
 
@@ -98,4 +98,10 @@ export class Schema {
   @DeleteDateColumn()
   @GraphQLField()
   public deletedAt!: Date;
+}
+
+@ObjectType()
+export class Singleton extends Schema {
+  @GraphQLField(_type => GraphQLJSON)
+  public data!: Record<string, any>;
 }

@@ -1,0 +1,19 @@
+query allSingletons {
+  allSingletons {
+    results {
+      id
+      name
+      title
+      data
+      type
+      groups
+      settings
+      createdAt
+      updatedAt
+    }
+    totalItems
+    totalPages
+    currentPage
+    hasNextPage
+  }
+}

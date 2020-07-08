@@ -4,6 +4,7 @@ export * from './field';
 export * from './revision';
 export * from './release';
 export * from './schema';
+export * from './singleton';
 export * from './webhook';
 export * from './webhook-call';
 export * from './util';

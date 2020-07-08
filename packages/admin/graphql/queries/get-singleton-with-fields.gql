@@ -1,0 +1,21 @@
+query GetSingletonWithFields($id: String!) {
+  getSingleton(id: $id) {
+    id
+    name
+    title
+    type
+    groups
+    settings
+    data
+    fields {
+      id
+      name
+      title
+      description
+      type
+      settings
+    }
+    createdAt
+    updatedAt
+  }
+}
