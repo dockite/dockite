@@ -42,6 +42,29 @@
           </el-menu-item>
         </el-menu-item-group>
       </el-submenu>
+      <el-submenu index="/singletons">
+        <template slot="title">
+          <i class="el-icon-notebook-2"></i>
+          <span slot="title">{{ $t('sideMenu.singletons') }}</span>
+        </template>
+        <el-menu-item-group title="Management">
+          <el-menu-item index="/singletons">
+            <span slot="title">All Singletons</span>
+          </el-menu-item>
+          <el-menu-item index="/singletons/create">
+            <span slot="title">Create Singleton</span>
+          </el-menu-item>
+        </el-menu-item-group>
+        <el-menu-item-group v-if="allSingletons" title="Recent Singletons">
+          <el-menu-item
+            v-for="schema in allSingletons.results.slice(0, 5)"
+            :key="schema.id"
+            :index="`/singletons/${schema.id}`"
+          >
+            <span slot="title">{{ schema.title }}</span>
+          </el-menu-item>
+        </el-menu-item-group>
+      </el-submenu>
       <el-submenu index="/releases">
         <template slot="title">
           <i class="el-icon-date"></i>
@@ -96,7 +119,7 @@
 import { Component, Vue } from 'nuxt-property-decorator';
 import { Fragment } from 'vue-fragment';
 
-import { AllSchemasResultItem, ManyResultSet } from '../../common/types';
+import { AllSchemasResultItem, ManyResultSet, AllSingletonsResultItem } from '../../common/types';
 
 import { NAV_BACKGROUND_COLOR, NAV_ACTIVE_TEXT_COLOR, NAV_TEXT_COLOR } from '~/common/constants';
 import LogoThumbnail from '~/components/base/logo-thumbnail.vue';
@@ -126,14 +149,27 @@ export default class SideMenuComponent extends Vue {
     return state.allSchemas;
   }
 
+  get allSingletons(): ManyResultSet<AllSingletonsResultItem> {
+    const state: data.DataState = this.$store.state[data.namespace];
+
+    return state.allSingletons;
+  }
+
   async fetchAllSchemas(): Promise<void> {
     if (this.allSchemas.results.length === 0) {
       await this.$store.dispatch(`${data.namespace}/fetchAllSchemas`);
     }
   }
 
+  async fetchAllSingletons(): Promise<void> {
+    if (this.allSingletons.results.length === 0) {
+      await this.$store.dispatch(`${data.namespace}/fetchAllSingletons`);
+    }
+  }
+
   mounted(): void {
     this.fetchAllSchemas();
+    this.fetchAllSingletons();
   }
 
   public async logout(): Promise<void> {

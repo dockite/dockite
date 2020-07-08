@@ -22,6 +22,7 @@
     "home": "Home",
     "documents": "Documents",
     "schemas": "Schemas",
+    "singletons": "Singletons",
     "webhooks": "Webhooks",
     "users": "Users",
     "roles": "Roles",

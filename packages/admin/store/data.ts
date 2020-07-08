@@ -1,4 +1,4 @@
-import { Document, Role, Schema, User } from '@dockite/database';
+import { Document, Role, Schema, User, Singleton } from '@dockite/database';
 import { DockiteFieldStatic, DockiteGraphqlSortInput } from '@dockite/types';
 import { AndQuery, Constraint } from '@dockite/where-builder';
 import Vue from 'vue';
@@ -34,6 +34,9 @@ import {
   ManyResultSet,
   SearchDocumentsWithSchemaQueryResponse,
   SearchDocumentsWithSchemaResultItem,
+  AllSingletonsResultItem,
+  AllSingletonsQueryResponse,
+  GetSingletonWithFieldsQueryResponse,
 } from '~/common/types';
 import AllDocumentRevisionsQuery from '~/graphql/queries/all-document-revisions.gql';
 import AllDocumentsWithSchemaQuery from '~/graphql/queries/all-documents-with-schema.gql';
@@ -41,6 +44,7 @@ import AllRolesQuery from '~/graphql/queries/all-roles.gql';
 import AllSchemaRevisionsQuery from '~/graphql/queries/all-schema-revisions.gql';
 import AllSchemasQuery from '~/graphql/queries/all-schemas.gql';
 import AllScopesQuery from '~/graphql/queries/all-scopes.gql';
+import AllSingletonsQuery from '~/graphql/queries/all-singletons.gql';
 import AllUsersQuery from '~/graphql/queries/all-users.gql';
 import AllWebhooksQuery from '~/graphql/queries/all-webhooks.gql';
 import AvailableFieldsQuery from '~/graphql/queries/available-fields.gql';
@@ -50,6 +54,7 @@ import FindWebhookCallsByWebhookIdQuery from '~/graphql/queries/find-webhook-cal
 import GetDocumentQuery from '~/graphql/queries/get-document.gql';
 import GetRoleQuery from '~/graphql/queries/get-role.gql';
 import GetSchemaWithFieldsQuery from '~/graphql/queries/get-schema-with-fields.gql';
+import GetSingletonWithFieldsQuery from '~/graphql/queries/get-singleton-with-fields.gql';
 import GetUserQuery from '~/graphql/queries/get-user.gql';
 import SearchDocumentsWithSchemaQuery from '~/graphql/queries/search-documents-with-schema.gql';
 
@@ -68,6 +73,7 @@ interface FilterablePayload {
 
 export interface DataState {
   allSchemas: ManyResultSet<AllSchemasResultItem>;
+  allSingletons: ManyResultSet<AllSingletonsResultItem>;
   allSchemaRevisions: ManyResultSet<AllSchemaRevisionsResultItem>;
   allDocumentRevisions: ManyResultSet<AllDocumentRevisionsResultItem>;
   allWebhooks: ManyResultSet<AllWebhooksResultItem>;
@@ -80,6 +86,7 @@ export interface DataState {
   getUser: Record<string, Omit<User, 'handleNormalizeScopes'>>;
   getRole: Record<string, Role>;
   getSchemaWithFields: Record<string, Schema>;
+  getSingletonWithFields: Record<string, Singleton>;
   findDocumentsBySchemaId: ManyResultSet<FindDocumentResultItem>;
   findDocumentsBySchemaIds: ManyResultSet<FindDocumentResultItem>;
   availableFields: DockiteFieldStatic[];
@@ -100,6 +107,13 @@ const makeEmptyResultSet = <T>(): ManyResultSet<T> => {
 
 export const state = (): DataState => ({
   allSchemas: {
+    results: [],
+    totalItems: null,
+    totalPages: null,
+    currentPage: null,
+    hasNextPage: null,
+  },
+  allSingletons: {
     results: [],
     totalItems: null,
     totalPages: null,
@@ -160,6 +174,7 @@ export const state = (): DataState => ({
   getUser: {},
   getRole: {},
   getSchemaWithFields: {},
+  getSingletonWithFields: {},
   findDocumentsBySchemaId: {
     results: [],
     totalItems: null,
@@ -208,6 +223,18 @@ export const getters: GetterTree<DataState, RootState> = {
 
     return schema ?? null;
   },
+
+  getSingletonNameById: state => (id: string): string => {
+    const singleton = state.allSingletons.results.find(singleton => singleton.id === id);
+
+    return singleton ? singleton.title : '';
+  },
+
+  getSingletonWithFieldsById: state => (id: string): Singleton | null => {
+    const singleton = state.getSingletonWithFields[id];
+
+    return singleton ?? null;
+  },
 };
 
 export const actions: ActionTree<DataState, RootState> = {
@@ -222,6 +249,19 @@ export const actions: ActionTree<DataState, RootState> = {
     }
 
     commit('setAllSchemas', data);
+  },
+
+  async fetchAllSingletons({ commit }, payload: boolean = false): Promise<void> {
+    const { data } = await this.$apolloClient.query<AllSingletonsQueryResponse>({
+      query: AllSingletonsQuery,
+      fetchPolicy: payload ? 'no-cache' : 'cache-first',
+    });
+
+    if (!data.allSingletons) {
+      throw new Error('graphql: allSingletons could not be fetched');
+    }
+
+    commit('setAllSingletons', data);
   },
 
   async fetchAllDocumentsWithSchema(
@@ -333,6 +373,26 @@ export const actions: ActionTree<DataState, RootState> = {
     }
 
     commit('setSchemaWithFields', data);
+  },
+
+  async fetchSingletonWithFieldsById(
+    { state, commit },
+    payload: { id: string; force?: boolean },
+  ): Promise<void> {
+    if (state.getSingletonWithFields[payload.id] && !payload.force) {
+      return;
+    }
+
+    const { data } = await this.$apolloClient.query<GetSingletonWithFieldsQueryResponse>({
+      query: GetSingletonWithFieldsQuery,
+      variables: { id: payload.id },
+    });
+
+    if (!data.getSingleton) {
+      throw new Error('graphql: getSingleton could not be fetched');
+    }
+
+    commit('setSingletonWithFields', data);
   },
 
   async fetchFindDocumentsBySchemaId(
@@ -510,6 +570,10 @@ export const mutations: MutationTree<DataState> = {
     state.allSchemas = { ...payload.allSchemas };
   },
 
+  setAllSingletons(state, payload: AllSingletonsQueryResponse) {
+    state.allSingletons = { ...payload.allSingletons };
+  },
+
   setAllSchemaRevisionsForSchema(state, payload: AllSchemaRevisionsQueryResponse): void {
     state.allSchemaRevisions = { ...payload.allSchemaRevisions };
   },
@@ -562,8 +626,21 @@ export const mutations: MutationTree<DataState> = {
     };
   },
 
+  setSingletonWithFields(state, payload: GetSingletonWithFieldsQueryResponse): void {
+    state.getSingletonWithFields = {
+      ...state.getSingletonWithFields,
+      [payload.getSingleton.id]: {
+        ...payload.getSingleton,
+      },
+    };
+  },
+
   removeSchemaWithFields(state, payload: string): void {
     Vue.delete(state.getSchemaWithFields, payload);
+  },
+
+  removeSingletonWithFields(state, payload: string): void {
+    Vue.delete(state.getSingletonWithFields, payload);
   },
 
   removeDocument(state, payload: string): void {
@@ -619,6 +696,14 @@ export const mutations: MutationTree<DataState> = {
     }
 
     state.allSchemas = makeEmptyResultSet<AllSchemasResultItem>();
+  },
+
+  clearSingletonData(state, payload?: string): void {
+    if (payload) {
+      Vue.delete(state.getSingletonWithFields, payload);
+    }
+
+    state.allSingletons = makeEmptyResultSet<AllSingletonsResultItem>();
   },
 
   clearUserData(state, payload?: string): void {

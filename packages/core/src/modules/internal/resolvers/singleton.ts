@@ -3,12 +3,12 @@ import {
   Schema,
   SchemaImportRepository,
   SchemaRevision,
+  Singleton,
   SchemaType,
 } from '@dockite/database';
 import { GlobalContext } from '@dockite/types';
 import { AuthenticationError, ValidationError } from 'apollo-server-express';
 import { GraphQLError } from 'graphql';
-import GraphQLJSON from 'graphql-type-json';
 import { omit } from 'lodash';
 import {
   Arg,
@@ -21,15 +21,16 @@ import {
   Resolver,
 } from 'type-graphql';
 import { getCustomRepository, getRepository } from 'typeorm';
+import GraphQLJSON from 'graphql-type-json';
 
 import { Authenticated, Authorized } from '../../../common/decorators';
 import { DockiteEvents } from '../../../events';
 import { validator as schemaImportValidator } from '../validation/schema-import';
 
 @ObjectType()
-class ManySchemas {
-  @GraphQLField(_type => [Schema])
-  results!: Schema[];
+class ManySingletons {
+  @GraphQLField(_type => [Singleton])
+  results!: Singleton[];
 
   @GraphQLField(_type => Int)
   totalItems!: number;
@@ -44,28 +45,29 @@ class ManySchemas {
   hasNextPage!: boolean;
 }
 
-@Resolver(_of => Schema)
-export class SchemaResolver {
+@Resolver(_of => Singleton)
+export class SingletonResolver {
   @Authenticated()
   @Authorized('internal:schema:read')
-  @Query(_returns => Schema, { nullable: true })
-  async getSchema(
+  @Query(_returns => Singleton, { nullable: true })
+  async getSingleton(
     @Arg('id', _type => String, { nullable: true }) id: string | null,
     @Arg('name', _type => String, { nullable: true }) name: string | null,
-  ): Promise<Schema | null> {
-    const repository = getRepository(Schema);
+  ): Promise<Singleton | null> {
+    const schemaRepository = getRepository(Schema);
+    const documentRepository = getRepository(Document);
 
     let schema;
 
     if (id) {
-      schema = await repository.findOne({
-        where: { id, deletedAt: null, type: SchemaType.DEFAULT },
+      schema = await schemaRepository.findOne({
+        where: { id, deletedAt: null, type: SchemaType.SINGLETON },
         relations: ['fields'],
       });
     } else if (name) {
-      schema = await repository.findOne({
+      schema = await schemaRepository.findOne({
         relations: ['fields'],
-        where: { name, deletedAt: null, type: SchemaType.DEFAULT },
+        where: { name, deletedAt: null, type: SchemaType.SINGLETON },
       });
     }
 
@@ -73,23 +75,25 @@ export class SchemaResolver {
       return null;
     }
 
+    const document = await documentRepository.findOneOrFail({ where: { schemaId: schema.id } });
+
     schema.groups = schema.groups.reduce(
       (acc: Record<string, string[]>, curr: Record<string, string[]>) => ({ ...acc, ...curr }),
       {},
     );
 
-    return schema;
+    return { ...schema, data: document.data };
   }
 
   @Authenticated()
   @Authorized('internal:schema:read')
-  @Query(_returns => ManySchemas)
-  async allSchemas(): Promise<ManySchemas> {
+  @Query(_returns => ManySingletons)
+  async allSingletons(): Promise<ManySingletons> {
     const repository = getRepository(Schema);
 
     const [results, totalItems] = await repository.findAndCount({
-      where: { deletedAt: null, type: SchemaType.DEFAULT },
-      relations: ['fields'],
+      where: { deletedAt: null, type: SchemaType.SINGLETON },
+      relations: ['fields', 'documents'],
     });
 
     results.forEach(schema => {
@@ -101,7 +105,10 @@ export class SchemaResolver {
     });
 
     return {
-      results,
+      results: results.map(schemaWithDocuments => ({
+        ...schemaWithDocuments,
+        data: schemaWithDocuments.documents[0].data,
+      })),
       currentPage: 1,
       totalItems,
       totalPages: 1,
@@ -114,22 +121,23 @@ export class SchemaResolver {
    */
   @Authenticated()
   @Authorized('internal:schema:create', { derriveAlternativeScopes: false })
-  @Mutation(_returns => Schema)
-  async createSchema(
+  @Mutation(_returns => Singleton)
+  async createSingleton(
     @Arg('name')
     name: string,
     @Arg('title', _type => String)
     title: string,
-    @Arg('type', _type => SchemaType)
-    type: SchemaType,
     @Arg('groups', _type => GraphQLJSON)
-    groups: any, // eslint-disable-line
+    groups: any,
     @Arg('settings', _type => GraphQLJSON)
-    settings: any, // eslint-disable-line
+    settings: any,
+    @Arg('data', _type => GraphQLJSON)
+    data: any,
     @Ctx()
     ctx: GlobalContext,
-  ): Promise<Schema | null> {
-    const repository = getRepository(Schema);
+  ): Promise<Singleton | null> {
+    const schemaRepository = getRepository(Schema);
+    const documentRepository = getRepository(Document);
 
     const { user } = ctx;
 
@@ -137,26 +145,31 @@ export class SchemaResolver {
       throw new GraphQLError('User not found');
     }
 
-    if (!Object.values(SchemaType).includes(type as SchemaType)) {
-      throw new Error('SchemaType provided is invalid');
-    }
-
     const preservedGroups = Object.keys(groups).map(key => ({ [key]: groups[key] }));
 
-    const schema = repository.create({
+    const schema = schemaRepository.create({
       name: name.toLowerCase(),
       title,
-      type,
+      type: SchemaType.SINGLETON,
       groups: preservedGroups,
       settings,
       userId: user.id,
     });
 
-    const savedSchema = await repository.save(schema);
+    const savedSchema = await schemaRepository.save(schema);
+
+    const document = documentRepository.create({
+      data,
+      locale: 'en-AU',
+      userId: user.id,
+      schemaId: savedSchema.id,
+    });
+
+    const savedDocument = await documentRepository.save(document);
 
     DockiteEvents.emit('reload');
 
-    return savedSchema;
+    return { ...savedSchema, data: savedDocument.data };
   }
 
   /**
@@ -164,20 +177,23 @@ export class SchemaResolver {
    */
   @Authenticated()
   @Authorized('internal:schema:update', { derriveAlternativeScopes: false })
-  @Mutation(_returns => Schema)
-  async updateSchema(
+  @Mutation(_returns => Singleton)
+  async updateSingleton(
     @Arg('id')
     id: string,
     @Arg('title', _type => String, { nullable: true })
     title: string | null,
     @Arg('groups', _type => GraphQLJSON)
-    groups: any, // eslint-disable-line
+    groups: any,
     @Arg('settings', _type => GraphQLJSON)
-    settings: any, // eslint-disable-line
+    settings: any,
+    @Arg('data', _type => GraphQLJSON)
+    data: any,
     @Ctx()
     ctx: GlobalContext,
-  ): Promise<Schema | null> {
-    const repository = getRepository(Schema);
+  ): Promise<Singleton | null> {
+    const schemaRepository = getRepository(Schema);
+    const documentRepository = getRepository(Document);
 
     const { user } = ctx;
 
@@ -185,9 +201,14 @@ export class SchemaResolver {
       throw new GraphQLError('User not found');
     }
 
-    const schema = await repository.findOneOrFail({
-      where: { id, type: SchemaType.DEFAULT },
-    });
+    const [schema, document] = await Promise.all([
+      schemaRepository.findOneOrFail({
+        where: { id, type: SchemaType.SINGLETON },
+      }),
+      documentRepository.findOneOrFail({
+        where: { schemaId: id },
+      }),
+    ]);
 
     if (title) {
       schema.title = title;
@@ -198,13 +219,17 @@ export class SchemaResolver {
     schema.groups = preservedGroups;
     schema.settings = settings;
 
+    if (data) {
+      document.data = data;
+    }
+
     await this.createRevision(schema.id, user.id);
 
-    const savedSchema = await repository.save(schema);
+    await Promise.all([schemaRepository.save(schema), documentRepository.save(document)]);
 
     DockiteEvents.emit('reload');
 
-    return savedSchema;
+    return { ...schema, data: document.data };
   }
 
   /**
@@ -213,11 +238,11 @@ export class SchemaResolver {
   @Authenticated()
   @Authorized('internal:schema:import', { derriveAlternativeScopes: false })
   @Mutation(_returns => Schema)
-  async importSchema(
+  async importSingleton(
     @Arg('schemaId', _type => String, { nullable: true })
     schemaId: string | null,
     @Arg('payload', _type => GraphQLJSON)
-    payload: string, // eslint-disable-line
+    payload: string,
     @Ctx()
     ctx: GlobalContext,
   ): Promise<Schema | null> {
@@ -245,7 +270,7 @@ export class SchemaResolver {
   @Authenticated()
   @Authorized('internal:schema:delete', { derriveAlternativeScopes: false })
   @Mutation(_returns => Boolean)
-  async removeSchema(
+  async removeSingleton(
     @Arg('id')
     id: string,
   ): Promise<boolean> {
@@ -254,7 +279,7 @@ export class SchemaResolver {
 
     try {
       const [schema, documents] = await Promise.all([
-        schemaRepository.findOneOrFail({ where: { id, type: SchemaType.DEFAULT } }),
+        schemaRepository.findOneOrFail({ where: { id, type: SchemaType.SINGLETON } }),
         documentRepository.find({ where: { schemaId: id } }),
       ]);
 
