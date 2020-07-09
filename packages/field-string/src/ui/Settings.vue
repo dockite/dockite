@@ -60,7 +60,7 @@ export default class StringFieldSettingsComponent extends Vue {
   readonly value!: StringFieldSettings;
 
   @Prop({ required: true })
-  readonly rules: object;
+  readonly rules!: object;
 
   get settings(): StringFieldSettings {
     return this.value;

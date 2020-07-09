@@ -48,6 +48,7 @@
               :is="$dockiteFieldManager[fieldType].settings"
               v-model="field.settings"
               :rules.sync="fieldSettingsRules"
+              :fields="currentFields"
             />
           </template>
 
