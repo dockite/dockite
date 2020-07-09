@@ -1,7 +1,9 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable @typescript-eslint/no-var-requires */
 const path = require('path');
 
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
+const { NormalModuleReplacementPlugin } = require('webpack');
 // const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 const isDev =
@@ -74,5 +76,22 @@ module.exports = {
   resolve: {
     extensions: ['.tsx', '.ts', '.mjs', '.js', '.jsx', '.vue', '.json', '.wasm'],
   },
-  plugins: [new VueLoaderPlugin()],
+  plugins: [
+    new VueLoaderPlugin(),
+    new NormalModuleReplacementPlugin(/type-graphql$/, resource => {
+      resource.request = resource.request.replace(
+        /type-graphql/,
+        'type-graphql/dist/browser-shim.js',
+      );
+    }),
+    new NormalModuleReplacementPlugin(/typeorm$/, resource => {
+      resource.request = resource.request.replace(
+        /typeorm/,
+        path.join(
+          path.dirname(require.resolve('@dockite/database')),
+          'extra/typeorm-model-shim.js',
+        ),
+      );
+    }),
+  ],
 };

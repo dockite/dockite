@@ -306,19 +306,11 @@ export class DocumentResolver {
       {},
     );
 
-    const document = documentRepository.create({
-      locale,
-      data: { ...initialData, ...data },
-      schemaId,
-      releaseId,
-      userId,
-    });
-
     await Promise.all(
       schema.fields.map(async field => {
         const fieldData = data[field.name] ?? null;
 
-        const hookContext: HookContext = { field, fieldData, data: document.data };
+        const hookContext: HookContext = { field, fieldData, data };
 
         await field.dockiteField!.validateInputRaw(hookContext);
         data[field.name] = await field.dockiteField!.processInputRaw(hookContext);
@@ -326,6 +318,14 @@ export class DocumentResolver {
         await field.dockiteField!.onCreate(hookContext);
       }),
     );
+
+    const document = documentRepository.create({
+      locale,
+      data: { ...initialData, ...data },
+      schemaId,
+      releaseId,
+      userId,
+    });
 
     const savedDocument = await documentRepository.save(document);
 
@@ -343,7 +343,7 @@ export class DocumentResolver {
     // @Arg('locale', _type => String, { nullable: true })
     // locale: string | null,
     @Arg('data', _type => GraphQLJSON)
-    data: any, // eslint-disable-line
+    data: Record<string, any>, // eslint-disable-line
     @Ctx() ctx: GlobalContext,
   ): Promise<Document | null> {
     const documentRepository = getRepository(Document);
@@ -369,27 +369,27 @@ export class DocumentResolver {
       userId: document.userId ?? '',
     });
 
-    if (data) {
-      document.data = { ...document.data, ...data };
-    }
-
     await Promise.all(
       schema.fields.map(async field => {
-        const fieldData = document.data[field.name] ?? null;
+        const fieldData = data[field.name] ?? null;
 
         const hookContext: HookContextWithOldData = {
           field,
           fieldData,
-          data: document.data,
+          data,
           oldData,
+          document,
         };
 
         await field.dockiteField!.validateInputRaw(hookContext);
+
         data[field.name] = await field.dockiteField!.processInputRaw(hookContext);
 
         await field.dockiteField!.onUpdate(hookContext);
       }),
     );
+
+    document.data = { ...document.data, ...data };
 
     document.userId = userId;
 
@@ -421,7 +421,7 @@ export class DocumentResolver {
         schema.fields.map(async field => {
           const fieldData = data[field.name] ?? null;
 
-          await field.dockiteField!.onSoftDelete({ field, fieldData, data });
+          await field.dockiteField!.onSoftDelete({ field, fieldData, data, document });
         }),
       );
 
@@ -443,6 +443,7 @@ export class DocumentResolver {
       const document = await documentRepository.findOneOrFail({
         where: { id, deletedAt: Not(IsNull()) },
         relations: ['schema', 'schema.fields'],
+        withDeleted: true,
       });
 
       const { schema, data } = document;
@@ -451,7 +452,9 @@ export class DocumentResolver {
         schema.fields.map(field => {
           const fieldData = data[field.name] ?? null;
 
-          return Promise.resolve(field.dockiteField!.onPermanentDelete({ field, fieldData, data }));
+          return Promise.resolve(
+            field.dockiteField!.onPermanentDelete({ field, fieldData, data, document }),
+          );
         }),
       );
 

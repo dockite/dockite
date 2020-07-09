@@ -6,7 +6,7 @@ import {
 } from 'graphql';
 import typeorm from 'typeorm';
 
-import { Field, Schema } from '../entities';
+import { Field, Schema, Document } from '../entities';
 
 export interface FieldIOContext {
   dockiteFields: Record<string, DockiteFieldStatic>;
@@ -19,12 +19,14 @@ export interface FieldContext {
   fieldData: any;
   data: Record<string, any>;
   args?: Record<string, any>;
+  document?: Document;
 }
 
 export interface HookContext {
   field: Field;
   fieldData: any;
   data: Record<string, any>;
+  document?: Document;
 }
 
 export interface HookContextWithOldData extends HookContext {

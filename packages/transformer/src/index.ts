@@ -561,6 +561,7 @@ const createGraphQLMutationsForSchema = async (
                   fieldData: input[field.name],
                   field,
                   oldData: cloneDeep(document.data),
+                  document,
                 });
 
                 await field.dockiteField.onUpdate({
@@ -568,12 +569,14 @@ const createGraphQLMutationsForSchema = async (
                   fieldData: input[field.name],
                   field,
                   oldData: cloneDeep(document.data),
+                  document,
                 });
 
                 input[field.name] = await field.dockiteField.processInputGraphQL<any>({
                   data: input,
                   field,
                   fieldData: input[field.name],
+                  document,
                 });
               }),
             );
@@ -651,6 +654,7 @@ const createGraphQLMutationsForSchema = async (
                   data: input,
                   fieldData: input[field.name],
                   field,
+                  document,
                 });
               }),
             );

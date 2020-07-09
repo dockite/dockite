@@ -25,6 +25,7 @@
   "fields": [
     "@dockite/field-s3-image",
     "@dockite/field-string",
+    "@dockite/field-slug",
     "@dockite/field-number",
     "@dockite/field-boolean",
     "@dockite/field-colorpicker",
