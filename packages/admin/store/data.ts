@@ -402,15 +402,17 @@ export const actions: ActionTree<DataState, RootState> = {
     const variables: {
       id: string;
       page: number;
+      perPage: number;
       sort?: DockiteGraphqlSortInput;
       where?: AndQuery;
     } = {
       id: payload.schemaId,
       page: payload.page ?? 1,
+      perPage: payload.perPage ?? 20,
       sort: payload.sort,
     };
 
-    if (payload.filters.length > 0) {
+    if (payload.filters && payload.filters.length > 0) {
       variables.where = { AND: payload.filters };
     }
 
