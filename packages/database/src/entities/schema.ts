@@ -24,6 +24,10 @@ registerEnumType(SchemaType, { name: 'SchemaType' });
 
 interface SchemaSettings extends Record<string, any> {
   fieldsToDisplay: string[];
+  enableTreeView: boolean;
+  treeViewField: string;
+  treeViewLabelField: string;
+  treeViewSortField: string;
   enableMutations: boolean;
   enableCreateMutation: boolean;
   enableUpdateMutation: boolean;

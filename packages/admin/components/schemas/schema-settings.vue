@@ -23,6 +23,75 @@
         </div>
       </el-form-item>
 
+      <el-form-item label="Enable Tree View?">
+        <el-switch v-model="settings.enableTreeView" />
+        <div class="el-form-item__description">
+          Whether or not the Tree View is enabled for this schema. Within the Tree View your can
+          view and organize documents into a hierarchical structure via the assigned reference
+          field.
+        </div>
+      </el-form-item>
+
+      <el-form-item v-show="settings.enableTreeView" label="Field for Tree View">
+        <el-select
+          v-model="settings.treeViewField"
+          style="width: 100%;"
+          filterable
+          default-first-option
+        >
+          <el-option
+            v-for="field in schemaFields.filter(field => field.type === 'reference')"
+            :key="field.name"
+            :label="field.title"
+            :value="field.name"
+          />
+        </el-select>
+        <div class="el-form-item__description">
+          The schema field to use for the tree view. This will tell the view which reference field
+          to use to build the hierarchical structure.
+        </div>
+      </el-form-item>
+
+      <el-form-item v-show="settings.enableTreeView" label="Label for Tree View">
+        <el-select
+          v-model="settings.treeViewLabelField"
+          style="width: 100%;"
+          filterable
+          default-first-option
+        >
+          <el-option
+            v-for="field in schemaFields"
+            :key="field.name"
+            :label="field.title"
+            :value="field.name"
+          />
+        </el-select>
+        <div class="el-form-item__description">
+          The schema field to use for the tree views label. This will be displayed as the identifier
+          for each item on the tree view.
+        </div>
+      </el-form-item>
+
+      <el-form-item v-show="settings.enableTreeView" label="Sort Field for Tree View">
+        <el-select
+          v-model="settings.treeViewSortField"
+          style="width: 100%;"
+          filterable
+          default-first-option
+        >
+          <el-option
+            v-for="field in schemaFields"
+            :key="field.name"
+            :label="field.title"
+            :value="field.name"
+          />
+        </el-select>
+        <div class="el-form-item__description">
+          The schema field to use for sorting the Tree View. If left blank the documents ID will be
+          used for sorting items.
+        </div>
+      </el-form-item>
+
       <el-form-item label="Enable Mutations?">
         <el-switch v-model="settings.enableMutations" />
         <div class="el-form-item__description">
@@ -57,7 +126,7 @@
 </template>
 
 <script lang="ts">
-import { Schema } from '@dockite/database';
+import { Schema, Field } from '@dockite/database';
 import { defaultsDeep, cloneDeep, isEqual } from 'lodash';
 import { Component, Prop, Vue } from 'nuxt-property-decorator';
 
@@ -69,12 +138,16 @@ export default class SchemaSettingsComponent extends Vue {
   @Prop()
   readonly schema!: Schema;
 
-  get schemaFields(): { name: string; title: string }[] {
+  get schemaFields(): Field[] {
     if (this.schema?.fields) {
-      return this.schema.fields.map(({ name, title }) => ({ name, title }));
+      return this.schema.fields;
     }
 
     return [];
+  }
+
+  get canEnableTreeView(): boolean {
+    return !!this.schemaFields.find(field => field.type === 'reference');
   }
 
   get settings(): Record<string, any> {

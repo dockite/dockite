@@ -10,18 +10,22 @@
         </portal-target>
       </el-header>
       <el-main>
-        <el-breadcrumb class="dockite-main--breadcrumb">
-          <el-breadcrumb-item to="/">
-            <i class="el-icon-s-home" />
-          </el-breadcrumb-item>
-          <el-breadcrumb-item
-            v-for="crumb in breadcrumbs"
-            :key="crumb.location"
-            :to="crumb.location"
-          >
-            {{ crumb.title | startCaseUnlessUUID }}
-          </el-breadcrumb-item>
-        </el-breadcrumb>
+        <el-row type="flex" justify="space-between" align="middle" style="padding-bottom: 1rem;">
+          <el-breadcrumb class="">
+            <el-breadcrumb-item to="/">
+              <i class="el-icon-s-home" />
+            </el-breadcrumb-item>
+            <el-breadcrumb-item
+              v-for="crumb in breadcrumbs"
+              :key="crumb.location"
+              :to="crumb.location"
+            >
+              {{ crumb.title | startCaseUnlessUUID }}
+            </el-breadcrumb-item>
+          </el-breadcrumb>
+
+          <portal-target name="opposite-breadcrumb" />
+        </el-row>
         <transition name="el-fade-in-linear">
           <nuxt />
         </transition>
