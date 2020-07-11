@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.8](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.7...@dockite/admin@0.4.0-alpha.8) (2020-07-11)
+
+
+### Bug Fixes
+
+* **field-reference*:** allow self references ([62551d8](https://github.com/dockite/dockite/commit/62551d89c199a9b18061c3e8e5fd2f17d2a9f05c))
+
+
+### Features
+
+* **admin:** add configurable tree view to schemas ([6faff96](https://github.com/dockite/dockite/commit/6faff9643b3db09e5bfe8a67345f8296c012c203))
+* **field-slug:** add the slug field ([0afed9e](https://github.com/dockite/dockite/commit/0afed9eb6294308960598c02de1dd985da6ab66d))
+* add singletons ([5242453](https://github.com/dockite/dockite/commit/52424536b91e7665c4af31a258060c5f770bcfd2))
+
+
+
+
+
 # [0.4.0-alpha.7](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.6...@dockite/admin@0.4.0-alpha.7) (2020-07-08)
 
 **Note:** Version bump only for package @dockite/admin

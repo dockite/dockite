@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.1](https://github.com/dockite/dockite/compare/@dockite/database@0.4.0-alpha.0...@dockite/database@0.4.0-alpha.1) (2020-07-11)
+
+
+### Features
+
+* **admin:** add configurable tree view to schemas ([6faff96](https://github.com/dockite/dockite/commit/6faff9643b3db09e5bfe8a67345f8296c012c203))
+* add singletons ([5242453](https://github.com/dockite/dockite/commit/52424536b91e7665c4af31a258060c5f770bcfd2))
+
+
+
+
+
 # [0.4.0-alpha.0](https://github.com/dockite/dockite/compare/@dockite/database@0.3.4...@dockite/database@0.4.0-alpha.0) (2020-07-07)
 
 

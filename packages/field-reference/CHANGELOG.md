@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.6-alpha.4](https://github.com/dockite/dockite/compare/@dockite/field-reference@0.2.6-alpha.3...@dockite/field-reference@0.2.6-alpha.4) (2020-07-11)
+
+
+### Bug Fixes
+
+* **field-reference*:** allow self references ([62551d8](https://github.com/dockite/dockite/commit/62551d89c199a9b18061c3e8e5fd2f17d2a9f05c))
+
+
+
+
+
 ## [0.2.6-alpha.3](https://github.com/dockite/dockite/compare/@dockite/field-reference@0.2.6-alpha.2...@dockite/field-reference@0.2.6-alpha.3) (2020-07-08)
 
 **Note:** Version bump only for package @dockite/field-reference

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.4](https://github.com/dockite/dockite/compare/@dockite/transformer@0.3.0-alpha.3...@dockite/transformer@0.3.0-alpha.4) (2020-07-11)
+
+
+### Features
+
+* **field-slug:** add the slug field ([0afed9e](https://github.com/dockite/dockite/commit/0afed9eb6294308960598c02de1dd985da6ab66d))
+
+
+
+
+
 # [0.3.0-alpha.3](https://github.com/dockite/dockite/compare/@dockite/transformer@0.3.0-alpha.2...@dockite/transformer@0.3.0-alpha.3) (2020-07-07)
 
 **Note:** Version bump only for package @dockite/transformer
