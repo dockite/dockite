@@ -24,6 +24,8 @@ async function getNuxt(options: any): Promise<any> {
 }
 
 export async function buildAdminUI(distPath?: string): Promise<void> {
+  module.paths.push(path.join(process.cwd(), 'node_modules'));
+
   register({
     project: path.join(path.dirname(require.resolve('@dockite/admin')), 'tsconfig.json'),
     transpileOnly: true,
