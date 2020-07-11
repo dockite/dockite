@@ -144,7 +144,7 @@ export class SchemaResolver {
     const preservedGroups = Object.keys(groups).map(key => ({ [key]: groups[key] }));
 
     const schema = repository.create({
-      name: name.toLowerCase(),
+      name,
       title,
       type,
       groups: preservedGroups,

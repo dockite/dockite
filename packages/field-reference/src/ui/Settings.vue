@@ -26,15 +26,13 @@
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { Fragment } from 'vue-fragment';
 import gql from 'graphql-tag';
-import { Schema } from '@dockite/types';
+import { Schema } from '@dockite/database';
 
-interface Settings {
-  required: boolean;
-  schemaIds: string[];
-}
+import { DockiteFieldReference } from '..';
+import { ReferenceFieldSettings } from '../types';
 
 interface SchemaResults {
-  results: Schema[];
+  results: Pick<Schema, 'id' | 'name' | 'title'>[];
 }
 
 @Component({
@@ -45,18 +43,18 @@ interface SchemaResults {
 })
 export default class ReferenceFieldSettingsComponent extends Vue {
   @Prop({ required: true, type: Object })
-  readonly value!: any;
+  readonly value!: ReferenceFieldSettings;
 
   @Prop({ required: true, type: Object })
   readonly rules!: object;
 
   public allSchemas: SchemaResults = { results: [] };
 
-  get settings(): Settings {
+  get settings(): ReferenceFieldSettings {
     return this.value;
   }
 
-  set settings(value: Settings) {
+  set settings(value: ReferenceFieldSettings) {
     this.$emit('input', value);
   }
 
@@ -76,17 +74,24 @@ export default class ReferenceFieldSettingsComponent extends Vue {
   }
 
   async fetchAllSchemas(): Promise<void> {
-    const { data } = await this.$apolloClient.query<{allSchemas: SchemaResults}>({
+    const { data } = await this.$apolloClient.query<{ allSchemas: SchemaResults }>({
       query: gql`
         query {
           allSchemas {
             results {
               id
+              title
               name
             }
           }
         }
       `,
+    });
+
+    data.allSchemas.results.unshift({
+      id: 'self',
+      name: 'self',
+      title: 'Self',
     });
 
     this.allSchemas = data.allSchemas;
@@ -95,8 +100,7 @@ export default class ReferenceFieldSettingsComponent extends Vue {
   mounted(): void {
     if (Object.keys(this.settings).length === 0) {
       this.settings = {
-        required: false,
-        schemaIds: [],
+        ...DockiteFieldReference.defaultOptions,
       };
     }
 

@@ -1,18 +1,12 @@
 <template>
-  <el-form-item
-    :label="fieldConfig.title"
-    :prop="name"
-  >
+  <el-form-item :label="fieldConfig.title" :prop="name">
     <el-table
       :max-height="400"
       :data="referenceOfDocuments"
       :row-key="record => record.id"
       style="border: 1px solid #DCDFE6; border-radius: 4px;"
     >
-      <el-table-column
-        prop="id"
-        label="ID"
-      >
+      <el-table-column prop="id" label="ID">
         <template slot-scope="scope">
           <router-link :to="`/documents/${scope.row.id}`">
             {{ scope.row.id | shortDesc }}
@@ -30,20 +24,14 @@
           <span v-else-if="scope.row.data.identifier">
             {{ scope.row.data.identifier }}
           </span>
-          <span
-            v-else
-            :title="JSON.stringify(scope.row.data)"
-          >
+          <span v-else :title="JSON.stringify(scope.row.data)">
             {{ JSON.stringify(scope.row.data).substr(0, 15) }}
           </span>
         </template>
       </el-table-column>
     </el-table>
 
-    <el-row
-      type="flex"
-      justify="space-between"
-    >
+    <el-row type="flex" justify="space-between">
       <span />
       <el-pagination
         :current-page="page"
@@ -54,7 +42,7 @@
         :total="totalItems"
         hide-on-single-page
         layout="total, prev, pager, next"
-        @current-change="(newPage) => page = newPage"
+        @current-change="newPage => (page = newPage)"
       />
     </el-row>
 
@@ -65,9 +53,7 @@
 </template>
 
 <script lang="ts">
-import {
-  Component, Prop, Vue, Watch,
-} from 'vue-property-decorator';
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import gql from 'graphql-tag';
 import { Field, Document } from '@dockite/types';
 

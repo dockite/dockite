@@ -5,10 +5,7 @@
     :prop="name"
     :rules="rules"
   >
-    <div
-      v-if="fieldData"
-      class="active-reference"
-    >
+    <div v-if="fieldData" class="active-reference">
       <div>
         <span>{{ schemaName }}</span>
         <p>
@@ -18,18 +15,12 @@
           </small>
         </p>
       </div>
-      <a
-        class="dockite-field reference remove"
-        @click.prevent="handleClearReference"
-      >
+      <a class="dockite-field reference remove" @click.prevent="handleClearReference">
         <i class="el-icon-close" />
       </a>
     </div>
 
-    <div
-      v-else
-      class="dockite-field reference no-reference"
-    >
+    <div v-else class="dockite-field reference no-reference">
       <a @click="dialogVisible = true">Select a Document</a>
     </div>
 
@@ -39,28 +30,14 @@
       title="Select a Document"
       @close="dialogVisible = false"
     >
-      <el-table
-        :data="documents"
-        :row-key="record => record.id"
-        :max-height="400"
-      >
-        <el-table-column
-          label=""
-          width="25"
-        >
+      <el-table :data="documents" :row-key="record => record.id" :max-height="400">
+        <el-table-column label="" width="25">
           <template slot-scope="scope">
-            <input
-              v-model="document"
-              type="radio"
-              :value="scope.row"
-            >
+            <input v-model="document" type="radio" :value="scope.row" />
           </template>
         </el-table-column>
 
-        <el-table-column
-          prop="id"
-          label="ID"
-        >
+        <el-table-column prop="id" label="ID">
           <template slot-scope="scope">
             {{ scope.row.id | shortDesc }}
           </template>
@@ -76,18 +53,12 @@
             <span v-else-if="scope.row.data.identifier">
               {{ scope.row.data.identifier }}
             </span>
-            <span
-              v-else
-              :title="scope.row.data"
-            >
+            <span v-else :title="scope.row.data">
               {{ JSON.stringify(scope.row.data).substr(0, 15) }}
             </span>
           </template>
         </el-table-column>
-        <el-table-column
-          prop="schema.name"
-          label="Schema"
-        />
+        <el-table-column prop="schema.name" label="Schema" />
       </el-table>
     </el-dialog>
 
@@ -99,16 +70,14 @@
 
 <script lang="ts">
 import gql from 'graphql-tag';
-import {
-  Component, Prop, Vue, Watch,
-} from 'vue-property-decorator';
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import { Field, Document, Schema } from '@dockite/types';
 
 interface SchemaResults {
   results: Schema[];
 }
 
-interface ValueType {
+interface Reference {
   id: string;
   schemaId: string;
 }
@@ -121,7 +90,7 @@ export default class ReferenceFieldInputComponent extends Vue {
   readonly name!: string;
 
   @Prop({ required: true })
-  readonly value!: ValueType | null;
+  readonly value!: Reference | null;
 
   @Prop({ required: true })
   readonly formData!: object;
@@ -141,11 +110,11 @@ export default class ReferenceFieldInputComponent extends Vue {
 
   public perPage = 20;
 
-  get fieldData(): ValueType | null {
+  get fieldData(): Reference | null {
     return this.value;
   }
 
-  set fieldData(value: ValueType | null) {
+  set fieldData(value: Reference | null) {
     this.$emit('input', value);
   }
 

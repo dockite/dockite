@@ -6,6 +6,7 @@ import { User } from './user';
 export interface Schema {
   id: string;
   name: string;
+  title: string;
   type: SchemaType;
   groups: Record<string, string[]>; // eslint-disable-line
   settings: Record<string, any>; // eslint-disable-line
