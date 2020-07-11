@@ -1,6 +1,6 @@
 {
   "name": "@dockite/cli",
-  "version": "0.0.7-alpha.6",
+  "version": "0.0.7-alpha.7",
   "author": "Dockite",
   "bin": {
     "dockite": "./bin/run"

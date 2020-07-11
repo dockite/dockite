@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.7-alpha.7](https://github.com/dockite/dockite/compare/@dockite/cli@0.0.7-alpha.6...@dockite/cli@0.0.7-alpha.7) (2020-07-11)
+
+
+### Bug Fixes
+
+* **cli,admin:** fix cli build process ([af206c1](https://github.com/dockite/dockite/commit/af206c17c27a63bdb10812f6b3a95e3f79f9de09))
+
+
+
+
+
 ## [0.0.7-alpha.6](https://github.com/dockite/dockite/compare/@dockite/cli@0.0.7-alpha.5...@dockite/cli@0.0.7-alpha.6) (2020-07-11)
 
 **Note:** Version bump only for package @dockite/cli

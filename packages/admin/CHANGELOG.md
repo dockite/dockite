@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.9](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.8...@dockite/admin@0.4.0-alpha.9) (2020-07-11)
+
+
+### Bug Fixes
+
+* **admin:** layout shift during login ([52ca5d9](https://github.com/dockite/dockite/commit/52ca5d916385d35136b849ab7e63804d4a3f8dbe))
+* **cli,admin:** fix cli build process ([af206c1](https://github.com/dockite/dockite/commit/af206c17c27a63bdb10812f6b3a95e3f79f9de09))
+
+
+
+
+
 # [0.4.0-alpha.8](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.7...@dockite/admin@0.4.0-alpha.8) (2020-07-11)
 
 
