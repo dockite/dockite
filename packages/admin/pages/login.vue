@@ -4,25 +4,29 @@
 
     <el-card class="dockite-login-form--container">
       <first-user v-if="newInstallation" />
-      <el-form
-        v-else
-        ref="form"
-        :model="loginForm"
-        :rules="loginFormRules"
-        @submit.native.prevent="login"
-      >
-        <el-form-item :label="$t('login.labels.email')" prop="email">
-          <el-input ref="email" v-model="loginForm.email" type="email" />
-        </el-form-item>
-        <el-form-item :label="$t('login.labels.password')" prop="password">
-          <el-input v-model="loginForm.password" type="password" />
-        </el-form-item>
-        <el-form-item>
-          <el-button native-type="submit" type="primary">
-            {{ $t('login.labels.button') }}
-          </el-button>
-        </el-form-item>
-      </el-form>
+      <div v-else>
+        <el-alert v-if="error" type="error" show-icon :closable="false">
+          {{ error }}
+        </el-alert>
+        <el-form
+          ref="form"
+          :model="loginForm"
+          :rules="loginFormRules"
+          @submit.native.prevent="login"
+        >
+          <el-form-item :label="$t('login.labels.email')" prop="email">
+            <el-input ref="email" v-model="loginForm.email" type="email" />
+          </el-form-item>
+          <el-form-item :label="$t('login.labels.password')" prop="password">
+            <el-input v-model="loginForm.password" type="password" />
+          </el-form-item>
+          <el-form-item>
+            <el-button native-type="submit" type="primary">
+              {{ $t('login.labels.button') }}
+            </el-button>
+          </el-form-item>
+        </el-form>
+      </div>
     </el-card>
   </el-row>
 </template>
@@ -51,6 +55,8 @@ interface NewInstallationQueryResponse {
 export default class LoginPage extends Vue {
   @Ref()
   readonly email!: Input;
+
+  public error = '';
 
   public newInstallation = false;
 
@@ -102,15 +108,21 @@ export default class LoginPage extends Vue {
   }
 
   public async login(): Promise<void> {
-    const valid = await (this.$refs.form as Form).validate();
+    try {
+      const valid = await (this.$refs.form as Form).validate();
 
-    if (!valid) {
-      return;
+      console.log({ valid });
+
+      if (!valid) {
+        return;
+      }
+
+      await this.$store.dispatch(`${namespace}/login`, this.loginForm);
+
+      this.$router.push('/');
+    } catch (_) {
+      this.error = 'The username or password provided is incorrect.';
     }
-
-    await this.$store.dispatch(`${namespace}/login`, this.loginForm);
-
-    this.$router.push('/');
   }
 
   mounted(): void {
