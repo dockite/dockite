@@ -11,6 +11,8 @@ import {
 import { startCase } from 'lodash';
 import { FieldIOContext, FieldContext } from '@dockite/types';
 
+import { ReferenceFieldSettings } from './types';
+
 const graphqlCase = (value: string): string => startCase(value).replace(/\s/g, '');
 
 const DockiteFieldReferenceInputType = new GraphQLInputObjectType({
@@ -28,10 +30,32 @@ export class DockiteFieldReference extends DockiteField {
 
   public static description = 'A reference field';
 
-  public static defaultOptions = {};
+  public static defaultOptions: ReferenceFieldSettings = {
+    required: false,
+    schemaIds: [],
+  };
+
+  private updateSchemaIdPointers() {
+    if (
+      this.schemaField.settings.schemaIds &&
+      this.schemaField.settings.schemaIds.includes('self')
+    ) {
+      const index = this.schemaField.settings.schemaIds.indexOf('self');
+
+      this.schemaField.settings.schemaIds[index] = this.schemaField.schemaId;
+    }
+  }
 
   public async inputType(): Promise<GraphQLInputType> {
     return DockiteFieldReferenceInputType;
+  }
+
+  public async onFieldCreate(): Promise<void> {
+    this.updateSchemaIdPointers();
+  }
+
+  public async onFieldUpdate(): Promise<void> {
+    this.updateSchemaIdPointers();
   }
 
   public async outputType({
@@ -41,8 +65,8 @@ export class DockiteFieldReference extends DockiteField {
     const schemaIds: string[] = this.schemaField.settings.schemaIds ?? [];
 
     const unionTypes = dockiteSchemas
-      .filter((schema) => schemaIds.includes(schema.id))
-      .map((schema) => graphqlTypes.get(schema.name));
+      .filter(schema => schemaIds.includes(schema.id))
+      .map(schema => graphqlTypes.get(schema.name));
 
     if (unionTypes.length === 1) {
       const [outputType] = unionTypes;

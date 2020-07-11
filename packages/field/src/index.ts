@@ -88,6 +88,14 @@ export abstract class DockiteField {
   public onPermanentDelete(_ctx: HookContext): Promise<void> {
     return Promise.resolve();
   }
+
+  public onFieldCreate(): Promise<void> {
+    return Promise.resolve();
+  }
+
+  public onFieldUpdate(): Promise<void> {
+    return Promise.resolve();
+  }
 }
 
 export const registerField = (

@@ -78,4 +78,8 @@ export interface DockiteField {
   onSoftDelete(ctx: HookContext): Promise<void>;
 
   onPermanentDelete(ctx: HookContext): Promise<void>;
+
+  onFieldCreate(): Promise<void>;
+
+  onFieldUpdate(): Promise<void>;
 }

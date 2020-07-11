@@ -12,6 +12,8 @@ import {
   GraphQLString,
 } from 'graphql';
 
+import { ReferenceOfFieldSettings } from './types';
+
 export class DockiteFieldReferenceOf extends DockiteField {
   public static type = 'reference_of';
 
@@ -20,11 +22,30 @@ export class DockiteFieldReferenceOf extends DockiteField {
   public static description =
     'A reference of field. Returns a list of documents that refernence this document.';
 
-  public static defaultOptions = {};
+  public static defaultOptions: ReferenceOfFieldSettings = {
+    required: false,
+    schemaId: null,
+    fieldName: null,
+  };
+
+  private updateSchemaIdPointer() {
+    if (this.schemaField.settings.schemaId && this.schemaField.settings.schemaId === 'self') {
+      this.schemaField.settings.schemaId = this.schemaField.schemaId;
+    }
+  }
 
   public async inputType(): Promise<GraphQLInputType> {
     // A dirty hack but we don't want this field to allow input.
+    // Why?
     return (null as any) as GraphQLInputType;
+  }
+
+  public async onFieldCreate(): Promise<void> {
+    this.updateSchemaIdPointer();
+  }
+
+  public async onFieldUpdate(): Promise<void> {
+    this.updateSchemaIdPointer();
   }
 
   public async outputType({
@@ -34,8 +55,8 @@ export class DockiteFieldReferenceOf extends DockiteField {
     const schemaId: string = this.schemaField.settings.schemaId ?? this.schemaField.schemaId;
 
     const [schemaType] = dockiteSchemas
-      .filter((schema) => schemaId === schema.id)
-      .map((schema) => graphqlTypes.get(schema.name));
+      .filter(schema => schemaId === schema.id)
+      .map(schema => graphqlTypes.get(schema.name));
 
     return new GraphQLList(schemaType as GraphQLObjectType);
   }
@@ -83,6 +104,6 @@ export class DockiteFieldReferenceOf extends DockiteField {
 
     const documents: Document[] = await qb.getMany();
 
-    return (documents.map((d) => ({ id: d.id, ...d.data })) as any) as T;
+    return (documents.map(d => ({ id: d.id, ...d.data })) as any) as T;
   }
 }

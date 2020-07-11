@@ -13,7 +13,29 @@ export class FieldSubscriber implements EntitySubscriberInterface {
     return Field;
   }
 
+  async beforeInsert(event: InsertEvent<Field>): Promise<void> {
+    const { entity } = event;
+
+    entity.setDockiteField();
+
+    if (!entity.dockiteField) {
+      return;
+    }
+
+    await entity.dockiteField.onFieldCreate();
+  }
+
   async afterInsert(event: InsertEvent<Field>): Promise<void> {
+    const { entity } = event;
+
+    entity.setDockiteField();
+
+    if (!entity.dockiteField) {
+      return;
+    }
+
+    await entity.dockiteField.onFieldUpdate();
+
     await getRepository(Document)
       .createQueryBuilder()
       .update()

@@ -1,9 +1,6 @@
 <template>
   <fragment>
-    <el-form-item
-      label="Schema Type"
-      prop="settings.schemaId"
-    >
+    <el-form-item label="Schema Type" prop="settings.schemaId">
       <el-select
         v-model="schemaId"
         filterable
@@ -20,10 +17,7 @@
         </el-option>
       </el-select>
     </el-form-item>
-    <el-form-item
-      label="Reference Field"
-      prop="settings.fieldName"
-    >
+    <el-form-item label="Reference Field" prop="settings.fieldName">
       <el-select
         v-model="fieldName"
         filterable
@@ -48,15 +42,14 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 import { Fragment } from 'vue-fragment';
 import gql from 'graphql-tag';
 import { find } from 'lodash';
-import { Field, Schema } from '@dockite/types';
+import { Field, Schema } from '@dockite/database';
 
-interface Settings {
-  required: boolean;
-  schemaId: string | null;
-  fieldName: string | null;
+import { DockiteFieldReferenceOf } from '..';
+import { ReferenceOfFieldSettings } from '../types';
+
+interface SchemaResults {
+  results: Pick<Schema, 'id' | 'name' | 'title' | 'fields'>[];
 }
-
-const MAX_32_BIT_INT = 2147483647;
 
 @Component({
   name: 'ReferenceOfFieldSettingsComponent',
@@ -66,14 +59,17 @@ const MAX_32_BIT_INT = 2147483647;
 })
 export default class ReferenceOfFieldSettingsComponent extends Vue {
   @Prop({ required: true })
-  readonly value!: Settings;
+  readonly value!: ReferenceOfFieldSettings;
 
   @Prop({ required: true })
   readonly rules!: object;
 
-  public allSchemas: { results: Schema[] } = { results: [] };
+  @Prop({ required: true })
+  readonly fields!: Field[];
 
-  get settings(): Settings {
+  public allSchemas: SchemaResults = { results: [] };
+
+  get settings(): ReferenceOfFieldSettings {
     return this.value;
   }
 
@@ -106,18 +102,18 @@ export default class ReferenceOfFieldSettingsComponent extends Vue {
   }
 
   get referenceFields(): Field[] {
-    const schema = find(this.allSchemas.results, (s) => s.id === this.schemaId);
+    const schema = find(this.allSchemas.results, s => s.id === this.schemaId);
 
     if (!schema) return [];
 
-    return schema.fields.filter((f) => f.type === 'reference');
+    return schema.fields.filter(f => f.type === 'reference');
   }
 
   public async fetchAllSchemas(): Promise<void> {
-    const { data } = await this.$apolloClient.query<{ allSchemas: { results: Schema[] } }>({
+    const { data } = await this.$apolloClient.query<{ allSchemas: SchemaResults }>({
       query: gql`
-        query($perPage: Int!) {
-          allSchemas(perPage: $perPage) {
+        {
+          allSchemas {
             results {
               id
               name
@@ -130,9 +126,13 @@ export default class ReferenceOfFieldSettingsComponent extends Vue {
           }
         }
       `,
-      variables: {
-        perPage: MAX_32_BIT_INT,
-      },
+    });
+
+    data.allSchemas.results.unshift({
+      id: 'self',
+      name: 'self',
+      title: 'Self',
+      fields: this.fields,
     });
 
     this.allSchemas = data.allSchemas;
@@ -143,9 +143,7 @@ export default class ReferenceOfFieldSettingsComponent extends Vue {
 
     if (Object.keys(this.settings).length === 0) {
       this.settings = {
-        required: false,
-        schemaId: null,
-        fieldName: null,
+        ...DockiteFieldReferenceOf.defaultOptions,
       };
     }
 
