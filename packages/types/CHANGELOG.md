@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.3](https://github.com/dockite/dockite/compare/@dockite/types@0.3.0-alpha.2...@dockite/types@0.3.0-alpha.3) (2020-07-11)
+
+
+### Bug Fixes
+
+* **field-reference*:** allow self references ([62551d8](https://github.com/dockite/dockite/commit/62551d89c199a9b18061c3e8e5fd2f17d2a9f05c))
+
+
+### Features
+
+* **field-slug:** add the slug field ([0afed9e](https://github.com/dockite/dockite/commit/0afed9eb6294308960598c02de1dd985da6ab66d))
+
+
+
+
+
 # [0.3.0-alpha.2](https://github.com/dockite/dockite/compare/@dockite/types@0.2.0...@dockite/types@0.3.0-alpha.2) (2020-07-07)
 
 
