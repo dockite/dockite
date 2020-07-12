@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.6](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.5...@dockite/core@0.4.0-alpha.6) (2020-07-12)
+
+
+### Features
+
+* **field-select:** add select field ([8bd4528](https://github.com/dockite/dockite/commit/8bd4528f5784ac9dedad68dea1a0bbc8871adbd9))
+
+
+
+
+
 # [0.4.0-alpha.5](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.4...@dockite/core@0.4.0-alpha.5) (2020-07-11)
 
 
