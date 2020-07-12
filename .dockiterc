@@ -3,7 +3,7 @@
     "secret": "secret",
     "title": "Dockite",
     "description": "The simpler HeadlessCMS",
-    "url": "https://localhost:4000",
+    "url": "http://localhost:4000",
     "graphqlEndpoint": "http://localhost:3000/dockite/graphql/internal"
   },
   "database": {
@@ -25,6 +25,7 @@
   "fields": [
     "@dockite/field-s3-image",
     "@dockite/field-string",
+    "@dockite/field-select",
     "@dockite/field-slug",
     "@dockite/field-number",
     "@dockite/field-boolean",

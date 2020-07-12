@@ -53,7 +53,7 @@ export default class SlugFieldInputComponent extends Vue {
   }
 
   beforeMount() {
-    if (this.fieldData !== null) {
+    if (this.fieldData !== null && this.fieldData !== '') {
       this.freezeSlug = true;
     } else {
       this.freezeSlug = false;

@@ -4,6 +4,7 @@
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
+    "debug": "DEBUG=* ts-node-dev --transpileOnly --no-notify src/",
     "dev": "DEBUG=dockite* ts-node-dev --transpileOnly --no-notify src/",
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx --quiet",
     "build": "tsc",

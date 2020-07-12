@@ -150,12 +150,15 @@ export default class CreateSchemaDocumentPage extends Vue {
       // It's any's all the way down
       (this.formEl as any).fields
         .filter((f: any): boolean => f.validateState === 'error')
+        .slice(0, 3)
         .forEach((f: any): void => {
           const groupName = this.getGroupNameFromFieldName(f.prop);
 
-          this.$message({
-            message: `${groupName}: ${f.validateMessage}`,
-            type: 'warning',
+          setImmediate(() => {
+            this.$message({
+              message: `${groupName}: ${f.validateMessage}`,
+              type: 'warning',
+            });
           });
         });
     }
