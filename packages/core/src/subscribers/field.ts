@@ -5,6 +5,7 @@ import {
   getRepository,
   InsertEvent,
   RemoveEvent,
+  UpdateEvent,
 } from 'typeorm';
 
 @EventSubscriber()
@@ -16,7 +17,9 @@ export class FieldSubscriber implements EntitySubscriberInterface {
   async beforeInsert(event: InsertEvent<Field>): Promise<void> {
     const { entity } = event;
 
-    entity.setDockiteField();
+    const f = new Field();
+
+    f.setDockiteField.apply(entity);
 
     if (!entity.dockiteField) {
       return;
@@ -25,17 +28,21 @@ export class FieldSubscriber implements EntitySubscriberInterface {
     await entity.dockiteField.onFieldCreate();
   }
 
-  async afterInsert(event: InsertEvent<Field>): Promise<void> {
+  async beforeUpdate(event: UpdateEvent<Field>): Promise<void> {
     const { entity } = event;
 
-    entity.setDockiteField();
+    const f = new Field();
+
+    f.setDockiteField.apply(entity);
 
     if (!entity.dockiteField) {
       return;
     }
 
     await entity.dockiteField.onFieldUpdate();
+  }
 
+  async afterInsert(event: InsertEvent<Field>): Promise<void> {
     await getRepository(Document)
       .createQueryBuilder()
       .update()
