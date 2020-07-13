@@ -35,7 +35,9 @@
             </p>
           </template>
         </step-one>
+
         <step-two v-show="step === 1" ref="step-2" @field-data="handleFieldData"> </step-two>
+
         <step-three
           v-show="step === 2"
           ref="step-3"
@@ -43,6 +45,7 @@
           :schema="createSingletonForm"
         >
         </step-three>
+
         <step-four v-show="step === 3" ref="step-4" v-bind="createSingletonForm"> </step-four>
       </div>
 

@@ -7,5 +7,5 @@ export interface SelectFieldSettings {
 }
 
 export interface DockiteFieldSelectEntity extends Field {
-  settings: SelectFieldSettings;
+  settings: SelectFieldSettings & Field['settings'];
 }

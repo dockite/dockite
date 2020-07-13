@@ -11,10 +11,9 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
-import { Field } from '@dockite/types';
 import slugify from 'slugify';
 
-import { SlugFieldSettings } from '../types';
+import { SlugFieldSettings, DockiteFieldSlugEntity } from '../types';
 
 @Component({
   name: 'SlugFieldInputComponent',
@@ -30,7 +29,7 @@ export default class SlugFieldInputComponent extends Vue {
   readonly formData!: Record<string, any>;
 
   @Prop({ required: true })
-  readonly fieldConfig!: Field;
+  readonly fieldConfig!: DockiteFieldSlugEntity;
 
   public freezeSlug = true;
 

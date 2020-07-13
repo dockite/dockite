@@ -16,9 +16,8 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { Field } from '@dockite/types';
 
-import { StringFieldSettings } from '../types';
+import { StringFieldSettings, DockiteFieldStringEntity } from '../types';
 
 @Component({
   name: 'StringFieldInputComponent',
@@ -34,7 +33,7 @@ export default class StringFieldInputComponent extends Vue {
   readonly formData!: object;
 
   @Prop({ required: true })
-  readonly fieldConfig!: Field;
+  readonly fieldConfig!: DockiteFieldStringEntity;
 
   public rules: object[] = [];
 

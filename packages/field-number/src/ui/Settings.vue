@@ -1,74 +1,56 @@
 <template>
   <fragment>
-    <el-form-item
-      label="Required"
-      prop="settings.required"
-    >
+    <el-form-item label="Required" prop="settings.required">
       <el-switch v-model="settings.required" />
     </el-form-item>
-    <el-form-item
-      label="Float"
-      prop="settings.float"
-    >
+    <el-form-item label="Float" prop="settings.float">
       <el-switch v-model="settings.float" />
     </el-form-item>
-    <el-form-item
-      label="Min Value"
-      prop="settings.min"
-    >
+    <el-form-item label="Min Value" prop="settings.min">
       <el-input-number v-model="settings.min" />
     </el-form-item>
-    <el-form-item
-      label="Max Value"
-      prop="settings.max"
-    >
+    <el-form-item label="Max Value" prop="settings.max">
       <el-input-number v-model="settings.max" />
     </el-form-item>
   </fragment>
 </template>
 
-<script>
+<script lang="ts">
 import { Fragment } from 'vue-fragment';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 
-export default {
+import { NumberFieldSettings } from '../types';
+import { DockiteFieldNumber } from '..';
+
+@Component({
+  name: 'NumberFieldSettingsComponent',
   components: {
     Fragment,
   },
+})
+export default class NumberFieldSettingsComponent extends Vue {
+  @Prop({ required: true })
+  readonly value!: NumberFieldSettings;
 
-  props: {
-    value: {
-      type: Object,
-      required: true,
-    },
+  @Prop({ required: true })
+  readonly rules!: object;
 
-    rules: {
-      type: Object,
-      required: true,
-    },
-  },
+  get settings(): NumberFieldSettings {
+    return this.value;
+  }
 
-  computed: {
-    settings: {
-      get() {
-        return this.value;
-      },
-      set(value) {
-        this.$emit('input', value);
-      },
-    },
-  },
+  set settings(value) {
+    this.$emit('input', value);
+  }
 
   mounted() {
     if (Object.keys(this.settings).length === 0) {
       this.settings = {
-        required: false,
-        float: false,
-        min: -Infinity,
-        max: Infinity,
+        ...DockiteFieldNumber.defaultOptions,
       };
     }
-  },
-};
+  }
+}
 </script>
 
 <style></style>

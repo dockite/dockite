@@ -5,10 +5,7 @@
     :rules="rules"
     class="dockite-field-datetime"
   >
-    <el-date-picker
-      v-model="fieldData"
-      :type="settings.date ? 'date' : 'datetime'"
-    />
+    <el-date-picker v-model="fieldData" :type="settings.dateOnly ? 'date' : 'datetime'" />
 
     <div class="el-form-item__description">
       {{ fieldConfig.description }}
@@ -18,12 +15,13 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { Field } from '@dockite/types';
+
+import { DateFieldSettings, DockiteFieldDateTimeEntity } from '../types';
 
 @Component({
-  name: 'DatetimeFieldInputComponent',
+  name: 'DateTimeFieldInputComponent',
 })
-export default class DatetimeFieldInputComponent extends Vue {
+export default class DateTimeFieldInputComponent extends Vue {
   @Prop({ required: true })
   readonly name!: string;
 
@@ -34,7 +32,7 @@ export default class DatetimeFieldInputComponent extends Vue {
   readonly formData!: object;
 
   @Prop({ required: true })
-  readonly fieldConfig!: Field;
+  readonly fieldConfig!: DockiteFieldDateTimeEntity;
 
   public rules: object[] = [];
 
@@ -46,14 +44,22 @@ export default class DatetimeFieldInputComponent extends Vue {
     this.$emit('input', value);
   }
 
-  get settings(): {required: boolean, date: boolean} {
+  get settings(): DateFieldSettings {
     return this.fieldConfig.settings;
   }
 
   mounted() {
-    if (this.fieldConfig.settings.required) { this.rules.push(this.getRequiredRule()); }
-    if (!this.fieldConfig.settings.date) { this.rules.push(this.getDateTimeRule()); }
-    if (this.fieldConfig.settings.date) { this.rules.push(this.getDateRule()); }
+    if (this.fieldConfig.settings.required) {
+      this.rules.push(this.getRequiredRule());
+    }
+
+    if (this.fieldConfig.settings.dateOnly) {
+      this.rules.push(this.getDateRule());
+    }
+
+    if (!this.fieldConfig.settings.dateOnly) {
+      this.rules.push(this.getDateTimeRule());
+    }
   }
 
   public getRequiredRule(): object {
