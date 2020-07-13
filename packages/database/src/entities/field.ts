@@ -1,5 +1,5 @@
 import { FieldManager } from '@dockite/manager';
-import { DockiteField } from '@dockite/types';
+import { DockiteField, FieldSettings } from '@dockite/types';
 import GraphQLJSON from 'graphql-type-json';
 import { Field as GraphQLField, ObjectType } from 'type-graphql';
 import { AfterLoad, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
@@ -32,7 +32,7 @@ export class Field {
 
   @Column('jsonb', { default: {} })
   @GraphQLField(_type => GraphQLJSON)
-  public settings!: any; // eslint-disable-line
+  public settings!: FieldSettings;
 
   @Column()
   @GraphQLField()
