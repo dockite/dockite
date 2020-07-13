@@ -32,6 +32,7 @@ interface CreateSingletonWithFields {
   fields: UnpersistedField[];
   groups: Record<string, string[]>;
   data: Record<string, string[]>;
+  settings: Record<string, any>;
 }
 
 interface UpdateSingletonAndFieldsPayload {
@@ -60,7 +61,7 @@ export const actions: ActionTree<SingletonState, RootState> = {
         type: SchemaType.SINGLETON,
         groups: payload.groups,
         data: payload.data,
-        settings: {},
+        settings: payload.settings,
       },
     });
 

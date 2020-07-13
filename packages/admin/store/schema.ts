@@ -31,6 +31,7 @@ interface CreateSchemaWithFields {
   title: string;
   fields: UnpersistedField[];
   groups: Record<string, string[]>;
+  settings: Record<string, any>;
 }
 
 interface UpdateSchemaAndFieldsPayload {
@@ -56,7 +57,7 @@ export const actions: ActionTree<SchemaState, RootState> = {
         title: payload.title,
         type: SchemaType.DEFAULT,
         groups: payload.groups,
-        settings: {},
+        settings: payload.settings,
       },
     });
 

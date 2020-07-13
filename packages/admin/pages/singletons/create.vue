@@ -24,15 +24,26 @@
           :name.sync="createSingletonForm.name"
           :title.sync="createSingletonForm.title"
           @next-step="stepForwards"
-        />
-        <step-two v-show="step === 1" ref="step-2" @field-data="handleFieldData" />
+        >
+          <template slot="header">
+            <h3>First, lets give the Singleton a name</h3>
+
+            <p class="dockite-text--subtitle">
+              The Singleton name should be reflective of the type of content it should hold. An
+              example of a good Singleton name would be <strong>About Us</strong> for a Singleton
+              that was going to hold the About Us page data.
+            </p>
+          </template>
+        </step-one>
+        <step-two v-show="step === 1" ref="step-2" @field-data="handleFieldData"> </step-two>
         <step-three
           v-show="step === 2"
           ref="step-3"
           v-model="createSingletonForm.settings"
           :schema="createSingletonForm"
-        />
-        <step-four v-show="step === 3" ref="step-4" v-bind="createSingletonForm" />
+        >
+        </step-three>
+        <step-four v-show="step === 3" ref="step-4" v-bind="createSingletonForm"> </step-four>
       </div>
 
       <div class="dockite-singleton--stepper">
