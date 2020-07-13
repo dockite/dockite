@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.7](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.6...@dockite/core@0.4.0-alpha.7) (2020-07-13)
+
+
+### Features
+
+* **transformer:** add singleton resolver ([e799ab4](https://github.com/dockite/dockite/commit/e799ab45750385126742ae7238bc2d6487e965c4))
+
+
+
+
+
 # [0.4.0-alpha.6](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.5...@dockite/core@0.4.0-alpha.6) (2020-07-12)
 
 
