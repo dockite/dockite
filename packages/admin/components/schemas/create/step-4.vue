@@ -1,11 +1,13 @@
 <template>
   <div class="create-schema-step-1-component">
-    <h3>Finally, lets review the Schema</h3>
+    <slot name="header">
+      <h3>Finally, lets review the Schema</h3>
 
-    <p class="dockite-text--subtitle">
-      We've given our Schema a name and added the fields we desire. Before we create the Schema
-      let's quickly take a second to ensure it is all correct.
-    </p>
+      <p class="dockite-text--subtitle">
+        We've given our Schema a name and added the fields we desire. Before we create the Schema
+        let's quickly take a second to ensure it is all correct.
+      </p>
+    </slot>
 
     <h2 style="margin-top: 1.5rem;">
       Details for <strong>{{ name }}</strong>

@@ -1,12 +1,14 @@
 <template>
   <div class="create-schema-step-1-component">
-    <h3>First, lets give the Schema a name</h3>
+    <slot name="header">
+      <h3>First, lets give the Schema a name</h3>
 
-    <p class="dockite-text--subtitle">
-      The Schema name should be reflective of the type of content it should hold. An example of a
-      good Schema name would be <strong>BlogPosts</strong> for a Schema that was going to hold all
-      the blog posts for a particular backend.
-    </p>
+      <p class="dockite-text--subtitle">
+        The Schema name should be reflective of the type of content it should hold. An example of a
+        good Schema name would be <strong>BlogPosts</strong> for a Schema that was going to hold all
+        the blog posts for a particular backend.
+      </p>
+    </slot>
 
     <el-form
       ref="form"
@@ -21,8 +23,8 @@
         <el-input v-model="syncName" :disabled="!overrideSchemaName" />
         <small>
           The schema name determines the name of the generated GraphQL type. For most purposes the
-          generated name is fine but you can override it to meet your needs.</small
-        >
+          generated name is fine but you can override it to meet your needs.
+        </small>
       </el-form-item>
       <el-form-item label="Override Schema Name" style="margin-bottom: 1rem;">
         <el-switch v-model="overrideSchemaName" />

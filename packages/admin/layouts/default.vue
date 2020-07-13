@@ -40,7 +40,7 @@ import { Component, Vue } from 'nuxt-property-decorator';
 
 import SideMenu from '~/components/base/side-menu.vue';
 
-interface breadcrumbItem {
+interface BreadcrumbItem {
   title: string;
   location: string;
 }
@@ -61,7 +61,7 @@ interface breadcrumbItem {
   },
 })
 export default class DefaultLayout extends Vue {
-  get breadcrumbs(): breadcrumbItem[] {
+  get breadcrumbs(): BreadcrumbItem[] {
     return this.$route.path
       .split('/')
       .filter(x => x !== '')

@@ -1,11 +1,13 @@
 <template>
   <div class="create-schema-step-1-component">
-    <h3>Next, lets configre the Settings</h3>
+    <slot name="header">
+      <h3>Next, lets configre the Settings</h3>
 
-    <p class="dockite-text--subtitle">
-      Next up lets configure the schema, we can define the fields that will be displayed in views
-      and other useful details that will help manage our content.
-    </p>
+      <p class="dockite-text--subtitle">
+        Next up lets configure the schema, we can define the fields that will be displayed in views
+        and other useful details that will help manage our content.
+      </p>
+    </slot>
 
     <schema-settings v-model="settings" :schema="schema" />
   </div>
