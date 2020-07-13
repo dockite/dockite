@@ -1,5 +1,5 @@
 import { can } from '@dockite/ability';
-import { Schema, Document, User, DocumentRevision } from '@dockite/database';
+import { Schema, Document, User, DocumentRevision, SchemaType } from '@dockite/database';
 import {
   DockiteFieldStatic,
   GlobalContext,
@@ -290,8 +290,8 @@ const createGraphQLQueriesForSchema = async (
             if (
               !can(
                 user.normalizedScopes,
-                'internal:document:delete',
-                `schema:${schema.name.toLowerCase()}:delete`,
+                'internal:document:read',
+                `schema:${schema.name.toLowerCase()}:read`,
               )
             ) {
               throw new Error('You are not authorized to perform this action');
@@ -330,8 +330,8 @@ const createGraphQLQueriesForSchema = async (
             if (
               !can(
                 user.normalizedScopes,
-                'internal:document:delete',
-                `schema:${schema.name.toLowerCase()}:delete`,
+                'internal:document:read',
+                `schema:${schema.name.toLowerCase()}:read`,
               )
             ) {
               throw new Error('You are not authorized to perform this action');
@@ -387,6 +387,56 @@ const createGraphQLQueriesForSchema = async (
           hasNextPage: page < totalPages,
           totalPages,
         };
+      },
+    },
+  };
+
+  return queries;
+};
+
+const createGraphQLQueriesForSingleton = async (
+  config: ConfigBagItem,
+): Promise<GraphQLFieldConfigMap<Source, GlobalContext>> => {
+  const { schema, orm, graphqlObjectType } = config;
+
+  const repository = orm.getRepository(Document);
+
+  const queries: GraphQLFieldConfigMap<Source, GlobalContext> = {
+    [schema.name]: {
+      type: graphqlObjectType,
+      async resolve(_source, _args, ctx, info): Promise<object> {
+        if (schema.settings.enableQueryAuthentication) {
+          if (ctx.user) {
+            const user = await orm.getRepository(User).findOneOrFail(ctx.user.id);
+
+            if (
+              !can(
+                user.normalizedScopes,
+                'internal:document:read',
+                `schema:${schema.name.toLowerCase()}:read`,
+              )
+            ) {
+              throw new Error('You are not authorized to perform this action');
+            }
+          } else {
+            const authenticated = await isAuthenticatedAndAuthorized(
+              config,
+              ctx,
+              info,
+              schema.name,
+            );
+
+            if (!authenticated) {
+              throw new Error('You are not authorized to perform this action');
+            }
+          }
+        }
+
+        const [document] = await repository.find({
+          take: 1,
+        });
+
+        return { id: document.id, ...document.data };
       },
     },
   };
@@ -723,12 +773,18 @@ export const createSchema = async (
     }),
   );
 
-  const queryConfigCollection = await Promise.all(
-    ConfigBag.map(config => createGraphQLQueriesForSchema(config)),
+  const SchemaConfigBag = ConfigBag.filter(config => config.schema.type === SchemaType.DEFAULT);
+  const SingletonConfigBag = ConfigBag.filter(
+    config => config.schema.type === SchemaType.SINGLETON,
   );
 
+  const queryConfigCollection = await Promise.all([
+    ...SchemaConfigBag.map(config => createGraphQLQueriesForSchema(config)),
+    ...SingletonConfigBag.map(config => createGraphQLQueriesForSingleton(config)),
+  ]);
+
   const mutationConfigCollection = await Promise.all(
-    ConfigBag.map(config => createGraphQLMutationsForSchema(config)),
+    SchemaConfigBag.map(config => createGraphQLMutationsForSchema(config)),
   );
 
   const queryConfig = queryConfigCollection.reduce((acc, curr) => ({ ...acc, ...curr }), {});

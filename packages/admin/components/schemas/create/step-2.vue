@@ -1,12 +1,14 @@
 <template>
   <div class="create-schema-step-2-component">
-    <h3>Next, lets add some fields</h3>
+    <slot name="header">
+      <h3>Next, lets add some fields</h3>
 
-    <p class="dockite-text--subtitle">
-      Fields define what a schema can hold, you can add String fields for names and descriptions,
-      Color fields for product colors and so forth. A schema can have as many fields as you desire
-      however the more you add the harder it can be to manage later on.
-    </p>
+      <p class="dockite-text--subtitle">
+        Fields define what a schema can hold, you can add String fields for names and descriptions,
+        Color fields for product colors and so forth. A schema can have as many fields as you desire
+        however the more you add the harder it can be to manage later on.
+      </p>
+    </slot>
 
     <el-tabs v-model="currentTab" type="border-card" editable @edit="handleEditTabs">
       <el-tab-pane v-for="tab in availableTabs" :key="tab" :label="tab" :name="tab">

@@ -148,7 +148,7 @@ export class SingletonResolver {
     const preservedGroups = Object.keys(groups).map(key => ({ [key]: groups[key] }));
 
     const schema = schemaRepository.create({
-      name: name.toLowerCase(),
+      name,
       title,
       type: SchemaType.SINGLETON,
       groups: preservedGroups,
