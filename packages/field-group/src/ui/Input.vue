@@ -56,14 +56,9 @@
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { Field } from '@dockite/types';
 
-type UnpersistedField = Omit<Field, 'id' | 'schemaId' | 'dockiteField' | 'schema'>;
+import { DockiteFieldGroupEntity, GroupFieldSettings } from '../types';
 
-interface Settings {
-  required: boolean;
-  repeatable: boolean;
-  minRows: number;
-  maxRows: number;
-}
+type UnpersistedField = Omit<Field, 'id' | 'schemaId' | 'dockiteField' | 'schema'>;
 
 @Component({
   name: 'GroupFieldInputComponent',
@@ -79,7 +74,7 @@ export default class GroupFieldInputComponent extends Vue {
   readonly formData!: object;
 
   @Prop({ required: true })
-  readonly fieldConfig!: Field;
+  readonly fieldConfig!: DockiteFieldGroupEntity;
 
   public rules: object[] = [];
 
@@ -111,7 +106,7 @@ export default class GroupFieldInputComponent extends Vue {
     this.$emit('input', value);
   }
 
-  get settings(): Settings {
+  get settings(): GroupFieldSettings {
     return this.fieldConfig.settings;
   }
 

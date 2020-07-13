@@ -1,10 +1,5 @@
 <template>
-  <el-form-item
-    :label="fieldConfig.title"
-    :prop="name"
-    :rules="rules"
-    class="dockite-field-number"
-  >
+  <el-form-item :label="fieldConfig.title" :prop="name" :rules="rules" class="dockite-field-number">
     <el-input-number
       v-if="settings.float"
       v-model="fieldData"
@@ -28,7 +23,8 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { Field } from '@dockite/types';
+
+import { DockiteFieldNumberEntity, NumberFieldSettings } from '../types';
 
 @Component({
   name: 'NumberFieldInputComponent',
@@ -44,7 +40,7 @@ export default class NumberFieldInputComponent extends Vue {
   readonly formData!: object;
 
   @Prop({ required: true })
-  readonly fieldConfig!: Field;
+  readonly fieldConfig!: DockiteFieldNumberEntity;
 
   public rules: object[] = [];
 
@@ -60,7 +56,7 @@ export default class NumberFieldInputComponent extends Vue {
     this.$emit('input', value);
   }
 
-  get settings(): { min?: number; max?: number; float?: boolean } {
+  get settings(): NumberFieldSettings {
     return this.fieldConfig.settings;
   }
 

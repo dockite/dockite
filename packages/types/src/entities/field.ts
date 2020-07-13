@@ -2,8 +2,9 @@ import { DockiteField } from '../common';
 
 import { Schema } from './schema';
 
-export interface FieldSettings extends Record<string, any> {
-  default: any;
+export interface FieldSettings {
+  default?: any;
+  [key: string]: any;
 }
 
 export interface Field {

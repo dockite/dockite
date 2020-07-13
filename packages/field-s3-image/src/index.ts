@@ -9,7 +9,7 @@ import {
   GraphQLInputObjectType,
 } from 'graphql';
 
-import { FieldSettings } from './types';
+import { S3ImageFieldSettings } from './types';
 
 export interface S3ImageType {
   name: string;
@@ -56,7 +56,7 @@ export class DockiteFieldS3Image extends DockiteField {
 
   public static description = 'An image field that uploads files to an S3 compatible storage.';
 
-  public static defaultOptions: FieldSettings = {
+  public static defaultOptions: S3ImageFieldSettings = {
     required: false,
     acceptedExtensions: [],
     maxSizeKB: 10000,
@@ -76,7 +76,7 @@ export class DockiteFieldS3Image extends DockiteField {
   };
 
   public async inputType(): Promise<GraphQLInputType> {
-    if ((this.schemaField.settings as FieldSettings).multiple) {
+    if ((this.schemaField.settings as S3ImageFieldSettings).multiple) {
       return MultipleDockiteFieldS3ImageInputType;
     }
 
@@ -84,7 +84,7 @@ export class DockiteFieldS3Image extends DockiteField {
   }
 
   public async outputType(): Promise<GraphQLOutputType> {
-    if ((this.schemaField.settings as FieldSettings).multiple) {
+    if ((this.schemaField.settings as S3ImageFieldSettings).multiple) {
       return MultipleDockiteFieldS3ImageType;
     }
 

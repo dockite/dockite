@@ -70,11 +70,12 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { Field, Schema } from '@dockite/types';
+import { Schema } from '@dockite/database';
 import axios from 'axios';
 import gql from 'graphql-tag';
 
-import { S3ImageType, FieldSettings, ImageExtension, S3Settings } from '../types';
+import { S3ImageType, S3ImageFieldSettings, ImageExtension, S3Settings } from '../types';
+import { DockiteFieldS3ImageEntity } from '../../lib/types';
 
 const presignURLMutation = gql`
   mutation PresignS3Object($input: PresignInput!) {
@@ -99,7 +100,7 @@ export default class S3ImageFieldInputComponent extends Vue {
   readonly formData!: object;
 
   @Prop({ required: true })
-  readonly fieldConfig!: Field;
+  readonly fieldConfig!: DockiteFieldS3ImageEntity;
 
   @Prop({ required: true })
   readonly schema!: Schema;
@@ -108,7 +109,7 @@ export default class S3ImageFieldInputComponent extends Vue {
 
   public errors: string[] = [];
 
-  get settings(): FieldSettings {
+  get settings(): S3ImageFieldSettings {
     return this.fieldConfig.settings;
   }
 

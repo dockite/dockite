@@ -137,7 +137,7 @@
 import { Fragment } from 'vue-fragment';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 
-import { FieldSettings, imageTypeExtensions } from '../types';
+import { S3ImageFieldSettings, imageTypeExtensions } from '../types';
 import { DockiteFieldS3Image } from '..';
 
 @Component({
@@ -147,15 +147,15 @@ import { DockiteFieldS3Image } from '..';
 })
 export default class S3ImageFieldSettingsComponent extends Vue {
   @Prop({ required: true })
-  readonly value!: FieldSettings;
+  readonly value!: S3ImageFieldSettings;
 
   public imageTypeExtensions = imageTypeExtensions;
 
-  get settings(): FieldSettings {
+  get settings(): S3ImageFieldSettings {
     return this.value;
   }
 
-  set settings(value: FieldSettings) {
+  set settings(value: S3ImageFieldSettings) {
     this.$emit('input', value);
   }
 

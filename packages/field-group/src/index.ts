@@ -19,6 +19,8 @@ import {
   Source,
 } from 'graphql';
 
+import { GroupFieldSettings } from './types';
+
 type ChildField = Omit<Field, 'id' | 'schema' | 'schemaId' | 'dockiteField'>;
 
 export class DockiteFieldGroup extends DockiteField {
@@ -28,7 +30,12 @@ export class DockiteFieldGroup extends DockiteField {
 
   public static description = 'A group field';
 
-  public static defaultOptions = {};
+  public static defaultOptions: GroupFieldSettings = {
+    required: false,
+    repeatable: false,
+    minRows: 0,
+    maxRows: Infinity,
+  };
 
   private getMappedChildFields(): Omit<Field, 'id'>[] {
     const staticFields = Object.values(this.fieldManager);

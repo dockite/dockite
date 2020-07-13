@@ -9,46 +9,42 @@
   </fragment>
 </template>
 
-<script>
+<script lang="ts">
 import { Fragment } from 'vue-fragment';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 
-export default {
+import { DateFieldSettings } from '../../lib/types';
+import { DockiteFieldDatetime } from '..';
+
+@Component({
+  name: '',
   components: {
     Fragment,
   },
+})
+export default class DateTimeFieldSettingsComponent extends Vue {
+  @Prop({ required: true })
+  readonly value!: DateFieldSettings;
 
-  props: {
-    value: {
-      type: Object,
-      required: true,
-    },
+  @Prop({ required: true })
+  readonly rules!: Record<string, any>;
 
-    rules: {
-      type: Object,
-      required: true,
-    },
-  },
+  get settings(): DateFieldSettings {
+    return this.value;
+  }
 
-  computed: {
-    settings: {
-      get() {
-        return this.value;
-      },
-      set(value) {
-        this.$emit('input', value);
-      },
-    },
-  },
+  set settings(value) {
+    this.$emit('input', value);
+  }
 
   mounted() {
     if (Object.keys(this.settings).length === 0) {
       this.settings = {
-        required: false,
-        date: false,
+        ...DockiteFieldDatetime.defaultOptions,
       };
     }
-  },
-};
+  }
+}
 </script>
 
 <style></style>
