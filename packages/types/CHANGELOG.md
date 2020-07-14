@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.5](https://github.com/dockite/dockite/compare/@dockite/types@0.3.0-alpha.4...@dockite/types@0.3.0-alpha.5) (2020-07-14)
+
+
+### Bug Fixes
+
+* **types:** re-add express import ([04ffc83](https://github.com/dockite/dockite/commit/04ffc83d76d152476ddf284caca7573ce64715c4))
+
+
+
+
+
 # [0.3.0-alpha.4](https://github.com/dockite/dockite/compare/@dockite/types@0.3.0-alpha.3...@dockite/types@0.3.0-alpha.4) (2020-07-14)
 
 
