@@ -1,6 +1,6 @@
 {
   "name": "@dockite/where-builder",
-  "version": "0.2.0-alpha.3",
+  "version": "0.2.0-alpha.4",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
@@ -8,9 +8,9 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@dockite/database": "^0.4.0-alpha.1",
-    "@dockite/field": "^0.3.0-alpha.1",
-    "@dockite/types": "^0.3.0-alpha.3",
+    "@dockite/database": "^0.4.0-alpha.2",
+    "@dockite/field": "^0.3.0-alpha.2",
+    "@dockite/types": "^0.3.0-alpha.4",
     "ajv": "^6.12.2",
     "debug": "^4.1.1",
     "graphql": "^15.0.0",

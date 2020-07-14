@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.12](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.11...@dockite/admin@0.4.0-alpha.12) (2020-07-14)
+
+
+### Bug Fixes
+
+* **admin:** fix schema settings overwrite ([8cac8f8](https://github.com/dockite/dockite/commit/8cac8f80f087c035e474a1e5fa4827372e912093))
+* **field*:** add types to resolve default value conflicts ([4154f21](https://github.com/dockite/dockite/commit/4154f213f0397aa133b385002cb64f97fd5a1da4))
+
+
+
+
+
 # [0.4.0-alpha.11](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.10...@dockite/admin@0.4.0-alpha.11) (2020-07-13)
 
 
