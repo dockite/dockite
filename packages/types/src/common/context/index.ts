@@ -1,10 +1,10 @@
-import * as Express from 'express';
+import * as express from 'express';
 
 import { User } from '../../entities';
 
 export interface SessionContext {
-  req: Express.Request;
-  res: Express.Response;
+  req: express.Request;
+  res: express.Response;
 }
 
 export interface GlobalContext extends SessionContext {
