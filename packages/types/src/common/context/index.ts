@@ -1,3 +1,5 @@
+import * as Express from 'express';
+
 import { User } from '../../entities';
 
 export interface SessionContext {
