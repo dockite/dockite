@@ -68,6 +68,10 @@ module.exports = {
         use: ['style-loader', 'css-loader', 'sass-loader'],
         sideEffects: true,
       },
+      {
+        test: /\.g(raph)?ql$/,
+        loader: 'graphql-tag/loader',
+      },
     ],
   },
   externals: {
