@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.2](https://github.com/dockite/dockite/compare/@dockite/database@0.4.0-alpha.1...@dockite/database@0.4.0-alpha.2) (2020-07-14)
+
+
+### Features
+
+* **core:** add default value support ([e25504e](https://github.com/dockite/dockite/commit/e25504e7d3d7d4b61b7c29ba4e25ffcaa7090f79))
+
+
+
+
+
 # [0.4.0-alpha.1](https://github.com/dockite/dockite/compare/@dockite/database@0.4.0-alpha.0...@dockite/database@0.4.0-alpha.1) (2020-07-11)
 
 
