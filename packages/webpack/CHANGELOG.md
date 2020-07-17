@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.1.0-alpha.1](https://github.com/dockite/dockite/compare/@dockite/webpack@1.1.0-alpha.0...@dockite/webpack@1.1.0-alpha.1) (2020-07-17)
+
+
+### Bug Fixes
+
+* **webpack:** add node-sass and babel plugins ([ca4e50c](https://github.com/dockite/dockite/commit/ca4e50ccb8c0f2759ba6f20033b3dfcb7dd7dee4))
+
+
+
+
+
 # 1.1.0-alpha.0 (2020-07-14)
 
 
