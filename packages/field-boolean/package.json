@@ -1,6 +1,6 @@
 {
   "name": "@dockite/field-boolean",
-  "version": "0.2.1-alpha.7",
+  "version": "0.2.1-alpha.8",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
@@ -11,8 +11,8 @@
   "dependencies": {
     "@babel/plugin-proposal-class-properties": "^7.10.1",
     "@babel/plugin-proposal-decorators": "^7.10.1",
-    "@dockite/field": "^0.3.0-alpha.4",
-    "@dockite/types": "^0.3.0-alpha.6",
+    "@dockite/field": "^0.3.0-alpha.5",
+    "@dockite/types": "^0.3.0-alpha.7",
     "graphql": "^15.1.0",
     "reflect-metadata": "^0.1.13",
     "type-graphql": "1.0.0-rc.2",
