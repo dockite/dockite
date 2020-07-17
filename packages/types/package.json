@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "express": "^4.17.1",
-    "graphql": "^15.0.0",
+    "graphql": "^15.1.0",
     "type-graphql": "1.0.0-rc.2",
     "typeorm": "^0.2.25"
   },

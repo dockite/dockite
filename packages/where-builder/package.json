@@ -13,7 +13,7 @@
     "@dockite/types": "^0.3.0-alpha.6",
     "ajv": "^6.12.2",
     "debug": "^4.1.1",
-    "graphql": "^15.0.0",
+    "graphql": "^15.1.0",
     "graphql-type-json": "^0.3.1",
     "lodash": "^4.17.15",
     "type-graphql": "1.0.0-rc.2",
