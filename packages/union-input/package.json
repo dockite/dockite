@@ -9,7 +9,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "graphql": "^15.0.0",
+    "graphql": "^15.1.0",
     "lodash": "^4.17.15"
   },
   "devDependencies": {

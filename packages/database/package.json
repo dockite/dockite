@@ -12,7 +12,7 @@
     "@dockite/manager": "^0.2.1-alpha.4",
     "@dockite/types": "^0.3.0-alpha.6",
     "debug": "^4.1.1",
-    "graphql": "^15.0.0",
+    "graphql": "^15.1.0",
     "graphql-type-json": "^0.3.1",
     "lodash": "^4.17.15",
     "reflect-metadata": "^0.1.13",

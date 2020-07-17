@@ -13,7 +13,7 @@
     "@babel/plugin-proposal-decorators": "^7.10.1",
     "@dockite/field": "^0.3.0-alpha.4",
     "@dockite/types": "^0.3.0-alpha.6",
-    "graphql": "^15.0.0",
+    "graphql": "^15.1.0",
     "graphql-scalars": "^1.1.0",
     "reflect-metadata": "^0.1.13",
     "tinycolor2": "^1.4.1",

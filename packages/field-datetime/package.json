@@ -15,7 +15,7 @@
     "@dockite/field": "^0.3.0-alpha.4",
     "@dockite/types": "^0.3.0-alpha.6",
     "@types/graphql-iso-date": "^3.3.3",
-    "graphql": "^15.0.0",
+    "graphql": "^15.1.0",
     "graphql-iso-date": "^3.6.1",
     "reflect-metadata": "^0.1.13",
     "type-graphql": "1.0.0-rc.2",
