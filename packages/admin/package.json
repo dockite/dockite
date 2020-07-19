@@ -71,5 +71,8 @@
     "vue-jest": "^4.0.0-0",
     "webpack": "^4.43.0",
     "webpack-inject-plugin": "^1.5.4"
+  },
+  "devDependencies": {
+    "@nuxtjs/tailwindcss": "^2.0.0"
   }
 }

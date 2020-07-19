@@ -80,8 +80,14 @@ const config: Configuration = {
         typecheck: !process.env.CLI_BUILD,
       },
     ],
+    '@nuxtjs/tailwindcss',
     '@nuxtjs/stylelint-module',
   ],
+  tailwindcss: {
+    configPath: '~/tailwind.config.js',
+    cssPath: '~/assets/css/tailwind.css',
+    exposeConfig: false,
+  },
   /*
    ** Nuxt.js modules
    */
