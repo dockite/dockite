@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.8](https://github.com/dockite/dockite/compare/@dockite/types@0.2.0...@dockite/types@0.3.0-alpha.8) (2020-07-19)
+
+
+### Bug Fixes
+
+* **field-reference*:** allow self references ([b97c310](https://github.com/dockite/dockite/commit/b97c3103dca8c2e47ffa888f5eee91caa2c8c616))
+* **field*:** add types to resolve default value conflicts ([1c1dc76](https://github.com/dockite/dockite/commit/1c1dc76c3d1ec5b503b53192dd0ef32a5aacaf30))
+* **types:** re-add express import ([7c88faa](https://github.com/dockite/dockite/commit/7c88faab7496aef0c004725b62dec8fa06d57669))
+* **types:** re-add express import ([b8d3fff](https://github.com/dockite/dockite/commit/b8d3fff04e2c8054ab60162a27a2db84ce06bd02))
+* remove where method from field packages ([80815ca](https://github.com/dockite/dockite/commit/80815caeddf977c6e061ec4d0cc4805f5cd5d87a))
+
+
+### Features
+
+* **core:** add default value support ([265396f](https://github.com/dockite/dockite/commit/265396f0107644c02eb8a2bf74ad89e1fa703937))
+* **field-group:** add nested field hooks ([81771bc](https://github.com/dockite/dockite/commit/81771bc9f8d5c19f552ca9f5e9f552359a17935a))
+* **field-slug:** add the slug field ([57b905a](https://github.com/dockite/dockite/commit/57b905af68ddd29b447294026594ff3fcc43c0e0))
+* add filtering and sorting ([a90b92e](https://github.com/dockite/dockite/commit/a90b92e28d1dbc2b05dbfb4089923891cd94b900))
+* add s3 image upload field ([3cb7a87](https://github.com/dockite/dockite/commit/3cb7a877de72da2398c9d9d5ac8ad9fa44fe7ca2))
+
+
+
+
+
 # [0.3.0-alpha.7](https://github.com/dockite/dockite/compare/@dockite/types@0.3.0-alpha.6...@dockite/types@0.3.0-alpha.7) (2020-07-17)
 
 **Note:** Version bump only for package @dockite/types

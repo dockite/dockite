@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 0.2.0-alpha.8 (2020-07-19)
+
+
+### Bug Fixes
+
+* **where-builder:** reorder operators ([48605de](https://github.com/dockite/dockite/commit/48605de581fefbb5f3f6686a076f014aec213d7c))
+
+
+### Features
+
+* add filtering and sorting ([a90b92e](https://github.com/dockite/dockite/commit/a90b92e28d1dbc2b05dbfb4089923891cd94b900))
+
+
+
+
+
 # [0.2.0-alpha.7](https://github.com/dockite/dockite/compare/@dockite/where-builder@0.2.0-alpha.6...@dockite/where-builder@0.2.0-alpha.7) (2020-07-17)
 
 **Note:** Version bump only for package @dockite/where-builder

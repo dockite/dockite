@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.6-alpha.10](https://github.com/dockite/dockite/compare/@dockite/field-reference@0.2.5...@dockite/field-reference@0.2.6-alpha.10) (2020-07-19)
+
+
+### Bug Fixes
+
+* **field-reference*:** allow self references ([b97c310](https://github.com/dockite/dockite/commit/b97c3103dca8c2e47ffa888f5eee91caa2c8c616))
+* remove where method from field packages ([80815ca](https://github.com/dockite/dockite/commit/80815caeddf977c6e061ec4d0cc4805f5cd5d87a))
+
+
+
+
+
 ## [0.2.6-alpha.9](https://github.com/dockite/dockite/compare/@dockite/field-reference@0.2.6-alpha.8...@dockite/field-reference@0.2.6-alpha.9) (2020-07-17)
 
 **Note:** Version bump only for package @dockite/field-reference

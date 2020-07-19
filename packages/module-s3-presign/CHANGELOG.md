@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 0.3.0-alpha.7 (2020-07-19)
+
+
+### Features
+
+* add s3 image upload field ([3cb7a87](https://github.com/dockite/dockite/commit/3cb7a877de72da2398c9d9d5ac8ad9fa44fe7ca2))
+
+
+
+
+
 # [0.3.0-alpha.6](https://github.com/dockite/dockite/compare/@dockite/module-s3-presign@0.3.0-alpha.5...@dockite/module-s3-presign@0.3.0-alpha.6) (2020-07-17)
 
 **Note:** Version bump only for package @dockite/module-s3-presign

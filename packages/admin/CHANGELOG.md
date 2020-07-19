@@ -3,6 +3,43 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.16](https://github.com/dockite/dockite/compare/@dockite/admin@0.3.4...@dockite/admin@0.4.0-alpha.16) (2020-07-19)
+
+
+### Bug Fixes
+
+* **admin:** fix schema settings overwrite ([a1fa9c4](https://github.com/dockite/dockite/commit/a1fa9c44448b1bd20376c85998d2d443d6244ee3))
+* **admin:** include vue-i18n types ([6582367](https://github.com/dockite/dockite/commit/65823673a790d4d8c719c96fde8a547bf2cd1543))
+* **admin:** layout shift during login ([449bd55](https://github.com/dockite/dockite/commit/449bd55119cbcaf37cc9dbbd4e841218556e22ec))
+* **admin:** type errors ([dbcce56](https://github.com/dockite/dockite/commit/dbcce56385810f5b62bca30845f4df97345dbbf7))
+* **admin,cli:** disable typechecking during cli build ([acca9c9](https://github.com/dockite/dockite/commit/acca9c961e44d443351d445aa72e943714d77025))
+* **cli,admin:** fix cli build process ([c849076](https://github.com/dockite/dockite/commit/c8490765de7f5c3cba4deb422fc77e3b8b0a950b))
+* **field-reference*:** allow self references ([b97c310](https://github.com/dockite/dockite/commit/b97c3103dca8c2e47ffa888f5eee91caa2c8c616))
+* **field*:** add types to resolve default value conflicts ([1c1dc76](https://github.com/dockite/dockite/commit/1c1dc76c3d1ec5b503b53192dd0ef32a5aacaf30))
+
+
+### Features
+
+* **admin:** add account page ([85a59b3](https://github.com/dockite/dockite/commit/85a59b3cee85c1bd59629e8d73a8ff8e8c92be26))
+* **admin:** add configurable tree view to schemas ([600f5d6](https://github.com/dockite/dockite/commit/600f5d62ee8867e2bf5487518d2b7935118ae6c8))
+* **admin:** add password updates ([2af9145](https://github.com/dockite/dockite/commit/2af9145b5d9827c6dead876189bb14280e3b282c))
+* **admin:** add schema settings to creation ([c0b1618](https://github.com/dockite/dockite/commit/c0b1618facd509abf08b512bf5953e6f5e9e905f))
+* **admin:** add tailwindcss ([0fe10ac](https://github.com/dockite/dockite/commit/0fe10aceb6e3c72c6f1eaf63c33a09f3570270c5))
+* **admin:** admin password resets ([acee4c4](https://github.com/dockite/dockite/commit/acee4c4be320477528d5997058365555692cd36f))
+* **admin,core:** add api keys ([d51c43f](https://github.com/dockite/dockite/commit/d51c43f357b5bb3bf29fd6b2a8cc3f400898c15d))
+* **core:** add password reset resolver ([a071f7c](https://github.com/dockite/dockite/commit/a071f7cc45e27630fdfdc055032673f044cece3c))
+* **field-select:** add select field ([318e374](https://github.com/dockite/dockite/commit/318e3740f49da91228e18295029ad41cc244ffde))
+* **field-slug:** add the slug field ([57b905a](https://github.com/dockite/dockite/commit/57b905af68ddd29b447294026594ff3fcc43c0e0))
+* **transformer:** add singleton resolver ([138b97c](https://github.com/dockite/dockite/commit/138b97c2eb23475cd7cda264fc5117084f38418f))
+* add filtering and sorting ([a90b92e](https://github.com/dockite/dockite/commit/a90b92e28d1dbc2b05dbfb4089923891cd94b900))
+* add s3 image upload field ([3cb7a87](https://github.com/dockite/dockite/commit/3cb7a877de72da2398c9d9d5ac8ad9fa44fe7ca2))
+* add singletons ([2f5d29d](https://github.com/dockite/dockite/commit/2f5d29d5d9c9036a9b85be8069a53fa758aa7a42))
+* add user management system ([514b7fc](https://github.com/dockite/dockite/commit/514b7fcf5ab4999a8d4b74773ec8cf8960249862))
+
+
+
+
+
 # [0.4.0-alpha.15](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.14...@dockite/admin@0.4.0-alpha.15) (2020-07-17)
 
 **Note:** Version bump only for package @dockite/admin

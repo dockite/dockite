@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.6](https://github.com/dockite/dockite/compare/@dockite/database@0.3.4...@dockite/database@0.4.0-alpha.6) (2020-07-19)
+
+
+### Features
+
+* **admin:** add configurable tree view to schemas ([600f5d6](https://github.com/dockite/dockite/commit/600f5d62ee8867e2bf5487518d2b7935118ae6c8))
+* **admin,core:** add api keys ([d51c43f](https://github.com/dockite/dockite/commit/d51c43f357b5bb3bf29fd6b2a8cc3f400898c15d))
+* **core:** add default value support ([265396f](https://github.com/dockite/dockite/commit/265396f0107644c02eb8a2bf74ad89e1fa703937))
+* add singletons ([2f5d29d](https://github.com/dockite/dockite/commit/2f5d29d5d9c9036a9b85be8069a53fa758aa7a42))
+* **field-group:** add nested field hooks ([81771bc](https://github.com/dockite/dockite/commit/81771bc9f8d5c19f552ca9f5e9f552359a17935a))
+
+
+
+
+
 # [0.4.0-alpha.5](https://github.com/dockite/dockite/compare/@dockite/database@0.4.0-alpha.4...@dockite/database@0.4.0-alpha.5) (2020-07-17)
 
 **Note:** Version bump only for package @dockite/database

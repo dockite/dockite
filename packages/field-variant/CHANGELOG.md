@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.8](https://github.com/dockite/dockite/compare/@dockite/field-variant@0.2.0...@dockite/field-variant@0.3.0-alpha.8) (2020-07-19)
+
+
+### Bug Fixes
+
+* remove where method from field packages ([80815ca](https://github.com/dockite/dockite/commit/80815caeddf977c6e061ec4d0cc4805f5cd5d87a))
+
+
+### Features
+
+* **field-variant:** add nested field hooks ([55102ba](https://github.com/dockite/dockite/commit/55102ba16ef970a2fe85ccb133ea4318fef00eff))
+
+
+
+
+
 # [0.3.0-alpha.7](https://github.com/dockite/dockite/compare/@dockite/field-variant@0.3.0-alpha.6...@dockite/field-variant@0.3.0-alpha.7) (2020-07-17)
 
 **Note:** Version bump only for package @dockite/field-variant

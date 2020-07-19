@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.6](https://github.com/dockite/dockite/compare/@dockite/field-string@0.2.0...@dockite/field-string@0.3.0-alpha.6) (2020-07-19)
+
+
+### Bug Fixes
+
+* **field*:** add types to resolve default value conflicts ([1c1dc76](https://github.com/dockite/dockite/commit/1c1dc76c3d1ec5b503b53192dd0ef32a5aacaf30))
+* remove where method from field packages ([80815ca](https://github.com/dockite/dockite/commit/80815caeddf977c6e061ec4d0cc4805f5cd5d87a))
+
+
+### Features
+
+* **field-slug:** add the slug field ([57b905a](https://github.com/dockite/dockite/commit/57b905af68ddd29b447294026594ff3fcc43c0e0))
+
+
+
+
+
 # [0.3.0-alpha.5](https://github.com/dockite/dockite/compare/@dockite/field-string@0.3.0-alpha.4...@dockite/field-string@0.3.0-alpha.5) (2020-07-17)
 
 **Note:** Version bump only for package @dockite/field-string

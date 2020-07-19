@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 0.3.0-alpha.6 (2020-07-19)
+
+
+### Bug Fixes
+
+* **field*:** add types to resolve default value conflicts ([1c1dc76](https://github.com/dockite/dockite/commit/1c1dc76c3d1ec5b503b53192dd0ef32a5aacaf30))
+
+
+### Features
+
+* **field-select:** add select field ([318e374](https://github.com/dockite/dockite/commit/318e3740f49da91228e18295029ad41cc244ffde))
+
+
+
+
+
 # [0.3.0-alpha.5](https://github.com/dockite/dockite/compare/@dockite/field-select@0.3.0-alpha.4...@dockite/field-select@0.3.0-alpha.5) (2020-07-17)
 
 **Note:** Version bump only for package @dockite/field-select

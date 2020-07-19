@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.1-alpha.10](https://github.com/dockite/dockite/compare/@dockite/field-colorpicker@0.2.0...@dockite/field-colorpicker@0.2.1-alpha.10) (2020-07-19)
+
+
+### Bug Fixes
+
+* remove where method from field packages ([80815ca](https://github.com/dockite/dockite/commit/80815caeddf977c6e061ec4d0cc4805f5cd5d87a))
+
+
+
+
+
 ## [0.2.1-alpha.9](https://github.com/dockite/dockite/compare/@dockite/field-colorpicker@0.2.1-alpha.8...@dockite/field-colorpicker@0.2.1-alpha.9) (2020-07-17)
 
 **Note:** Version bump only for package @dockite/field-colorpicker

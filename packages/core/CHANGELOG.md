@@ -3,6 +3,36 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.13](https://github.com/dockite/dockite/compare/@dockite/core@0.3.5...@dockite/core@0.4.0-alpha.13) (2020-07-19)
+
+
+### Bug Fixes
+
+* **core:** fix invalid uuid ([e7b77bc](https://github.com/dockite/dockite/commit/e7b77bc1e60ae4a298219143a907ac0d22fdc9f0))
+* **core:** store connection for cases of reinstantiation ([a54b3ab](https://github.com/dockite/dockite/commit/a54b3ab4b395da2b05a2e046baaf52e7700dbb86))
+* **field-reference*:** allow self references ([b97c310](https://github.com/dockite/dockite/commit/b97c3103dca8c2e47ffa888f5eee91caa2c8c616))
+* remove where method from field packages ([80815ca](https://github.com/dockite/dockite/commit/80815caeddf977c6e061ec4d0cc4805f5cd5d87a))
+
+
+### Features
+
+* **admin:** admin password resets ([acee4c4](https://github.com/dockite/dockite/commit/acee4c4be320477528d5997058365555692cd36f))
+* **admin,core:** add api keys ([d51c43f](https://github.com/dockite/dockite/commit/d51c43f357b5bb3bf29fd6b2a8cc3f400898c15d))
+* **core:** add default value support ([265396f](https://github.com/dockite/dockite/commit/265396f0107644c02eb8a2bf74ad89e1fa703937))
+* **core:** add password reset resolver ([a071f7c](https://github.com/dockite/dockite/commit/a071f7cc45e27630fdfdc055032673f044cece3c))
+* **core:** add user management resolvers ([d2342bc](https://github.com/dockite/dockite/commit/d2342bcf88771691dcd4b101d7aa825a1fd7bb9b))
+* **field-select:** add select field ([318e374](https://github.com/dockite/dockite/commit/318e3740f49da91228e18295029ad41cc244ffde))
+* **field-slug:** add the slug field ([57b905a](https://github.com/dockite/dockite/commit/57b905af68ddd29b447294026594ff3fcc43c0e0))
+* **transformer:** add singleton resolver ([138b97c](https://github.com/dockite/dockite/commit/138b97c2eb23475cd7cda264fc5117084f38418f))
+* add filtering and sorting ([a90b92e](https://github.com/dockite/dockite/commit/a90b92e28d1dbc2b05dbfb4089923891cd94b900))
+* add s3 image upload field ([3cb7a87](https://github.com/dockite/dockite/commit/3cb7a877de72da2398c9d9d5ac8ad9fa44fe7ca2))
+* add singletons ([2f5d29d](https://github.com/dockite/dockite/commit/2f5d29d5d9c9036a9b85be8069a53fa758aa7a42))
+* add user management system ([514b7fc](https://github.com/dockite/dockite/commit/514b7fcf5ab4999a8d4b74773ec8cf8960249862))
+
+
+
+
+
 # [0.4.0-alpha.12](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.11...@dockite/core@0.4.0-alpha.12) (2020-07-17)
 
 **Note:** Version bump only for package @dockite/core

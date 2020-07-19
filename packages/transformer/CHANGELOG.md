@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.10](https://github.com/dockite/dockite/compare/@dockite/transformer@0.2.0...@dockite/transformer@0.3.0-alpha.10) (2020-07-19)
+
+
+### Bug Fixes
+
+* remove where method from field packages ([80815ca](https://github.com/dockite/dockite/commit/80815caeddf977c6e061ec4d0cc4805f5cd5d87a))
+
+
+### Features
+
+* **field-slug:** add the slug field ([57b905a](https://github.com/dockite/dockite/commit/57b905af68ddd29b447294026594ff3fcc43c0e0))
+* **transformer:** add singleton resolver ([138b97c](https://github.com/dockite/dockite/commit/138b97c2eb23475cd7cda264fc5117084f38418f))
+* add filtering and sorting ([a90b92e](https://github.com/dockite/dockite/commit/a90b92e28d1dbc2b05dbfb4089923891cd94b900))
+
+
+
+
+
 # [0.3.0-alpha.9](https://github.com/dockite/dockite/compare/@dockite/transformer@0.3.0-alpha.8...@dockite/transformer@0.3.0-alpha.9) (2020-07-17)
 
 **Note:** Version bump only for package @dockite/transformer

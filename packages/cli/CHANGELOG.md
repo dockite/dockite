@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.7-alpha.9](https://github.com/dockite/dockite/compare/@dockite/cli@0.0.6...@dockite/cli@0.0.7-alpha.9) (2020-07-19)
+
+
+### Bug Fixes
+
+* **admin,cli:** disable typechecking during cli build ([acca9c9](https://github.com/dockite/dockite/commit/acca9c961e44d443351d445aa72e943714d77025))
+* **cli,admin:** fix cli build process ([c849076](https://github.com/dockite/dockite/commit/c8490765de7f5c3cba4deb422fc77e3b8b0a950b))
+
+
+
+
+
 ## [0.0.7-alpha.8](https://github.com/dockite/dockite/compare/@dockite/cli@0.0.7-alpha.7...@dockite/cli@0.0.7-alpha.8) (2020-07-17)
 
 **Note:** Version bump only for package @dockite/cli
