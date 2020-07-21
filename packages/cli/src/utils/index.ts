@@ -59,3 +59,32 @@ export async function buildAdminUI(distPath?: string): Promise<void> {
 
   await generator.generate({ build: true });
 }
+
+export async function startAdminUIDevServer(): Promise<void> {
+  module.paths.push(path.join(process.cwd(), 'node_modules'));
+
+  register({
+    project: path.join(path.dirname(require.resolve('@dockite/admin')), 'tsconfig.json'),
+    transpileOnly: true,
+    // eslint-disable-next-line
+    ignore: ['/node_modules\/(?!@dockite\/admin.*)/'],
+  });
+
+  const loadOptions = {
+    rootDir: path.dirname(require.resolve('@dockite/admin')),
+  };
+
+  let config = await loadNuxtConfig(loadOptions);
+
+  config = Object.assign(config, { true: false, server: false, _build: true });
+
+  config.server = config.mode === 'spa' || config.ssr === false;
+
+  const nuxt = await getNuxt(config);
+
+  await nuxt.server.listen();
+
+  const builder = await getBuilder(nuxt);
+
+  await builder.build();
+}
