@@ -76,9 +76,7 @@ export async function startAdminUIDevServer(): Promise<void> {
 
   let config = await loadNuxtConfig(loadOptions);
 
-  config = Object.assign(config, { true: false, server: false, _build: true });
-
-  config.server = config.mode === 'spa' || config.ssr === false;
+  config = Object.assign(config, { dev: true, _build: true });
 
   const nuxt = await getNuxt(config);
 
@@ -87,4 +85,9 @@ export async function startAdminUIDevServer(): Promise<void> {
   const builder = await getBuilder(nuxt);
 
   await builder.build();
+
+  // Display server urls after the build
+  nuxt.server.listeners.forEach((listener: any) => {
+    console.log(`Listening on: ${listener.url}`);
+  });
 }
