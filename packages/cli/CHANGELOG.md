@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.1.0-alpha.0](https://github.com/dockite/dockite/compare/@dockite/cli@0.0.7-alpha.9...@dockite/cli@0.1.0-alpha.0) (2020-07-21)
+
+
+### Features
+
+* **cli:** add the dev command ([e5a2c87](https://github.com/dockite/dockite/commit/e5a2c8744d069a677366119aec9f5cdc07e69ab7))
+
+
+
+
+
 ## [0.0.7-alpha.9](https://github.com/dockite/dockite/compare/@dockite/cli@0.0.6...@dockite/cli@0.0.7-alpha.9) (2020-07-19)
 
 
