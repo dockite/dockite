@@ -1,6 +1,6 @@
 {
   "name": "@dockite/field-reference-of",
-  "version": "0.2.6-alpha.10",
+  "version": "0.2.6-alpha.11",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
@@ -11,8 +11,8 @@
   "dependencies": {
     "@babel/plugin-proposal-class-properties": "^7.10.1",
     "@babel/plugin-proposal-decorators": "^7.10.1",
-    "@dockite/database": "^0.4.0-alpha.6",
-    "@dockite/field": "^0.3.0-alpha.6",
+    "@dockite/database": "^0.4.0-alpha.7",
+    "@dockite/field": "^0.3.0-alpha.7",
     "@dockite/types": "^0.3.0-alpha.8",
     "apollo-client": "^2.6.10",
     "graphql": "^15.1.0",

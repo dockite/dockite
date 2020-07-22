@@ -1,6 +1,6 @@
 {
   "name": "@dockite/core",
-  "version": "0.4.0-alpha.13",
+  "version": "0.4.0-alpha.14",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
@@ -11,13 +11,13 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@dockite/ability": "^0.2.1-alpha.8",
-    "@dockite/database": "^0.4.0-alpha.6",
-    "@dockite/field": "^0.3.0-alpha.6",
-    "@dockite/manager": "^0.2.1-alpha.6",
-    "@dockite/transformer": "^0.3.0-alpha.10",
+    "@dockite/ability": "^0.2.1-alpha.9",
+    "@dockite/database": "^0.4.0-alpha.7",
+    "@dockite/field": "^0.3.0-alpha.7",
+    "@dockite/manager": "^0.2.1-alpha.7",
+    "@dockite/transformer": "^0.3.0-alpha.11",
     "@dockite/types": "^0.3.0-alpha.8",
-    "@dockite/where-builder": "^0.2.0-alpha.8",
+    "@dockite/where-builder": "^0.2.0-alpha.9",
     "@graphql-modules/core": "^0.7.14",
     "@typescript-eslint/eslint-plugin": "^2.20.0",
     "@typescript-eslint/parser": "^2.20.0",
