@@ -100,8 +100,8 @@ export abstract class DockiteField {
 
 export const registerField = (
   name: string,
-  inputComponent: Component,
-  settingsComponent: Component,
+  inputComponent: Component | null,
+  settingsComponent: Component | null,
 ): void => {
   if (typeof window === 'undefined') {
     throw new Error('registerField called in non-browser environment');

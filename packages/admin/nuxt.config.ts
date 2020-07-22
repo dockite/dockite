@@ -81,7 +81,6 @@ const config: Configuration = {
       },
     ],
     '@nuxtjs/tailwindcss',
-    '@nuxtjs/stylelint-module',
   ],
   tailwindcss: {
     configPath: '~/tailwind.config.js',
