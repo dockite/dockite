@@ -67,9 +67,10 @@ export class DocumentResolver {
     await Promise.all(
       document.schema.fields.map(async field => {
         document.data[field.name] = await field.dockiteField!.processOutputRaw({
-          data: document.data,
+          data: { id: document.id, ...document.data },
           field,
           fieldData: document.data[field.name] ?? null,
+          document,
         });
       }),
     );
@@ -142,9 +143,10 @@ export class DocumentResolver {
         await Promise.all(
           item.schema.fields.map(async field => {
             item.data[field.name] = await field.dockiteField!.processOutputRaw({
-              data: item.data,
+              data: { id: item.id, ...item.data },
               field,
               fieldData: item.data[field.name] ?? null,
+              document: item,
             });
           }),
         );
@@ -194,7 +196,7 @@ export class DocumentResolver {
         await Promise.all(
           item.schema.fields.map(async field => {
             item.data[field.name] = await field.dockiteField!.processOutputRaw({
-              data: item.data,
+              data: { id: item.id, ...item.data },
               field,
               fieldData: item.data[field.name] ?? null,
             });
@@ -258,7 +260,7 @@ export class DocumentResolver {
         await Promise.all(
           item.schema.fields.map(async field => {
             item.data[field.name] = await field.dockiteField!.processOutputRaw({
-              data: item.data,
+              data: { id: item.id, ...item.data },
               field,
               fieldData: item.data[field.name] ?? null,
             });
