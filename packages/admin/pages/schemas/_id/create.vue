@@ -1,10 +1,22 @@
 <template>
   <fragment>
     <portal to="header">
-      <h2>{{ schemaName }} - Create Document</h2>
+      <el-row type="flex" justify="space-between" align="middle">
+        <h2>{{ schemaName }} - Create Document</h2>
+
+        <el-button :disabled="submitting" @click="submit">
+          Create Document
+        </el-button>
+      </el-row>
     </portal>
     <div v-if="ready" class="create-schema-document-page">
-      <el-form ref="formEl" label-position="top" :model="form" @submit.native.prevent="submit">
+      <el-form
+        ref="formEl"
+        v-loading="submitting"
+        label-position="top"
+        :model="form"
+        @submit.native.prevent="submit"
+      >
         <el-tabs v-model="currentTab" type="border-card">
           <el-tab-pane v-for="tab in availableTabs" :key="tab" :label="tab" :name="tab">
             <component
@@ -25,7 +37,7 @@
           Cancel
         </el-button>
 
-        <el-button type="primary" @click="submit">
+        <el-button :disabled="submitting" type="primary" @click="submit">
           Create Document
         </el-button>
       </el-row>
@@ -57,6 +69,8 @@ export default class CreateSchemaDocumentPage extends Vue {
   public form: Record<string, any> = {};
 
   public ready = false;
+
+  public submitting = false;
 
   @Ref()
   readonly formEl!: Form;
@@ -132,6 +146,8 @@ export default class CreateSchemaDocumentPage extends Vue {
   }
 
   public async submit(): Promise<void> {
+    this.submitting = false;
+
     try {
       await this.formEl.validate();
 
@@ -161,6 +177,8 @@ export default class CreateSchemaDocumentPage extends Vue {
             });
           });
         });
+    } finally {
+      this.submitting = false;
     }
   }
 

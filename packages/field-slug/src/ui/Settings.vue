@@ -1,6 +1,6 @@
 <template>
   <fragment>
-    <el-form-item label="Required">
+    <el-form-item label="Field to slugify">
       <el-select v-model="settings.fieldToSlugify">
         <el-option
           v-for="field in fields"

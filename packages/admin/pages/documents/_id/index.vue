@@ -4,20 +4,38 @@
       <el-row type="flex" justify="space-between" align="middle">
         <h2>Update - {{ documentId }}</h2>
 
-        <el-button
-          type="text"
-          style="font-size: 1.2rem;"
-          title="Actions"
-          @click="actionsDrawerVisible = true"
-        >
-          <i class="el-icon-d-arrow-left" />
-        </el-button>
+        <el-dropdown v-loading="submitting" split-button @click="submit">
+          Save and Publish
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item>Save as Draft</el-dropdown-item>
+            <el-dropdown-item>Add to Release</el-dropdown-item>
+            <el-dropdown-item>
+              <router-link class="block w-full" :to="`/documents/${documentId}/revisions`">
+                View Revisions
+              </router-link>
+            </el-dropdown-item>
+            <el-dropdown-item>
+              <router-link
+                class="block w-full text-red-400 hover:text-red-500"
+                :to="`/documents/${documentId}/delete`"
+              >
+                Delete
+              </router-link>
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
       </el-row>
     </portal>
 
     <div v-if="ready" class="update-document-page">
-      <div style="padding-right: 350px;">
-        <el-form ref="formEl" label-position="top" :model="form" @submit.native.prevent="submit">
+      <div>
+        <el-form
+          ref="formEl"
+          v-loading="submitting"
+          label-position="top"
+          :model="form"
+          @submit.native.prevent="submit"
+        >
           <el-tabs v-model="currentTab" type="border-card">
             <el-tab-pane v-for="tab in availableTabs" :key="tab" :label="tab" :name="tab">
               <component
@@ -36,50 +54,46 @@
           </el-tabs>
         </el-form>
       </div>
+
       <div
-        class="dockite-document--actions-drawer"
-        :style="`padding-top: calc(1rem + ${heightOffset}px);`"
+        class="dockite-document--history-hook border px-1 py-2 text-gray-600 cursor-pointer shadow"
+        @click="showHistoryDrawer = true"
       >
-        <div class="dockite-document--actions-drawer-body">
-          <div class="dockite-document--actions-drawer-revisions">
-            <h4>Recent changes</h4>
-            <el-alert
-              v-for="revision in revisions"
-              :key="revision.id"
-              style="margin-bottom: 0.75rem;"
-              type="info"
-              :closable="false"
-              show-icon
-            >
-              <template slot="title">
-                Updated by {{ revision.user.firstName }} {{ revision.user.lastName }}
-              </template>
-              Update occurred {{ revision.createdAt | fromNow }}
-              <router-link
-                style="display: block;"
-                :to="`/documents/${documentId}/revisions/compare?from=${revision.id}&to=current`"
-              >
-                Compare changes
-              </router-link>
-            </el-alert>
-            <el-alert v-if="revisions.length === 0" type="warning" show-icon :closable="false">
-              <template slot="title">
-                No changes yet!
-              </template>
-              Once changes occur they will appear here with a link to view the differences.
-            </el-alert>
-          </div>
-          <!-- <el-button size="medium" type="danger" >
-              Delete Document
-            </el-button> -->
-          <el-button size="medium">
-            Save as Draft
-          </el-button>
-          <el-button type="primary" size="medium" @click="submit">
-            Save and Publish
-          </el-button>
-        </div>
+        <i class="el-icon-caret-left"></i>
       </div>
+      <el-drawer
+        custom-class="dockite-document--history-drawer"
+        title="Document History"
+        :visible.sync="showHistoryDrawer"
+      >
+        <div class="dockite-document--actions-drawer-revisions p-3">
+          <el-alert
+            v-for="revision in revisions"
+            :key="revision.id"
+            style="margin-bottom: 0.75rem;"
+            type="info"
+            :closable="false"
+            show-icon
+          >
+            <template slot="title">
+              Updated by {{ revision.user.firstName }} {{ revision.user.lastName }}
+            </template>
+            Update occurred {{ revision.createdAt | fromNow }}
+            <router-link
+              style="display: block;"
+              :to="`/documents/${documentId}/revisions/compare?from=${revision.id}&to=current`"
+            >
+              Compare changes
+            </router-link>
+          </el-alert>
+          <el-alert v-if="revisions.length === 0" type="warning" show-icon :closable="false">
+            <template slot="title">
+              No changes yet!
+            </template>
+            Once changes occur they will appear here with a link to view the differences.
+          </el-alert>
+        </div>
+      </el-drawer>
     </div>
   </fragment>
 </template>
@@ -112,6 +126,10 @@ export default class UpdateDocumentPage extends Vue {
   public form: Record<string, any> = {};
 
   public ready = false;
+
+  public submitting = false;
+
+  public showHistoryDrawer = false;
 
   public actionsDrawerVisible = false;
 
@@ -240,6 +258,7 @@ export default class UpdateDocumentPage extends Vue {
   }
 
   public async submit(): Promise<void> {
+    this.submitting = true;
     try {
       await this.formEl.validate();
 
@@ -267,6 +286,8 @@ export default class UpdateDocumentPage extends Vue {
             type: 'warning',
           });
         });
+    } finally {
+      this.submitting = false;
     }
   }
 
@@ -304,30 +325,18 @@ export default class UpdateDocumentPage extends Vue {
   box-sizing: border-box;
 }
 
-.dockite-document--actions-drawer-body {
-  display: flex;
-  flex-direction: column;
-
-  height: 100%;
-
-  padding: 0rem 20px 1rem 20px;
-
-  .el-button + .el-button {
-    margin-left: 0;
-  }
-
-  .el-button {
-    margin-bottom: 0.75rem;
-  }
-
-  .el-button:last-child {
-    margin-bottom: 0;
+.dockite-document--history-drawer {
+  .el-drawer__body {
+    overflow-y: auto;
   }
 }
 
-.dockite-document--actions-drawer-revisions {
-  flex: 1;
-  overflow-y: auto;
-  margin-bottom: 1rem;
+.dockite-document--history-hook {
+  position: fixed;
+  right: 0;
+  top: 50%;
+  background: #ffffff;
+  border-top-left-radius: 7px;
+  border-bottom-right-radius: 7px;
 }
 </style>

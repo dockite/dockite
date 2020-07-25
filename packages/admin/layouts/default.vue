@@ -4,7 +4,7 @@
       <side-menu class="dockite-aside--sidemenu" />
     </el-aside>
     <el-container>
-      <el-header class="dockite-main--header" height="">
+      <el-header class="dockite-main--header shadow" height="">
         <portal-target name="header" style="width: 100%">
           <h2>Portal <strong>header</strong> not used</h2>
         </portal-target>
@@ -80,11 +80,13 @@ export default class DefaultLayout extends Vue {
 }
 
 .dockite-main--header {
+  position: sticky;
   height: 80px;
+  top: 0;
+  z-index: 200;
   display: flex;
   align-items: center;
   background: #ffffff;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 
   &h1,
   h2,

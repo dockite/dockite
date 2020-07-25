@@ -65,3 +65,13 @@ pre.dockite-data--raw {
   color: rgba(0, 0, 0, 0.66);
   font-style: italic;
 }
+
+.el-loading-mask {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  .el-loading-spinner {
+    width: auto;
+  }
+}

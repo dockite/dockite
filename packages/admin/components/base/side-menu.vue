@@ -2,7 +2,7 @@
   <div>
     <el-menu
       :router="true"
-      class="dockite-aside--el-menu fixed"
+      class="dockite-aside--el-menu dockite-aside--fixed fixed overflow-y-auto"
       :collapse="isCollapse"
       :background-color="backgroundColor"
       :text-color="textColor"
@@ -187,6 +187,18 @@ export default class SideMenuComponent extends Vue {
   top: 0;
   left: 0;
 }
+
+.dockite-aside--fixed {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+
+  &::-webkit-scrollbar {
+    /* WebKit */
+    width: 0;
+    height: 0;
+  }
+}
+
 .dockite-aside--el-menu:not(.el-menu--collapse) {
   width: 100vw;
   max-width: 300px;
