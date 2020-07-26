@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.16](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.15...@dockite/core@0.4.0-alpha.16) (2020-07-26)
+
+
+### Features
+
+* **core,admin:** add ability to bulk-edit schema documents ([9d9cb2d](https://github.com/dockite/dockite/commit/9d9cb2d22c358280a80bb2c56d34b2bc1bac6aef))
+
+
+
+
+
 # [0.4.0-alpha.15](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.14...@dockite/core@0.4.0-alpha.15) (2020-07-23)
 
 

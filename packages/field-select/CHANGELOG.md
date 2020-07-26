@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.8](https://github.com/dockite/dockite/compare/@dockite/field-select@0.3.0-alpha.7...@dockite/field-select@0.3.0-alpha.8) (2020-07-26)
+
+
+### Features
+
+* **core,admin:** add ability to bulk-edit schema documents ([9d9cb2d](https://github.com/dockite/dockite/commit/9d9cb2d22c358280a80bb2c56d34b2bc1bac6aef))
+
+
+
+
+
 # [0.3.0-alpha.7](https://github.com/dockite/dockite/compare/@dockite/field-select@0.3.0-alpha.6...@dockite/field-select@0.3.0-alpha.7) (2020-07-22)
 
 **Note:** Version bump only for package @dockite/field-select
