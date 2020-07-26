@@ -171,6 +171,10 @@ export interface UpdateDocumentMutationResponse {
   };
 }
 
+export interface PartialUpdateDocumentsInSchemaIdMutationResponse {
+  partialUpdateDocumentsInSchemaId: boolean;
+}
+
 export interface DeleteDocumentMutationResponse {
   removeDocument: boolean;
 }

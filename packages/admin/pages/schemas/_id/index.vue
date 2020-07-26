@@ -28,6 +28,12 @@
                 </router-link>
               </el-dropdown-item>
               <el-dropdown-item>
+                <router-link :to="`/schemas/${schemaId}/bulk-edit`">
+                  <i class="el-icon-magic-stick" />
+                  Bulk Edit
+                </router-link>
+              </el-dropdown-item>
+              <el-dropdown-item>
                 <router-link :to="`/schemas/${schemaId}/delete`" style="color: rgb(245, 108, 108)">
                   <i class="el-icon-delete" />
                   Delete

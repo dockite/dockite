@@ -15,7 +15,14 @@ import {
   Query,
   Resolver,
 } from 'type-graphql';
-import { FindManyOptions, getCustomRepository, getRepository, IsNull, Not } from 'typeorm';
+import {
+  FindManyOptions,
+  getCustomRepository,
+  getRepository,
+  IsNull,
+  Not,
+  getManager,
+} from 'typeorm';
 
 import { Authenticated, Authorized } from '../../../common/decorators';
 import { GlobalContext } from '../../../common/types';
@@ -401,6 +408,103 @@ export class DocumentResolver {
     ]);
 
     return savedDocument;
+  }
+
+  @Authenticated()
+  @Authorized('internal:document:update', {
+    derriveAlternativeScopes: false,
+  })
+  @Mutation(_returns => Boolean)
+  async partialUpdateDocumentsInSchemaId(
+    @Arg('schemaId', _type => String)
+    schemaId: string,
+    // @Arg('locale', _type => String, { nullable: true })
+    // locale: string | null,
+    @Arg('data', _type => GraphQLJSON)
+    data: Record<string, any>,
+    @Arg('documentIds', _type => [String], { nullable: true })
+    documentIds: string[] | null,
+    @Ctx() ctx: GlobalContext,
+  ): Promise<boolean> {
+    const documentRepository = getRepository(Document);
+    const revisionRepository = getRepository(DocumentRevision);
+    const schemaRepository = getRepository(Schema);
+
+    const { id: userId } = ctx.user!; // eslint-disable-line
+
+    try {
+      const schema = await schemaRepository.findOneOrFail(schemaId, { relations: ['fields'] });
+
+      // Fire the update hooks for each field
+      await Promise.all(
+        schema.fields.map(async field => {
+          if (!data[field.name]) {
+            return;
+          }
+
+          const fieldData = data[field.name] ?? null;
+
+          const hookContext: HookContextWithOldData = {
+            field,
+            fieldData,
+            data,
+          };
+
+          await field.dockiteField!.validateInputRaw(hookContext);
+
+          data[field.name] = await field.dockiteField!.processInputRaw(hookContext);
+
+          await field.dockiteField!.onUpdate(hookContext);
+        }),
+      );
+
+      // Create a collection of params for the following query
+      const params: any[] = [schemaId];
+
+      // If we were given a specific set of documents to update add those to
+      // the params.
+      if (documentIds && documentIds.length > 0) {
+        params.push(documentIds);
+      }
+
+      // Create the corresponding revisions
+      await getManager().query(
+        `
+          INSERT INTO ${revisionRepository.metadata.tableName}("documentId", "data", "userId")
+          SELECT d."id", d."data", d."userId"
+          FROM ${documentRepository.metadata.tableName} d
+          WHERE d."schemaId" = $1
+          ${documentIds && documentIds.length > 0 ? 'AND WHERE d."id" = ANY($2::text[])' : ''}
+          `,
+        params,
+      );
+
+      // Stringify the data for the great merge
+      const encodedData = JSON.stringify(data);
+
+      const qb = documentRepository
+        .createQueryBuilder('document')
+        .update()
+        .set({
+          data: () => `data || '${encodedData}'`,
+          userId,
+        })
+        .where('document."schemaId" = :schemaId', { schemaId });
+
+      // If we were given specific document ids to update filter
+      // on those.
+      if (documentIds && documentIds.length > 0) {
+        qb.andWhereInIds(documentIds);
+      }
+
+      await qb.execute();
+
+      return true;
+    } catch (err) {
+      console.log(err);
+
+      return false;
+    }
   }
 
   @Authenticated()

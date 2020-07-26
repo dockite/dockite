@@ -9,12 +9,17 @@
         suffix-icon="el-icon-search"
       />
     </portal>
+
     <el-table
       v-if="schema && findDocumentsBySchemaId.results"
       :data="findDocumentsBySchemaId.results"
-      style="width: 100%"
+      style="width: 100%;"
+      class="dockite-table--document el-table--scrollable-x"
       @sort-change="handleSortChange"
+      @selection-change="handleSelectionChange"
     >
+      <el-table-column v-if="selectable" fixed type="selection" width="55" />
+
       <el-table-column sortable="custom" prop="id" label="ID">
         <template slot-scope="scope">
           <router-link :to="`/documents/${scope.row.id}`">
@@ -96,11 +101,11 @@
 </template>
 
 <script lang="ts">
-import { Schema, Field } from '@dockite/database';
+import { Schema, Field, Document } from '@dockite/database';
 import { DockiteGraphqlSortInput, DockiteSortDirection } from '@dockite/types';
 import { SupportedOperators, Constraint } from '@dockite/where-builder';
 import { formatDistanceToNow } from 'date-fns';
-import { Component, Vue, Watch } from 'nuxt-property-decorator';
+import { Component, Vue, Watch, Prop } from 'nuxt-property-decorator';
 import { Fragment } from 'vue-fragment';
 
 import {
@@ -121,6 +126,12 @@ import * as data from '~/store/data';
   },
 })
 export default class SchemaDocumentsPage extends Vue {
+  @Prop({ default: () => false })
+  readonly selectable!: boolean;
+
+  @Prop()
+  readonly selectedItems!: Document[];
+
   public term = '';
 
   public filters: Constraint[] = [];
@@ -235,6 +246,13 @@ export default class SchemaDocumentsPage extends Vue {
     this.fetchFindDocumentsBySchemaId(1);
   }
 
+  public handleSelectionChange(items: Document[]): void {
+    this.$emit(
+      'update:selectedItems',
+      items.map(i => i.id),
+    );
+  }
+
   @Watch('filters')
   handleFilterChange(): void {
     this.fetchFindDocumentsBySchemaId(1);
@@ -257,7 +275,7 @@ export default class SchemaDocumentsPage extends Vue {
 }
 </script>
 
-<style>
+<style lang="scss">
 .table-view {
   background: #ffffff;
 }

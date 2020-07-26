@@ -6,9 +6,11 @@ import {
   CreateDocumentMutationResponse,
   DeleteDocumentMutationResponse,
   UpdateDocumentMutationResponse,
+  PartialUpdateDocumentsInSchemaIdMutationResponse,
 } from '~/common/types';
 import CreateDocumentMutation from '~/graphql/mutations/create-document.gql';
 import DeleteDocumentMutation from '~/graphql/mutations/delete-document.gql';
+import PartialUpdateDocumentsInSchemaIdMutation from '~/graphql/mutations/partial-update-documents-in-schema-id.gql';
 import UpdateDocumentMutation from '~/graphql/mutations/update-document.gql';
 import * as data from '~/store/data';
 
@@ -23,6 +25,10 @@ interface CreateDocumentPayload {
 
 interface UpdateDocumentPayload extends CreateDocumentPayload {
   documentId: string;
+}
+
+interface PartialUpdateDocumentsInSchemaIdPayload extends CreateDocumentPayload {
+  documentIds?: string[];
 }
 
 type DeleteDocumentPayload = Omit<UpdateDocumentPayload, 'data'>;
@@ -68,6 +74,31 @@ export const actions: ActionTree<DocumentState, RootState> = {
     }
 
     this.commit(`${data.namespace}/removeDocument`, payload.documentId);
+  },
+
+  async partialUpdateDocumentsInSchemaId(
+    _,
+    payload: PartialUpdateDocumentsInSchemaIdPayload,
+  ): Promise<void> {
+    const { data: documentData } = await this.$apolloClient.mutate<
+      PartialUpdateDocumentsInSchemaIdMutationResponse
+    >({
+      mutation: PartialUpdateDocumentsInSchemaIdMutation,
+      variables: {
+        schemaId: payload.schemaId,
+        data: payload.data,
+        documentIds: payload.documentIds,
+      },
+      update: () => {
+        this.$apolloClient.resetStore();
+      },
+    });
+
+    if (!documentData?.partialUpdateDocumentsInSchemaId) {
+      throw new Error('Unable to update document');
+    }
+
+    this.commit(`${data.namespace}/clearDocumentData`);
   },
 
   async deleteDocument(_, payload: DeleteDocumentPayload): Promise<void> {

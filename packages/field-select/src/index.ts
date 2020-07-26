@@ -38,7 +38,14 @@ export class DockiteFieldSelect extends DockiteField {
   }
 
   public async validateInput(ctx: HookContext): Promise<void> {
+    const settings = this.schemaField.settings as SelectFieldSettings;
+
     let input: string | string[] = ctx.fieldData;
+
+    if (input === null && !settings.required) {
+      return;
+    }
+
     if (!Array.isArray(input)) {
       input = [input];
     }
