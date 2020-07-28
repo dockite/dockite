@@ -194,10 +194,12 @@ export class DockiteFieldGroup extends DockiteField {
           throw new Error(`dockiteFiled failed to map for ${this.schemaField.name}.${child.name}`);
         }
 
+        const data = ctx.data[this.schemaField.name] ?? {};
+
         const childCtx: HookContextWithOldData = {
           ...ctx,
-          data: ctx.data[this.schemaField.name],
-          fieldData: ctx.data[this.schemaField.name][child.name],
+          data,
+          fieldData: data[child.name] ?? null,
           field: child as Field,
         };
 

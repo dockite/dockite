@@ -120,6 +120,7 @@ export default class GroupFieldInputComponent extends Vue {
     }
 
     this.initialiseForm();
+
     this.ready = true;
 
     if (this.settings.required) {
