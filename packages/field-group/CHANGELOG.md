@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.11](https://github.com/dockite/dockite/compare/@dockite/field-group@0.4.0-alpha.10...@dockite/field-group@0.4.0-alpha.11) (2020-07-28)
+
+
+### Bug Fixes
+
+* **field-group:** map schemaId rather than fieldId ([5bf33a4](https://github.com/dockite/dockite/commit/5bf33a4b403139526874159882640ed9e5d9de97))
+
+
+
+
+
 # [0.4.0-alpha.10](https://github.com/dockite/dockite/compare/@dockite/field-group@0.4.0-alpha.9...@dockite/field-group@0.4.0-alpha.10) (2020-07-28)
 
 
