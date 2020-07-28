@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.12](https://github.com/dockite/dockite/compare/@dockite/field-group@0.4.0-alpha.11...@dockite/field-group@0.4.0-alpha.12) (2020-07-28)
+
+
+### Bug Fixes
+
+* **field-group:** better handling of null values ([0ca4c77](https://github.com/dockite/dockite/commit/0ca4c77524ebb02882cbf5030a3739969c9846e0))
+
+
+
+
+
 # [0.4.0-alpha.11](https://github.com/dockite/dockite/compare/@dockite/field-group@0.4.0-alpha.10...@dockite/field-group@0.4.0-alpha.11) (2020-07-28)
 
 
