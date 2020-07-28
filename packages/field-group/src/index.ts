@@ -44,7 +44,7 @@ export class DockiteFieldGroup extends DockiteField {
       (child: ChildField): Omit<Field, 'id'> => {
         const mappedChild: Omit<Field, 'id'> = {
           ...child,
-          schemaId: this.schemaField.id,
+          schemaId: this.schemaField.schemaId,
           schema: this.schemaField.schema,
         };
 
