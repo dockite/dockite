@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.22](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.21...@dockite/admin@0.4.0-alpha.22) (2020-07-28)
+
+
+### Bug Fixes
+
+* **admin:** add schema and form groups to document creation ([ef0fa7e](https://github.com/dockite/dockite/commit/ef0fa7e6df534f111a243f530e5af7042f8c709d))
+
+
+
+
+
 # [0.4.0-alpha.21](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.20...@dockite/admin@0.4.0-alpha.21) (2020-07-28)
 
 
