@@ -56,7 +56,7 @@
       </div>
 
       <div
-        class="dockite-document--history-hook border px-1 py-2 text-gray-600 cursor-pointer shadow"
+        class="dockite-document--history-hook border border-r-0 px-1 py-2 text-gray-600 cursor-pointer shadow"
         @click="showHistoryDrawer = true"
       >
         <i class="el-icon-caret-left"></i>
@@ -337,6 +337,6 @@ export default class UpdateDocumentPage extends Vue {
   top: 50%;
   background: #ffffff;
   border-top-left-radius: 7px;
-  border-bottom-right-radius: 7px;
+  border-bottom-left-radius: 7px;
 }
 </style>

@@ -168,6 +168,14 @@ export default class GroupFieldInputComponent extends Vue {
   }
 
   public initialiseForm(): void {
+    if (this.repeatable && !Array.isArray(this.fieldData)) {
+      if (this.fieldData !== null) {
+        this.fieldData = [this.fieldData];
+      } else {
+        this.fieldData = [];
+      }
+    }
+
     if (this.repeatable && Array.isArray(this.fieldData)) {
       if (this.fieldData.length === 0) {
         this.fieldData = [{ ...this.initialFieldData }];
