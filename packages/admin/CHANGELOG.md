@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.21](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.20...@dockite/admin@0.4.0-alpha.21) (2020-07-28)
+
+
+### Bug Fixes
+
+* **field-group:** handle initial values ([adec8a0](https://github.com/dockite/dockite/commit/adec8a0250bf6142e0e375ff22f9dd328bf0e750))
+
+
+
+
+
 # [0.4.0-alpha.20](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.19...@dockite/admin@0.4.0-alpha.20) (2020-07-26)
 
 

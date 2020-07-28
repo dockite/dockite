@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.10](https://github.com/dockite/dockite/compare/@dockite/field-group@0.4.0-alpha.9...@dockite/field-group@0.4.0-alpha.10) (2020-07-28)
+
+
+### Bug Fixes
+
+* **field-group:** handle initial values ([adec8a0](https://github.com/dockite/dockite/commit/adec8a0250bf6142e0e375ff22f9dd328bf0e750))
+
+
+
+
+
 # [0.4.0-alpha.9](https://github.com/dockite/dockite/compare/@dockite/field-group@0.4.0-alpha.8...@dockite/field-group@0.4.0-alpha.9) (2020-07-22)
 
 **Note:** Version bump only for package @dockite/field-group
