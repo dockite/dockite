@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.10](https://github.com/dockite/dockite/compare/@dockite/field-select@0.3.0-alpha.9...@dockite/field-select@0.3.0-alpha.10) (2020-07-29)
+
+
+### Bug Fixes
+
+* **field-select:** typo in attribute ([811ac44](https://github.com/dockite/dockite/commit/811ac440bc45fefae6ffcc679ab4413c4eca196d))
+
+
+
+
+
 # [0.3.0-alpha.9](https://github.com/dockite/dockite/compare/@dockite/field-select@0.3.0-alpha.8...@dockite/field-select@0.3.0-alpha.9) (2020-07-29)
 
 
