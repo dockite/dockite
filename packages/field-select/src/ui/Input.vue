@@ -2,7 +2,7 @@
   <el-form-item :label="fieldConfig.title" :prop="name" :rules="rules" class="dockite-field-string">
     <el-select
       v-model="fieldData"
-      :mutliple="settings.multiple"
+      :multiple="settings.multiple"
       style="width: 100%"
       filterable
       default-first-option
