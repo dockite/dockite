@@ -7,12 +7,9 @@
       filterable
       default-first-option
     >
-      <el-option
-        v-for="(value, label) in settings.options"
-        :key="value"
-        :label="label"
-        :value="value"
-      />
+      <el-option v-for="(value, label) in settings.options" :key="value" :value="value">
+        {{ label }}
+      </el-option>
     </el-select>
     <div class="el-form-item__description">
       {{ fieldConfig.description }}
