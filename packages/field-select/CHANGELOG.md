@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.9](https://github.com/dockite/dockite/compare/@dockite/field-select@0.3.0-alpha.8...@dockite/field-select@0.3.0-alpha.9) (2020-07-29)
+
+
+### Bug Fixes
+
+* **field-select:** values get dropped on repeat saves ([068d66c](https://github.com/dockite/dockite/commit/068d66c168a9eaa4eba7472c3c886d685ac8a0d3))
+
+
+
+
+
 # [0.3.0-alpha.8](https://github.com/dockite/dockite/compare/@dockite/field-select@0.3.0-alpha.7...@dockite/field-select@0.3.0-alpha.8) (2020-07-26)
 
 
