@@ -47,7 +47,7 @@
                 :field-config="field"
                 :form-data="form"
                 :schema="schema"
-                :groups="groups"
+                :groups.sync="groups"
               >
               </component>
             </el-tab-pane>
@@ -133,6 +133,8 @@ export default class UpdateDocumentPage extends Vue {
 
   public actionsDrawerVisible = false;
 
+  public localGroups: Record<string, string[]> | null = null;
+
   @Ref()
   readonly formEl!: Form;
 
@@ -169,11 +171,19 @@ export default class UpdateDocumentPage extends Vue {
   }
 
   get groups(): Record<string, string[]> {
+    if (this.localGroups) {
+      return this.localGroups;
+    }
+
     if (this.schema) {
       return this.schema.groups;
     }
 
     return {};
+  }
+
+  set groups(value: Record<string, string[]>) {
+    this.localGroups = { ...value };
   }
 
   get availableTabs(): string[] {

@@ -57,6 +57,7 @@
               :name="field.name"
               :field-config="field"
               :form-data="form"
+              :groups.sync="groups"
             >
             </component>
           </el-tab-pane>
@@ -100,6 +101,8 @@ export default class CreateSingletonDocumentPage extends Vue {
 
   public ready = false;
 
+  public localGroups: Record<string, string[]> | null = null;
+
   @Ref()
   readonly formEl!: Form;
 
@@ -124,11 +127,19 @@ export default class CreateSingletonDocumentPage extends Vue {
   }
 
   get groups(): Record<string, string[]> {
+    if (this.localGroups) {
+      return this.localGroups;
+    }
+
     if (this.singleton) {
       return this.singleton.groups;
     }
 
     return {};
+  }
+
+  set groups(value: Record<string, string[]>) {
+    this.localGroups = { ...value };
   }
 
   get availableTabs(): string[] {
