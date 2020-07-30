@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.23](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.22...@dockite/admin@0.4.0-alpha.23) (2020-07-30)
+
+
+### Features
+
+* **admin:** pass schema to field settings component ([1f98b60](https://github.com/dockite/dockite/commit/1f98b60588123e94fca26df3c05547605b686d6c))
+
+
+
+
+
 # [0.4.0-alpha.22](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.21...@dockite/admin@0.4.0-alpha.22) (2020-07-28)
 
 
