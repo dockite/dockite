@@ -48,6 +48,7 @@
     <add-field
       :visible.sync="showAddField"
       :current-fields="fieldDataFlat"
+      :schema="schema"
       @add-field="handleAddField"
     />
 
@@ -61,6 +62,7 @@
 </template>
 
 <script lang="ts">
+import { Schema } from '@dockite/database';
 import { TreeNode } from 'element-ui/types/tree';
 import { Component, Vue, Prop } from 'nuxt-property-decorator';
 import { Fragment } from 'vue-fragment';
@@ -84,6 +86,9 @@ const ALLOWED_DROP_TYPES = ['group', 'variant', 'string'];
 export default class CreateSchemaStepTwoComponent extends Vue {
   @Prop()
   readonly value!: string;
+
+  @Prop()
+  readonly schema!: Schema;
 
   public showAddField = false;
 

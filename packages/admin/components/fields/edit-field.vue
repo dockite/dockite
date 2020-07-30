@@ -45,6 +45,7 @@
               v-model="field.settings"
               :rules.sync="fieldSettingsRules"
               :fields="currentFields"
+              :schema="schema"
               :apollo-client="$apolloClient"
             />
           </template>
@@ -66,7 +67,7 @@
 </template>
 
 <script lang="ts">
-import { Field } from '@dockite/database';
+import { Field, Schema } from '@dockite/database';
 import { DockiteFieldStatic } from '@dockite/types';
 import { Form } from 'element-ui';
 import { TreeData } from 'element-ui/types/tree';
@@ -92,6 +93,9 @@ export default class EditFieldComponent extends Vue {
 
   @Prop({ required: true })
   readonly value!: FieldTreeData | null;
+
+  @Prop({ required: true })
+  readonly schema!: Schema;
 
   @Ref()
   readonly form!: Form;

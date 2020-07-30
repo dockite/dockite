@@ -58,12 +58,14 @@
       <add-field
         :visible.sync="showAddField"
         :current-fields="fieldDataFlat"
+        :schema="singleton"
         @add-field="handleAddField"
       />
 
       <edit-field
         :value="fieldToBeEdited"
         :current-fields="fieldDataFlat"
+        :schema="singleton"
         @input="handleEditField"
         @submit="fieldToBeEdited = null"
       />

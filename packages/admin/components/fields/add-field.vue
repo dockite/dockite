@@ -49,6 +49,7 @@
               v-model="field.settings"
               :rules.sync="fieldSettingsRules"
               :fields="currentFields"
+              :schema="schema"
             />
           </template>
 
@@ -88,6 +89,7 @@
 </template>
 
 <script lang="ts">
+import { Schema } from '@dockite/database';
 import { DockiteFieldStatic } from '@dockite/types';
 import { Input, Form } from 'element-ui';
 import { Component, Vue, Prop, Watch, Ref } from 'nuxt-property-decorator';
@@ -103,6 +105,9 @@ export default class AddFieldComponent extends Vue {
 
   @Prop({ required: true, type: Array })
   readonly currentFields!: UnpersistedField[];
+
+  @Prop({ required: true })
+  readonly schema!: Schema;
 
   @Ref()
   readonly form!: Form;
