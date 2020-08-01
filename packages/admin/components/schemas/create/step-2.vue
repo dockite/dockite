@@ -49,12 +49,15 @@
       :visible.sync="showAddField"
       :current-fields="fieldDataFlat"
       :schema="schema"
+      :groups="groups"
       @add-field="handleAddField"
     />
 
     <edit-field
       :value="fieldToBeEdited"
       :current-fields="fieldDataFlat"
+      :schema="schema"
+      :groups="groups"
       @input="handleEditField"
       @submit="fieldToBeEdited = null"
     />
@@ -111,6 +114,19 @@ export default class CreateSchemaStepTwoComponent extends Vue {
   public groupFieldData: Record<string, FieldTreeData[]> = {
     Default: [],
   };
+
+  get groups(): Record<string, string[]> {
+    if (!this.groupFieldData) {
+      return {};
+    }
+
+    return Object.keys(this.groupFieldData).reduce((acc, curr) => {
+      return {
+        ...acc,
+        [curr]: this.groupFieldData[curr].map(x => x.dockite.name),
+      };
+    }, {});
+  }
 
   get fieldDataFlat(): UnpersistedField[] {
     const fieldData: UnpersistedField[] = [];

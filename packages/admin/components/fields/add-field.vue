@@ -50,6 +50,7 @@
               :rules.sync="fieldSettingsRules"
               :fields="currentFields"
               :schema="schema"
+              :groups="groups"
             />
           </template>
 
@@ -108,6 +109,9 @@ export default class AddFieldComponent extends Vue {
 
   @Prop({ required: true })
   readonly schema!: Schema;
+
+  @Prop({ required: true })
+  readonly groups!: Record<string, string[]>;
 
   @Ref()
   readonly form!: Form;

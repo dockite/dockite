@@ -35,7 +35,9 @@
     "@dockite/field-group",
     "@dockite/field-reference",
     "@dockite/field-reference-of",
-    "@dockite/field-variant"
+    "@dockite/field-variant",
+    "@dockite/field-conditional-boolean",
+    "@dockite/field-conditional-select"
   ],
   "modules": {
     "internal": [

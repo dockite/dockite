@@ -59,6 +59,7 @@
         :visible.sync="showAddField"
         :current-fields="fieldDataFlat"
         :schema="singleton"
+        :groups="groupFieldData"
         @add-field="handleAddField"
       />
 
@@ -66,6 +67,7 @@
         :value="fieldToBeEdited"
         :current-fields="fieldDataFlat"
         :schema="singleton"
+        :groups="groupFieldData"
         @input="handleEditField"
         @submit="fieldToBeEdited = null"
       />

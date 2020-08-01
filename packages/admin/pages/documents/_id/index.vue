@@ -171,7 +171,7 @@ export default class UpdateDocumentPage extends Vue {
   }
 
   get groups(): Record<string, string[]> {
-    if (this.localGroups) {
+    if (this.localGroups && Object.keys(this.localGroups).length > 0) {
       return this.localGroups;
     }
 
@@ -187,6 +187,10 @@ export default class UpdateDocumentPage extends Vue {
   }
 
   get availableTabs(): string[] {
+    if (this.localGroups && Object.keys(this.localGroups).length > 0) {
+      return Object.keys(this.localGroups);
+    }
+
     if (this.schema) {
       return Object.keys(this.schema.groups);
     }
@@ -221,6 +225,7 @@ export default class UpdateDocumentPage extends Vue {
   }
 
   public getFieldsByGroupName(name: string): Field[] {
+    console.log(this.groups);
     const filteredFields = this.fields.filter(field => this.groups[name].includes(field.name));
 
     return sortBy(filteredFields, [i => this.groups[name].indexOf(i.name)]);
