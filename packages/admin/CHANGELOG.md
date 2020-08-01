@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.24](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.23...@dockite/admin@0.4.0-alpha.24) (2020-08-01)
+
+
+### Features
+
+* add conditional fields ([c4a53c5](https://github.com/dockite/dockite/commit/c4a53c599b0cbbfdc2566d75c1629571d32efa52))
+* **admin:** add group syncing with field components ([06a3060](https://github.com/dockite/dockite/commit/06a3060ddc24fb3947c20df60c1c60b995363bef))
+
+
+
+
+
 # [0.4.0-alpha.23](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.22...@dockite/admin@0.4.0-alpha.23) (2020-07-30)
 
 

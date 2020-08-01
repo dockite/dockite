@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 0.1.0-alpha.0 (2020-08-01)
+
+
+### Features
+
+* add conditional fields ([c4a53c5](https://github.com/dockite/dockite/commit/c4a53c599b0cbbfdc2566d75c1629571d32efa52))
+
+
+
+
+
 ## [0.2.1-alpha.11](https://github.com/dockite/dockite/compare/@dockite/field-boolean@0.2.1-alpha.10...@dockite/field-boolean@0.2.1-alpha.11) (2020-07-22)
 
 **Note:** Version bump only for package @dockite/field-boolean
