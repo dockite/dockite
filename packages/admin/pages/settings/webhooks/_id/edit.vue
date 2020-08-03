@@ -63,6 +63,7 @@ import { Webhook } from '@dockite/database';
 import { WebhookAction } from '@dockite/types';
 import CodeMirror from 'codemirror';
 import { Form } from 'element-ui';
+import { cloneDeep, omit } from 'lodash';
 import { Component, Vue, Ref, Watch } from 'nuxt-property-decorator';
 import { Fragment } from 'vue-fragment';
 
@@ -73,10 +74,10 @@ import 'codemirror-graphql/lint';
 import 'codemirror-graphql/mode';
 import 'codemirror/theme/nord.css';
 
-import { RequestMethod } from '../../../common/types';
-
+import { RequestMethod } from '~/common/types';
 import Logo from '~/components/base/logo.vue';
 import * as auth from '~/store/auth';
+import * as data from '~/store/data';
 import * as webhook from '~/store/webhook';
 
 type WebhookForm = Omit<Webhook, 'id' | 'createdAt' | 'updatedAt' | 'calls'>;
@@ -92,7 +93,7 @@ export default class CreateWebhookPage extends Vue {
     name: '',
     url: '',
     method: RequestMethod.GET,
-    options: { listeners: [] },
+    options: { query: '', listeners: [] },
   };
 
   @Ref()
@@ -105,6 +106,14 @@ export default class CreateWebhookPage extends Vue {
 
   get user(): string {
     return this.$store.getters[`${auth.namespace}/fullName`];
+  }
+
+  get webhookId(): string {
+    return this.$route.params.id;
+  }
+
+  get webhook(): Webhook | null {
+    return this.$store.getters[`${data.namespace}/getWebhookById`](this.webhookId);
   }
 
   get webhookActions(): string[] {
@@ -186,15 +195,16 @@ export default class CreateWebhookPage extends Vue {
 
       const options = this.willExecuteGraphQL
         ? this.form.options
-        : { listeners: this.form.options.listeners };
+        : omit(this.form.options, 'query');
 
-      await this.$store.dispatch(`${webhook.namespace}/createWebhook`, {
+      await this.$store.dispatch(`${webhook.namespace}/updateWebhook`, {
         ...this.form,
+        webhookId: this.webhookId,
         options: { ...options },
       });
 
       this.$message({
-        message: 'Webhook created successfully',
+        message: 'Webhook updated successfully',
         type: 'success',
       });
 
@@ -203,16 +213,35 @@ export default class CreateWebhookPage extends Vue {
       console.log(err);
       this.$message({
         message:
-          'Unable to create webhook, please ensure that the configuration is correct and try again.',
+          'Unable to update webhook, please ensure that the configuration is correct and try again.',
         type: 'warning',
       });
+    }
+  }
+
+  @Watch('webhook', { immediate: true })
+  handleWebhookChange(): void {
+    if (this.webhook) {
+      this.form = {
+        ...cloneDeep(this.webhook),
+        options: {
+          query: '',
+          ...cloneDeep(this.webhook.options),
+        },
+      };
+
+      if (this.webhook.options.query) {
+        this.willExecuteGraphQL = true;
+      }
     }
   }
 
   @Watch('willExecuteGraphQL', { immediate: true })
   handleWillExecuteGraphQLChange(): void {
     if (this.willExecuteGraphQL) {
-      this.form.options.query = '';
+      if (!this.form.options.query) {
+        this.form.options.query = '';
+      }
 
       this.$nextTick(() => {
         const editor = CodeMirror.fromTextArea(
@@ -227,7 +256,7 @@ export default class CreateWebhookPage extends Vue {
         );
 
         editor.on('change', cm => {
-          this.form.options.query = cm.getValue();
+          Vue.set(this.form.options, 'query', cm.getValue());
         });
 
         editor.on('blur', _ => {
@@ -240,8 +269,19 @@ export default class CreateWebhookPage extends Vue {
     }
   }
 
+  @Watch('webhookId', { immediate: true })
+  public handleWebhookIdChange(): void {
+    this.fetchWebhookById();
+  }
+
+  public fetchWebhookById(): void {
+    this.$store.dispatch(`${data.namespace}/fetchWebhookById`, {
+      id: this.webhookId,
+    });
+  }
+
   mounted(): void {
-    this.form = this.initialFormState;
+    this.fetchWebhookById();
   }
 }
 </script>

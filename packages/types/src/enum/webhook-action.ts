@@ -1,4 +1,5 @@
 export enum WebhookAction {
+  WebhookError = 'WebhookError',
   SchemaCreate = 'SchemaCreate',
   SchemaUpdate = 'SchemaUpdate',
   SchemaDelete = 'SchemaDelete',

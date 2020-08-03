@@ -45,7 +45,6 @@ export class WebhookResolver {
     return webhook ?? null;
   }
 
-
   @Authenticated()
   @Authorized('internal:webhook:read', { derriveAlternativeScopes: false })
   @Query(_returns => ManyWebhooks)
@@ -97,6 +96,40 @@ export class WebhookResolver {
     });
 
     const savedWebhook = await repository.save(webhook);
+
+    return savedWebhook;
+  }
+
+  @Authenticated()
+  @Authorized('internal:webhook:update', { derriveAlternativeScopes: false })
+  @Mutation(_returns => Webhook)
+  async updateWebhook(
+    @Arg('id')
+    id: string,
+    @Arg('name')
+    name: string,
+    @Arg('url')
+    url: string,
+    @Arg('method', _type => String)
+    method: string, // eslint-disable-line
+    @Arg('options', _type => GraphQLJSON)
+    options: any, // eslint-disable-line
+  ): Promise<Webhook | null> {
+    const repository = getRepository(Webhook);
+
+    if (!Object.values(RequestMethods).includes(method as RequestMethods)) {
+      throw new Error('Method provided is invalid');
+    }
+
+    const webhook = await repository.findOneOrFail(id);
+
+    const savedWebhook = await repository.save({
+      ...webhook,
+      name,
+      url,
+      method,
+      options,
+    });
 
     return savedWebhook;
   }

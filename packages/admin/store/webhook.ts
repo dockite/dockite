@@ -8,8 +8,9 @@ import {
   UpdateWebhookMutationResponse,
 } from '~/common/types';
 import CreateWebhookMutation from '~/graphql/mutations/create-webhook.gql';
-import DeleteWebhookMutation from '~/graphql/mutations/delete-document.gql';
-import UpdateWebhookMutation from '~/graphql/mutations/update-document.gql';
+import DeleteWebhookMutation from '~/graphql/mutations/delete-webhook.gql';
+import UpdateWebhookMutation from '~/graphql/mutations/update-webhook.gql';
+import * as data from '~/store/data';
 
 export interface WebhookState {
   errors: null | string | string[];
@@ -56,7 +57,7 @@ export const actions: ActionTree<WebhookState, RootState> = {
   },
 
   async updateWebhook(_, payload: UpdateWebhookPayload): Promise<void> {
-    const { data: documentData } = await this.$apolloClient.mutate<UpdateWebhookMutationResponse>({
+    const { data: webhookData } = await this.$apolloClient.mutate<UpdateWebhookMutationResponse>({
       mutation: UpdateWebhookMutation,
       variables: {
         id: payload.webhookId,
@@ -67,23 +68,24 @@ export const actions: ActionTree<WebhookState, RootState> = {
       },
     });
 
-    if (!documentData?.updateWebhook) {
+    if (!webhookData?.updateWebhook) {
       throw new Error('Unable to update webhook');
     }
   },
 
   async deleteWebhook(_, payload: DeleteWebhookPayload): Promise<void> {
-    const { data } = await this.$apolloClient.mutate<DeleteWebhookMutationResponse>({
+    const { data: webhookData } = await this.$apolloClient.mutate<DeleteWebhookMutationResponse>({
       mutation: DeleteWebhookMutation,
       variables: {
-        documentId: payload.webhookId,
+        id: payload.webhookId,
       },
       update: () => {
+        this.commit(`${data.namespace}/clearWebhookData`, payload.webhookId);
         this.$apolloClient.resetStore();
       },
     });
 
-    if (!data?.removeWebhook) {
+    if (!webhookData?.removeWebhook) {
       throw new Error('Unable to delete webhook');
     }
   },

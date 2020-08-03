@@ -94,6 +94,10 @@ export interface GetRoleQueryResponse {
   getRole: Role;
 }
 
+export interface GetWebhookQueryResponse {
+  getWebhook: Webhook;
+}
+
 export interface GetSchemaWithFieldsQueryResponse {
   getSchema: Schema;
 }

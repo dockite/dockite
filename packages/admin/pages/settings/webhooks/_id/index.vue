@@ -1,7 +1,7 @@
 <template>
   <fragment>
     <portal to="header">
-      <h2>All Webhooks</h2>
+      <h2>Edit - {{ (webhook && webhook.name) || '' }}</h2>
     </portal>
 
     <div class="all-webhook-calls-page">
@@ -59,7 +59,7 @@
 </template>
 
 <script lang="ts">
-import { WebhookCall } from '@dockite/database';
+import { WebhookCall, Webhook } from '@dockite/database';
 import CodeMirror from 'codemirror';
 import { formatDistanceToNow } from 'date-fns';
 import { Component, Vue, Watch, Ref } from 'nuxt-property-decorator';
@@ -92,6 +92,10 @@ export default class WebhookCallsPage extends Vue {
 
   get webhookId(): string {
     return this.$route.params.id;
+  }
+
+  get webhook(): Webhook {
+    return this.$store.getters[`${data.namespace}/getWebhookById`](this.webhookId);
   }
 
   get currentPage(): number {
@@ -148,8 +152,15 @@ export default class WebhookCallsPage extends Vue {
     }
   }
 
+  public fetchWebhookById(): void {
+    this.$store.dispatch(`${data.namespace}/fetchWebhookById`, {
+      id: this.webhookId,
+    });
+  }
+
   @Watch('webhookId', { immediate: true })
   handleWebhookIdChange(): void {
+    this.fetchWebhookById();
     this.fetchWebhookCalls();
   }
 }

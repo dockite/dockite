@@ -1,4 +1,4 @@
-import { Document, Role, Schema, User, Singleton } from '@dockite/database';
+import { Document, Role, Schema, User, Singleton, Webhook } from '@dockite/database';
 import { DockiteFieldStatic, DockiteGraphqlSortInput } from '@dockite/types';
 import { AndQuery, Constraint } from '@dockite/where-builder';
 import Vue from 'vue';
@@ -37,6 +37,7 @@ import {
   AllSingletonsResultItem,
   AllSingletonsQueryResponse,
   GetSingletonWithFieldsQueryResponse,
+  GetWebhookQueryResponse,
 } from '~/common/types';
 import AllDocumentRevisionsQuery from '~/graphql/queries/all-document-revisions.gql';
 import AllDocumentsWithSchemaQuery from '~/graphql/queries/all-documents-with-schema.gql';
@@ -56,6 +57,7 @@ import GetRoleQuery from '~/graphql/queries/get-role.gql';
 import GetSchemaWithFieldsQuery from '~/graphql/queries/get-schema-with-fields.gql';
 import GetSingletonWithFieldsQuery from '~/graphql/queries/get-singleton-with-fields.gql';
 import GetUserQuery from '~/graphql/queries/get-user.gql';
+import GetWebhookQuery from '~/graphql/queries/get-webhook.gql';
 import SearchDocumentsWithSchemaQuery from '~/graphql/queries/search-documents-with-schema.gql';
 
 interface PaginationPayload {
@@ -85,6 +87,7 @@ export interface DataState {
   getDocument: Record<string, Document>;
   getUser: Record<string, Omit<User, 'handleNormalizeScopes'>>;
   getRole: Record<string, Role>;
+  getWebhook: Record<string, Webhook>;
   getSchemaWithFields: Record<string, Schema>;
   getSingletonWithFields: Record<string, Singleton>;
   findDocumentsBySchemaId: ManyResultSet<FindDocumentResultItem>;
@@ -173,6 +176,7 @@ export const state = (): DataState => ({
   getDocument: {},
   getUser: {},
   getRole: {},
+  getWebhook: {},
   getSchemaWithFields: {},
   getSingletonWithFields: {},
   findDocumentsBySchemaId: {
@@ -234,6 +238,10 @@ export const getters: GetterTree<DataState, RootState> = {
     const singleton = state.getSingletonWithFields[id];
 
     return singleton ?? null;
+  },
+
+  getWebhookById: state => (id: string): Webhook | null => {
+    return state.getWebhook[id] ?? null;
   },
 };
 
@@ -393,6 +401,26 @@ export const actions: ActionTree<DataState, RootState> = {
     }
 
     commit('setSingletonWithFields', data);
+  },
+
+  async fetchWebhookById(
+    { state, commit },
+    payload: { id: string; force?: boolean },
+  ): Promise<void> {
+    if (state.getWebhook[payload.id] && !payload.force) {
+      return;
+    }
+
+    const { data } = await this.$apolloClient.query<GetWebhookQueryResponse>({
+      query: GetWebhookQuery,
+      variables: { id: payload.id },
+    });
+
+    if (!data.getWebhook) {
+      throw new Error('graphql: getWebhook could not be fetched');
+    }
+
+    commit('setWebhook', data);
   },
 
   async fetchFindDocumentsBySchemaId(
@@ -568,11 +596,11 @@ export const actions: ActionTree<DataState, RootState> = {
 };
 
 export const mutations: MutationTree<DataState> = {
-  setAllSchemas(state, payload: AllSchemasQueryResponse) {
+  setAllSchemas(state, payload: AllSchemasQueryResponse): void {
     state.allSchemas = { ...payload.allSchemas };
   },
 
-  setAllSingletons(state, payload: AllSingletonsQueryResponse) {
+  setAllSingletons(state, payload: AllSingletonsQueryResponse): void {
     state.allSingletons = { ...payload.allSingletons };
   },
 
@@ -592,7 +620,7 @@ export const mutations: MutationTree<DataState> = {
     state.searchDocumentsWithSchema = { ...payload.searchDocuments };
   },
 
-  setDocument(state, payload: GetDocumentQueryResponse) {
+  setDocument(state, payload: GetDocumentQueryResponse): void {
     state.getDocument = {
       ...state.getDocument,
       [payload.getDocument.id]: {
@@ -601,7 +629,7 @@ export const mutations: MutationTree<DataState> = {
     };
   },
 
-  setUser(state, payload: GetUserQueryResponse) {
+  setUser(state, payload: GetUserQueryResponse): void {
     state.getUser = {
       ...state.getUser,
       [payload.getUser.id]: {
@@ -610,11 +638,20 @@ export const mutations: MutationTree<DataState> = {
     };
   },
 
-  setRole(state, payload: GetRoleQueryResponse) {
+  setRole(state, payload: GetRoleQueryResponse): void {
     state.getRole = {
       ...state.getRole,
       [payload.getRole.name]: {
         ...payload.getRole,
+      },
+    };
+  },
+
+  setWebhook(state, payload: GetWebhookQueryResponse): void {
+    state.getWebhook = {
+      ...state.getWebhook,
+      [payload.getWebhook.id]: {
+        ...payload.getWebhook,
       },
     };
   },
@@ -661,19 +698,19 @@ export const mutations: MutationTree<DataState> = {
     state.availableFields = payload.availableFields;
   },
 
-  setAllWebhooks(state, payload: AllWebhooksQueryResponse) {
+  setAllWebhooks(state, payload: AllWebhooksQueryResponse): void {
     state.allWebhooks = { ...payload.allWebhooks };
   },
 
-  setAllUsers(state, payload: AllUsersQueryResponse) {
+  setAllUsers(state, payload: AllUsersQueryResponse): void {
     state.allUsers = { ...payload.allUsers };
   },
 
-  setAllRoles(state, payload: AllRolesQueryResponse) {
+  setAllRoles(state, payload: AllRolesQueryResponse): void {
     state.allRoles = { ...payload.allRoles };
   },
 
-  setAllScopes(state, payload: AllScopesQueryResponse) {
+  setAllScopes(state, payload: AllScopesQueryResponse): void {
     state.allScopes = { ...payload.allScopes };
   },
 
@@ -714,6 +751,14 @@ export const mutations: MutationTree<DataState> = {
     }
 
     state.allUsers = makeEmptyResultSet<AllUsersResultItem>();
+  },
+
+  clearWebhookData(state, payload?: string): void {
+    if (payload) {
+      Vue.delete(state.getWebhook, payload);
+    }
+
+    state.allWebhooks = makeEmptyResultSet<AllWebhooksResultItem>();
   },
 
   clearRoleData(state, payload?: string): void {

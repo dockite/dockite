@@ -46,6 +46,10 @@ export const fireWebhooks = async (entity: object, action: WebhookAction): Promi
               });
             },
             (error: AxiosError) => {
+              if (action !== WebhookAction.WebhookError) {
+                fireWebhooks(webhook, WebhookAction.WebhookError);
+              }
+
               return webhookCallRepository.insert({
                 executedAt: new Date(),
                 request: {
@@ -100,6 +104,10 @@ export const fireWebhooks = async (entity: object, action: WebhookAction): Promi
                   });
                 },
                 (error: AxiosError) => {
+                  if (action !== WebhookAction.WebhookError) {
+                    fireWebhooks(webhook, WebhookAction.WebhookError);
+                  }
+
                   return webhookCallRepository.insert({
                     executedAt: new Date(),
                     request: {

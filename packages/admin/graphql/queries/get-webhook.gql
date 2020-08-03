@@ -1,0 +1,11 @@
+query GetWebhook($id: String!) {
+  getWebhook(id: $id) {
+    id
+    name
+    url
+    method
+    options
+    createdAt
+    updatedAt
+  }
+}

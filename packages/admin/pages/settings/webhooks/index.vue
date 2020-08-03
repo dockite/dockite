@@ -36,9 +36,16 @@
             >
               <i class="el-icon-edit-outline" />
             </router-link>
-            <router-link :to="`/settings/webhooks/${scope.row.id}/delete`">
-              <i class="el-icon-delete" />
-            </router-link>
+            <el-popconfirm
+              title="Are you sure?"
+              confirm-button-text="Delete"
+              cancel-button-text="Cancel"
+              @onConfirm="handleRemoveWebhook(scope.row.id)"
+            >
+              <el-button slot="reference" type="text">
+                <i class="el-icon-delete"></i>
+              </el-button>
+            </el-popconfirm>
           </template>
         </el-table-column>
       </el-table>
@@ -62,6 +69,7 @@ import { Fragment } from 'vue-fragment';
 
 import { AllWebhooksResultItem, ManyResultSet } from '~/common/types';
 import * as data from '~/store/data';
+import * as webhook from '~/store/webhook';
 
 @Component({
   components: {
@@ -97,6 +105,14 @@ export default class AllWebhooksPage extends Vue {
 
   public cellValueFromNow(_row: never, _column: never, cellValue: string, _index: never): string {
     return formatDistanceToNow(new Date(cellValue)) + ' ago';
+  }
+
+  public async handleRemoveWebhook(id: string): Promise<void> {
+    await this.$store.dispatch(`${webhook.namespace}/deleteWebhook`, {
+      webhookId: id,
+    });
+
+    this.fetchAllWebhooks();
   }
 
   mounted(): void {
