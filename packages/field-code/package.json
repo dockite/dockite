@@ -1,6 +1,6 @@
 {
   "name": "@dockite/field-code",
-  "version": "0.2.1-alpha.11",
+  "version": "0.2.1-alpha.12",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
@@ -14,8 +14,8 @@
   "dependencies": {
     "@babel/plugin-proposal-class-properties": "^7.10.1",
     "@babel/plugin-proposal-decorators": "^7.10.1",
-    "@dockite/field": "^0.3.0-alpha.7",
-    "@dockite/types": "^0.3.0-alpha.8",
+    "@dockite/field": "^0.3.0-alpha.8",
+    "@dockite/types": "^0.3.0-alpha.9",
     "codemirror": "^5.52.2",
     "codemirror-graphql": "^0.11.6",
     "diff-match-patch": "^1.0.4",

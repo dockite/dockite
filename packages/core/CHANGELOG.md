@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.17](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.16...@dockite/core@0.4.0-alpha.17) (2020-08-03)
+
+
+### Features
+
+* **admin,core:** add webhook editing ([b391657](https://github.com/dockite/dockite/commit/b391657487f62c756225dc4a0c6cc51da46f7059))
+
+
+
+
+
 # [0.4.0-alpha.16](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.15...@dockite/core@0.4.0-alpha.16) (2020-07-26)
 
 

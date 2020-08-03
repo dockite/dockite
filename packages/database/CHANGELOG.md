@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.8](https://github.com/dockite/dockite/compare/@dockite/database@0.4.0-alpha.7...@dockite/database@0.4.0-alpha.8) (2020-08-03)
+
+**Note:** Version bump only for package @dockite/database
+
+
+
+
+
 # [0.4.0-alpha.7](https://github.com/dockite/dockite/compare/@dockite/database@0.4.0-alpha.6...@dockite/database@0.4.0-alpha.7) (2020-07-22)
 
 **Note:** Version bump only for package @dockite/database
