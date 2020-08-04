@@ -61,7 +61,7 @@ export const Authorized = (
     }
 
     // If we're not allowing further drilling to determine authorization
-    if (mergedOptions.derriveAlternativeScopes) {
+    if (!mergedOptions.derriveAlternativeScopes) {
       throw new ForbiddenError('Not authorized');
     }
 
