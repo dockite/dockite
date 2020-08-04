@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.18](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.17...@dockite/core@0.4.0-alpha.18) (2020-08-04)
+
+
+### Bug Fixes
+
+* **core:** resolve authorizer short circuiting ([079a9e8](https://github.com/dockite/dockite/commit/079a9e8778f02af2c1007ff4258b9e34733d7133))
+
+
+
+
+
 # [0.4.0-alpha.17](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.16...@dockite/core@0.4.0-alpha.17) (2020-08-03)
 
 
