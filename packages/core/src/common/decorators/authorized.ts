@@ -129,7 +129,7 @@ export const Authorized = (
     );
 
     if (allowed) {
-      return next();
+      return resolved;
     }
 
     throw new ForbiddenError('Not authorized');

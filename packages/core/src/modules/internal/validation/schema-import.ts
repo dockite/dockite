@@ -49,6 +49,8 @@ export const validationSchema = {
             },
             name: {
               type: 'string',
+              // eslint-disable-next-line
+              pattern: '^[_A-Za-z][_0-9A-Za-z]*$',
             },
             title: {
               type: 'string',
@@ -70,6 +72,8 @@ export const validationSchema = {
                       properties: {
                         name: {
                           type: 'string',
+                          // eslint-disable-next-line
+                          pattern: '^[_A-Za-z][_0-9A-Za-z]*$',
                         },
                         type: {
                           type: 'string',
