@@ -151,9 +151,8 @@ export default class AddFieldComponent extends Vue {
           trigger: 'blur',
         },
         {
-          pattern: /^[A-Za-z][0-9A-Za-z]*$/,
-          message:
-            'The field name must start with an alpha character and can only contain alpha-numeric characters.',
+          pattern: /^[_A-Za-z][_0-9A-Za-z]*$/,
+          message: 'The field name must be a valid GraphQL name.',
           trigger: 'blur',
         },
         {

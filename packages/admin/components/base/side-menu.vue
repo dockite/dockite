@@ -15,11 +15,37 @@
         <i class="el-icon-s-home"></i>
         <span slot="title">{{ $t('sideMenu.home') }}</span>
       </el-menu-item>
-      <el-menu-item index="/documents">
+
+      <el-menu-item v-if="$can('internal:schema:read')" index="/documents">
         <i class="el-icon-document"></i>
         <span slot="title">{{ $t('sideMenu.documents') }}</span>
       </el-menu-item>
-      <el-submenu index="/schemas">
+
+      <el-submenu v-else index="/documents">
+        <template slot="title">
+          <i class="el-icon-document"></i>
+          <span slot="title">{{ $t('sideMenu.documents') }}</span>
+        </template>
+
+        <el-menu-item index="/documents">
+          <span slot="title">All Documents</span>
+        </el-menu-item>
+
+        <el-menu-item-group
+          v-if="allSchemas && allSchemas.results && allSchemas.results.length > 0"
+          title="Schema Documents"
+        >
+          <el-menu-item
+            v-for="schema in allSchemas.results"
+            :key="schema.id"
+            :index="`/schemas/${schema.id}`"
+          >
+            <span slot="title">{{ schema.title }}</span>
+          </el-menu-item>
+        </el-menu-item-group>
+      </el-submenu>
+
+      <el-submenu v-if="$can('internal:schema:read')" index="/schemas">
         <template slot="title">
           <i class="el-icon-s-grid"></i>
           <span slot="title">{{ $t('sideMenu.schemas') }}</span>
@@ -32,9 +58,9 @@
             <span slot="title">Create Schema</span>
           </el-menu-item>
         </el-menu-item-group>
-        <el-menu-item-group v-if="allSchemas" title="Recent Schemas">
+        <el-menu-item-group v-if="allSchemas" title="Schemas">
           <el-menu-item
-            v-for="schema in allSchemas.results.slice(0, 5)"
+            v-for="schema in allSchemas.results"
             :key="schema.id"
             :index="`/schemas/${schema.id}`"
           >
@@ -42,35 +68,47 @@
           </el-menu-item>
         </el-menu-item-group>
       </el-submenu>
+
       <el-submenu index="/singletons">
         <template slot="title">
           <i class="el-icon-notebook-2"></i>
           <span slot="title">{{ $t('sideMenu.singletons') }}</span>
         </template>
-        <el-menu-item-group title="Management">
+        <el-menu-item-group v-if="$can('internal:singleton:read')" title="Management">
           <el-menu-item index="/singletons">
             <span slot="title">All Singletons</span>
           </el-menu-item>
-          <el-menu-item index="/singletons/create">
+          <el-menu-item v-if="$can('internal:singleton:create')" index="/singletons/create">
             <span slot="title">Create Singleton</span>
           </el-menu-item>
         </el-menu-item-group>
-        <el-menu-item-group v-if="allSingletons" title="Recent Singletons">
+        <el-menu-item-group
+          v-if="allSingletons && allSingletons.results && allSingletons.results.length > 0"
+          title="Singletons"
+        >
           <el-menu-item
-            v-for="schema in allSingletons.results.slice(0, 5)"
+            v-for="schema in allSingletons.results"
             :key="schema.id"
             :index="`/singletons/${schema.id}`"
           >
             <span slot="title">{{ schema.title }}</span>
           </el-menu-item>
         </el-menu-item-group>
+        <span v-else>
+          <el-menu-item>
+            <i class="el-icon-warning"></i>
+            No singletons
+          </el-menu-item>
+        </span>
       </el-submenu>
+
       <el-submenu index="/releases">
         <template slot="title">
           <i class="el-icon-date"></i>
           <span slot="title">Releases (Coming Soon)</span>
         </template>
       </el-submenu>
+
       <el-submenu index="/settings">
         <template slot="title">
           <i class="el-icon-setting"></i>
@@ -92,14 +130,17 @@
           <span slot="title">{{ $t('sideMenu.webhooks') }}</span>
         </el-menu-item>
       </el-submenu>
+
       <el-menu-item index="/account">
         <i class="el-icon-user"></i>
         <span slot="title">{{ $t('sideMenu.account') }}</span>
       </el-menu-item>
+
       <el-menu-item index="#logout" @click.native.prevent="logout">
         <i class="el-icon-refresh-left"></i>
         <span slot="title">Logout</span>
       </el-menu-item>
+
       <el-menu-item @click.native.prevent="isCollapse = !isCollapse">
         <i :class="{ 'el-icon-d-arrow-left': !isCollapse, 'el-icon-d-arrow-right': isCollapse }" />
         <!-- <span slot="title">{{ isCollapse ? 'Expand' : 'Collapse' }}</span> -->
