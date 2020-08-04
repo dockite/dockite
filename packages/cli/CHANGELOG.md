@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.1.0-alpha.2](https://github.com/dockite/dockite/compare/@dockite/cli@0.1.0-alpha.1...@dockite/cli@0.1.0-alpha.2) (2020-08-04)
+
+
+### Bug Fixes
+
+* **cli:** resolve module resolution ([6198adb](https://github.com/dockite/dockite/commit/6198adbc163b2ed874fb758788caefc135e99bff))
+
+
+### Features
+
+* **cli:** experimental ui overrides ([e063e5f](https://github.com/dockite/dockite/commit/e063e5fd560238914edce050776271f4f987cca6))
+
+
+
+
+
 # [0.1.0-alpha.1](https://github.com/dockite/dockite/compare/@dockite/cli@0.1.0-alpha.0...@dockite/cli@0.1.0-alpha.1) (2020-07-21)
 
 

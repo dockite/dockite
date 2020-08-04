@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.19](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.18...@dockite/core@0.4.0-alpha.19) (2020-08-04)
+
+
+### Bug Fixes
+
+* **core:** resolve further authorization issues ([4005fd1](https://github.com/dockite/dockite/commit/4005fd13193981bea03afb997de5e00562ee5182))
+
+
+
+
+
 # [0.4.0-alpha.18](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.17...@dockite/core@0.4.0-alpha.18) (2020-08-04)
 
 

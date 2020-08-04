@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.26](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.25...@dockite/admin@0.4.0-alpha.26) (2020-08-04)
+
+
+### Features
+
+* **admin:** allow graphql spec names for fields ([1153e8c](https://github.com/dockite/dockite/commit/1153e8cbf8309b70919a28a28032768cbe98804b))
+
+
+
+
+
 # [0.4.0-alpha.25](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.24...@dockite/admin@0.4.0-alpha.25) (2020-08-03)
 
 
