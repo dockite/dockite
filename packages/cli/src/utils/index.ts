@@ -1,5 +1,6 @@
 import * as path from 'path';
 
+import * as fse from 'fs-extra';
 import { loadNuxtConfig, Builder, Generator, Nuxt } from 'nuxt';
 import { register } from 'ts-node';
 
@@ -26,15 +27,29 @@ async function getNuxt(options: any): Promise<any> {
 export async function buildAdminUI(distPath?: string): Promise<void> {
   module.paths.push(path.join(process.cwd(), 'node_modules'));
 
+  const buildDir = path.join(process.cwd(), '.build');
+  const replaceDir = path.join(process.cwd(), '.dockite');
+
+  fse.copySync(path.dirname(require.resolve('@dockite/admin')), buildDir, {
+    filter: src => !/node_modules/.test(src),
+    recursive: true,
+    overwrite: true,
+  });
+
+  fse.copySync(buildDir, replaceDir, {
+    recursive: true,
+    overwrite: true,
+  });
+
   register({
-    project: path.join(path.dirname(require.resolve('@dockite/admin')), 'tsconfig.json'),
+    project: path.join(buildDir, 'tsconfig.json'),
     transpileOnly: true,
     // eslint-disable-next-line
     ignore: ['/node_modules\/(?!@dockite\/admin.*)/'],
   });
 
   const loadOptions = {
-    rootDir: path.dirname(require.resolve('@dockite/admin')),
+    rootDir: buildDir,
   };
 
   let config = await loadNuxtConfig(loadOptions);
@@ -63,15 +78,29 @@ export async function buildAdminUI(distPath?: string): Promise<void> {
 export async function startAdminUIDevServer(): Promise<void> {
   module.paths.push(path.join(process.cwd(), 'node_modules'));
 
+  const buildDir = path.join(process.cwd(), '.build');
+  const replaceDir = path.join(process.cwd(), '.dockite');
+
+  fse.copySync(path.dirname(require.resolve('@dockite/admin')), buildDir, {
+    filter: src => !/node_modules/.test(src),
+    recursive: true,
+    overwrite: true,
+  });
+
+  fse.copySync(buildDir, replaceDir, {
+    recursive: true,
+    overwrite: true,
+  });
+
   register({
-    project: path.join(path.dirname(require.resolve('@dockite/admin')), 'tsconfig.json'),
+    project: path.join(buildDir, 'tsconfig.json'),
     transpileOnly: true,
     // eslint-disable-next-line
     ignore: ['/node_modules\/(?!@dockite\/admin.*)/'],
   });
 
   const loadOptions = {
-    rootDir: path.dirname(require.resolve('@dockite/admin')),
+    rootDir: buildDir,
   };
 
   let config = await loadNuxtConfig(loadOptions);
