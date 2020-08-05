@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.1.0-alpha.2](https://github.com/dockite/dockite/compare/@dockite/field-conditional-select@0.1.0-alpha.1...@dockite/field-conditional-select@0.1.0-alpha.2) (2020-08-05)
+
+
+### Bug Fixes
+
+* **field-conditional-select:** correct placeholder name ([bca5465](https://github.com/dockite/dockite/commit/bca5465934da2c5eef8ad426828e2de25c0ae765))
+
+
+
+
+
 # [0.1.0-alpha.1](https://github.com/dockite/dockite/compare/@dockite/field-conditional-select@0.1.0-alpha.0...@dockite/field-conditional-select@0.1.0-alpha.1) (2020-08-03)
 
 **Note:** Version bump only for package @dockite/field-conditional-select
