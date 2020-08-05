@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.1.0-alpha.3](https://github.com/dockite/dockite/compare/@dockite/cli@0.1.0-alpha.2...@dockite/cli@0.1.0-alpha.3) (2020-08-05)
+
+
+### Bug Fixes
+
+* **cli:** resolve logic errors ([6baa0fa](https://github.com/dockite/dockite/commit/6baa0fa0dfde5499e35e5440cc8464fdd784cdea))
+
+
+
+
+
 # [0.1.0-alpha.2](https://github.com/dockite/dockite/compare/@dockite/cli@0.1.0-alpha.1...@dockite/cli@0.1.0-alpha.2) (2020-08-04)
 
 
