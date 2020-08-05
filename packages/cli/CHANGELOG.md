@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.1.0-alpha.4](https://github.com/dockite/dockite/compare/@dockite/cli@0.1.0-alpha.3...@dockite/cli@0.1.0-alpha.4) (2020-08-05)
+
+
+### Bug Fixes
+
+* **cli:** remove invalid sig listeners ([4f72628](https://github.com/dockite/dockite/commit/4f72628ced3ad3119649865189cb634777b3f500))
+
+
+
+
+
 # [0.1.0-alpha.3](https://github.com/dockite/dockite/compare/@dockite/cli@0.1.0-alpha.2...@dockite/cli@0.1.0-alpha.3) (2020-08-05)
 
 
