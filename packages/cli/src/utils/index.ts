@@ -31,6 +31,10 @@ export async function buildAdminUI(distPath?: string): Promise<void> {
   const replaceDir = path.join(process.cwd(), '.overrides');
   const srcDir = path.dirname(require.resolve('@dockite/admin'));
 
+  if (fse.existsSync(buildDir)) {
+    fse.emptyDirSync(buildDir);
+  }
+
   if (!fse.existsSync(buildDir)) {
     fse.mkdirSync(buildDir);
   }
@@ -89,6 +93,10 @@ export async function startAdminUIDevServer(): Promise<void> {
   const replaceDir = path.join(process.cwd(), '.overrides');
   const srcDir = path.dirname(require.resolve('@dockite/admin'));
 
+  if (fse.existsSync(buildDir)) {
+    fse.emptyDirSync(buildDir);
+  }
+
   if (!fse.existsSync(buildDir)) {
     fse.mkdirSync(buildDir);
   }
@@ -134,11 +142,3 @@ export async function startAdminUIDevServer(): Promise<void> {
     console.log(`Listening on: ${listener.url}`);
   });
 }
-
-export const tidyBuildDirs = (): void => {
-  const buildDir = path.join(process.cwd(), '.build');
-
-  if (fse.existsSync(buildDir)) {
-    fse.removeSync(buildDir);
-  }
-};

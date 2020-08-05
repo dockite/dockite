@@ -1,6 +1,6 @@
 import { Command } from '@oclif/command';
 
-import { buildAdminUI, tidyBuildDirs } from '../utils';
+import { buildAdminUI } from '../utils';
 
 export default class Build extends Command {
   static description = 'Build the Admin UI';
@@ -9,9 +9,6 @@ export default class Build extends Command {
     console.log('Building the Admin UI');
 
     process.env.CLI_BUILD = 'true';
-
-    process.on('exit', () => tidyBuildDirs());
-    process.on('SIGINT', () => tidyBuildDirs());
 
     await buildAdminUI();
   }
