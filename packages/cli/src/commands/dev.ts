@@ -1,6 +1,6 @@
 import { Command } from '@oclif/command';
 
-import { startAdminUIDevServer } from '../utils';
+import { startAdminUIDevServer, tidyBuildDirs } from '../utils';
 
 export default class Build extends Command {
   static description = 'Build the Admin UI';
@@ -9,6 +9,11 @@ export default class Build extends Command {
     console.log('Building the Admin UI');
 
     process.env.CLI_BUILD = 'true';
+
+    process.on('exit', () => tidyBuildDirs());
+    process.on('SIGINT', () => tidyBuildDirs());
+    process.on('SIGKILL', () => tidyBuildDirs());
+
     await startAdminUIDevServer();
   }
 }

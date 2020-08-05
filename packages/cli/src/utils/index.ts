@@ -28,18 +28,25 @@ export async function buildAdminUI(distPath?: string): Promise<void> {
   module.paths.push(path.join(process.cwd(), 'node_modules'));
 
   const buildDir = path.join(process.cwd(), '.build');
-  const replaceDir = path.join(process.cwd(), '.dockite');
+  const replaceDir = path.join(process.cwd(), '.overrides');
+  const srcDir = path.dirname(require.resolve('@dockite/admin'));
 
-  fse.copySync(path.dirname(require.resolve('@dockite/admin')), buildDir, {
-    filter: src => !/node_modules/.test(src),
+  if (!fse.existsSync(buildDir)) {
+    fse.mkdirSync(buildDir);
+  }
+
+  fse.copySync(srcDir, buildDir, {
+    filter: src => !/node_modules/.test(src.replace(srcDir, '')),
     recursive: true,
     overwrite: true,
   });
 
-  fse.copySync(buildDir, replaceDir, {
-    recursive: true,
-    overwrite: true,
-  });
+  if (fse.existsSync(replaceDir)) {
+    fse.copySync(replaceDir, buildDir, {
+      recursive: true,
+      overwrite: true,
+    });
+  }
 
   register({
     project: path.join(buildDir, 'tsconfig.json'),
@@ -79,18 +86,25 @@ export async function startAdminUIDevServer(): Promise<void> {
   module.paths.push(path.join(process.cwd(), 'node_modules'));
 
   const buildDir = path.join(process.cwd(), '.build');
-  const replaceDir = path.join(process.cwd(), '.dockite');
+  const replaceDir = path.join(process.cwd(), '.overrides');
+  const srcDir = path.dirname(require.resolve('@dockite/admin'));
 
-  fse.copySync(path.dirname(require.resolve('@dockite/admin')), buildDir, {
-    filter: src => !/node_modules/.test(src),
+  if (!fse.existsSync(buildDir)) {
+    fse.mkdirSync(buildDir);
+  }
+
+  fse.copySync(srcDir, buildDir, {
+    filter: src => !/node_modules/.test(src.replace(srcDir, '')),
     recursive: true,
     overwrite: true,
   });
 
-  fse.copySync(buildDir, replaceDir, {
-    recursive: true,
-    overwrite: true,
-  });
+  if (fse.existsSync(replaceDir)) {
+    fse.copySync(replaceDir, buildDir, {
+      recursive: true,
+      overwrite: true,
+    });
+  }
 
   register({
     project: path.join(buildDir, 'tsconfig.json'),
@@ -120,3 +134,11 @@ export async function startAdminUIDevServer(): Promise<void> {
     console.log(`Listening on: ${listener.url}`);
   });
 }
+
+export const tidyBuildDirs = (): void => {
+  const buildDir = path.join(process.cwd(), '.build');
+
+  if (fse.existsSync(buildDir)) {
+    fse.removeSync(buildDir);
+  }
+};
