@@ -12,7 +12,6 @@ export default class Build extends Command {
 
     process.on('exit', () => tidyBuildDirs());
     process.on('SIGINT', () => tidyBuildDirs());
-    process.on('SIGKILL', () => tidyBuildDirs());
 
     await startAdminUIDevServer();
   }
