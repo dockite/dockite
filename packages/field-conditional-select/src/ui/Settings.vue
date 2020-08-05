@@ -21,7 +21,7 @@
       </el-table>
 
       <el-input v-model="optionLabel" class="mb-2" placeholder="Label" />
-      <el-input v-model="optionValue.value" class="mb-2" placeholder="Label" />
+      <el-input v-model="optionValue.value" class="mb-2" placeholder="Value" />
       <el-select
         v-model="optionValue.fieldsToHide"
         class="w-full mb-2"
