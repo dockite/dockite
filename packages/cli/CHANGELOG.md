@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.1.0-alpha.5](https://github.com/dockite/dockite/compare/@dockite/cli@0.1.0-alpha.4...@dockite/cli@0.1.0-alpha.5) (2020-08-06)
+
+
+### Bug Fixes
+
+* **cli:** remove signal hooks ([bd6f05a](https://github.com/dockite/dockite/commit/bd6f05a77e3d2b2ce0b26491b31f8af483672a80))
+
+
+
+
+
 # [0.1.0-alpha.4](https://github.com/dockite/dockite/compare/@dockite/cli@0.1.0-alpha.3...@dockite/cli@0.1.0-alpha.4) (2020-08-05)
 
 
