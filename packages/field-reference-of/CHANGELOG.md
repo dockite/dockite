@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.6-alpha.13](https://github.com/dockite/dockite/compare/@dockite/field-reference-of@0.2.6-alpha.12...@dockite/field-reference-of@0.2.6-alpha.13) (2020-08-07)
+
+
+### Bug Fixes
+
+* **field-reference-of:** resolve potential graphql type conflicts ([e2eeb91](https://github.com/dockite/dockite/commit/e2eeb917aade3d1acb7f2278af903604bd13a93e))
+
+
+
+
+
 ## [0.2.6-alpha.12](https://github.com/dockite/dockite/compare/@dockite/field-reference-of@0.2.6-alpha.11...@dockite/field-reference-of@0.2.6-alpha.12) (2020-08-03)
 
 **Note:** Version bump only for package @dockite/field-reference-of
