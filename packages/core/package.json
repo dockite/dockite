@@ -19,8 +19,7 @@
     "@dockite/types": "^0.3.0-alpha.9",
     "@dockite/where-builder": "^0.2.0-alpha.10",
     "@graphql-modules/core": "^0.7.14",
-    "@typescript-eslint/eslint-plugin": "^2.20.0",
-    "@typescript-eslint/parser": "^2.20.0",
+
     "ajv": "^6.12.2",
     "apollo-server-express": "^2.15.1",
     "axios": "^0.19.2",
@@ -41,11 +40,8 @@
     "nodemailer": "^6.4.10",
     "pg": "8.0.3",
     "reflect-metadata": "^0.1.13",
-    "ts-node": "^8.6.2",
-    "ts-node-dev": "^1.0.0-pre.44",
     "type-graphql": "1.0.0-rc.2",
-    "typeorm": "^0.2.25",
-    "typescript": "^3.9.5"
+    "typeorm": "^0.2.25"
   },
   "devDependencies": {
     "@types/axios": "^0.14.0",
@@ -55,6 +51,11 @@
     "@types/debug": "^4.1.5",
     "@types/graphql-type-json": "^0.3.2",
     "@types/jsonwebtoken": "^8.3.7",
-    "@types/nodemailer": "^6.4.0"
+    "@types/nodemailer": "^6.4.0",
+    "@typescript-eslint/eslint-plugin": "^2.20.0",
+    "@typescript-eslint/parser": "^2.20.0",
+    "ts-node": "^8.6.2",
+    "ts-node-dev": "^1.0.0-pre.44",
+    "typescript": "^3.9.5"
   }
 }

@@ -12,8 +12,6 @@
     "*.css"
   ],
   "dependencies": {
-    "@babel/plugin-proposal-class-properties": "^7.10.1",
-    "@babel/plugin-proposal-decorators": "^7.10.1",
     "@dockite/field": "^0.3.0-alpha.8",
     "@dockite/types": "^0.3.0-alpha.9",
     "codemirror": "^5.52.2",
@@ -23,7 +21,6 @@
     "reflect-metadata": "^0.1.13",
     "type-graphql": "1.0.0-rc.2",
     "typeorm": "^0.2.25",
-    "typescript": "^3.9.5",
     "validator": "^13.0.0",
     "vue": "^2.6.11",
     "vue-codemirror": "^4.0.6",
@@ -32,6 +29,8 @@
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",
+    "@babel/plugin-proposal-class-properties": "^7.10.1",
+    "@babel/plugin-proposal-decorators": "^7.10.1",
     "@babel/preset-env": "^7.9.0",
     "@types/graphql-type-json": "^0.3.2",
     "@typescript-eslint/eslint-plugin": "^2.20.0",
@@ -45,6 +44,7 @@
     "sass-loader": "^8.0.2",
     "style-loader": "^1.1.3",
     "ts-loader": "^7.0.0",
+    "typescript": "^3.9.5",
     "vue-loader": "^15.9.1",
     "vue-template-compiler": "^2.6.11",
     "webpack": "^4.42.0",
