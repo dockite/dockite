@@ -1,6 +1,6 @@
 {
   "name": "@dockite/admin",
-  "version": "0.4.0-alpha.26",
+  "version": "0.4.0-alpha.27",
   "description": "",
   "author": "Dockite",
   "main": "nuxt.config.ts",
@@ -72,8 +72,5 @@
     "vue-jest": "^4.0.0-0",
     "webpack": "^4.43.0",
     "webpack-inject-plugin": "^1.5.4"
-  },
-  "devDependencies": {
-
   }
 }

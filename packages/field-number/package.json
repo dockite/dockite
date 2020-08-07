@@ -1,6 +1,6 @@
 {
   "name": "@dockite/field-number",
-  "version": "0.2.1-alpha.11",
+  "version": "0.2.1-alpha.12",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
