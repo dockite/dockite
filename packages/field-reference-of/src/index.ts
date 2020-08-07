@@ -68,7 +68,8 @@ export class DockiteFieldReferenceOf extends DockiteField {
       orderBy: { type: GraphQLString, defaultValue: 'updatedAt' },
       orderDirection: {
         type: new GraphQLEnumType({
-          name: `OrderDirection_${this.schemaField.name}`,
+          name: `OrderDirection_${this.schemaField.name}_${this.schemaField.schema?.name ||
+            'Unknown'}`,
           values: { DESC: { value: 'DESC' }, ASC: { value: 'ASC' } },
         }),
         defaultValue: 'DESC',
