@@ -26,6 +26,7 @@
               :name="`${name}[${itemIndex}].${field.name}`"
               :field-config="field"
               :form-data="formData"
+              :schema="schema"
             />
           </div>
         </template>
@@ -39,6 +40,7 @@
               :name="`${name}.${field.name}`"
               :field-config="field"
               :form-data="formData"
+              :schema="schema"
             />
           </div>
         </template>
@@ -55,6 +57,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { Field } from '@dockite/types';
+import { Schema } from '@dockite/database';
 
 import { DockiteFieldGroupEntity, GroupFieldSettings } from '../types';
 
@@ -75,6 +78,9 @@ export default class GroupFieldInputComponent extends Vue {
 
   @Prop({ required: true })
   readonly fieldConfig!: DockiteFieldGroupEntity;
+
+  @Prop({ required: true })
+  readonly schema!: Schema;
 
   public rules: object[] = [];
 
