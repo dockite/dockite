@@ -228,7 +228,7 @@ export default class AddFieldComponent extends Vue {
 
   @Watch('field.name')
   handleFieldNameChange(): void {
-    this.field.name = this.field.name.toLowerCase().trim();
+    this.field.name = this.field.name.trim();
   }
 
   handleSelectField(type: string): void {

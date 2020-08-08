@@ -231,7 +231,7 @@ export default class EditFieldComponent extends Vue {
   @Watch('field.name')
   handleFieldNameChange(): void {
     if (this.field !== null) {
-      this.field.name = this.field.name.toLowerCase().trim();
+      this.field.name = this.field.name.trim();
     }
   }
 }
