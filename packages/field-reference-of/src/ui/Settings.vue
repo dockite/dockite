@@ -128,14 +128,18 @@ export default class ReferenceOfFieldSettingsComponent extends Vue {
       `,
     });
 
-    data.allSchemas.results.unshift({
-      id: 'self',
-      name: 'self',
-      title: 'Self',
-      fields: this.fields,
-    });
-
-    this.allSchemas = data.allSchemas;
+    this.allSchemas = {
+      ...data.allSchemas,
+      results: [
+        {
+          id: 'self',
+          name: 'self',
+          title: 'Self',
+          fields: this.fields,
+        },
+        ...data.allSchemas.results,
+      ],
+    };
   }
 
   mounted(): void {

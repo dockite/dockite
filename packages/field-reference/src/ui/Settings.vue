@@ -88,13 +88,17 @@ export default class ReferenceFieldSettingsComponent extends Vue {
       `,
     });
 
-    data.allSchemas.results.unshift({
-      id: 'self',
-      name: 'self',
-      title: 'Self',
-    });
-
-    this.allSchemas = data.allSchemas;
+    this.allSchemas = {
+      ...data.allSchemas,
+      results: [
+        {
+          id: 'self',
+          name: 'self',
+          title: 'Self',
+        },
+        ...data.allSchemas.results,
+      ],
+    };
   }
 
   mounted(): void {
