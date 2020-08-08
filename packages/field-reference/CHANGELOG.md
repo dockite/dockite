@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.6-alpha.15](https://github.com/dockite/dockite/compare/@dockite/field-reference@0.2.6-alpha.14...@dockite/field-reference@0.2.6-alpha.15) (2020-08-08)
+
+
+### Bug Fixes
+
+* **field-reference:** resolve union name conflicts ([47e20d7](https://github.com/dockite/dockite/commit/47e20d7963b4f86a219e105c4e2538de0801f0af))
+
+
+
+
+
 ## [0.2.6-alpha.14](https://github.com/dockite/dockite/compare/@dockite/field-reference@0.2.6-alpha.13...@dockite/field-reference@0.2.6-alpha.14) (2020-08-08)
 
 
