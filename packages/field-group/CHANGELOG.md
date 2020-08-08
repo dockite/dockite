@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.17](https://github.com/dockite/dockite/compare/@dockite/field-group@0.4.0-alpha.16...@dockite/field-group@0.4.0-alpha.17) (2020-08-08)
+
+
+### Bug Fixes
+
+* **field-group:** provide schema prop to children ([a874e94](https://github.com/dockite/dockite/commit/a874e94c80cc4149da799ec3e1e338950bc715b6))
+
+
+
+
+
 # [0.4.0-alpha.16](https://github.com/dockite/dockite/compare/@dockite/field-group@0.4.0-alpha.15...@dockite/field-group@0.4.0-alpha.16) (2020-08-08)
 
 
