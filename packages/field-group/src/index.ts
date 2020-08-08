@@ -35,6 +35,7 @@ export class DockiteFieldGroup extends DockiteField {
     repeatable: false,
     minRows: 0,
     maxRows: Infinity,
+    children: [],
   };
 
   private getMappedChildFields(): Omit<Field, 'id'>[] {
@@ -319,6 +320,34 @@ export class DockiteFieldGroup extends DockiteField {
         };
 
         await child.dockiteField.onPermanentDelete(childCtx);
+      }),
+    );
+  }
+
+  public async onFieldCreate(): Promise<void> {
+    const childFields = this.getMappedChildFields();
+
+    await Promise.all(
+      childFields.map(async child => {
+        if (!child.dockiteField) {
+          throw new Error(`dockiteFiled failed to map for ${this.schemaField.name}.${child.name}`);
+        }
+
+        await child.dockiteField.onFieldCreate();
+      }),
+    );
+  }
+
+  public async onFieldUpdate(): Promise<void> {
+    const childFields = this.getMappedChildFields();
+
+    await Promise.all(
+      childFields.map(async child => {
+        if (!child.dockiteField) {
+          throw new Error(`dockiteFiled failed to map for ${this.schemaField.name}.${child.name}`);
+        }
+
+        await child.dockiteField.onFieldUpdate();
       }),
     );
   }

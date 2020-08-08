@@ -333,4 +333,32 @@ export class DockiteFieldVariant extends DockiteField {
       }),
     );
   }
+
+  public async onFieldCreate(): Promise<void> {
+    const childFields = this.getMappedChildFields();
+
+    await Promise.all(
+      childFields.map(async child => {
+        if (!child.dockiteField) {
+          throw new Error(`dockiteFiled failed to map for ${this.schemaField.name}.${child.name}`);
+        }
+
+        await child.dockiteField.onFieldCreate();
+      }),
+    );
+  }
+
+  public async onFieldUpdate(): Promise<void> {
+    const childFields = this.getMappedChildFields();
+
+    await Promise.all(
+      childFields.map(async child => {
+        if (!child.dockiteField) {
+          throw new Error(`dockiteFiled failed to map for ${this.schemaField.name}.${child.name}`);
+        }
+
+        await child.dockiteField.onFieldUpdate();
+      }),
+    );
+  }
 }
