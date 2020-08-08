@@ -75,7 +75,7 @@ export class DockiteFieldReference extends DockiteField {
     }
 
     return new GraphQLUnionType({
-      name: `${this.schemaField.name}_Union`,
+      name: `${this.schemaField.name}_${this.schemaField.schema?.name ?? 'Unknown'}_Union`,
       types: unionTypes as GraphQLObjectType[],
       resolveType(obj: { schemaName: string }) {
         return graphqlCase(obj.schemaName);
