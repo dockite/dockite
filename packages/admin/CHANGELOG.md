@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.28](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.27...@dockite/admin@0.4.0-alpha.28) (2020-08-08)
+
+
+### Bug Fixes
+
+* **admin:** stop transforming fieldname to lowercase ([2cc5624](https://github.com/dockite/dockite/commit/2cc5624061e79be161d8a7eee721a58e3d5b0918))
+
+
+### Features
+
+* **admin:** pass bulk-edit-mode prop to fields ([b01737b](https://github.com/dockite/dockite/commit/b01737bea31aff8ef3f91b0de50474675c289580))
+
+
+
+
+
 # [0.4.0-alpha.27](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.26...@dockite/admin@0.4.0-alpha.27) (2020-08-07)
 
 **Note:** Version bump only for package @dockite/admin

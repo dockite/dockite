@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.21](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.20...@dockite/core@0.4.0-alpha.21) (2020-08-08)
+
+
+### Features
+
+* **admin:** pass bulk-edit-mode prop to fields ([b01737b](https://github.com/dockite/dockite/commit/b01737bea31aff8ef3f91b0de50474675c289580))
+
+
+
+
+
 # [0.4.0-alpha.20](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.19...@dockite/core@0.4.0-alpha.20) (2020-08-07)
 
 **Note:** Version bump only for package @dockite/core
