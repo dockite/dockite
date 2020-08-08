@@ -35,6 +35,7 @@
                   <component
                     :is="$dockiteFieldManager[field.type].input"
                     v-model="form[field.name]"
+                    :bulk-edit-mode="true"
                     :name="field.name"
                     :field-config="field"
                     :form-data="form"
