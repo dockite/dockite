@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.6-alpha.16](https://github.com/dockite/dockite/compare/@dockite/field-reference@0.2.6-alpha.15...@dockite/field-reference@0.2.6-alpha.16) (2020-08-08)
+
+
+### Bug Fixes
+
+* add/update field typings ([17b327c](https://github.com/dockite/dockite/commit/17b327c1a3771d1ec10036cac8dd87a0928e3718))
+
+
+
+
+
 ## [0.2.6-alpha.15](https://github.com/dockite/dockite/compare/@dockite/field-reference@0.2.6-alpha.14...@dockite/field-reference@0.2.6-alpha.15) (2020-08-08)
 
 
