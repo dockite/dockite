@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.0](https://github.com/dockite/dockite/compare/@dockite/field-datetime@0.2.1-alpha.13...@dockite/field-datetime@0.3.0-alpha.0) (2020-08-09)
+
+
+### Features
+
+* **field-wysiwyg:** add the wysiwyg field ([1b36a1f](https://github.com/dockite/dockite/commit/1b36a1f2c4332b08f1681ed7eb4e7d094b73221b))
+
+
+
+
+
 ## [0.2.1-alpha.13](https://github.com/dockite/dockite/compare/@dockite/field-datetime@0.2.1-alpha.12...@dockite/field-datetime@0.2.1-alpha.13) (2020-08-07)
 
 **Note:** Version bump only for package @dockite/field-datetime
