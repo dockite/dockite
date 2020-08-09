@@ -10,6 +10,7 @@ interface DockiteConfig {
     title: string;
     description: string;
     graphqlEndpoint: string;
+    nestableFields?: string[];
   };
   fields: string[];
 }
@@ -33,6 +34,7 @@ const config: Configuration = {
   mode: 'spa',
   env: {
     GRAPHQL_ENDPOINT: dockiteConfig.app.graphqlEndpoint,
+    ALLOWED_DROP_TYPES: JSON.stringify(dockiteConfig.app.nestableFields ?? ['group', 'variant']),
   },
   /*
    ** Headers of the page

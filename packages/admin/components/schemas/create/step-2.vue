@@ -76,7 +76,7 @@ import AddField from '~/components/fields/add-field.vue';
 import EditField from '~/components/fields/edit-field.vue';
 import * as auth from '~/store/auth';
 
-const ALLOWED_DROP_TYPES = ['group', 'variant', 'string'];
+const ALLOWED_DROP_TYPES: string[] = JSON.parse(process.env.ALLOWED_DROP_TYPES as string);
 
 @Component({
   components: {
@@ -227,9 +227,13 @@ export default class CreateSchemaStepTwoComponent extends Vue {
   public handleAllowDrop(
     _draggingNode: TreeNode<string, FieldTreeData>,
     dropNode: TreeNode<string, FieldTreeData>,
-    _type: 'prev' | 'inner' | 'next',
+    type: 'prev' | 'inner' | 'next',
   ): boolean {
-    return ALLOWED_DROP_TYPES.includes(dropNode.data.dockite.type);
+    if (type === 'inner') {
+      return ALLOWED_DROP_TYPES.includes(dropNode.data.dockite.type ?? '');
+    } else {
+      return true;
+    }
   }
 
   public handleNextStep(): void {
