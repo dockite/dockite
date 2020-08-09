@@ -1,4 +1,4 @@
-import { Field } from '@dockite/database';
+import { Field, Document } from '@dockite/database';
 import GraphQLJSON from 'graphql-type-json';
 import { omitBy } from 'lodash';
 import {
@@ -47,7 +47,6 @@ export class FieldResolver {
 
     return field ?? null;
   }
-
 
   @Authenticated()
   @Authorized('internal:schema:read', {
@@ -125,14 +124,16 @@ export class FieldResolver {
     // eslint-disable-next-line
     @Arg('settings', _type => GraphQLJSON, {nullable: true}) settings: Record<string, any>,
   ): Promise<Field | null> {
-    const repository = getRepository(Field);
+    const fieldRepository = getRepository(Field);
+    const documentRepository = getRepository(Document);
 
     try {
-      const field = await repository.findOneOrFail(id);
+      const field = await fieldRepository.findOneOrFail(id);
 
       const attributes = omitBy(
         {
           title,
+          name,
           description,
           type,
           settings,
@@ -140,7 +141,20 @@ export class FieldResolver {
         x => x === null,
       );
 
-      const savedField = await repository.save({
+      if (name !== field.name) {
+        await documentRepository
+          .createQueryBuilder('document')
+          .update()
+          .set({
+            data: () =>
+              `data - '${field.name}' || jsonb_build_object('${name}', data->'${field.name}')`,
+          })
+          .where('schemaId = :schemaId', { schemaId: field.schemaId })
+          .andWhere('data ? :fieldName', { fieldName: field.name })
+          .execute();
+      }
+
+      const savedField = await fieldRepository.save({
         ...field,
         ...attributes,
       });

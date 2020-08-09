@@ -124,8 +124,8 @@ export default class EditFieldComponent extends Vue {
         },
         {
           min: 2,
-          max: 26,
-          message: 'The field name must contain atleast 2 and no more than 26 characters',
+          max: 40,
+          message: 'The field name must contain atleast 2 and no more than 40 characters',
           trigger: 'blur',
         },
         {
