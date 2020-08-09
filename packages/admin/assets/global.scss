@@ -70,8 +70,13 @@ pre.dockite-data--raw {
   display: flex;
   justify-content: center;
   align-items: center;
-  
+
   .el-loading-spinner {
     width: auto;
   }
+}
+
+
+.el-icon-hamburger {
+  &:before { content:'\2630'; }
 }

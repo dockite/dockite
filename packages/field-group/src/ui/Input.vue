@@ -1,52 +1,75 @@
 <template>
-  <el-form-item :prop="name" :rules="rules">
+  <el-form-item :prop="name" :rules="rules" class="dockite-field-group">
     <fieldset class="dockite-field-group">
       <legend>{{ fieldConfig.title }}</legend>
+      <el-row type="flex" justify="center">
+        <el-button v-if="repeatable && fieldData.length > 0" @click.prevent="handleAddFieldBefore">
+          <i class="el-icon-plus" />
+        </el-button>
+      </el-row>
       <template v-if="ready">
         <template v-if="repeatable && Array.isArray(fieldData)">
-          <div
-            v-for="(item, itemIndex) in fieldData"
-            :key="itemIndex"
-            class="dockite-field-group--item"
+          <vue-draggable
+            v-model="fieldData"
+            v-bind="dragOptions"
+            handle=".item-handle"
+            @start="drag = true"
+            @end="drag = false"
           >
-            <el-button
-              v-if="repeatable"
-              type="text"
-              class="dockite-field-group--remove-item"
-              title="Remove the current group item"
-              @click.prevent="handleRemoveField(itemIndex)"
-            >
-              <i class="el-icon-close" />
-            </el-button>
-            <component
-              :is="$dockiteFieldManager[field.type].input"
-              v-for="(field, fieldIndex) in fields"
-              :key="fieldIndex"
-              v-model="fieldData[itemIndex][field.name]"
-              :name="`${name}[${itemIndex}].${field.name}`"
-              :field-config="field"
-              :form-data="formData"
-              :schema="schema"
-            />
-          </div>
+            <transition-group type="transition" :name="!drag ? 'flip-list' : null">
+              <div
+                v-for="(item, itemIndex) in fieldData"
+                :key="itemIndex"
+                class="dockite-field-group--item items-center"
+              >
+                <div class="pr-5 item-handle cursor-pointer">
+                  <i class="el-icon-hamburger text-xl" />
+                </div>
+
+                <el-button
+                  v-if="repeatable"
+                  type="text"
+                  class="dockite-field-group--remove-item"
+                  title="Remove the current group item"
+                  @click.prevent="handleRemoveField(itemIndex)"
+                >
+                  <i class="el-icon-close" />
+                </el-button>
+                <div class="flex-1">
+                  <component
+                    :is="$dockiteFieldManager[field.type].input"
+                    v-for="(field, fieldIndex) in fields"
+                    :key="fieldIndex"
+                    v-model="fieldData[itemIndex][field.name]"
+                    :name="`${name}[${itemIndex}].${field.name}`"
+                    :field-config="field"
+                    :form-data="formData"
+                    :schema="schema"
+                  />
+                </div>
+              </div>
+            </transition-group>
+          </vue-draggable>
         </template>
         <template v-else>
           <div class="dockite-field-group--item">
-            <component
-              :is="$dockiteFieldManager[field.type].input"
-              v-for="(field, index) in fields"
-              :key="index"
-              v-model="fieldData[field.name]"
-              :name="`${name}.${field.name}`"
-              :field-config="field"
-              :form-data="formData"
-              :schema="schema"
-            />
+            <div class="flex-1">
+              <component
+                :is="$dockiteFieldManager[field.type].input"
+                v-for="(field, index) in fields"
+                :key="index"
+                v-model="fieldData[field.name]"
+                :name="`${name}.${field.name}`"
+                :field-config="field"
+                :form-data="formData"
+                :schema="schema"
+              />
+            </div>
           </div>
         </template>
       </template>
       <el-row type="flex" justify="center">
-        <el-button v-if="repeatable" @click.prevent="handleAddField">
+        <el-button v-if="repeatable" @click.prevent="handleAddFieldAfter">
           <i class="el-icon-plus" />
         </el-button>
       </el-row>
@@ -58,6 +81,8 @@
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { Field } from '@dockite/types';
 import { Schema } from '@dockite/database';
+import VueDraggable from 'vuedraggable';
+import { cloneDeep } from 'lodash';
 
 import { DockiteFieldGroupEntity, GroupFieldSettings } from '../types';
 
@@ -65,6 +90,9 @@ type UnpersistedField = Omit<Field, 'id' | 'schemaId' | 'dockiteField' | 'schema
 
 @Component({
   name: 'GroupFieldInputComponent',
+  components: {
+    VueDraggable,
+  },
 })
 export default class GroupFieldInputComponent extends Vue {
   @Prop({ required: true })
@@ -79,7 +107,7 @@ export default class GroupFieldInputComponent extends Vue {
   @Prop({ required: true })
   readonly fieldConfig!: DockiteFieldGroupEntity;
 
-  @Prop({ required: true })
+  @Prop({ required: true, type: Object })
   readonly schema!: Schema;
 
   public rules: object[] = [];
@@ -87,6 +115,14 @@ export default class GroupFieldInputComponent extends Vue {
   public ready = false;
 
   public groupRules: Record<string, any> = {};
+
+  public drag = false;
+
+  public dragOptions = {
+    animation: 200,
+    disabled: false,
+    ghostClass: 'ghost',
+  };
 
   get fields(): UnpersistedField[] {
     return this.fieldConfig.settings.children;
@@ -134,11 +170,11 @@ export default class GroupFieldInputComponent extends Vue {
     }
 
     if (this.settings.repeatable) {
-      if (this.settings.minRows > -Infinity) {
+      if (this.settings.minRows) {
         this.rules.push(this.getMinRule());
       }
 
-      if (this.settings.maxRows < Infinity) {
+      if (this.settings.maxRows) {
         this.rules.push(this.getMaxRule());
       }
     }
@@ -178,6 +214,10 @@ export default class GroupFieldInputComponent extends Vue {
     if (this.repeatable && !Array.isArray(this.fieldData)) {
       if (this.fieldData !== null) {
         this.fieldData = [this.fieldData];
+      } else if (this.settings.minRows && this.settings.minRows > 0) {
+        this.fieldData = new Array(this.settings.minRows)
+          .fill(0)
+          .map(_ => cloneDeep(this.initialFieldData));
       } else {
         this.fieldData = [];
       }
@@ -197,7 +237,13 @@ export default class GroupFieldInputComponent extends Vue {
     }
   }
 
-  public handleAddField(): void {
+  public handleAddFieldBefore(): void {
+    if (Array.isArray(this.fieldData)) {
+      this.fieldData.unshift({ ...this.initialFieldData });
+    }
+  }
+
+  public handleAddFieldAfter(): void {
     if (Array.isArray(this.fieldData)) {
       this.fieldData.push({ ...this.initialFieldData });
     }
@@ -224,6 +270,8 @@ export default class GroupFieldInputComponent extends Vue {
 
 .dockite-field-group--item {
   position: relative;
+  display: flex;
+  width: 100%;
 
   .el-form-item {
     margin-bottom: 22px !important;
@@ -244,6 +292,15 @@ export default class GroupFieldInputComponent extends Vue {
 
   i {
     font-weight: bold;
+  }
+}
+
+.dockite-field-group {
+  .flip-list-move {
+    transition: transform 0.5s;
+  }
+  .no-move {
+    transition: transform 0s;
   }
 }
 </style>
