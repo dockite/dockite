@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.22](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.21...@dockite/core@0.4.0-alpha.22) (2020-08-09)
+
+
+### Bug Fixes
+
+* **core:** remove dockiteField from webhook payloads ([24324e6](https://github.com/dockite/dockite/commit/24324e64fd2511088a25c56e61a08d6b7f3fcfce))
+* **core:** resolve field renaming errors ([45405ac](https://github.com/dockite/dockite/commit/45405acbfa8f441bf97b5259bc546ff825dab19f))
+
+
+
+
+
 # [0.4.0-alpha.21](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.20...@dockite/core@0.4.0-alpha.21) (2020-08-08)
 
 

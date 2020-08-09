@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.29](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.28...@dockite/admin@0.4.0-alpha.29) (2020-08-09)
+
+
+### Bug Fixes
+
+* **core:** resolve field renaming errors ([45405ac](https://github.com/dockite/dockite/commit/45405acbfa8f441bf97b5259bc546ff825dab19f))
+
+
+
+
+
 # [0.4.0-alpha.28](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.27...@dockite/admin@0.4.0-alpha.28) (2020-08-08)
 
 
