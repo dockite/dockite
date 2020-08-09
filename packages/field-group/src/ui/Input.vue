@@ -225,7 +225,7 @@ export default class GroupFieldInputComponent extends Vue {
 
     if (this.repeatable && Array.isArray(this.fieldData)) {
       if (this.fieldData.length === 0) {
-        this.fieldData = [{ ...this.initialFieldData }];
+        this.fieldData = [];
       } else {
         this.fieldData = this.fieldData.map(fd => ({ ...this.initialFieldData, ...fd }));
       }

@@ -104,28 +104,59 @@ export class DockiteFieldGroup extends DockiteField {
 
   public async processInput<T>(ctx: HookContextWithOldData): Promise<T> {
     const childFields = this.getMappedChildFields();
+    if (Array.isArray(ctx.fieldData)) {
+      await Promise.all(
+        ctx.fieldData.map(async (_, i) => {
+          await Promise.all(
+            childFields.map(async child => {
+              if (!child.dockiteField) {
+                throw new Error(
+                  `dockiteFiled failed to map for ${this.schemaField.name}.${child.name}`,
+                );
+              }
 
-    await Promise.all(
-      childFields.map(async child => {
-        if (!child.dockiteField) {
-          throw new Error(`dockiteFiled failed to map for ${this.schemaField.name}.${child.name}`);
-        }
+              const oldData = ((ctx.oldData ?? {})[this.schemaField.name] ?? [])[i];
 
-        const oldData = (ctx.oldData ?? {})[this.schemaField.name];
+              const childCtx: HookContextWithOldData = {
+                ...ctx,
+                data: ctx.data[this.schemaField.name][i],
+                fieldData: ctx.data[this.schemaField.name][i][child.name],
+                field: child as Field,
+                oldData,
+              };
 
-        const childCtx: HookContextWithOldData = {
-          ...ctx,
-          data: ctx.data[this.schemaField.name],
-          fieldData: ctx.data[this.schemaField.name][child.name],
-          field: child as Field,
-          oldData,
-        };
+              ctx.data[this.schemaField.name][i][
+                child.name
+              ] = await child.dockiteField.processInput(childCtx);
+            }),
+          );
+        }),
+      );
+    } else {
+      await Promise.all(
+        childFields.map(async child => {
+          if (!child.dockiteField) {
+            throw new Error(
+              `dockiteFiled failed to map for ${this.schemaField.name}.${child.name}`,
+            );
+          }
 
-        ctx.data[this.schemaField.name][child.name] = await child.dockiteField.processInput(
-          childCtx,
-        );
-      }),
-    );
+          const oldData = (ctx.oldData ?? {})[this.schemaField.name];
+
+          const childCtx: HookContextWithOldData = {
+            ...ctx,
+            data: ctx.data[this.schemaField.name],
+            fieldData: ctx.data[this.schemaField.name][child.name],
+            field: child as Field,
+            oldData,
+          };
+
+          ctx.data[this.schemaField.name][child.name] = await child.dockiteField.processInput(
+            childCtx,
+          );
+        }),
+      );
+    }
 
     return (ctx.data[this.schemaField.name] as any) as T;
   }
@@ -189,26 +220,57 @@ export class DockiteFieldGroup extends DockiteField {
   public async processOutput<T>(ctx: HookContext): Promise<T> {
     const childFields = this.getMappedChildFields();
 
-    await Promise.all(
-      childFields.map(async child => {
-        if (!child.dockiteField) {
-          throw new Error(`dockiteFiled failed to map for ${this.schemaField.name}.${child.name}`);
-        }
+    if (Array.isArray(ctx.fieldData)) {
+      await Promise.all(
+        ctx.fieldData.map(async (_, i) => {
+          await Promise.all(
+            childFields.map(async child => {
+              if (!child.dockiteField) {
+                throw new Error(
+                  `dockiteFiled failed to map for ${this.schemaField.name}.${child.name}`,
+                );
+              }
 
-        ctx.data[this.schemaField.name] = ctx.data[this.schemaField.name] ?? {};
+              ctx.data[this.schemaField.name][i] = ctx.data[this.schemaField.name][i] ?? {};
 
-        const childCtx: HookContextWithOldData = {
-          ...ctx,
-          data: ctx.data[this.schemaField.name],
-          fieldData: ctx.data[this.schemaField.name][child.name] ?? null,
-          field: child as Field,
-        };
+              const childCtx: HookContextWithOldData = {
+                ...ctx,
+                data: ctx.data[this.schemaField.name][i],
+                fieldData: ctx.data[this.schemaField.name][i][child.name] ?? null,
+                field: child as Field,
+              };
 
-        ctx.data[this.schemaField.name][child.name] = await child.dockiteField.processOutput(
-          childCtx,
-        );
-      }),
-    );
+              ctx.data[this.schemaField.name][i][
+                child.name
+              ] = await child.dockiteField.processOutput(childCtx);
+            }),
+          );
+        }),
+      );
+    } else {
+      await Promise.all(
+        childFields.map(async child => {
+          if (!child.dockiteField) {
+            throw new Error(
+              `dockiteFiled failed to map for ${this.schemaField.name}.${child.name}`,
+            );
+          }
+
+          ctx.data[this.schemaField.name] = ctx.data[this.schemaField.name] ?? {};
+
+          const childCtx: HookContextWithOldData = {
+            ...ctx,
+            data: ctx.data[this.schemaField.name],
+            fieldData: ctx.data[this.schemaField.name][child.name] ?? null,
+            field: child as Field,
+          };
+
+          ctx.data[this.schemaField.name][child.name] = await child.dockiteField.processOutput(
+            childCtx,
+          );
+        }),
+      );
+    }
 
     return (ctx.data[this.schemaField.name] as any) as T;
   }
@@ -216,112 +278,253 @@ export class DockiteFieldGroup extends DockiteField {
   public async validateInput(ctx: HookContextWithOldData): Promise<void> {
     const childFields = this.getMappedChildFields();
 
-    await Promise.all(
-      childFields.map(async child => {
-        if (!child.dockiteField) {
-          throw new Error(`dockiteFiled failed to map for ${this.schemaField.name}.${child.name}`);
-        }
+    if (Array.isArray(ctx.fieldData)) {
+      await Promise.all(
+        ctx.fieldData.map(async (_, i) => {
+          await Promise.all(
+            childFields.map(async child => {
+              if (!child.dockiteField) {
+                throw new Error(
+                  `dockiteFiled failed to map for ${this.schemaField.name}.${child.name}`,
+                );
+              }
 
-        const oldData = (ctx.oldData ?? {})[this.schemaField.name];
+              const oldData = ((ctx.oldData ?? {})[this.schemaField.name] ?? [])[i];
 
-        const childCtx: HookContextWithOldData = {
-          ...ctx,
-          data: ctx.data[this.schemaField.name],
-          fieldData: ctx.data[this.schemaField.name][child.name],
-          field: child as Field,
-          oldData,
-        };
+              const childCtx: HookContextWithOldData = {
+                ...ctx,
+                data: ctx.data[this.schemaField.name][i],
+                fieldData: ctx.data[this.schemaField.name][i][child.name],
+                field: child as Field,
+                oldData,
+              };
 
-        await child.dockiteField.validateInput(childCtx);
-      }),
-    );
+              await child.dockiteField.validateInput(childCtx);
+            }),
+          );
+        }),
+      );
+    } else {
+      await Promise.all(
+        childFields.map(async child => {
+          if (!child.dockiteField) {
+            throw new Error(
+              `dockiteFiled failed to map for ${this.schemaField.name}.${child.name}`,
+            );
+          }
+
+          const oldData = (ctx.oldData ?? {})[this.schemaField.name];
+
+          const childCtx: HookContextWithOldData = {
+            ...ctx,
+            data: ctx.data[this.schemaField.name],
+            fieldData: ctx.data[this.schemaField.name][child.name],
+            field: child as Field,
+            oldData,
+          };
+
+          await child.dockiteField.validateInput(childCtx);
+        }),
+      );
+    }
   }
 
   public async onCreate(ctx: HookContext): Promise<void> {
     const childFields = this.getMappedChildFields();
 
-    await Promise.all(
-      childFields.map(async child => {
-        if (!child.dockiteField) {
-          throw new Error(`dockiteFiled failed to map for ${this.schemaField.name}.${child.name}`);
-        }
+    if (Array.isArray(ctx.fieldData)) {
+      await Promise.all(
+        ctx.fieldData.map(async (_, i) => {
+          await Promise.all(
+            childFields.map(async child => {
+              if (!child.dockiteField) {
+                throw new Error(
+                  `dockiteFiled failed to map for ${this.schemaField.name}.${child.name}`,
+                );
+              }
 
-        const childCtx: HookContextWithOldData = {
-          ...ctx,
-          data: ctx.data[this.schemaField.name],
-          fieldData: ctx.data[this.schemaField.name][child.name],
-          field: child as Field,
-        };
+              const childCtx: HookContextWithOldData = {
+                ...ctx,
+                data: ctx.data[this.schemaField.name][i],
+                fieldData: ctx.data[this.schemaField.name][i][child.name],
+                field: child as Field,
+              };
 
-        await child.dockiteField.onCreate(childCtx);
-      }),
-    );
+              await child.dockiteField.onCreate(childCtx);
+            }),
+          );
+        }),
+      );
+    } else {
+      await Promise.all(
+        childFields.map(async child => {
+          if (!child.dockiteField) {
+            throw new Error(
+              `dockiteFiled failed to map for ${this.schemaField.name}.${child.name}`,
+            );
+          }
+
+          const childCtx: HookContextWithOldData = {
+            ...ctx,
+            data: ctx.data[this.schemaField.name],
+            fieldData: ctx.data[this.schemaField.name][child.name],
+            field: child as Field,
+          };
+
+          await child.dockiteField.onCreate(childCtx);
+        }),
+      );
+    }
   }
 
   public async onUpdate(ctx: HookContextWithOldData): Promise<void> {
     const childFields = this.getMappedChildFields();
 
-    await Promise.all(
-      childFields.map(async child => {
-        if (!child.dockiteField) {
-          throw new Error(`dockiteFiled failed to map for ${this.schemaField.name}.${child.name}`);
-        }
+    if (Array.isArray(ctx.fieldData)) {
+      await Promise.all(
+        ctx.fieldData.map(async (_, i) => {
+          await Promise.all(
+            childFields.map(async child => {
+              if (!child.dockiteField) {
+                throw new Error(
+                  `dockiteFiled failed to map for ${this.schemaField.name}.${child.name}`,
+                );
+              }
 
-        const oldData = (ctx.oldData ?? {})[this.schemaField.name];
+              const oldData = ((ctx.oldData ?? {})[this.schemaField.name] ?? [])[i];
 
-        const childCtx: HookContextWithOldData = {
-          ...ctx,
-          data: ctx.data[this.schemaField.name],
-          fieldData: ctx.data[this.schemaField.name][child.name],
-          field: child as Field,
-          oldData,
-        };
+              const childCtx: HookContextWithOldData = {
+                ...ctx,
+                data: ctx.data[this.schemaField.name][i],
+                fieldData: ctx.data[this.schemaField.name][i][child.name],
+                field: child as Field,
+                oldData,
+              };
 
-        await child.dockiteField.onUpdate(childCtx);
-      }),
-    );
+              await child.dockiteField.onUpdate(childCtx);
+            }),
+          );
+        }),
+      );
+    } else {
+      await Promise.all(
+        childFields.map(async child => {
+          if (!child.dockiteField) {
+            throw new Error(
+              `dockiteFiled failed to map for ${this.schemaField.name}.${child.name}`,
+            );
+          }
+
+          const oldData = (ctx.oldData ?? {})[this.schemaField.name];
+
+          const childCtx: HookContextWithOldData = {
+            ...ctx,
+            data: ctx.data[this.schemaField.name],
+            fieldData: ctx.data[this.schemaField.name][child.name],
+            field: child as Field,
+            oldData,
+          };
+
+          await child.dockiteField.onUpdate(childCtx);
+        }),
+      );
+    }
   }
 
   public async onSoftDelete(ctx: HookContext): Promise<void> {
     const childFields = this.getMappedChildFields();
 
-    await Promise.all(
-      childFields.map(async child => {
-        if (!child.dockiteField) {
-          throw new Error(`dockiteFiled failed to map for ${this.schemaField.name}.${child.name}`);
-        }
+    if (Array.isArray(ctx.fieldData)) {
+      await Promise.all(
+        ctx.fieldData.map(async (_, i) => {
+          await Promise.all(
+            childFields.map(async child => {
+              if (!child.dockiteField) {
+                throw new Error(
+                  `dockiteFiled failed to map for ${this.schemaField.name}.${child.name}`,
+                );
+              }
 
-        const childCtx: HookContextWithOldData = {
-          ...ctx,
-          data: ctx.data[this.schemaField.name],
-          fieldData: ctx.data[this.schemaField.name][child.name],
-          field: child as Field,
-        };
+              const childCtx: HookContextWithOldData = {
+                ...ctx,
+                data: ctx.data[this.schemaField.name][i],
+                fieldData: ctx.data[this.schemaField.name][i][child.name],
+                field: child as Field,
+              };
 
-        await child.dockiteField.onSoftDelete(childCtx);
-      }),
-    );
+              await child.dockiteField.onSoftDelete(childCtx);
+            }),
+          );
+        }),
+      );
+    } else {
+      await Promise.all(
+        childFields.map(async child => {
+          if (!child.dockiteField) {
+            throw new Error(
+              `dockiteFiled failed to map for ${this.schemaField.name}.${child.name}`,
+            );
+          }
+
+          const childCtx: HookContextWithOldData = {
+            ...ctx,
+            data: ctx.data[this.schemaField.name],
+            fieldData: ctx.data[this.schemaField.name][child.name],
+            field: child as Field,
+          };
+
+          await child.dockiteField.onSoftDelete(childCtx);
+        }),
+      );
+    }
   }
 
   public async onPermanentDelete(ctx: HookContext): Promise<void> {
     const childFields = this.getMappedChildFields();
 
-    await Promise.all(
-      childFields.map(async child => {
-        if (!child.dockiteField) {
-          throw new Error(`dockiteFiled failed to map for ${this.schemaField.name}.${child.name}`);
-        }
+    if (Array.isArray(ctx.fieldData)) {
+      await Promise.all(
+        ctx.fieldData.map(async (_, i) => {
+          await Promise.all(
+            childFields.map(async child => {
+              if (!child.dockiteField) {
+                throw new Error(
+                  `dockiteFiled failed to map for ${this.schemaField.name}.${child.name}`,
+                );
+              }
 
-        const childCtx: HookContextWithOldData = {
-          ...ctx,
-          data: ctx.data[this.schemaField.name],
-          fieldData: ctx.data[this.schemaField.name][child.name],
-          field: child as Field,
-        };
+              const childCtx: HookContextWithOldData = {
+                ...ctx,
+                data: ctx.data[this.schemaField.name][i],
+                fieldData: ctx.data[this.schemaField.name][i][child.name],
+                field: child as Field,
+              };
 
-        await child.dockiteField.onPermanentDelete(childCtx);
-      }),
-    );
+              await child.dockiteField.onPermanentDelete(childCtx);
+            }),
+          );
+        }),
+      );
+    } else {
+      await Promise.all(
+        childFields.map(async child => {
+          if (!child.dockiteField) {
+            throw new Error(
+              `dockiteFiled failed to map for ${this.schemaField.name}.${child.name}`,
+            );
+          }
+
+          const childCtx: HookContextWithOldData = {
+            ...ctx,
+            data: ctx.data[this.schemaField.name],
+            fieldData: ctx.data[this.schemaField.name][child.name],
+            field: child as Field,
+          };
+
+          await child.dockiteField.onPermanentDelete(childCtx);
+        }),
+      );
+    }
   }
 
   public async onFieldCreate(): Promise<void> {
