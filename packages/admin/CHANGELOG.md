@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.31](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.30...@dockite/admin@0.4.0-alpha.31) (2020-08-09)
+
+
+### Bug Fixes
+
+* **admin:** resolve broken field reordering ([63215a0](https://github.com/dockite/dockite/commit/63215a04f4a4a4015ef073a1ebaf51c7e4da1712))
+
+
+
+
+
 # [0.4.0-alpha.30](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.29...@dockite/admin@0.4.0-alpha.30) (2020-08-09)
 
 **Note:** Version bump only for package @dockite/admin
