@@ -16,8 +16,22 @@
     "plugin:vue/base",
     "plugin:vue/essential",
     "plugin:vue/recommended",
-    "plugin:vue/strongly-recommended"
+    "plugin:vue/strongly-recommended",
+    "prettier/vue",
+    "plugin:prettier/recommended"
   ],
+  "settings": {
+    "import/extensions": [".ts", ".tsx", ".vue", ".js", ".mjs"],
+    "import/parsers": {
+      "@typescript-eslint/parser": [".ts", ".tsx", ".vue", ".js", ".mjs"]
+    },
+    "import/resolver": {
+      "node": {
+        "extensions": [".ts", ".tsx", ".vue", ".js", ".mjs"]
+      }
+    },
+    "import/no-cycle": "warn"
+  },
   "rules": {
     "class-methods-use-this": "off",
     "max-classes-per-file": "off",
@@ -45,8 +59,11 @@
       }
     ],
     "import/no-cycle": "off",
-    "vue/component-tags-order": ["error", {
-      "order": ["template", "script", "style"]
-    }]
+    "vue/component-tags-order": [
+      "error",
+      {
+        "order": ["template", "script", "style"]
+      }
+    ]
   }
 }
