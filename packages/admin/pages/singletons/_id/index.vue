@@ -57,6 +57,7 @@
               :name="field.name"
               :field-config="field"
               :form-data="form"
+              :schema="singleton"
               :groups.sync="groups"
             >
             </component>
@@ -79,7 +80,7 @@
 <script lang="ts">
 import { Singleton, Field } from '@dockite/database';
 import { Form } from 'element-ui';
-import { sortBy, omit } from 'lodash';
+import { sortBy, omit, cloneDeep } from 'lodash';
 import { Component, Vue, Watch, Ref } from 'nuxt-property-decorator';
 import { Fragment } from 'vue-fragment';
 
@@ -171,12 +172,12 @@ export default class CreateSingletonDocumentPage extends Vue {
   }
 
   public initialiseForm(): void {
-    this.fields.forEach(field => {
-      if (this.singleton && Object.keys(this.singleton.data).includes(field.name)) {
-        Vue.set(this.form, field.name, this.singleton.data[field.name]);
-      }
+    if (this.singleton) {
+      this.form = { ...this.form, ...cloneDeep(this.singleton.data) };
+    }
 
-      if (!Object.keys(this.form).includes(field.name)) {
+    this.fields.forEach(field => {
+      if (!this.form[field.name]) {
         Vue.set(this.form, field.name, null);
       }
     });

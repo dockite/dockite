@@ -221,7 +221,8 @@ export class SchemaResolver {
     @Ctx()
     ctx: GlobalContext,
   ): Promise<Schema | null> {
-    const repository = getCustomRepository(SchemaImportRepository);
+    const schemaImportRepository = getCustomRepository(SchemaImportRepository);
+    const schemaRepository = getRepository(Schema);
 
     const parsedPayload: Schema = JSON.parse(payload);
 
@@ -238,7 +239,17 @@ export class SchemaResolver {
       throw new AuthenticationError('Not authenticated');
     }
 
-    return repository.importSchema(schemaId, parsedPayload, ctx.user.id);
+    const importedSchema = await schemaImportRepository.importSchema(
+      schemaId,
+      parsedPayload,
+      ctx.user.id,
+    );
+
+    if (!importedSchema) {
+      throw new Error('Error importing schema');
+    }
+
+    return schemaRepository.findOneOrFail(importedSchema.id, { relations: ['fields'] });
   }
 
   /**

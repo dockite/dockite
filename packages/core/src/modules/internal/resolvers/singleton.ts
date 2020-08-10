@@ -255,6 +255,7 @@ export class SingletonResolver {
 
     const schemaImportRepository = getCustomRepository(SchemaImportRepository);
     const documentRepository = getRepository(Document);
+    const schemaRepository = getRepository(Schema);
 
     const parsedPayload: Schema = JSON.parse(payload);
 
@@ -271,33 +272,37 @@ export class SingletonResolver {
       throw new AuthenticationError('Not authenticated');
     }
 
-    const newSingleton = await schemaImportRepository.importSchema(
+    const importedSingleton = await schemaImportRepository.importSchema(
       schemaId,
       parsedPayload,
       ctx.user.id,
     );
 
-    if (!newSingleton) {
+    if (!importedSingleton) {
       throw new Error('Singleton failed to be imported');
     }
 
+    const singleton = await schemaRepository.findOneOrFail(importedSingleton.id, {
+      relations: ['fields'],
+    });
+
     try {
       const document = await documentRepository.findOneOrFail({
-        where: { schemaId: newSingleton.id },
+        where: { schemaId: singleton.id },
       });
 
-      return { ...newSingleton, data: document.data };
+      return { ...singleton, data: document.data };
     } catch (_) {
       const document = documentRepository.create({
-        data: this.makeInitialSingletonData(newSingleton.fields),
+        data: this.makeInitialSingletonData(singleton.fields),
         locale: 'en-AU',
         userId: user.id,
-        schemaId: newSingleton.id,
+        schemaId: singleton.id,
       });
 
       await documentRepository.save(document);
 
-      return { ...newSingleton, data: document.data };
+      return { ...singleton, data: document.data };
     }
   }
 
