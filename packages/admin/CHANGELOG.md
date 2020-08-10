@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.32](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.31...@dockite/admin@0.4.0-alpha.32) (2020-08-10)
+
+
+### Features
+
+* assorted fixes ([81aca23](https://github.com/dockite/dockite/commit/81aca238c2025a667d589e8ee467979b6e7f66ca))
+
+
+
+
+
 # [0.4.0-alpha.31](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.30...@dockite/admin@0.4.0-alpha.31) (2020-08-09)
 
 

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.11](https://github.com/dockite/dockite/compare/@dockite/field-wysiwyg@0.3.0-alpha.10...@dockite/field-wysiwyg@0.3.0-alpha.11) (2020-08-10)
+
+
+### Features
+
+* assorted fixes ([81aca23](https://github.com/dockite/dockite/commit/81aca238c2025a667d589e8ee467979b6e7f66ca))
+
+
+
+
+
 # 0.3.0-alpha.10 (2020-08-09)
 
 
