@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.25](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.24...@dockite/core@0.4.0-alpha.25) (2020-08-10)
+
+
+### Bug Fixes
+
+* **admin,core:** further import and singleton fixes ([7d09bcb](https://github.com/dockite/dockite/commit/7d09bcb5e27ce77eb8b34043383a7b45616f2e6f))
+
+
+
+
+
 # [0.4.0-alpha.24](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.23...@dockite/core@0.4.0-alpha.24) (2020-08-10)
 
 
