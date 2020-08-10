@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.33](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.32...@dockite/admin@0.4.0-alpha.33) (2020-08-10)
+
+
+### Features
+
+* **core,field-s3-image:** allow min and max images, resolve imports ([e1cfe22](https://github.com/dockite/dockite/commit/e1cfe22dc54e42986a8401a7eb8ae5b3f96b09c1))
+
+
+
+
+
 # [0.4.0-alpha.32](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.31...@dockite/admin@0.4.0-alpha.32) (2020-08-10)
 
 
