@@ -90,11 +90,11 @@ export default class ImportSingletonWithIdPage extends Vue {
     if (this.singleton) {
       this.payload = JSON.stringify(
         {
-          ...omit(this.singleton, ['id', 'type', 'createdAt', 'updatedAt', '__typename']),
+          ...omit(this.singleton, 'type', 'createdAt', 'updatedAt', 'deletedAt', '__typename'),
           groups: Object.keys(this.singleton.groups).map(key => ({
             [key]: this.singleton.groups[key],
           })),
-          fields: this.singleton.fields.map(field => omit(field, ['singletonId', '__typename'])),
+          fields: this.singleton.fields.map(field => omit(field, 'schemaId', '__typename')),
         },
         null,
         2,

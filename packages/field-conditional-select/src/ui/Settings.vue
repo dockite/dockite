@@ -9,7 +9,7 @@
       </div>
     </el-form-item>
 
-    <el-form-item label="Options" :class="{ 'is-error': error !== '' }">
+    <el-form-item class="overflow-x-auto" label="Options" :class="{ 'is-error': error !== '' }">
       <el-table
         style="border: 1px solid #dcdfe6; border-radius: 4px; margin-bottom: 0.5rem;"
         :data="tableData"
@@ -18,6 +18,13 @@
         <el-table-column prop="value" label="Value" />
         <el-table-column prop="fieldsToHide" label="Fields To Hide" />
         <el-table-column prop="groupsToHide" label="Groups To Hide" />
+        <el-table-column label="Action">
+          <template slot-scope="scope">
+            <el-button type="text" size="small" @click="handleRemoveOption(scope.row.key)">
+              <i class="el-icon-delete" />
+            </el-button>
+          </template>
+        </el-table-column>
       </el-table>
 
       <el-input v-model="optionLabel" class="mb-2" placeholder="Label" />
@@ -140,6 +147,11 @@ export default class SelectFieldSettingsComponent extends Vue {
   public handleAddOption() {
     this.error = '';
 
+    if (this.settings.options[this.optionLabel]) {
+      this.error = 'Label has already been used.';
+      return;
+    }
+
     if (
       this.optionLabel !== '' &&
       this.optionValue.value &&
@@ -162,6 +174,10 @@ export default class SelectFieldSettingsComponent extends Vue {
     } else {
       this.error = 'Both option label and option value must be provided.';
     }
+  }
+
+  public handleRemoveOption(label: string): void {
+    Vue.delete(this.settings.options, label);
   }
 
   beforeMount() {

@@ -12,14 +12,14 @@
     </el-alert>
     <div v-else>
       <el-upload
-        v-show="fieldData.length < settings.limit"
+        v-show="fieldData.length < settings.max"
         :key="key"
         action="#"
         mutiple
         :accept="settings.acceptedExtensions.join(',')"
         :http-request="handleUpload"
         :before-upload="handleBeforeUpload"
-        :limit="settings.limit"
+        :limit="settings.max"
         :show-file-list="false"
       >
         <el-button type="primary">
@@ -74,8 +74,13 @@ import { Schema } from '@dockite/database';
 import axios from 'axios';
 import gql from 'graphql-tag';
 
-import { S3ImageType, S3ImageFieldSettings, ImageExtension, S3Settings } from '../types';
-import { DockiteFieldS3ImageEntity } from '../../lib/types';
+import {
+  S3ImageType,
+  S3ImageFieldSettings,
+  ImageExtension,
+  S3Settings,
+  DockiteFieldS3ImageEntity,
+} from '../types';
 
 const presignURLMutation = gql`
   mutation PresignS3Object($input: PresignInput!) {
@@ -333,6 +338,34 @@ export default class S3ImageFieldInputComponent extends Vue {
     if (this.value === null) {
       // this.$emit('input', );
     }
+
+    if (this.settings.multiple) {
+      if (this.settings.min) {
+        this.rules.push(this.getMinRule());
+      }
+
+      if (this.settings.max) {
+        this.rules.push(this.getMaxRule());
+      }
+    }
+  }
+
+  public getMinRule(): object {
+    return {
+      type: 'array',
+      min: this.settings.min,
+      message: `${this.fieldConfig.title} must contain at least ${this.settings.min} images.`,
+      trigger: 'blur',
+    };
+  }
+
+  public getMaxRule(): object {
+    return {
+      type: 'array',
+      max: this.settings.max,
+      message: `${this.fieldConfig.title} must contain at most ${this.settings.max} images.`,
+      trigger: 'blur',
+    };
   }
 }
 </script>

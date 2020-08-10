@@ -79,8 +79,15 @@
       </small>
     </el-form-item>
 
-    <el-form-item v-show="settings.multiple" label="Image Limit" prop="settings.limit">
-      <el-input-number v-model="settings.limit" style="width: 100%" />
+    <el-form-item v-show="settings.multiple" label="Minimum number of Images" prop="settings.min">
+      <el-input-number v-model="settings.min" style="width: 100%" />
+      <small>
+        The minimum number of images that can be uploaded.
+      </small>
+    </el-form-item>
+
+    <el-form-item v-show="settings.multiple" label="Maximum number of Images" prop="settings.max">
+      <el-input-number v-model="settings.max" style="width: 100%" />
       <small>
         The maximum number of images that can be uploaded.
       </small>

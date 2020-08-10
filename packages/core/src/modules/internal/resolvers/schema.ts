@@ -225,6 +225,8 @@ export class SchemaResolver {
 
     const parsedPayload: Schema = JSON.parse(payload);
 
+    parsedPayload.type = SchemaType.DEFAULT;
+
     const valid = schemaImportValidator(parsedPayload);
 
     if (!valid) {

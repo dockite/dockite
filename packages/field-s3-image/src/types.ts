@@ -1,4 +1,3 @@
-import { FieldSettings } from '@dockite/types';
 import { Field } from '@dockite/database';
 
 export interface S3ImageType {
@@ -23,7 +22,7 @@ export interface S3Settings {
   bucket: string;
 }
 
-export interface S3ImageFieldSettings extends S3Settings, FieldSettings {
+export interface S3ImageFieldSettings extends S3Settings {
   required: boolean;
   acceptedExtensions: ImageExtension[];
   maxSizeKB: number;
@@ -34,7 +33,8 @@ export interface S3ImageFieldSettings extends S3Settings, FieldSettings {
   maxHeight: number | null;
   ratio: number | null;
   multiple: boolean;
-  limit: number;
+  min: number;
+  max: number;
   useSchemaS3Settings: boolean;
   pathPrefix: string | null;
 }

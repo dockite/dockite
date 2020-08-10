@@ -28,7 +28,7 @@
         <el-table-column label="Action">
           <template slot-scope="scope">
             <el-button type="text" size="small" @click="handleRemoveOption(scope.row.key)">
-              <i class="el-icon-trash"></i>
+              <i class="el-icon-delete" />
             </el-button>
           </template>
         </el-table-column>
@@ -105,11 +105,12 @@ export default class SelectFieldSettingsComponent extends Vue {
   public handleAddOption(): void {
     this.error = '';
 
-    if (
-      this.optionLabel !== '' &&
-      this.optionValue !== '' &&
-      !this.settings.options[this.optionLabel]
-    ) {
+    if (this.settings.options[this.optionLabel]) {
+      this.error = 'Label has already been used.';
+      return;
+    }
+
+    if (this.optionLabel !== '' && this.optionValue !== '') {
       this.settings = {
         ...this.settings,
         options: {

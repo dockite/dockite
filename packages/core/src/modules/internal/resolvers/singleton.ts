@@ -5,6 +5,7 @@ import {
   SchemaRevision,
   Singleton,
   SchemaType,
+  Field,
 } from '@dockite/database';
 import { GlobalContext } from '@dockite/types';
 import { AuthenticationError, ValidationError } from 'apollo-server-express';
@@ -237,7 +238,7 @@ export class SingletonResolver {
    */
   @Authenticated()
   @Authorized('internal:schema:import', { derriveAlternativeScopes: false })
-  @Mutation(_returns => Schema)
+  @Mutation(_returns => Singleton)
   async importSingleton(
     @Arg('schemaId', _type => String, { nullable: true })
     schemaId: string | null,
@@ -245,10 +246,19 @@ export class SingletonResolver {
     payload: string,
     @Ctx()
     ctx: GlobalContext,
-  ): Promise<Schema | null> {
-    const repository = getCustomRepository(SchemaImportRepository);
+  ): Promise<Singleton | null> {
+    const { user } = ctx;
+
+    if (!user) {
+      throw new GraphQLError('User not found');
+    }
+
+    const schemaImportRepository = getCustomRepository(SchemaImportRepository);
+    const documentRepository = getRepository(Document);
 
     const parsedPayload: Schema = JSON.parse(payload);
+
+    parsedPayload.type = SchemaType.SINGLETON;
 
     const valid = schemaImportValidator(parsedPayload);
 
@@ -261,7 +271,34 @@ export class SingletonResolver {
       throw new AuthenticationError('Not authenticated');
     }
 
-    return repository.importSchema(schemaId, parsedPayload, ctx.user.id);
+    const newSingleton = await schemaImportRepository.importSchema(
+      schemaId,
+      parsedPayload,
+      ctx.user.id,
+    );
+
+    if (!newSingleton) {
+      throw new Error('Singleton failed to be imported');
+    }
+
+    try {
+      const document = await documentRepository.findOneOrFail({
+        where: { schemaId: newSingleton.id },
+      });
+
+      return { ...newSingleton, data: document.data };
+    } catch (_) {
+      const document = documentRepository.create({
+        data: this.makeInitialSingletonData(newSingleton.fields),
+        locale: 'en-AU',
+        userId: user.id,
+        schemaId: newSingleton.id,
+      });
+
+      await documentRepository.save(document);
+
+      return { ...newSingleton, data: document.data };
+    }
   }
 
   /**
@@ -312,5 +349,21 @@ export class SingletonResolver {
     });
 
     await revisionRepository.save(revision);
+  }
+
+  private makeInitialSingletonData(fields: Field[]): Record<string, any> {
+    return fields.reduce((acc, curr) => {
+      if (curr.settings.children) {
+        return {
+          ...acc,
+          [curr.name]: this.makeInitialSingletonData(curr.settings.children),
+        };
+      }
+
+      return {
+        ...acc,
+        [curr.name]: curr.settings.default ?? null,
+      };
+    }, {});
   }
 }
