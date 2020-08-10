@@ -30,36 +30,42 @@
       title="Select a Document"
       @close="dialogVisible = false"
     >
-      <el-table :data="documents" :row-key="record => record.id" :max-height="400">
-        <el-table-column label="" width="25">
-          <template slot-scope="scope">
-            <input v-model="document" type="radio" :value="scope.row" />
-          </template>
-        </el-table-column>
+      <el-row type="flex" justify="space-between" class="pb-3">
+        <span />
+        <el-input v-model="term" style="max-width: 400px;" placeholder="Search term" />
+      </el-row>
+      <div class="border rounded">
+        <el-table :data="documents" :row-key="record => record.id" max-height="60vh">
+          <el-table-column label="" width="25">
+            <template slot-scope="scope">
+              <input v-model="document" type="radio" :value="scope.row" />
+            </template>
+          </el-table-column>
 
-        <el-table-column prop="id" label="ID">
-          <template slot-scope="scope">
-            {{ scope.row.id | shortDesc }}
-          </template>
-        </el-table-column>
-        <el-table-column label="Identifier">
-          <template slot-scope="scope">
-            <span v-if="scope.row.data.name">
-              {{ scope.row.data.name }}
-            </span>
-            <span v-else-if="scope.row.data.title">
-              {{ scope.row.data.title }}
-            </span>
-            <span v-else-if="scope.row.data.identifier">
-              {{ scope.row.data.identifier }}
-            </span>
-            <span v-else :title="scope.row.data">
-              {{ JSON.stringify(scope.row.data).substr(0, 15) }}
-            </span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="schema.name" label="Schema" />
-      </el-table>
+          <el-table-column prop="id" label="ID">
+            <template slot-scope="scope">
+              {{ scope.row.id | shortDesc }}
+            </template>
+          </el-table-column>
+          <el-table-column label="Identifier">
+            <template slot-scope="scope">
+              <span v-if="scope.row.data.name">
+                {{ scope.row.data.name }}
+              </span>
+              <span v-else-if="scope.row.data.title">
+                {{ scope.row.data.title }}
+              </span>
+              <span v-else-if="scope.row.data.identifier">
+                {{ scope.row.data.identifier }}
+              </span>
+              <span v-else :title="scope.row.data">
+                {{ JSON.stringify(scope.row.data).substr(0, 15) }}
+              </span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="schema.name" label="Schema" />
+        </el-table>
+      </div>
     </el-dialog>
 
     <div class="el-form-item__description">
@@ -103,6 +109,8 @@ export default class ReferenceFieldInputComponent extends Vue {
   public documents: Document[] = [];
 
   public document: Document | null = null;
+
+  public term = '';
 
   public dialogVisible = false;
 
@@ -167,13 +175,20 @@ export default class ReferenceFieldInputComponent extends Vue {
     }
   }
 
+  @Watch('term')
+  handleTermChange(): void {
+    this.page = 1;
+
+    this.findDocuments();
+  }
+
   beforeMount(): void {
     if (!this.fieldData) {
       this.findDocuments();
     }
 
     if (this.fieldConfig.settings.required) {
-      this.rules.push(this.getRequiredRule);
+      this.rules.push(this.getRequiredRule());
     }
   }
 
@@ -187,12 +202,17 @@ export default class ReferenceFieldInputComponent extends Vue {
 
   public async findDocuments(): Promise<void> {
     const { schemaIds } = this.fieldConfig.settings;
-    const { page } = this;
+    const { page, term } = this;
 
     const { data } = await this.$apolloClient.query({
       query: gql`
-        query FindDocumentsBySchemaIds($schemaIds: [String!], $page: Int = 1, $perPage: Int = 20) {
-          findDocuments(schemaIds: $schemaIds, page: $page, perPage: $perPage) {
+        query SearchDocumentsBySchemaIds(
+          $schemaIds: [String!]
+          $page: Int = 1
+          $perPage: Int = 20
+          $term: String!
+        ) {
+          searchDocuments(schemaIds: $schemaIds, page: $page, perPage: $perPage, term: $term) {
             results {
               id
               data
@@ -208,10 +228,11 @@ export default class ReferenceFieldInputComponent extends Vue {
       variables: {
         schemaIds,
         page,
+        term,
       },
     });
 
-    this.documents = data.findDocuments.results;
+    this.documents = data.searchDocuments.results;
   }
 
   public async getDocumentById(): Promise<void> {
@@ -331,6 +352,10 @@ export default class ReferenceFieldInputComponent extends Vue {
 
 .dockite-dialog--reference-selection {
   width: 80%;
-  max-width: 650px;
+  max-width: 1000px;
+
+  .el-dialog__body {
+    padding-top: 0;
+  }
 }
 </style>

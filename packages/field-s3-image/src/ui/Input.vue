@@ -173,7 +173,10 @@ export default class S3ImageFieldInputComponent extends Vue {
         variables: {
           input: {
             ...this.s3Settings,
-            object: `${this.schema.name}/${checksum.substring(0, 8)}/${file.name.toLowerCase()}`,
+            object: `${this.settings.pathPrefix || this.schema.name}/${checksum.substring(
+              0,
+              8,
+            )}/${file.name.toLowerCase()}`,
           },
         },
       });

@@ -85,10 +85,11 @@ export default class ImportSchemaWithIdPage extends Vue {
 
   @Watch('schema', { immediate: true })
   handleSchemaChange(): void {
-    if (this.schema) {
+    console.log(this.schema);
+    if (this.schema !== null) {
       this.payload = JSON.stringify(
         {
-          ...omit(this.schema, ['id', 'type', 'createdAt', 'updatedAt', '__typename']),
+          ...omit(this.schema, 'type', 'createdAt', 'updatedAt', 'deletedAt', '__typename'),
           groups: Object.keys(this.schema.groups).map(key => ({ [key]: this.schema.groups[key] })),
           fields: this.schema.fields.map(field => omit(field, ['schemaId', '__typename'])),
         },
@@ -96,6 +97,10 @@ export default class ImportSchemaWithIdPage extends Vue {
         2,
       );
     }
+  }
+
+  mounted(): void {
+    this.fetchSchemaById().then(() => this.handleSchemaChange());
   }
 }
 </script>

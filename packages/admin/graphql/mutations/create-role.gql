@@ -1,5 +1,5 @@
 mutation CreateRole($name: String!, $scopes: [String!]!) {
-  createRole(name: $name, roles: $roles) {
+  createRole(name: $name, scopes: $scopes) {
     name
     scopes
   }

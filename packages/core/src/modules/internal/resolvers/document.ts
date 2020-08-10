@@ -233,6 +233,8 @@ export class DocumentResolver {
     term: string,
     @Arg('schemaId', _type => String, { nullable: true })
     schemaId: string | null,
+    @Arg('schemaIds', _type => [String], { nullable: true })
+    schemaIds: string[] | null,
     @Arg('page', _type => Int, { defaultValue: 1 })
     page: number,
     @Arg('perPage', _type => Int, { defaultValue: 20 })
@@ -258,6 +260,10 @@ export class DocumentResolver {
 
     if (schemaId && schemaId !== '') {
       qb.andWhere('searchEngine.schemaId = :schemaId', { schemaId });
+    }
+
+    if (schemaIds && schemaIds.length > 0) {
+      qb.andWhere('searchEngine.schemaId IN (:...schemaIds)', { schemaIds });
     }
 
     const [results, totalItems] = await qb.getManyAndCount();

@@ -120,7 +120,7 @@ export default class CreateSingletonDocumentPage extends Vue {
   public initialiseForm(): void {
     this.fields.forEach(field => {
       if (!this.form[field.name]) {
-        Vue.set(this.form, field.name, null);
+        Vue.set(this.form, field.name, field.settings.default ?? null);
       }
     });
   }

@@ -18,17 +18,17 @@
 
       <el-menu-item v-if="$can('internal:schema:read')" index="/documents">
         <i class="el-icon-document"></i>
-        <span slot="title">{{ $t('sideMenu.documents') }}</span>
+        <span slot="title">{{ $t('sideMenu.documents') }}s</span>
       </el-menu-item>
 
       <el-submenu v-else index="/documents">
         <template slot="title">
           <i class="el-icon-document"></i>
-          <span slot="title">{{ $t('sideMenu.documents') }}</span>
+          <span slot="title">{{ $t('sideMenu.documents') }}s</span>
         </template>
 
         <el-menu-item index="/documents">
-          <span slot="title">All Documents</span>
+          <span slot="title">All {{ $t('sideMenu.documents') }}s</span>
         </el-menu-item>
 
         <el-menu-item-group
@@ -48,17 +48,17 @@
       <el-submenu v-if="$can('internal:schema:read')" index="/schemas">
         <template slot="title">
           <i class="el-icon-s-grid"></i>
-          <span slot="title">{{ $t('sideMenu.schemas') }}</span>
+          <span slot="title">{{ $t('sideMenu.schemas') }}s</span>
         </template>
         <el-menu-item-group title="Management">
           <el-menu-item index="/schemas">
-            <span slot="title">All Schemas</span>
+            <span slot="title">All {{ $t('sideMenu.schemas') }}s</span>
           </el-menu-item>
           <el-menu-item index="/schemas/create">
-            <span slot="title">Create Schema</span>
+            <span slot="title">Create {{ $t('sideMenu.schemas') }}</span>
           </el-menu-item>
         </el-menu-item-group>
-        <el-menu-item-group v-if="allSchemas" title="Schemas">
+        <el-menu-item-group v-if="allSchemas" :title="$t('sideMenu.schemas') + 's'">
           <el-menu-item
             v-for="schema in allSchemas.results"
             :key="schema.id"
@@ -69,22 +69,25 @@
         </el-menu-item-group>
       </el-submenu>
 
-      <el-submenu index="/singletons">
+      <el-submenu
+        v-if="$can('internal:singleton:read') || $can('internal:singleton:create')"
+        index="/singletons"
+      >
         <template slot="title">
           <i class="el-icon-notebook-2"></i>
-          <span slot="title">{{ $t('sideMenu.singletons') }}</span>
+          <span slot="title">{{ $t('sideMenu.singletons') }}s</span>
         </template>
         <el-menu-item-group v-if="$can('internal:singleton:read')" title="Management">
           <el-menu-item index="/singletons">
-            <span slot="title">All Singletons</span>
+            <span slot="title">All {{ $t('sideMenu.singletons') }}s</span>
           </el-menu-item>
           <el-menu-item v-if="$can('internal:singleton:create')" index="/singletons/create">
-            <span slot="title">Create Singleton</span>
+            <span slot="title">Create {{ $t('sideMenu.singletons') }}</span>
           </el-menu-item>
         </el-menu-item-group>
         <el-menu-item-group
           v-if="allSingletons && allSingletons.results && allSingletons.results.length > 0"
-          title="Singletons"
+          :title="$t('sideMenu.singletons') + 's'"
         >
           <el-menu-item
             v-for="schema in allSingletons.results"
@@ -97,35 +100,42 @@
         <span v-else>
           <el-menu-item>
             <i class="el-icon-warning"></i>
-            No singletons
+            No {{ $t('sideMenu.singletons') }}s
           </el-menu-item>
         </span>
       </el-submenu>
 
-      <el-submenu index="/releases">
+      <!-- <el-submenu index="/releases">
         <template slot="title">
           <i class="el-icon-date"></i>
           <span slot="title">Releases (Coming Soon)</span>
         </template>
-      </el-submenu>
+      </el-submenu> -->
 
-      <el-submenu index="/settings">
+      <el-submenu
+        v-if="
+          $can('internal:users:read') ||
+            $can('internal:roles:read') ||
+            $can('internal:webhooks:read')
+        "
+        index="/settings"
+      >
         <template slot="title">
           <i class="el-icon-setting"></i>
           <span slot="title">Settings</span>
         </template>
 
-        <el-menu-item index="/settings/users">
+        <el-menu-item v-if="$can('internal:users:read')" index="/settings/users">
           <i class="el-icon-user"></i>
           <span slot="title">{{ $t('sideMenu.users') }}</span>
         </el-menu-item>
 
-        <el-menu-item index="/settings/roles">
+        <el-menu-item v-if="$can('internal:roles:read')" index="/settings/roles">
           <i class="el-icon-lock"></i>
           <span slot="title">{{ $t('sideMenu.roles') }}</span>
         </el-menu-item>
 
-        <el-menu-item index="/settings/webhooks">
+        <el-menu-item v-if="$can('internal:webhooks:read')" index="/settings/webhooks">
           <i class="el-icon-connection"></i>
           <span slot="title">{{ $t('sideMenu.webhooks') }}</span>
         </el-menu-item>

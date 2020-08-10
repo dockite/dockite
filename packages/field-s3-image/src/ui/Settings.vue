@@ -86,6 +86,13 @@
       </small>
     </el-form-item>
 
+    <el-form-item v-show="!settings.pathPrefix" label="Path Prefix" prop="settings.pathPrefix">
+      <el-input v-model="settings.pathPrefix" style="width: 100%" />
+      <small>
+        The prefix for the S3 object, if left empty the schema name will be used.
+      </small>
+    </el-form-item>
+
     <el-form-item label="Use Schema S3 Settings" prop="settings.useSchemaS3Settings">
       <el-switch v-model="settings.useSchemaS3Settings" />
       <small>

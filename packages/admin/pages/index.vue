@@ -5,10 +5,8 @@
     </portal>
     <div class="container">
       <div>
-        <logo />
-        <h1 class="title">
-          Dockite
-        </h1>
+        <logo class="m-auto w-2/3" />
+        <h1 class="title"></h1>
       </div>
     </div>
   </fragment>

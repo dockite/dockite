@@ -1,5 +1,10 @@
 <template>
-  <el-form-item :label="fieldConfig.title" :prop="name" :rules="rules" class="dockite-field-string">
+  <el-form-item
+    :label="fieldConfig.title"
+    :prop="name"
+    :rules="rules"
+    class="dockite-field-wysiwyg"
+  >
     <el-editor v-model="fieldData" :extensions="extensions" lang="en" />
     <div class="el-form-item__description">
       {{ fieldConfig.description }}
@@ -122,4 +127,10 @@ export default class WysiwygFieldInputComponent extends Vue {
 }
 </script>
 
-<style></style>
+<style lang="scss">
+.dockite-field-wysiwyg {
+  .el-tiptap-editor > .el-tiptap-editor__content {
+    padding: 7px 10px;
+  }
+}
+</style>

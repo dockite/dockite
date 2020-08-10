@@ -14,6 +14,7 @@ import 'codemirror/mode/javascript/javascript';
 import 'codemirror/addon/lint/lint';
 import 'codemirror/addon/lint/lint.css';
 import 'codemirror/addon/lint/json-lint';
+import 'codemirror/addon/display/autorefresh';
 
 @Component
 export default class ImportEditorComponent extends Vue {
@@ -38,6 +39,7 @@ export default class ImportEditorComponent extends Vue {
         lint: true,
         tabSize: 2,
         theme: 'nord',
+        autoRefresh: true,
       });
 
       this.editor.setSize('100%', '100%');
@@ -52,9 +54,19 @@ export default class ImportEditorComponent extends Vue {
     delete (window as any).jsonlint;
   }
 
-  @Watch('value')
+  @Watch('value', { immediate: true })
   handleValueChange(value: string): void {
-    this.editor.setValue(value);
+    if (this.editor) {
+      this.editor.setValue(value);
+
+      this.$nextTick(() => {
+        this.editor.refresh();
+      });
+    } else {
+      this.$nextTick(() => {
+        this.handleValueChange(value);
+      });
+    }
   }
 }
 </script>

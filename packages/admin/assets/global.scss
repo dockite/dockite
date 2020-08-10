@@ -1,4 +1,3 @@
-
 $--color-primary: #2b6cb0;
 $--font-path: '~element-ui/lib/theme-chalk/fonts';
 
@@ -13,7 +12,7 @@ $breakpoints: (
   'sm': 640px,
   'md': 768px,
   'lg': 1024px,
-  'xl': 1280px
+  'xl': 1280px,
 );
 
 @each $size, $value in $breakpoints {
@@ -23,7 +22,6 @@ $breakpoints: (
     margin: 0 auto;
   }
 }
-
 
 pre.dockite-data--raw {
   background: #eeeeee;
@@ -45,7 +43,7 @@ pre.dockite-data--raw {
   color: darken($--color-info, 15%);
 
   &:hover {
-    color: darken($--color-info, 22%)
+    color: darken($--color-info, 22%);
   }
 }
 
@@ -76,7 +74,21 @@ pre.dockite-data--raw {
   }
 }
 
-
 .el-icon-hamburger {
-  &:before { content:'\2630'; }
+  &:before {
+    content: '\2630';
+  }
+}
+
+li.el-dropdown-menu__item {
+  position: relative;
+}
+
+li.el-dropdown-menu__item a::before {
+  content: ' ';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }

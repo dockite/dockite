@@ -20,12 +20,12 @@
   },
   "sideMenu": {
     "home": "Home",
-    "documents": "Documents",
-    "schemas": "Schemas",
-    "singletons": "Singletons",
-    "webhooks": "Webhooks",
-    "users": "Users",
-    "roles": "Roles",
+    "documents": "Document",
+    "schemas": "Schema",
+    "singletons": "Singleton",
+    "webhooks": "Webhook",
+    "users": "User",
+    "roles": "Role",
     "account": "Account"
   }
 }

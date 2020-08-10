@@ -118,7 +118,7 @@ export default class GroupFieldInputComponent extends Vue {
 
   public handleUpdateVariant(name: string): void {
     this.fieldData = {
-      [name]: null,
+      [name]: this.selectedField?.settings?.default ?? null,
     };
   }
 
@@ -153,7 +153,7 @@ export default class GroupFieldInputComponent extends Vue {
   top: 10px;
   right: 10px;
   color: #f56c6c;
-  z-index: 9999;
+  z-index: 200;
 
   &:hover {
     color: #f56c6c;

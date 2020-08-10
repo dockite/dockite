@@ -22,6 +22,13 @@ const USER_SCOPES = [
   'internal:user:delete',
 ];
 
+const ROLE_SCOPES = [
+  'internal:role:create',
+  'internal:role:read',
+  'internal:role:update',
+  'internal:role:delete',
+];
+
 const RELEASE_SCOPES = [
   'internal:release:create',
   'internal:release:read',
@@ -43,6 +50,7 @@ export const scopes = [
   ...API_KEY_SCOPES,
   ...DOCUMENT_SCOPES,
   ...SCHEMA_SCOPES,
+  ...ROLE_SCOPES,
   ...USER_SCOPES,
   ...RELEASE_SCOPES,
   ...WEBHOOK_SCOPES,

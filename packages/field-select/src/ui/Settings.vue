@@ -25,6 +25,13 @@
       >
         <el-table-column prop="key" label="Label" />
         <el-table-column prop="value" label="Value" />
+        <el-table-column label="Action">
+          <template slot-scope="scope">
+            <el-button type="text" size="small" @click="handleRemoveOption(scope.row.key)">
+              <i class="el-icon-trash"></i>
+            </el-button>
+          </template>
+        </el-table-column>
       </el-table>
 
       <el-input v-model="optionLabel" style="margin-bottom: 0.5rem" placeholder="Label" />
@@ -95,10 +102,14 @@ export default class SelectFieldSettingsComponent extends Vue {
     });
   }
 
-  public handleAddOption() {
+  public handleAddOption(): void {
     this.error = '';
 
-    if (this.optionLabel !== '' && this.optionValue !== '') {
+    if (
+      this.optionLabel !== '' &&
+      this.optionValue !== '' &&
+      !this.settings.options[this.optionLabel]
+    ) {
       this.settings = {
         ...this.settings,
         options: {
@@ -114,7 +125,11 @@ export default class SelectFieldSettingsComponent extends Vue {
     }
   }
 
-  beforeMount() {
+  public handleRemoveOption(label: string): void {
+    Vue.delete(this.settings.options, label);
+  }
+
+  beforeMount(): void {
     if (Object.keys(this.settings).length === 0) {
       this.settings = { ...DockiteFieldSelect.defaultOptions };
     }

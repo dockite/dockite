@@ -7,8 +7,8 @@
         <el-dropdown v-loading="submitting" split-button @click="submit">
           Save and Publish
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>Save as Draft</el-dropdown-item>
-            <el-dropdown-item>Add to Release</el-dropdown-item>
+            <!-- <el-dropdown-item>Save as Draft</el-dropdown-item> -->
+            <!-- <el-dropdown-item>Add to Release</el-dropdown-item> -->
             <el-dropdown-item>
               <router-link class="block w-full" :to="`/documents/${documentId}/revisions`">
                 View Revisions
@@ -248,7 +248,7 @@ export default class UpdateDocumentPage extends Vue {
 
     this.fields.forEach(field => {
       if (!this.form[field.name]) {
-        Vue.set(this.form, field.name, null);
+        Vue.set(this.form, field.name, field.settings.default ?? null);
       }
     });
   }

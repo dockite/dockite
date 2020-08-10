@@ -73,6 +73,7 @@ export class DockiteFieldS3Image extends DockiteField {
     secretAccessKey: '',
     endpoint: 's3.amazonaws.com',
     bucket: '',
+    pathPrefix: null,
   };
 
   public async inputType(): Promise<GraphQLInputType> {
