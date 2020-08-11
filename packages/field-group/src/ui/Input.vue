@@ -7,11 +7,7 @@
         </div>
         <div class="px-3">
           <el-row
-            v-if="
-              repeatable &&
-                fieldData.length > 0 &&
-                fieldData.length < (settings.maxRows || Infinity)
-            "
+            v-if="repeatable && fieldData.length < (settings.maxRows || Infinity)"
             type="flex"
             justify="center"
             class="py-3"
@@ -102,7 +98,11 @@
           </template>
 
           <el-row
-            v-if="repeatable && fieldData.length < (settings.maxRows || Infinity)"
+            v-if="
+              repeatable &&
+                fieldData.length > 0 &&
+                fieldData.length < (settings.maxRows || Infinity)
+            "
             type="flex"
             justify="center"
             class="py-3"
