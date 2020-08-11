@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.23](https://github.com/dockite/dockite/compare/@dockite/field-group@0.4.0-alpha.22...@dockite/field-group@0.4.0-alpha.23) (2020-08-11)
+
+
+### Bug Fixes
+
+* **field-group:** resolve layout shift ([c6107f4](https://github.com/dockite/dockite/commit/c6107f4f3a858813ecd93a2437a40cfb9d27b5fc))
+* singleton and group field fixes ([e755e19](https://github.com/dockite/dockite/commit/e755e19b6dcbb762787139eee9410848eb35d642))
+
+
+
+
+
 # [0.4.0-alpha.22](https://github.com/dockite/dockite/compare/@dockite/field-group@0.4.0-alpha.21...@dockite/field-group@0.4.0-alpha.22) (2020-08-11)
 
 **Note:** Version bump only for package @dockite/field-group

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.28](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.27...@dockite/core@0.4.0-alpha.28) (2020-08-11)
+
+
+### Bug Fixes
+
+* singleton and group field fixes ([e755e19](https://github.com/dockite/dockite/commit/e755e19b6dcbb762787139eee9410848eb35d642))
+
+
+
+
+
 # [0.4.0-alpha.27](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.26...@dockite/core@0.4.0-alpha.27) (2020-08-11)
 
 
