@@ -7,7 +7,7 @@
     "debug": "DEBUG=* ts-node-dev --no-notify src/",
     "dev": "DEBUG=dockite* ts-node-dev --no-notify src/",
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx --quiet",
-    "build": "tsc",
+    "build": "tsc && cp -r ./src/modules/authentication/mail-templates ./lib/modules/authentication",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
