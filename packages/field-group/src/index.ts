@@ -18,6 +18,7 @@ import {
   GraphQLOutputType,
   Source,
 } from 'graphql';
+import { Schema } from '@dockite/database';
 
 import { GroupFieldSettings } from './types';
 
@@ -46,7 +47,10 @@ export class DockiteFieldGroup extends DockiteField {
         const mappedChild: Omit<Field, 'id'> = {
           ...child,
           schemaId: this.schemaField.schemaId,
-          schema: this.schemaField.schema,
+          schema: {
+            ...(this.schemaField.schema as Schema),
+            name: `${this.schemaField.schema?.name}_${this.schemaField.name}`,
+          },
         };
 
         const FieldClass = staticFields.find(staticField => staticField.type === child.type);

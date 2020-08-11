@@ -1,5 +1,5 @@
 import { DockiteField } from '@dockite/field';
-import { Field, FieldIOContext, HookContextWithOldData, HookContext } from '@dockite/types';
+import { Field, FieldIOContext, HookContextWithOldData, HookContext, Schema } from '@dockite/types';
 import {
   GraphQLInputObjectType,
   GraphQLInputType,
@@ -28,7 +28,10 @@ export class DockiteFieldVariant extends DockiteField {
         const mappedChild: Omit<Field, 'id'> = {
           ...child,
           schemaId: this.schemaField.id,
-          schema: this.schemaField.schema,
+          schema: {
+            ...(this.schemaField.schema as Schema),
+            name: `${this.schemaField.schema?.name}_${this.schemaField.name}`,
+          },
         };
 
         const FieldClass = staticFields.find(staticField => staticField.type === child.type);

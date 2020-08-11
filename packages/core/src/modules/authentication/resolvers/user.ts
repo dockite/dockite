@@ -136,7 +136,7 @@ export class UserResolver {
     }
 
     const fsPromise = fs.readFile(
-      path.join(__dirname, '../mail-templates/new-account.html'),
+      path.resolve(path.join(__dirname, '../mail-templates/new-account.html')),
       'utf-8',
     );
 
@@ -233,7 +233,7 @@ export class UserResolver {
 
     const user = await userRepository.findOneOrFail({ where: { email }, relations: ['roles'] });
     const fsPromise = fs.readFile(
-      path.join(__dirname, '../mail-templates/reset-password.html'),
+      path.resolve(path.join(__dirname, '../mail-templates/reset-password.html')),
       'utf-8',
     );
 

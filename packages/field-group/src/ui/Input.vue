@@ -1,79 +1,119 @@
 <template>
   <el-form-item :prop="name" :rules="rules" class="dockite-field-group">
-    <fieldset class="dockite-field-group">
-      <legend>{{ fieldConfig.title }}</legend>
-      <el-row type="flex" justify="center">
-        <el-button v-if="repeatable && fieldData.length > 0" @click.prevent="handleAddFieldBefore">
-          <i class="el-icon-plus" />
-        </el-button>
-      </el-row>
-      <template v-if="ready">
-        <template v-if="repeatable && Array.isArray(fieldData)">
-          <vue-draggable
-            v-model="fieldData"
-            v-bind="dragOptions"
-            handle=".item-handle"
-            @start="drag = true"
-            @end="drag = false"
+    <el-collapse :value="expanded" class="border">
+      <el-collapse-item :name="name">
+        <div slot="title" class="w-full px-3">
+          <span class="font-semibold">Group: {{ fieldConfig.title }}</span>
+        </div>
+        <div class="px-3">
+          <el-row
+            v-if="
+              repeatable &&
+                fieldData.length > 0 &&
+                fieldData.length < (settings.maxRows || Infinity)
+            "
+            type="flex"
+            justify="center"
+            class="py-3"
           >
-            <transition-group type="transition" :name="!drag ? 'flip-list' : null">
-              <div
-                v-for="(item, itemIndex) in fieldData"
-                :key="itemIndex"
-                class="dockite-field-group--item items-center"
-              >
-                <div class="pr-5 item-handle cursor-pointer">
-                  <i class="el-icon-hamburger text-xl" />
-                </div>
+            <el-button @click.prevent="handleAddFieldBefore">
+              <i class="el-icon-plus" />
+            </el-button>
+          </el-row>
 
-                <el-button
-                  v-if="repeatable"
-                  type="text"
-                  class="dockite-field-group--remove-item"
-                  title="Remove the current group item"
-                  @click.prevent="handleRemoveField(itemIndex)"
-                >
-                  <i class="el-icon-close" />
-                </el-button>
+          <template v-if="ready">
+            <template v-if="repeatable && Array.isArray(fieldData)">
+              <vue-draggable
+                v-model="fieldData"
+                v-bind="dragOptions"
+                handle=".item-handle"
+                @start="drag = true"
+                @end="drag = false"
+              >
+                <transition-group type="transition" :name="!drag ? 'flip-list' : null">
+                  <div
+                    v-for="(item, itemIndex) in fieldData"
+                    :key="itemIndex"
+                    class="dockite-field-group--item items-center border border-gray-500 border-dashed p-3 mb-3"
+                  >
+                    <div class="pr-5 item-handle cursor-pointer">
+                      <i class="el-icon-hamburger text-xl" />
+                    </div>
+
+                    <div class="flex-1 clearfix">
+                      <component
+                        :is="$dockiteFieldManager[field.type].input"
+                        v-for="(field, fieldIndex) in fields"
+                        :key="fieldIndex"
+                        v-model="fieldData[itemIndex][field.name]"
+                        :name="`${name}[${itemIndex}].${field.name}`"
+                        :field-config="field"
+                        :form-data="formData"
+                        :schema="schema"
+                      />
+
+                      <div v-if="repeatable" class="float-right">
+                        <el-button
+                          v-if="repeatable && itemIndex !== 0"
+                          type="text"
+                          @click.prevent="handleShiftFieldUp(itemIndex)"
+                        >
+                          Move Up
+                        </el-button>
+
+                        <el-button
+                          v-if="itemIndex < fieldData.length - 1"
+                          type="text"
+                          @click.prevent="handleShiftFieldDown(itemIndex)"
+                        >
+                          Move Down
+                        </el-button>
+
+                        <el-button
+                          type="text"
+                          title="Remove the current group item"
+                          @click.prevent="handleRemoveField(itemIndex)"
+                        >
+                          Remove Item
+                        </el-button>
+                      </div>
+                    </div>
+                  </div>
+                </transition-group>
+              </vue-draggable>
+            </template>
+
+            <template v-else>
+              <div class="dockite-field-group--item">
                 <div class="flex-1">
                   <component
                     :is="$dockiteFieldManager[field.type].input"
-                    v-for="(field, fieldIndex) in fields"
-                    :key="fieldIndex"
-                    v-model="fieldData[itemIndex][field.name]"
-                    :name="`${name}[${itemIndex}].${field.name}`"
+                    v-for="(field, index) in fields"
+                    :key="index"
+                    v-model="fieldData[field.name]"
+                    :name="`${name}.${field.name}`"
                     :field-config="field"
                     :form-data="formData"
                     :schema="schema"
                   />
                 </div>
               </div>
-            </transition-group>
-          </vue-draggable>
-        </template>
-        <template v-else>
-          <div class="dockite-field-group--item">
-            <div class="flex-1">
-              <component
-                :is="$dockiteFieldManager[field.type].input"
-                v-for="(field, index) in fields"
-                :key="index"
-                v-model="fieldData[field.name]"
-                :name="`${name}.${field.name}`"
-                :field-config="field"
-                :form-data="formData"
-                :schema="schema"
-              />
-            </div>
-          </div>
-        </template>
-      </template>
-      <el-row type="flex" justify="center">
-        <el-button v-if="repeatable" @click.prevent="handleAddFieldAfter">
-          <i class="el-icon-plus" />
-        </el-button>
-      </el-row>
-    </fieldset>
+            </template>
+          </template>
+
+          <el-row
+            v-if="repeatable && fieldData.length < (settings.maxRows || Infinity)"
+            type="flex"
+            justify="center"
+            class="py-3"
+          >
+            <el-button @click.prevent="handleAddFieldAfter">
+              <i class="el-icon-plus" />
+            </el-button>
+          </el-row>
+        </div>
+      </el-collapse-item>
+    </el-collapse>
   </el-form-item>
 </template>
 
@@ -113,6 +153,8 @@ export default class GroupFieldInputComponent extends Vue {
   public rules: object[] = [];
 
   public ready = false;
+
+  public expanded = '';
 
   public groupRules: Record<string, any> = {};
 
@@ -157,7 +199,13 @@ export default class GroupFieldInputComponent extends Vue {
   }
 
   beforeMount(): void {
+    if (this.name === this.fieldConfig.name) {
+      this.expanded = this.name;
+    }
+
     if (this.value === null) {
+      this.expanded = this.name;
+
       this.$emit('input', this.repeatable ? [] : {});
     }
 
@@ -254,11 +302,27 @@ export default class GroupFieldInputComponent extends Vue {
       this.fieldData.splice(index, 1);
     }
   }
+
+  public handleShiftFieldUp(index: number): void {
+    if (Array.isArray(this.fieldData)) {
+      const [fieldItem] = this.fieldData.splice(index, 1);
+
+      this.fieldData.splice(index - 1, 0, fieldItem);
+    }
+  }
+
+  public handleShiftFieldDown(index: number): void {
+    if (Array.isArray(this.fieldData)) {
+      const [fieldItem] = this.fieldData.splice(index, 1);
+
+      this.fieldData.splice(index + 1, 0, fieldItem);
+    }
+  }
 }
 </script>
 
 <style lang="scss">
-.dockite-field-group {
+.dockite-field-group-fieldset {
   border: 1px solid #dcdfe6;
   border-radius: 4px;
   padding: 1rem;
@@ -299,8 +363,17 @@ export default class GroupFieldInputComponent extends Vue {
   .flip-list-move {
     transition: transform 0.5s;
   }
+
   .no-move {
     transition: transform 0s;
+  }
+
+  .el-collapse-item__header {
+    background: rgba(237, 242, 247, 1);
+  }
+
+  .el-collapse-item__content {
+    padding-bottom: 0;
   }
 }
 </style>

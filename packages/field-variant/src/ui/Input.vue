@@ -1,49 +1,58 @@
 <template>
   <el-form-item :prop="name" :rules="rules">
-    <fieldset class="dockite-field-variant">
-      <legend>{{ fieldConfig.title }}</legend>
+    <el-collapse :value="expanded" class="border">
+      <el-collapse-item :name="name">
+        <div slot="title" class="w-full px-3">
+          <span class="font-semibold">
+            Variant: {{ fieldConfig.title }}
+            <template v-if="selectedField">- {{ selectedField.title }}</template>
+          </span>
+        </div>
 
-      <template v-if="!selectedField">
-        <p class="dockite-field-variant--prompt">
-          Select a variant from the below options
-        </p>
-        <el-row type="flex">
-          <el-button
-            v-for="variant in variants"
-            :key="variant.name"
-            class="dockite-field-variant--option"
-            @click="handleUpdateVariant(variant.name)"
-          >
-            <span style="display: block; padding-bottom: 0.33rem;">
-              {{ variant.title }}
-            </span>
-            <el-tag size="mini" effect="plain" type="info"
-              >{{ variant.name }}:{{ variant.type }}</el-tag
+        <div v-if="!selectedField" class="p-3">
+          <p class="dockite-field-variant--prompt">
+            Select a variant from the below options
+          </p>
+          <div class="flex flex-wrap -mx-3">
+            <div v-for="variant in variants" :key="variant.name" class="p-3 w-1/4">
+              <el-button
+                class="dockite-field-variant--option"
+                @click="handleUpdateVariant(variant.name)"
+              >
+                <span style="display: block; padding-bottom: 0.33rem;">
+                  {{ variant.title }}
+                </span>
+                <el-tag size="mini" effect="plain" type="info"
+                  >{{ variant.name }}:{{ variant.type }}
+                </el-tag>
+              </el-button>
+            </div>
+          </div>
+        </div>
+
+        <div v-else class="dockite-field-variant--item p-3 clearfix">
+          <component
+            :is="$dockiteFieldManager[selectedField.type].input"
+            v-model="fieldData[selectedField.name]"
+            :name="`${name}.${selectedField.name}`"
+            :schema="schema"
+            :field-config="selectedField"
+            :form-data="formData"
+          />
+
+          <div class="float-right">
+            <el-button
+              type="text"
+              class=""
+              title="Remove the current variant"
+              @click.prevent="handleClearVariant"
             >
-          </el-button>
-        </el-row>
-      </template>
-
-      <div v-else class="dockite-field-variant--item">
-        <el-button
-          type="text"
-          class="dockite-field-variant--remove-item"
-          title="Remove the current variant"
-          @click.prevent="handleClearVariant"
-        >
-          <i class="el-icon-close" />
-        </el-button>
-
-        <component
-          :is="$dockiteFieldManager[selectedField.type].input"
-          v-model="fieldData[selectedField.name]"
-          :name="`${name}.${selectedField.name}`"
-          :schema="schema"
-          :field-config="selectedField"
-          :form-data="formData"
-        />
-      </div>
-    </fieldset>
+              Clear Variant
+            </el-button>
+          </div>
+        </div>
+      </el-collapse-item>
+    </el-collapse>
   </el-form-item>
 </template>
 
@@ -71,6 +80,8 @@ export default class GroupFieldInputComponent extends Vue {
 
   @Prop({ required: true })
   readonly schema!: Schema;
+
+  public expanded = '';
 
   public rules: object[] = [];
 
@@ -103,6 +114,10 @@ export default class GroupFieldInputComponent extends Vue {
   }
 
   beforeMount(): void {
+    if (!this.value) {
+      this.expanded = this.name;
+    }
+
     if (this.fieldConfig.settings.required) {
       this.rules.push(this.getRequiredRule());
     }
@@ -167,8 +182,7 @@ export default class GroupFieldInputComponent extends Vue {
 
 .dockite-field-variant--option {
   height: 60px;
-  // line-height: 30px;
-  width: 25%;
+  width: 100%;
 }
 
 .dockite-field-variant--prompt {
