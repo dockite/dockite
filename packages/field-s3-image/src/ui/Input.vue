@@ -107,7 +107,7 @@ export default class S3ImageFieldInputComponent extends Vue {
   @Prop({ required: true })
   readonly fieldConfig!: DockiteFieldS3ImageEntity;
 
-  @Prop({ required: true })
+  @Prop({ required: true, type: Object })
   readonly schema!: Schema;
 
   public rules: object[] = [];

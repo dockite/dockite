@@ -16,9 +16,15 @@ export class SchemaImportRepository extends Repository<Schema> {
 
     let schema: Schema | null = null;
 
-    if (schemaId) {
-      schema = await schemaRepository.findOneOrFail(schemaId);
-    } else {
+    try {
+      if (!(payload.id || schemaId)) {
+        throw new Error('No id passed');
+      }
+
+      schema = await schemaRepository.findOneOrFail(schemaId ?? payload.id, {
+        relations: ['fields'],
+      });
+    } catch (_) {
       schema = new Schema();
     }
 

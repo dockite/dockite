@@ -358,7 +358,7 @@ export class SingletonResolver {
 
   private makeInitialSingletonData(fields: Field[]): Record<string, any> {
     return fields.reduce((acc, curr) => {
-      if (curr.settings.children) {
+      if (curr.settings.children && curr.type !== 'variant') {
         return {
           ...acc,
           [curr.name]: this.makeInitialSingletonData(curr.settings.children),

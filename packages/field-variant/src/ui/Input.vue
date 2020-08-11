@@ -13,8 +13,8 @@
           <p class="dockite-field-variant--prompt">
             Select a variant from the below options
           </p>
-          <div class="flex flex-wrap -mx-3">
-            <div v-for="variant in variants" :key="variant.name" class="p-3 w-1/4">
+          <div class="flex flex-wrap items-stretch -mx-3">
+            <div v-for="variant in variants" :key="variant.name" class="p-3 flex-grow w-1/3">
               <el-button
                 class="dockite-field-variant--option"
                 @click="handleUpdateVariant(variant.name)"
@@ -33,6 +33,7 @@
         <div v-else class="dockite-field-variant--item p-3 clearfix">
           <component
             :is="$dockiteFieldManager[selectedField.type].input"
+            v-if="fieldData[selectedField.name] !== undefined"
             v-model="fieldData[selectedField.name]"
             :name="`${name}.${selectedField.name}`"
             :schema="schema"
@@ -63,9 +64,9 @@ import { Field, Schema } from '@dockite/types';
 type UnpersistedField = Omit<Field, 'id' | 'schemaId' | 'dockiteField' | 'schema'>;
 
 @Component({
-  name: 'GroupFieldInputComponent',
+  name: 'VariantFieldInputComponent',
 })
-export default class GroupFieldInputComponent extends Vue {
+export default class VariantFieldInputComponent extends Vue {
   @Prop({ required: true })
   readonly name!: string;
 
@@ -78,7 +79,7 @@ export default class GroupFieldInputComponent extends Vue {
   @Prop({ required: true })
   readonly fieldConfig!: Field;
 
-  @Prop({ required: true })
+  @Prop({ required: true, type: Object })
   readonly schema!: Schema;
 
   public expanded = '';
@@ -181,8 +182,9 @@ export default class GroupFieldInputComponent extends Vue {
 }
 
 .dockite-field-variant--option {
-  height: 60px;
+  height: 100%;
   width: 100%;
+  white-space: initial;
 }
 
 .dockite-field-variant--prompt {

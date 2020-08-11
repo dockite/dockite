@@ -21,7 +21,7 @@
             </el-button>
           </el-row>
 
-          <template v-if="ready">
+          <template v-if="ready && fieldData !== null">
             <template v-if="repeatable && Array.isArray(fieldData)">
               <vue-draggable
                 v-model="fieldData"
@@ -183,7 +183,7 @@ export default class GroupFieldInputComponent extends Vue {
       return [];
     }
 
-    return {};
+    return cloneDeep(this.initialFieldData);
   }
 
   set fieldData(value: Record<string, any> | Record<string, any>[]) {
@@ -259,29 +259,36 @@ export default class GroupFieldInputComponent extends Vue {
   }
 
   public initialiseForm(): void {
-    if (this.repeatable && !Array.isArray(this.fieldData)) {
-      if (this.fieldData !== null) {
-        this.fieldData = [this.fieldData];
-      } else if (this.settings.minRows && this.settings.minRows > 0) {
-        this.fieldData = new Array(this.settings.minRows)
-          .fill(0)
-          .map(_ => cloneDeep(this.initialFieldData));
+    // If we're in a repeatable group and aren't currently using an array
+    if (this.repeatable && !Array.isArray(this.value)) {
+      // If the field data is set as if it were a single group
+      if (this.value !== null) {
+        // Make it repeatable
+        this.fieldData = [this.value];
       } else {
         this.fieldData = [];
       }
     }
 
-    if (this.repeatable && Array.isArray(this.fieldData)) {
-      if (this.fieldData.length === 0) {
-        this.fieldData = [];
+    // If we're in a repeatable group that is an array
+    if (this.repeatable && Array.isArray(this.value)) {
+      if (this.value.length === 0 && (this.fieldConfig.settings.minRows ?? 0) > 0) {
+        this.fieldData = new Array(this.settings.minRows)
+          .fill(0)
+          .map(_ => cloneDeep(this.initialFieldData));
       } else {
-        this.fieldData = this.fieldData.map(fd => ({ ...this.initialFieldData, ...fd }));
+        this.fieldData = this.value.map(fd => ({ ...this.initialFieldData, ...fd }));
       }
     } else {
-      this.fieldData = {
-        ...this.initialFieldData,
-        ...this.fieldData,
-      };
+      // eslint-disable-next-line
+      if (this.value !== null) {
+        this.fieldData = {
+          ...cloneDeep(this.initialFieldData),
+          ...this.value,
+        };
+      } else {
+        this.fieldData = cloneDeep(this.initialFieldData);
+      }
     }
   }
 
