@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.3](https://github.com/dockite/dockite/compare/@dockite/field-colorpicker@0.3.0-alpha.2...@dockite/field-colorpicker@0.3.0-alpha.3) (2020-08-12)
+
+
+### Bug Fixes
+
+* further ui tweaks and import fixes ([f748da1](https://github.com/dockite/dockite/commit/f748da14700ceed557e48f2ea6a64183ccfbe0be))
+
+
+
+
+
 # [0.3.0-alpha.2](https://github.com/dockite/dockite/compare/@dockite/field-colorpicker@0.3.0-alpha.1...@dockite/field-colorpicker@0.3.0-alpha.2) (2020-08-11)
 
 **Note:** Version bump only for package @dockite/field-colorpicker

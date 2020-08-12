@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.25](https://github.com/dockite/dockite/compare/@dockite/field-group@0.4.0-alpha.24...@dockite/field-group@0.4.0-alpha.25) (2020-08-12)
+
+
+### Bug Fixes
+
+* further ui tweaks and import fixes ([f748da1](https://github.com/dockite/dockite/commit/f748da14700ceed557e48f2ea6a64183ccfbe0be))
+
+
+
+
+
 # [0.4.0-alpha.24](https://github.com/dockite/dockite/compare/@dockite/field-group@0.4.0-alpha.23...@dockite/field-group@0.4.0-alpha.24) (2020-08-12)
 
 
