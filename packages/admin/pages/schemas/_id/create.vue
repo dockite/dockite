@@ -2,7 +2,10 @@
   <fragment>
     <portal to="header">
       <el-row type="flex" justify="space-between" align="middle">
-        <h2>{{ schemaName }} - Create Document</h2>
+        <h2>
+          <span class="font-bold">Create {{ schema && schema.title }}:</span>
+          {{ documentIdentifier }}
+        </h2>
 
         <el-button :disabled="submitting" @click="submit">
           Create Document
@@ -89,6 +92,22 @@ export default class CreateSchemaDocumentPage extends Vue {
     return this.$store.getters[`${data.namespace}/getSchemaWithFieldsById`](this.schemaId);
   }
 
+  get documentIdentifier(): string {
+    if (this.form.name) {
+      return this.form.name;
+    }
+
+    if (this.form.title) {
+      return this.form.title;
+    }
+
+    if (this.form.identifier) {
+      return this.form.identifier;
+    }
+
+    return 'Document';
+  }
+
   get fields(): Field[] {
     if (this.schema) {
       return this.schema.fields;
@@ -166,19 +185,30 @@ export default class CreateSchemaDocumentPage extends Vue {
       this.$router.push(`/schemas/${this.schemaId}`);
     } catch (_) {
       // It's any's all the way down
-      (this.formEl as any).fields
-        .filter((f: any): boolean => f.validateState === 'error')
-        .slice(0, 3)
-        .forEach((f: any): void => {
-          const groupName = this.getGroupNameFromFieldName(f.prop);
+      // It's any's all the way down
+      const errors = (this.formEl as any).fields.filter(
+        (f: any): boolean => f.validateState === 'error',
+      );
 
-          setImmediate(() => {
-            this.$message({
-              message: `${groupName}: ${f.validateMessage}`,
-              type: 'warning',
-            });
+      errors.slice(0, 4).forEach((f: any): void => {
+        const groupName = this.getGroupNameFromFieldName(f.prop.split('.').shift());
+
+        setImmediate(() => {
+          this.$message({
+            message: `${groupName}: ${f.validateMessage}`,
+            type: 'warning',
           });
         });
+      });
+
+      if (errors.length > 4) {
+        setImmediate(() => {
+          this.$message({
+            message: `And ${errors.length - 4} more errors`,
+            type: 'warning',
+          });
+        });
+      }
     } finally {
       this.submitting = false;
     }

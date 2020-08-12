@@ -2,7 +2,10 @@
   <fragment>
     <portal to="header">
       <el-row type="flex" justify="space-between" align="middle">
-        <h2>Update - {{ documentId }}</h2>
+        <h2>
+          <span class="font-bold">Update {{ schema && schema.title }}:</span>
+          {{ documentIdentifier }}
+        </h2>
 
         <el-dropdown v-loading="submitting" split-button @click="submit">
           Save and Publish
@@ -142,6 +145,24 @@ export default class UpdateDocumentPage extends Vue {
     return this.$route.params.id;
   }
 
+  get documentIdentifier(): string {
+    if (this.document) {
+      if (this.form.name) {
+        return this.form.name;
+      }
+
+      if (this.form.title) {
+        return this.form.title;
+      }
+
+      if (this.form.identifier) {
+        return this.form.identifier;
+      }
+    }
+
+    return this.documentId;
+  }
+
   get document(): Document | null {
     return this.$store.getters[`${data.namespace}/getDocumentById`](this.documentId);
   }
@@ -225,7 +246,6 @@ export default class UpdateDocumentPage extends Vue {
   }
 
   public getFieldsByGroupName(name: string): Field[] {
-    console.log(this.groups);
     const filteredFields = this.fields.filter(field => this.groups[name].includes(field.name));
 
     return sortBy(filteredFields, [i => this.groups[name].indexOf(i.name)]);
@@ -291,16 +311,29 @@ export default class UpdateDocumentPage extends Vue {
       });
     } catch (_) {
       // It's any's all the way down
-      (this.formEl as any).fields
-        .filter((f: any): boolean => f.validateState === 'error')
-        .forEach((f: any): void => {
-          const groupName = this.getGroupNameFromFieldName(f.prop);
+      const errors = (this.formEl as any).fields.filter(
+        (f: any): boolean => f.validateState === 'error',
+      );
 
+      errors.slice(0, 4).forEach((f: any): void => {
+        const groupName = this.getGroupNameFromFieldName(f.prop.split('.').shift());
+
+        setImmediate(() => {
           this.$message({
             message: `${groupName}: ${f.validateMessage}`,
             type: 'warning',
           });
         });
+      });
+
+      if (errors.length > 4) {
+        setImmediate(() => {
+          this.$message({
+            message: `And ${errors.length - 4} more errors`,
+            type: 'warning',
+          });
+        });
+      }
     } finally {
       this.submitting = false;
     }

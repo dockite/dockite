@@ -5,7 +5,7 @@
         <div slot="title" class="w-full px-3">
           <span class="font-semibold">Group: {{ fieldConfig.title }}</span>
         </div>
-        <div class="px-3">
+        <div class="p-3">
           <template v-if="ready && fieldData !== null">
             <el-row
               v-if="
@@ -84,7 +84,7 @@
             </template>
 
             <template v-else>
-              <div class="dockite-field-group--item">
+              <div class="dockite-field-group--item items-center mb-3">
                 <div class="flex-1">
                   <component
                     :is="$dockiteFieldManager[field.type].input"
@@ -256,6 +256,18 @@ export default class GroupFieldInputComponent extends Vue {
         return;
       }
 
+      if (
+        this.repeatable &&
+        Array.isArray(this.value) &&
+        this.value.length === 0 &&
+        (this.settings.minRows ?? 0) > 0
+      ) {
+        this.fieldData = new Array(this.settings.minRows)
+          .fill(0)
+          .map(_ => cloneDeep(this.initialFieldData));
+        return;
+      }
+
       return;
     }
 
@@ -325,10 +337,6 @@ export default class GroupFieldInputComponent extends Vue {
   position: relative;
   display: flex;
   width: 100%;
-
-  .el-form-item {
-    margin-bottom: 22px !important;
-  }
 }
 
 .dockite-field-group--remove-item {
@@ -355,6 +363,10 @@ export default class GroupFieldInputComponent extends Vue {
 
   .no-move {
     transition: transform 0s;
+  }
+
+  .el-form-item {
+    margin-bottom: 1rem;
   }
 
   .el-collapse-item__header {

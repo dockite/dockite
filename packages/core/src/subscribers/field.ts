@@ -48,7 +48,9 @@ export class FieldSubscriber implements EntitySubscriberInterface {
       .update()
       .set({
         data: () =>
-          `data || '{ "${event.entity.name}": ${event.entity.settings.default ?? null} }'`,
+          `data || '{ "${event.entity.name}": ${
+            event.entity.settings.default ? JSON.stringify(event.entity.settings.default) : null
+          } }'`,
         updatedAt: () => '"updatedAt"',
       })
       .where('schemaId = :schemaId', { schemaId: event.entity.schemaId })

@@ -14,7 +14,7 @@
             </el-button>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item>
-                <router-link :to="`/singleton/${singletonId}/edit`">
+                <router-link :to="`/singletons/${singletonId}/edit`">
                   <i class="el-icon-edit" />
                   Edit
                 </router-link>
@@ -218,16 +218,29 @@ export default class CreateSingletonDocumentPage extends Vue {
       this.$router.push(`/singletons`);
     } catch (_) {
       // It's any's all the way down
-      (this.formEl as any).fields
-        .filter((f: any): boolean => f.validateState === 'error')
-        .forEach((f: any): void => {
-          const groupName = this.getGroupNameFromFieldName(f.prop);
+      const errors = (this.formEl as any).fields.filter(
+        (f: any): boolean => f.validateState === 'error',
+      );
 
+      errors.slice(0, 4).forEach((f: any): void => {
+        const groupName = this.getGroupNameFromFieldName(f.prop.split('.').shift());
+
+        setImmediate(() => {
           this.$message({
             message: `${groupName}: ${f.validateMessage}`,
             type: 'warning',
           });
         });
+      });
+
+      if (errors.length > 4) {
+        setImmediate(() => {
+          this.$message({
+            message: `And ${errors.length - 4} more errors`,
+            type: 'warning',
+          });
+        });
+      }
     }
   }
 

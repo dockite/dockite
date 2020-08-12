@@ -63,7 +63,10 @@ export class SchemaImportRepository extends Repository<Schema> {
     if (schemaId) {
       const revision = revisionRepository.create({
         schemaId: schema.id,
-        data: cloneDeep(schema) as Record<string, any>,
+        data: cloneDeep({
+          ...schema,
+          fields: schema.fields.map(field => omit(field, 'dockiteField')),
+        }) as Record<string, any>,
         userId: schema.userId ?? '',
       });
 

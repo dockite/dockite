@@ -60,7 +60,6 @@ export default class ColorpickerFieldInputComponent extends Vue {
     }
   }
 
-
   public getRequiredRule(): object {
     return {
       required: true,
@@ -81,7 +80,7 @@ export default class ColorpickerFieldInputComponent extends Vue {
 
 <style lang="scss">
 .dockite-field-colorpicker {
-  .el-form-item__content {
+  .el-color-picker {
     height: 50px;
   }
 

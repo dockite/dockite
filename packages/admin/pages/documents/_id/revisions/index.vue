@@ -3,7 +3,7 @@
     <portal to="header">
       <el-row style="width: 100%" type="flex" justify="space-between" align="middle">
         <h2>
-          Revisions - <strong>{{ documentId }}</strong>
+          Revisions - <strong>{{ documentIdentifier }}</strong>
         </h2>
       </el-row>
     </portal>
@@ -164,12 +164,30 @@ export default class DocumentRevisionsPage extends Vue {
     return this.primary !== null && this.secondary !== null && this.primary !== this.secondary;
   }
 
-  get document(): Document {
-    return this.$store.getters[`${data.namespace}/getDocumentWithFieldsById`](this.documentId);
+  get document(): Document | null {
+    return this.$store.getters[`${data.namespace}/getDocumentById`](this.documentId);
   }
 
   get documentId(): string {
     return this.$route.params.id;
+  }
+
+  get documentIdentifier(): string {
+    if (this.document) {
+      if (this.document.data.name) {
+        return this.document.data.name;
+      }
+
+      if (this.document.data.title) {
+        return this.document.data.title;
+      }
+
+      if (this.document.data.identifier) {
+        return this.document.data.identifier;
+      }
+    }
+
+    return this.documentId;
   }
 
   get currentPage(): number {
