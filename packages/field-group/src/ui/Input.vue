@@ -6,18 +6,22 @@
           <span class="font-semibold">Group: {{ fieldConfig.title }}</span>
         </div>
         <div class="px-3">
-          <el-row
-            v-if="repeatable && fieldData.length < (settings.maxRows || Infinity)"
-            type="flex"
-            justify="center"
-            class="py-3"
-          >
-            <el-button @click.prevent="handleAddFieldBefore">
-              <i class="el-icon-plus" />
-            </el-button>
-          </el-row>
-
           <template v-if="ready && fieldData !== null">
+            <el-row
+              v-if="
+                repeatable &&
+                  Array.isArray(fieldData) &&
+                  fieldData.length < (settings.maxRows || Infinity)
+              "
+              type="flex"
+              justify="center"
+              class="py-3"
+            >
+              <el-button @click.prevent="handleAddFieldBefore">
+                <i class="el-icon-plus" />
+              </el-button>
+            </el-row>
+
             <template v-if="repeatable && Array.isArray(fieldData)">
               <vue-draggable
                 v-model="fieldData"
@@ -42,7 +46,7 @@
                         v-for="(field, fieldIndex) in fields"
                         :key="fieldIndex"
                         v-model="fieldData[itemIndex][field.name]"
-                        :name="`${name}[${itemIndex}].${field.name}`"
+                        :name="`${name}.${itemIndex}.${field.name}`"
                         :field-config="field"
                         :form-data="formData"
                         :schema="schema"
@@ -100,6 +104,7 @@
           <el-row
             v-if="
               repeatable &&
+                Array.isArray(fieldData) &&
                 fieldData.length > 0 &&
                 fieldData.length < (settings.maxRows || Infinity)
             "
@@ -170,23 +175,11 @@ export default class GroupFieldInputComponent extends Vue {
     return this.fieldConfig.settings.children;
   }
 
-  get fieldData(): Record<string, any> | Record<string, any>[] {
-    if (this.value !== null) {
-      if (!Array.isArray(this.value) && this.repeatable) {
-        return [this.value];
-      }
-
-      return this.value;
-    }
-
-    if (this.repeatable) {
-      return [];
-    }
-
-    return cloneDeep(this.initialFieldData);
+  get fieldData(): Record<string, any> | Record<string, any>[] | null {
+    return this.value;
   }
 
-  set fieldData(value: Record<string, any> | Record<string, any>[]) {
+  set fieldData(value) {
     this.$emit('input', value);
   }
 
@@ -205,11 +198,9 @@ export default class GroupFieldInputComponent extends Vue {
 
     if (this.value === null) {
       this.expanded = this.name;
-
-      this.$emit('input', this.repeatable ? [] : {});
     }
 
-    this.initialiseForm();
+    this.initialiseFormData();
 
     this.ready = true;
 
@@ -258,49 +249,40 @@ export default class GroupFieldInputComponent extends Vue {
     return this.fields.reduce((a, b) => ({ ...a, [b.name]: b.settings.default ?? null }), {});
   }
 
-  public initialiseForm(): void {
-    // If we're in a repeatable group and aren't currently using an array
-    if (this.repeatable && !Array.isArray(this.value)) {
-      // If the field data is set as if it were a single group
-      if (this.value !== null) {
-        // Make it repeatable
+  public initialiseFormData(): void {
+    if (this.value !== null) {
+      if (this.repeatable && !Array.isArray(this.value)) {
         this.fieldData = [this.value];
-      } else {
-        this.fieldData = [];
+        return;
       }
+
+      return;
     }
 
-    // If we're in a repeatable group that is an array
-    if (this.repeatable && Array.isArray(this.value)) {
-      if (this.value.length === 0 && (this.fieldConfig.settings.minRows ?? 0) > 0) {
+    if (this.repeatable && this.value === null) {
+      if ((this.settings.minRows ?? 0) > 0) {
         this.fieldData = new Array(this.settings.minRows)
           .fill(0)
           .map(_ => cloneDeep(this.initialFieldData));
-      } else {
-        this.fieldData = this.value.map(fd => ({ ...this.initialFieldData, ...fd }));
+        return;
       }
-    } else {
-      // eslint-disable-next-line
-      if (this.value !== null) {
-        this.fieldData = {
-          ...cloneDeep(this.initialFieldData),
-          ...this.value,
-        };
-      } else {
-        this.fieldData = cloneDeep(this.initialFieldData);
-      }
+
+      this.fieldData = [];
+      return;
     }
+
+    this.fieldData = cloneDeep(this.initialFieldData);
   }
 
   public handleAddFieldBefore(): void {
     if (Array.isArray(this.fieldData)) {
-      this.fieldData.unshift({ ...this.initialFieldData });
+      this.fieldData = [{ ...this.initialFieldData }, ...this.fieldData];
     }
   }
 
   public handleAddFieldAfter(): void {
     if (Array.isArray(this.fieldData)) {
-      this.fieldData.push({ ...this.initialFieldData });
+      this.fieldData = [...this.fieldData, { ...this.initialFieldData }];
     }
   }
 

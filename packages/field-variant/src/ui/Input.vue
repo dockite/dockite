@@ -33,7 +33,7 @@
         <div v-else class="dockite-field-variant--item p-3 clearfix">
           <component
             :is="$dockiteFieldManager[selectedField.type].input"
-            v-if="fieldData[selectedField.name] !== undefined"
+            v-if="fieldData !== null"
             v-model="fieldData[selectedField.name]"
             :name="`${name}.${selectedField.name}`"
             :schema="schema"
@@ -136,6 +136,10 @@ export default class VariantFieldInputComponent extends Vue {
     this.fieldData = {
       [name]: this.selectedField?.settings?.default ?? null,
     };
+
+    this.$nextTick(() => {
+      this.ready = true;
+    });
   }
 
   public handleClearVariant() {

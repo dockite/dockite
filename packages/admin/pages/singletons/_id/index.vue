@@ -7,8 +7,8 @@
         </h2>
 
         <el-row type="flex" align="middle">
-          <el-dropdown>
-            <el-button size="medium">
+          <el-dropdown class="mr-3">
+            <el-button>
               Actions
               <i class="el-icon-arrow-down el-icon--right" />
             </el-button>
@@ -42,6 +42,10 @@
               </el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
+
+          <el-button type="primary" @click="submit">
+            Save
+          </el-button>
         </el-row>
       </el-row>
     </portal>
