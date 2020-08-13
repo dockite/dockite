@@ -8,7 +8,8 @@
       @close="handleClose"
     >
       <h2 slot="title">
-        Add a Field
+        <span v-if="selectedField">Add a {{ selectedField.title }} field</span>
+        <span v-else>Add a Field</span>
       </h2>
 
       <div class="dockite-drawer--body">
@@ -217,6 +218,14 @@ export default class AddFieldComponent extends Vue {
     const state = this.$store.state[data.namespace] as data.DataState;
 
     return state.availableFields;
+  }
+
+  get selectedField(): DockiteFieldStatic | null {
+    if (!this.fieldType) {
+      return null;
+    }
+
+    return this.availableFields.find(field => field.type === this.fieldType) ?? null;
   }
 
   @Watch('availableFields', { immediate: true })

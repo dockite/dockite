@@ -9,7 +9,7 @@
             <i class="el-icon-arrow-down el-icon--right" />
           </el-button>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>
+            <el-dropdown-item v-if="$can('internal:schema:create')">
               <router-link :to="`/singletons/import`">
                 <i class="el-icon-upload2" />
                 Import Singleton
@@ -20,7 +20,7 @@
       </el-row>
     </portal>
 
-    <div class="all-documents-page">
+    <div v-loading="loading > 0" class="all-documents-page">
       <el-table :data="allSingletons.results" style="width: 100%">
         <el-table-column prop="id" label="ID" sortable>
           <template slot-scope="scope">
@@ -79,6 +79,8 @@ import * as data from '~/store/data';
   },
 })
 export default class AllSingletonsPage extends Vue {
+  public loading = 0;
+
   get allSingletons(): ManyResultSet<AllSingletonsResultItem> {
     const state: data.DataState = this.$store.state[data.namespace];
 
@@ -101,8 +103,19 @@ export default class AllSingletonsPage extends Vue {
     return this.allSingletons.totalPages;
   }
 
-  public fetchAllSingletons(): void {
-    this.$store.dispatch(`${data.namespace}/fetchAllSingletons`);
+  public async fetchAllSingletons(): Promise<void> {
+    try {
+      this.loading += 1;
+
+      await this.$store.dispatch(`${data.namespace}/fetchAllSingletons`);
+    } catch (_) {
+      this.$message({
+        message: 'An error occurred whilst fetching singletons, please try again later.',
+        type: 'error',
+      });
+    } finally {
+      this.loading -= 1;
+    }
   }
 
   public cellValueFromNow(_row: never, _column: never, cellValue: string, _index: never): string {

@@ -4,7 +4,7 @@
       <h2>Create User</h2>
     </portal>
 
-    <div class="dockite-create-user-page">
+    <div v-loading="loading > 0" class="dockite-create-user-page">
       <el-form
         ref="formRef"
         :model="form"
@@ -15,15 +15,19 @@
         <el-form-item label="Email" prop="email">
           <el-input v-model="form.email" type="email"></el-input>
         </el-form-item>
+
         <el-form-item label="Password" prop="password">
           <el-input v-model="form.password" type="password"></el-input>
         </el-form-item>
+
         <el-form-item label="First Name" prop="firstName">
           <el-input v-model="form.firstName"></el-input>
         </el-form-item>
+
         <el-form-item label="Last Name" prop="lastName">
           <el-input v-model="form.lastName"></el-input>
         </el-form-item>
+
         <el-form-item label="Roles" prop="roles">
           <el-select
             v-model="form.roles"
@@ -37,12 +41,13 @@
             </el-option>
           </el-select>
         </el-form-item>
+
         <el-form-item label="Scopes" prop="scopes">
           <el-select
             v-model="form.scopes"
             multiple
             filterable
-            placeholder="Select Roles"
+            placeholder="Select Scopes"
             style="width: 100%"
           >
             <el-option v-for="scope in allScopes" :key="scope" :value="scope">
@@ -50,10 +55,17 @@
             </el-option>
           </el-select>
         </el-form-item>
+
         <el-form-item>
           <el-row type="flex" justify="space-between" align="middle">
             <span />
-            <el-button type="primary" native-type="submit" @click.prevent="submit">
+            <el-button
+              v-if="$can('internal:user:create')"
+              type="primary"
+              :disabled="loading > 0"
+              native-type="submit"
+              @click.prevent="submit"
+            >
               Create User
             </el-button>
           </el-row>
@@ -90,6 +102,8 @@ type UserForm = Omit<
   },
 })
 export default class CreateUserPage extends Vue {
+  public loading = 0;
+
   public form: UserForm = {
     email: '',
     password: '',
@@ -179,6 +193,8 @@ export default class CreateUserPage extends Vue {
 
   public async submit(): Promise<void> {
     try {
+      this.loading += 1;
+
       await this.formRef.validate();
 
       await this.$store.dispatch(`${user.namespace}/createUser`, {
@@ -197,15 +213,38 @@ export default class CreateUserPage extends Vue {
         message: 'Unable to create user, please ensure that the details are correct and try again.',
         type: 'warning',
       });
+    } finally {
+      this.loading -= 1;
     }
   }
 
-  public fetchAllRoles(): void {
-    this.$store.dispatch(`${data.namespace}/fetchAllRoles`, { perPage: 10000 });
+  public async fetchAllRoles(): Promise<void> {
+    try {
+      this.loading += 1;
+
+      await this.$store.dispatch(`${data.namespace}/fetchAllRoles`, { perPage: 10000 });
+    } catch (_) {
+      this.$message({
+        message: 'An error occurred whilst fetching roles, please try again later.',
+      });
+    } finally {
+      this.loading -= 1;
+    }
   }
 
-  public fetchAllScopes(): void {
-    this.$store.dispatch(`${data.namespace}/fetchAllScopes`);
+  public async fetchAllScopes(): Promise<void> {
+    try {
+      this.loading += 1;
+
+      await this.$store.dispatch(`${data.namespace}/fetchAllScopes`);
+    } catch (_) {
+      this.$message({
+        message: 'An error occurred whilst fetching scopes, please try again later.',
+        type: 'error',
+      });
+    } finally {
+      this.loading -= 1;
+    }
   }
 
   mounted(): void {

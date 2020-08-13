@@ -4,7 +4,7 @@
       <h2>Update {{ form.name }}</h2>
     </portal>
 
-    <div class="dockite-update-role-page">
+    <div v-loading="loading > 0" class="dockite-update-role-page">
       <el-form
         ref="formRef"
         :model="form"
@@ -15,12 +15,13 @@
         <el-form-item label="Name" prop="name">
           <el-input v-model="form.name" :disabled="true"></el-input>
         </el-form-item>
+
         <el-form-item label="Scopes" prop="scopes">
           <el-select
             v-model="form.scopes"
             multiple
             filterable
-            placeholder="Select Roles"
+            placeholder="Select Scopes"
             style="width: 100%"
           >
             <el-option v-for="scope in allScopes" :key="scope" :value="scope">
@@ -28,10 +29,17 @@
             </el-option>
           </el-select>
         </el-form-item>
+
         <el-form-item>
           <el-row type="flex" justify="space-between" align="middle">
             <span />
-            <el-button type="primary" native-type="submit" @click.prevent="submit">
+            <el-button
+              v-if="$can('internal:role:update')"
+              type="primary"
+              :disabled="loading > 0"
+              native-type="submit"
+              @click.prevent="submit"
+            >
               Update Role
             </el-button>
           </el-row>
@@ -59,6 +67,8 @@ type RoleForm = Omit<Role, 'createdAt' | 'updatedAt'>;
   },
 })
 export default class CreateRolePage extends Vue {
+  public loading = 0;
+
   public form: RoleForm = {
     name: '',
     scopes: [],
@@ -118,6 +128,8 @@ export default class CreateRolePage extends Vue {
 
   public async submit(): Promise<void> {
     try {
+      this.loading += 1;
+
       await this.formRef.validate();
 
       await this.$store.dispatch(`${role.namespace}/updateRole`, {
@@ -137,19 +149,54 @@ export default class CreateRolePage extends Vue {
         message: 'Unable to update role, please ensure that the details are correct and try again.',
         type: 'warning',
       });
+    } finally {
+      this.loading -= 1;
     }
   }
 
-  public fetchRoleByName(name: string): void {
-    this.$store.dispatch(`${data.namespace}/fetchRoleByName`, { name });
+  public async fetchRoleByName(name: string): Promise<void> {
+    try {
+      this.loading += 1;
+
+      await this.$store.dispatch(`${data.namespace}/fetchRoleByName`, { name });
+    } catch (_) {
+      this.$message({
+        message: 'An error occurred whilst fetching the role, please try again later.',
+        type: 'error',
+      });
+    } finally {
+      this.loading -= 1;
+    }
   }
 
-  public fetchAllRoles(): void {
-    this.$store.dispatch(`${data.namespace}/fetchAllRoles`, { perPage: 10000 });
+  public async fetchAllRoles(): Promise<void> {
+    try {
+      this.loading += 1;
+
+      await this.$store.dispatch(`${data.namespace}/fetchAllRoles`, { perPage: 10000 });
+    } catch (_) {
+      this.$message({
+        message: 'An error occurred whilst fetching roles, please try again later.',
+        type: 'error',
+      });
+    } finally {
+      this.loading -= 1;
+    }
   }
 
-  public fetchAllScopes(): void {
-    this.$store.dispatch(`${data.namespace}/fetchAllScopes`);
+  public async fetchAllScopes(): Promise<void> {
+    try {
+      this.loading += 1;
+
+      await this.$store.dispatch(`${data.namespace}/fetchAllScopes`);
+    } catch (_) {
+      this.$message({
+        message: 'An error occurred whilst fetching scopes, please try again later.',
+        type: 'error',
+      });
+    } finally {
+      this.loading -= 1;
+    }
   }
 
   @Watch('roleName', { immediate: true })

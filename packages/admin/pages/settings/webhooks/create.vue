@@ -4,7 +4,7 @@
       <h2>Create Webhook</h2>
     </portal>
 
-    <div class="dockite-create-webhook-page">
+    <div v-loading="loading > 0" class="dockite-create-webhook-page">
       <el-form
         ref="formRef"
         :model="form"
@@ -15,9 +15,11 @@
         <el-form-item label="Name" prop="name">
           <el-input v-model="form.name"></el-input>
         </el-form-item>
+
         <el-form-item label="URL" prop="url">
           <el-input v-model="form.url"></el-input>
         </el-form-item>
+
         <el-form-item label="Request Method" prop="method">
           <el-select v-model="form.method" placeholder="Select" style="width: 100%">
             <el-option v-for="method in requestMethods" :key="method" :value="method">
@@ -25,6 +27,7 @@
             </el-option>
           </el-select>
         </el-form-item>
+
         <el-form-item label="Listen to" prop="options.listeners">
           <el-select
             v-model="form.options.listeners"
@@ -38,17 +41,26 @@
             </el-option>
           </el-select>
         </el-form-item>
+
         <el-form-item label="Execute GraphQL Query?">
           <el-switch v-model="willExecuteGraphQL"></el-switch>
         </el-form-item>
+
         <el-form-item v-if="willExecuteGraphQL" label="GraphQL Query" prop="options.query">
           <el-input ref="graphqlEditor" v-model="form.options.query" type="textarea"></el-input>
           <!-- <textarea ref="graphqlEditor"></textarea> -->
         </el-form-item>
+
         <el-form-item>
           <el-row type="flex" justify="space-between" align="middle">
             <span />
-            <el-button type="primary" native-type="submit" @click.prevent="submit">
+            <el-button
+              v-if="$can('internal:webhook:create')"
+              :disabled="loading > 0"
+              type="primary"
+              native-type="submit"
+              @click.prevent="submit"
+            >
               Create
             </el-button>
           </el-row>
@@ -88,6 +100,8 @@ type WebhookForm = Omit<Webhook, 'id' | 'createdAt' | 'updatedAt' | 'calls'>;
   },
 })
 export default class CreateWebhookPage extends Vue {
+  public loading = 0;
+
   public form: WebhookForm = {
     name: '',
     url: '',
@@ -182,6 +196,8 @@ export default class CreateWebhookPage extends Vue {
 
   public async submit(): Promise<void> {
     try {
+      this.loading += 1;
+
       await this.formRef.validate();
 
       const options = this.willExecuteGraphQL
@@ -206,6 +222,8 @@ export default class CreateWebhookPage extends Vue {
           'Unable to create webhook, please ensure that the configuration is correct and try again.',
         type: 'warning',
       });
+    } finally {
+      this.loading -= 1;
     }
   }
 

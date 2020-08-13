@@ -32,9 +32,7 @@
             <span slot-scope="{ node, data }" class="dockite-tree--node">
               <span>{{ node.label }}</span>
               <span>
-                <el-tag size="mini">
-                  {{ data.dockite.type }}
-                </el-tag>
+                <el-tag size="mini">{{ data.dockite.name }}: {{ data.dockite.type }}</el-tag>
                 <el-button type="text" size="mini" @click="fieldToBeEdited = data">
                   Edit
                 </el-button>
@@ -285,7 +283,7 @@ export default class EditSchemaPage extends Vue {
   private transformFieldsToFieldTreeData(fields: UnpersistedField[]): FieldTreeData[] {
     return fields.map(field => {
       const data: FieldTreeData = {
-        label: field.name,
+        label: field.title,
         dockite: field,
       };
 
@@ -415,11 +413,23 @@ export default class EditSchemaPage extends Vue {
           break;
         }
 
-        Vue.delete(this.groupFieldData, targetName);
+        await this.$confirm(
+          'This will permanently delete all fields within the tab. Do you wish to Continue?',
+          'Warning',
+          {
+            confirmButtonText: 'OK',
+            cancelButtonText: 'Cancel',
+            type: 'warning',
+          },
+        )
+          .then(() => {
+            Vue.delete(this.groupFieldData, targetName);
 
-        if (this.currentTab === targetName) {
-          this.currentTab = this.availableTabs[0];
-        }
+            if (this.currentTab === targetName) {
+              this.currentTab = this.availableTabs[0];
+            }
+          })
+          .catch(() => {});
         break;
     }
   }

@@ -7,7 +7,7 @@
           {{ documentIdentifier }}
         </h2>
 
-        <el-dropdown v-loading="submitting" split-button @click="submit">
+        <el-dropdown v-loading="loading > 0" split-button @click="submit">
           Save and Publish
           <el-dropdown-menu slot="dropdown">
             <!-- <el-dropdown-item>Save as Draft</el-dropdown-item> -->
@@ -35,7 +35,7 @@
       <div>
         <el-form
           ref="formEl"
-          v-loading="submitting"
+          v-loading="loading > 0"
           label-position="top"
           :model="form"
           @submit.native.prevent="submit"
@@ -125,13 +125,11 @@ import * as document from '~/store/document';
 export default class UpdateDocumentPage extends Vue {
   public currentTab = 'Default';
 
-  public heightOffset = 80;
-
   public form: Record<string, any> = {};
 
   public ready = false;
 
-  public submitting = false;
+  public loading = 0;
 
   public showHistoryDrawer = false;
 
@@ -234,18 +232,6 @@ export default class UpdateDocumentPage extends Vue {
     return this.allDocumentRevisions.results.filter(revision => revision.id !== 'current');
   }
 
-  created(): void {
-    window.document.addEventListener('scroll', this.handleHeightOffset);
-  }
-
-  destroyed(): void {
-    window.document.removeEventListener('scroll', this.handleHeightOffset);
-  }
-
-  public handleHeightOffset(): void {
-    this.heightOffset = Math.max(0, 80 - window.pageYOffset);
-  }
-
   public getFieldsByGroupName(name: string): Field[] {
     const filteredFields = this.fields.filter(field => this.groups[name].includes(field.name));
 
@@ -274,28 +260,64 @@ export default class UpdateDocumentPage extends Vue {
     });
   }
 
-  public fetchSchemaById(): Promise<void> {
-    return this.$store.dispatch(`${data.namespace}/fetchSchemaWithFieldsById`, {
-      id: this.schemaId,
-    });
+  public async fetchSchemaById(): Promise<void> {
+    try {
+      this.loading += 1;
+
+      await this.$store.dispatch(`${data.namespace}/fetchSchemaWithFieldsById`, {
+        id: this.schemaId,
+      });
+    } catch (_) {
+      this.$message({
+        message:
+          'An error occurred whilst fetching the schema for the document, please try again later.',
+        type: 'error',
+      });
+    } finally {
+      this.loading -= 1;
+    }
   }
 
-  public fetchDocumentById(force = false): Promise<void> {
-    return this.$store.dispatch(`${data.namespace}/fetchDocumentById`, {
-      id: this.$route.params.id,
-      force,
-    });
+  public async fetchDocumentById(force = false): Promise<void> {
+    try {
+      this.loading += 1;
+
+      await this.$store.dispatch(`${data.namespace}/fetchDocumentById`, {
+        id: this.$route.params.id,
+        force,
+      });
+    } catch (_) {
+      this.$message({
+        message: 'An error occurred when fetching the document, please try again later.',
+        type: 'error',
+      });
+    } finally {
+      this.loading -= 1;
+    }
   }
 
-  public fetchAllDocumentRevisions(): void {
-    this.$store.dispatch(`${data.namespace}/fetchAllDocumentRevisionsForDocument`, {
-      documentId: this.documentId,
-    });
+  public async fetchAllDocumentRevisions(): Promise<void> {
+    try {
+      this.loading += 1;
+
+      await this.$store.dispatch(`${data.namespace}/fetchAllDocumentRevisionsForDocument`, {
+        documentId: this.documentId,
+      });
+    } catch (_) {
+      this.$message({
+        message:
+          'An error occurred whilst fetching revisions for the document, please try again later.',
+        type: 'error',
+      });
+    } finally {
+      this.loading -= 1;
+    }
   }
 
   public async submit(): Promise<void> {
-    this.submitting = true;
     try {
+      this.loading += 1;
+
       await this.formEl.validate();
 
       await this.$store.dispatch(`${document.namespace}/updateDocument`, {
@@ -336,7 +358,7 @@ export default class UpdateDocumentPage extends Vue {
         });
       }
     } finally {
-      this.submitting = false;
+      this.loading -= 1;
     }
   }
 

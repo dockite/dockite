@@ -9,7 +9,7 @@
       </div>
     </el-form-item>
 
-    <el-form-item class="overflow-x-auto" label="Options" :class="{ 'is-error': error !== '' }">
+    <el-form-item label="Options" :class="{ 'is-error': error !== '' }">
       <el-table
         style="border: 1px solid #dcdfe6; border-radius: 4px; margin-bottom: 0.5rem;"
         :data="tableData"

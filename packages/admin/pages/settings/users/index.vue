@@ -3,13 +3,13 @@
     <portal to="header">
       <el-row type="flex" justify="space-between" align="middle">
         <h2>All Users</h2>
-        <router-link to="/settings/users/create">
+        <router-link v-if="$can('internal:user:create')" to="/settings/users/create">
           <el-button>Create</el-button>
         </router-link>
       </el-row>
     </portal>
 
-    <div class="all-users-page">
+    <div v-loading="loading > 0" class="all-users-page">
       <el-table :data="allUsers.results" style="width: 100%">
         <el-table-column prop="id" label="ID">
           <template slot-scope="scope">
@@ -18,6 +18,7 @@
             </router-link>
           </template>
         </el-table-column>
+
         <el-table-column label="Name">
           <template slot-scope="scope">
             <router-link :to="`/settings/users/${scope.row.id}`">
@@ -25,8 +26,11 @@
             </router-link>
           </template>
         </el-table-column>
+
         <el-table-column prop="createdAt" label="Created" :formatter="cellValueFromNow" />
+
         <el-table-column prop="updatedAt" label="Updated" :formatter="cellValueFromNow" />
+
         <el-table-column label="Actions">
           <template slot-scope="scope">
             <router-link
@@ -92,6 +96,8 @@ import * as user from '~/store/user';
   },
 })
 export default class AllUsersPage extends Vue {
+  public loading = 0;
+
   get allUsers(): ManyResultSet<AllUsersResultItem> {
     const state: data.DataState = this.$store.state[data.namespace];
 
@@ -123,17 +129,39 @@ export default class AllUsersPage extends Vue {
   }
 
   public async handleRemoveUser(id: string): Promise<void> {
-    await this.$store.dispatch(`${user.namespace}/deleteUser`, { userId: id });
-    this.fetchAllUsers();
+    try {
+      this.loading += 1;
+
+      await this.$store.dispatch(`${user.namespace}/deleteUser`, { userId: id });
+      this.fetchAllUsers();
+    } catch (_) {
+      this.$message({
+        message: 'An error occurred whilst deleting the user, please try again later.',
+        type: 'error',
+      });
+    } finally {
+      this.loading -= 1;
+    }
   }
 
   public async handleResetUserPassword(email: string): Promise<void> {
-    await this.$store.dispatch(`${user.namespace}/resetUserPassword`, email);
+    try {
+      this.loading += 1;
 
-    this.$message({
-      message: `The password for ${email} has been successfully reset, they will receive an email with instructions.`,
-      type: 'success',
-    });
+      await this.$store.dispatch(`${user.namespace}/resetUserPassword`, email);
+
+      this.$message({
+        message: `The password for ${email} has been successfully reset, they will receive an email with instructions.`,
+        type: 'success',
+      });
+    } catch (_) {
+      this.$message({
+        message: "An error occurred whilst resetting the user's password, please try again later.",
+        type: 'error',
+      });
+    } finally {
+      this.loading -= 1;
+    }
   }
 
   mounted(): void {

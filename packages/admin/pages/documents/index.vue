@@ -15,7 +15,7 @@
       </el-row>
     </portal>
 
-    <div class="all-documents-page">
+    <div v-loading="loading > 0" class="all-documents-page">
       <el-table
         :loading="documents.results.length === 0"
         :data="documents.results"
@@ -96,6 +96,7 @@
             >
               <i class="el-icon-edit-outline" />
             </router-link>
+
             <router-link
               v-if="$can(`schema:${scope.row.schema.name}:delete`)"
               title="Delete Document"
@@ -103,12 +104,14 @@
             >
               <i class="el-icon-delete" />
             </router-link>
+
             <router-link title="View Revisions" :to="`/documents/${scope.row.id}/revisions`">
               <i class="el-icon-document-copy" />
             </router-link>
           </span>
         </el-table-column>
       </el-table>
+
       <el-row type="flex" justify="space-between">
         <span />
         <el-pagination
@@ -153,6 +156,8 @@ import * as data from '~/store/data';
   },
 })
 export default class AllDocumentsPage extends Vue {
+  public loading = 0;
+
   public term = '';
 
   public termDebounced = '';
@@ -224,30 +229,37 @@ export default class AllDocumentsPage extends Vue {
   }
 
   public fetchDocuments(page = 1): void {
-    if (!this.canViewAllDocuments) {
-      this.$store.dispatch(`${data.namespace}/fetchFindDocumentsBySchemaIds`, {
-        schemaIds: this.schemaIds,
-        page,
-        sort: this.sortConfig,
+    try {
+      this.loading += 1;
+
+      if (!this.canViewAllDocuments) {
+        this.$store.dispatch(`${data.namespace}/fetchFindDocumentsBySchemaIds`, {
+          schemaIds: this.schemaIds,
+          page,
+          sort: this.sortConfig,
+        });
+      } else if (this.termDebounced !== '') {
+        this.$store.dispatch(`${data.namespace}/fetchSearchDocumentsWithSchema`, {
+          term: this.termDebounced,
+          page,
+          sort: this.sortConfig,
+        });
+
+        return;
+      } else {
+        this.$store.dispatch(`${data.namespace}/fetchAllDocumentsWithSchema`, {
+          page,
+          sort: this.sortConfig,
+        });
+      }
+    } catch (_) {
+      this.$message({
+        message: 'An error occurred whilst fetching documents, please try again later.',
+        type: 'error',
       });
-
-      return;
+    } finally {
+      this.loading -= 1;
     }
-
-    if (this.termDebounced !== '') {
-      this.$store.dispatch(`${data.namespace}/fetchSearchDocumentsWithSchema`, {
-        term: this.termDebounced,
-        page,
-        sort: this.sortConfig,
-      });
-
-      return;
-    }
-
-    this.$store.dispatch(`${data.namespace}/fetchAllDocumentsWithSchema`, {
-      page,
-      sort: this.sortConfig,
-    });
   }
 
   public updateTerm(newTerm: string): void {

@@ -9,7 +9,7 @@
       </h2>
     </portal>
 
-    <div class="delete-document-page">
+    <div v-loading="loading > 0" class="delete-document-page">
       <el-card>
         <template slot="header">
           <h3>Are you sure you want to delete {{ documentId }}?</h3>
@@ -27,6 +27,7 @@
           </el-button>
           <el-button
             v-if="schema && $can(`schema:${schema.name}:delete`)"
+            :disabled="loading > 0"
             type="danger"
             @click="handleDeleteDocument"
           >
@@ -52,6 +53,8 @@ import * as document from '~/store/document';
   },
 })
 export default class EditDocumentPage extends Vue {
+  public loading = 0;
+
   get document(): Document | null {
     return this.$store.getters[`${data.namespace}/getDocumentById`](this.documentId);
   }
@@ -76,28 +79,61 @@ export default class EditDocumentPage extends Vue {
     return this.$store.getters[`${data.namespace}/getSchemaWithFieldsById`](this.schemaId);
   }
 
-  public fetchDocumentById(): void {
-    this.$store.dispatch(`${data.namespace}/fetchDocumentById`, { id: this.documentId });
+  public async fetchDocumentById(): Promise<void> {
+    try {
+      this.loading += 1;
+
+      await this.$store.dispatch(`${data.namespace}/fetchDocumentById`, { id: this.documentId });
+    } catch (_) {
+      this.$message({
+        message: 'An error occurred when fetching the document, please try again later.',
+        type: 'error',
+      });
+    } finally {
+      this.loading -= 1;
+    }
   }
 
-  public fetchSchemaById(): Promise<void> {
-    return this.$store.dispatch(`${data.namespace}/fetchSchemaWithFieldsById`, {
-      id: this.schemaId,
-    });
+  public async fetchSchemaById(): Promise<void> {
+    try {
+      this.loading += 1;
+
+      await this.$store.dispatch(`${data.namespace}/fetchSchemaWithFieldsById`, {
+        id: this.schemaId,
+      });
+    } catch (_) {
+      this.$message({
+        message: 'An error occurred when fetching the document, please try again later.',
+        type: 'error',
+      });
+    } finally {
+      this.loading -= 1;
+    }
   }
 
   public async handleDeleteDocument(): Promise<void> {
-    await this.$store.dispatch(`${document.namespace}/deleteDocument`, {
-      documentId: this.documentId,
-      schemaId: this.document?.schemaId,
-    });
+    try {
+      this.loading += 1;
 
-    this.$message({
-      message: 'Document deleted successfully',
-      type: 'success',
-    });
+      await this.$store.dispatch(`${document.namespace}/deleteDocument`, {
+        documentId: this.documentId,
+        schemaId: this.document?.schemaId,
+      });
 
-    this.$router.push(`/schemas/${this.document?.schemaId}`);
+      this.$message({
+        message: 'Document deleted successfully',
+        type: 'success',
+      });
+
+      this.$router.push(`/schemas/${this.document?.schemaId}`);
+    } catch (_) {
+      this.$message({
+        message: 'An error occurred when deleting the document, please try again later.',
+        type: 'error',
+      });
+    } finally {
+      this.loading -= 1;
+    }
   }
 
   @Watch('documentId', { immediate: true })

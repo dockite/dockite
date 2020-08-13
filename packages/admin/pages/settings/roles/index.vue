@@ -3,13 +3,13 @@
     <portal to="header">
       <el-row type="flex" justify="space-between" align="middle">
         <h2>All Roles</h2>
-        <router-link to="/settings/roles/create">
+        <router-link v-if="$can('internal:roles:create')" to="/settings/roles/create">
           <el-button>Create</el-button>
         </router-link>
       </el-row>
     </portal>
 
-    <div class="all-roles-page">
+    <div v-loading="loading > 0" class="all-roles-page">
       <el-table :data="allRoles.results" style="width: 100%">
         <el-table-column prop="name" label="Name">
           <template slot-scope="scope">
@@ -18,13 +18,17 @@
             </router-link>
           </template>
         </el-table-column>
+
         <el-table-column prop="createdAt" label="Created" :formatter="cellValueFromNow" />
+
         <el-table-column prop="updatedAt" label="Updated" :formatter="cellValueFromNow" />
+
         <el-table-column label="Actions">
           <template slot-scope="scope">
             <router-link :to="`/settings/roles/${scope.row.name}`" style="padding-right: 0.75rem;">
               <i class="el-icon-edit-outline" />
             </router-link>
+
             <el-popconfirm
               title="Are you sure you want to delete this role?"
               confirm-button-text="Yes"
@@ -66,6 +70,8 @@ import * as role from '~/store/role';
   },
 })
 export default class AllRolesPage extends Vue {
+  public loading = 0;
+
   get allRoles(): ManyResultSet<AllRolesResultItem> {
     const state: data.DataState = this.$store.state[data.namespace];
 
@@ -88,8 +94,19 @@ export default class AllRolesPage extends Vue {
     return this.allRoles.totalPages;
   }
 
-  public fetchAllRoles(): void {
-    this.$store.dispatch(`${data.namespace}/fetchAllRoles`);
+  public async fetchAllRoles(): Promise<void> {
+    try {
+      this.loading += 1;
+
+      await this.$store.dispatch(`${data.namespace}/fetchAllRoles`, { perPage: 10000 });
+    } catch (_) {
+      this.$message({
+        message: 'An error occurred whilst fetching roles, please try again later.',
+        type: 'error',
+      });
+    } finally {
+      this.loading -= 1;
+    }
   }
 
   public cellValueFromNow(_row: never, _column: never, cellValue: string, _index: never): string {
@@ -97,8 +114,19 @@ export default class AllRolesPage extends Vue {
   }
 
   public async handleRemoveRole(name: string): Promise<void> {
-    await this.$store.dispatch(`${role.namespace}/deleteRole`, { roleName: name });
-    this.fetchAllRoles();
+    try {
+      this.loading += 1;
+
+      await this.$store.dispatch(`${role.namespace}/deleteRole`, { roleName: name });
+      this.fetchAllRoles();
+    } catch (_) {
+      this.$message({
+        message: 'An error occurred whilst deleting the role, please try again later.',
+        type: 'error',
+      });
+    } finally {
+      this.loading -= 1;
+    }
   }
 
   mounted(): void {

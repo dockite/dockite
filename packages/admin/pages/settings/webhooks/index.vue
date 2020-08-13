@@ -3,13 +3,13 @@
     <portal to="header">
       <el-row type="flex" justify="space-between" align="middle">
         <h2>All Webhooks</h2>
-        <router-link to="/settings/webhooks/create">
+        <router-link v-if="$can('internal:webhook:create')" to="/settings/webhooks/create">
           <el-button>Create</el-button>
         </router-link>
       </el-row>
     </portal>
 
-    <div class="all-documents-page">
+    <div v-loading="loading > 0" class="all-documents-page">
       <el-table :data="allWebhooks.results" style="width: 100%">
         <el-table-column prop="id" label="ID">
           <template slot-scope="scope">
@@ -18,6 +18,7 @@
             </router-link>
           </template>
         </el-table-column>
+
         <el-table-column prop="name" label="Name">
           <template slot-scope="scope">
             <router-link :to="`/settings/webhooks/${scope.row.id}`">
@@ -25,24 +26,30 @@
             </router-link>
           </template>
         </el-table-column>
-        <el-table-column prop="method" label="HTTP Method"></el-table-column>
+
+        <el-table-column prop="method" label="HTTP Method" />
+
         <el-table-column prop="createdAt" label="Created" :formatter="cellValueFromNow" />
+
         <el-table-column prop="updatedAt" label="Updated" :formatter="cellValueFromNow" />
+
         <el-table-column label="Actions">
           <template slot-scope="scope">
             <router-link
+              v-if="$can('internal:webhook:update')"
               :to="`/settings/webhooks/${scope.row.id}/edit`"
               style="padding-right: 0.75rem;"
             >
               <i class="el-icon-edit-outline" />
             </router-link>
+
             <el-popconfirm
               title="Are you sure?"
               confirm-button-text="Delete"
               cancel-button-text="Cancel"
               @onConfirm="handleRemoveWebhook(scope.row.id)"
             >
-              <el-button slot="reference" type="text">
+              <el-button v-if="$can('internal:webhook:delete')" slot="reference" type="text">
                 <i class="el-icon-delete"></i>
               </el-button>
             </el-popconfirm>
@@ -77,6 +84,8 @@ import * as webhook from '~/store/webhook';
   },
 })
 export default class AllWebhooksPage extends Vue {
+  public loading = 0;
+
   get allWebhooks(): ManyResultSet<AllWebhooksResultItem> {
     const state: data.DataState = this.$store.state[data.namespace];
 
@@ -99,8 +108,19 @@ export default class AllWebhooksPage extends Vue {
     return this.allWebhooks.totalPages;
   }
 
-  public fetchAllWebhooks(): void {
-    this.$store.dispatch(`${data.namespace}/fetchAllWebhooks`);
+  public async fetchAllWebhooks(): Promise<void> {
+    try {
+      this.loading += 1;
+
+      await this.$store.dispatch(`${data.namespace}/fetchAllWebhooks`);
+    } catch (_) {
+      this.$message({
+        message: 'An error occurred whilst fetching webhooks, please try again later.',
+        type: 'error',
+      });
+    } finally {
+      this.loading -= 1;
+    }
   }
 
   public cellValueFromNow(_row: never, _column: never, cellValue: string, _index: never): string {
@@ -108,11 +128,21 @@ export default class AllWebhooksPage extends Vue {
   }
 
   public async handleRemoveWebhook(id: string): Promise<void> {
-    await this.$store.dispatch(`${webhook.namespace}/deleteWebhook`, {
-      webhookId: id,
-    });
+    try {
+      this.loading += 1;
+      await this.$store.dispatch(`${webhook.namespace}/deleteWebhook`, {
+        webhookId: id,
+      });
 
-    this.fetchAllWebhooks();
+      this.fetchAllWebhooks();
+    } catch (_) {
+      this.$message({
+        message: 'An error occurred when deleting the webhook, please try again later.',
+        type: 'error',
+      });
+    } finally {
+      this.loading -= 1;
+    }
   }
 
   mounted(): void {

@@ -7,6 +7,10 @@
       custom-class="dockite-edit-field--drawer"
       @close="handleClose"
     >
+      <h2 slot="title">
+        <span v-if="field">Edit {{ field.title }} field</span>
+        <span v-else>Edit Field</span>
+      </h2>
       <div class="dockite-drawer--body">
         <el-form
           v-if="field !== null"

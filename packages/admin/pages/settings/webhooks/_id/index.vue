@@ -4,20 +4,24 @@
       <h2>Edit - {{ (webhook && webhook.name) || '' }}</h2>
     </portal>
 
-    <div class="all-webhook-calls-page">
+    <div v-loading="loading > 0" class="all-webhook-calls-page">
       <el-table :data="findWebhookCallsByWebhookId.results" style="width: 100%">
         <el-table-column prop="id" label="ID">
           <template slot-scope="scope">
             {{ scope.row.id | shortDesc }}
           </template>
         </el-table-column>
+
         <el-table-column label="Success">
           <template slot-scope="scope">
             {{ scope.row.success ? 'Yes' : 'No' }}
           </template>
         </el-table-column>
-        <el-table-column prop="status" label="Status Code"></el-table-column>
+
+        <el-table-column prop="status" label="Status Code" />
+
         <el-table-column prop="executedAt" label="Executed At" :formatter="cellValueFromNow" />
+
         <el-table-column label="Actions">
           <template slot-scope="scope">
             <el-button type="text" @click="webhookCallToDisplay = scope.row">
@@ -29,6 +33,7 @@
 
       <el-row type="flex" justify="space-between">
         <span />
+
         <el-pagination
           :current-page="currentPage"
           class="dockite-element--pagination"
@@ -50,10 +55,7 @@
       :destroy-on-close="true"
       @close="webhookCallToDisplay = null"
     >
-      <textarea
-        ref="webhookCallDetail"
-        :value="JSON.stringify(webhookCallToDisplay, null, 2)"
-      ></textarea>
+      <textarea ref="webhookCallDetail" :value="JSON.stringify(webhookCallToDisplay, null, 2)" />
     </el-dialog>
   </fragment>
 </template>
@@ -77,6 +79,8 @@ import * as data from '~/store/data';
   },
 })
 export default class WebhookCallsPage extends Vue {
+  public loading = 0;
+
   public showWebhookCallDetail = false;
 
   public webhookCallToDisplay: null | WebhookCall = null;
@@ -122,11 +126,22 @@ export default class WebhookCallsPage extends Vue {
     return this.findWebhookCallsByWebhookId.totalItems;
   }
 
-  public fetchWebhookCalls(page = 1): void {
-    this.$store.dispatch(`${data.namespace}/fetchFindWebhookCallsByWebhookId`, {
-      webhookId: this.webhookId,
-      page,
-    });
+  public async fetchWebhookCalls(page = 1): Promise<void> {
+    try {
+      this.loading += 1;
+
+      await this.$store.dispatch(`${data.namespace}/fetchFindWebhookCallsByWebhookId`, {
+        webhookId: this.webhookId,
+        page,
+      });
+    } catch (_) {
+      this.$message({
+        message: 'An error occurred whilst fetching webhook calls, please try again later.',
+        type: 'error',
+      });
+    } finally {
+      this.loading -= 1;
+    }
   }
 
   public cellValueFromNow(_row: never, _column: never, cellValue: string, _index: never): string {
@@ -152,10 +167,21 @@ export default class WebhookCallsPage extends Vue {
     }
   }
 
-  public fetchWebhookById(): void {
-    this.$store.dispatch(`${data.namespace}/fetchWebhookById`, {
-      id: this.webhookId,
-    });
+  public async fetchWebhookById(): Promise<void> {
+    try {
+      this.loading += 1;
+
+      await this.$store.dispatch(`${data.namespace}/fetchWebhookById`, {
+        id: this.webhookId,
+      });
+    } catch (_) {
+      this.$message({
+        message: 'An error occurred whilst fetching the webhook, please try again later.',
+        type: 'error',
+      });
+    } finally {
+      this.loading -= 1;
+    }
   }
 
   @Watch('webhookId', { immediate: true })
