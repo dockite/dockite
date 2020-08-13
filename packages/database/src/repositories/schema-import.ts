@@ -32,11 +32,13 @@ export class SchemaImportRepository extends Repository<Schema> {
 
     const fieldsToBeImported = payload.fields.map(field => {
       if (!field.id) {
-        const fieldMatch = schemaFields.find(f => f.id === field.id || f.name === field.name);
+        const fieldMatch = schemaFields.find(f => f.name === field.name);
 
         if (fieldMatch) {
-          // Easier than ignoring the eslint rule
-          Object.assign(field, { id: fieldMatch.id });
+          return {
+            ...field,
+            id: fieldMatch.id,
+          };
         }
       }
 
@@ -44,10 +46,7 @@ export class SchemaImportRepository extends Repository<Schema> {
     });
 
     const fieldsToBeDeleted = schemaFields.filter(
-      field =>
-        !fieldsToBeImported.some(
-          fieldToImport => field.id === fieldToImport.id || fieldToImport.name === field.name,
-        ),
+      field => !fieldsToBeImported.some(fieldToImport => field.id === fieldToImport.id),
     );
 
     const newSchema = {
