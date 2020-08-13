@@ -9,22 +9,26 @@
       </h2>
     </portal>
 
-    <div class="delete-document-page">
+    <div v-loading="loading > 0" class="delete-document-page">
       <el-card>
         <template slot="header">
           <h3>Are you sure you want to delete {{ singletonName }}?</h3>
         </template>
         <div class="dockite-document--detail">
           <p class="dockite-text--subtitle">
-            You won't be able to recover this Singleton later on and all corresponding documents
-            will be deleted too.
+            You won't be able to recover this Singleton later on.
           </p>
         </div>
         <el-row type="flex" justify="space-between">
           <el-button @click.prevent="$router.go(-1)">
             Cancel
           </el-button>
-          <el-button type="danger" @click.prevent="handleDeleteSingleton">
+          <el-button
+            v-if="$can('internal:schema:delete')"
+            :disabled="loading > 0"
+            type="danger"
+            @click.prevent="handleDeleteSingleton"
+          >
             Delete
           </el-button>
         </el-row>
@@ -47,6 +51,8 @@ import * as singleton from '~/store/singleton';
   },
 })
 export default class DeleteSingletonPage extends Vue {
+  public loading = 0;
+
   get singletonName(): string {
     return this.$store.getters[`${data.namespace}/getSingletonNameById`](this.singletonId);
   }
@@ -55,21 +61,34 @@ export default class DeleteSingletonPage extends Vue {
     return this.$route.params.id;
   }
 
-  public fetchSingletonById(): void {
-    this.$store.dispatch(`${data.namespace}/fetchSingletonWithFieldsById`, {
+  public async fetchSingletonById(): Promise<void> {
+    this.loading += 1;
+
+    await this.$store.dispatch(`${data.namespace}/fetchSingletonWithFieldsById`, {
       id: this.singletonId,
     });
+
+    this.loading -= 1;
   }
 
   public async handleDeleteSingleton(): Promise<void> {
-    await this.$store.dispatch(`${singleton.namespace}/deleteSingleton`, this.singletonId);
+    try {
+      await this.$store.dispatch(`${singleton.namespace}/deleteSingleton`, this.singletonId);
 
-    this.$message({
-      message: 'Singleton deleted successfully',
-      type: 'success',
-    });
+      this.$message({
+        message: 'Singleton deleted successfully',
+        type: 'success',
+      });
 
-    this.$router.push('/singletons');
+      this.$router.push('/singletons');
+    } catch (_) {
+      this.$message({
+        message: 'An error was encountered when deleting the singleton, please try again later.',
+        type: 'error',
+      });
+    } finally {
+      this.loading -= 1;
+    }
   }
 
   @Watch('singletonId', { immediate: true })

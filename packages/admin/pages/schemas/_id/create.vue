@@ -7,15 +7,15 @@
           {{ documentIdentifier }}
         </h2>
 
-        <el-button :disabled="submitting" @click="submit">
+        <el-button :disabled="loading > 0" @click="submit">
           Create Document
         </el-button>
       </el-row>
     </portal>
-    <div v-if="ready" class="create-schema-document-page">
+    <div v-loading="loading > 0" class="create-schema-document-page">
       <el-form
+        v-if="ready"
         ref="formEl"
-        v-loading="submitting"
         label-position="top"
         :model="form"
         @submit.native.prevent="submit"
@@ -42,7 +42,7 @@
           Cancel
         </el-button>
 
-        <el-button :disabled="submitting" type="primary" @click="submit">
+        <el-button :disabled="loading > 0" type="primary" @click="submit">
           Create Document
         </el-button>
       </el-row>
@@ -75,7 +75,7 @@ export default class CreateSchemaDocumentPage extends Vue {
 
   public ready = false;
 
-  public submitting = false;
+  public loading = 0;
 
   @Ref()
   readonly formEl!: Form;
@@ -160,16 +160,28 @@ export default class CreateSchemaDocumentPage extends Vue {
     });
   }
 
-  public fetchSchemaById(): Promise<void> {
-    return this.$store.dispatch(`${data.namespace}/fetchSchemaWithFieldsById`, {
-      id: this.$route.params.id,
-    });
+  public async fetchSchemaById(force = false): Promise<void> {
+    try {
+      this.loading += 1;
+
+      await this.$store.dispatch(`${data.namespace}/fetchSchemaWithFieldsById`, {
+        id: this.schemaId,
+        force,
+      });
+    } catch (_) {
+      this.$message({
+        message: 'Unable to fetch schema: ' + this.schemaId,
+        type: 'error',
+      });
+    } finally {
+      this.loading -= 1;
+    }
   }
 
   public async submit(): Promise<void> {
-    this.submitting = false;
-
     try {
+      this.loading += 1;
+
       await this.formEl.validate();
 
       await this.$store.dispatch(`${document.namespace}/createDocument`, {
@@ -209,8 +221,15 @@ export default class CreateSchemaDocumentPage extends Vue {
           });
         });
       }
+
+      if (errors.length === 0) {
+        this.$message({
+          message: `An error occured whilst creating the document, please try again later.`,
+          type: 'error',
+        });
+      }
     } finally {
-      this.submitting = false;
+      this.loading -= 1;
     }
   }
 

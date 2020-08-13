@@ -3,12 +3,12 @@
     <portal to="header">
       <el-row style="width: 100%" type="flex" justify="space-between" align="middle">
         <h2>
-          Revisions - <strong>{{ schemaId }}</strong>
+          Revisions - <strong>{{ schema && schema.title }}</strong>
         </h2>
       </el-row>
     </portal>
 
-    <div class="all-schema-schemas-page">
+    <div v-loading="loading > 0" class="all-schema-schemas-page">
       <el-table :data="allSchemaRevisions.results" style="width: 100%">
         <el-table-column prop="id" label="ID">
           <template slot-scope="scope">
@@ -47,6 +47,7 @@
               v-if="scope.row.id !== 'current'"
               type="text"
               title="Restore to this revision"
+              :disabled="loading > 0"
               @click="restoreToRevision(scope.row.id)"
             >
               <i class="el-icon-refresh-left" />
@@ -124,6 +125,8 @@ export default class SchemaRevisionsPage extends Vue {
 
   public showDiff = false;
 
+  public loading = 0;
+
   @Ref()
   readonly revisionDetail!: HTMLTextAreaElement;
 
@@ -194,21 +197,46 @@ export default class SchemaRevisionsPage extends Vue {
     return this.allSchemaRevisions.totalItems;
   }
 
-  public fetchAllSchemaRevisions(): void {
-    this.$store.dispatch(`${data.namespace}/fetchAllSchemaRevisionsForSchema`, {
-      schemaId: this.schemaId,
-    });
+  public async fetchAllSchemaRevisions(): Promise<void> {
+    try {
+      this.loading += 1;
+
+      await this.$store.dispatch(`${data.namespace}/fetchAllSchemaRevisionsForSchema`, {
+        schemaId: this.schemaId,
+      });
+    } catch (_) {
+      this.$message({
+        message:
+          'Unable to fetch revisions for ' + (this.schema && this.schema.name) || this.schemaId,
+        type: 'error',
+      });
+    } finally {
+      this.loading -= 1;
+    }
   }
 
-  public fetchSchemaById(force = false): Promise<void> {
-    return this.$store.dispatch(`${data.namespace}/fetchSchemaWithFieldsById`, {
-      id: this.$route.params.id,
-      force,
-    });
+  public async fetchSchemaById(force = false): Promise<void> {
+    try {
+      this.loading += 1;
+
+      await this.$store.dispatch(`${data.namespace}/fetchSchemaWithFieldsById`, {
+        id: this.$route.params.id,
+        force,
+      });
+    } catch (_) {
+      this.$message({
+        message: 'Unable to fetch schema: ' + this.schemaId,
+        type: 'error',
+      });
+    } finally {
+      this.loading -= 1;
+    }
   }
 
   public async restoreToRevision(revisionId: string): Promise<void> {
     try {
+      this.loading += 1;
+
       await this.$store.dispatch(`${revision.namespace}/restoreSchemaRevision`, {
         revisionId,
         schemaId: this.schemaId,
@@ -225,6 +253,8 @@ export default class SchemaRevisionsPage extends Vue {
         message: 'Revision was unable to be restored',
         type: 'error',
       });
+    } finally {
+      this.loading -= 1;
     }
   }
 

@@ -6,13 +6,19 @@
           Edit Schema - <strong>{{ schemaName }}</strong>
         </h2>
 
-        <el-button @click="showSchemaSettings = true">
-          Setttings
-        </el-button>
+        <div>
+          <el-button @click="showSchemaSettings = true">
+            Setttings
+          </el-button>
+
+          <el-button type="primary" :disabled="loading > 0" @click="submit">
+            Update
+          </el-button>
+        </div>
       </el-row>
     </portal>
 
-    <div class="edit-schema-component">
+    <div v-loading="loading > 0" class="edit-schema-component">
       <el-tabs v-model="currentTab" type="border-card" editable @edit="handleEditTabs">
         <el-tab-pane v-for="tab in availableTabs" :key="tab" :label="tab" :name="tab">
           <el-tree
@@ -89,7 +95,7 @@
           Cancel
         </el-button>
 
-        <el-button type="primary" @click="submit">
+        <el-button :disabled="loading > 0" type="primary" @click="submit">
           Update
         </el-button>
       </el-row>
@@ -139,6 +145,8 @@ export default class EditSchemaPage extends Vue {
   public groupFieldData: Record<string, FieldTreeData[]> = {};
 
   public deletedFields: string[] = [];
+
+  public loading = 0;
 
   get schemaName(): string {
     return this.$store.getters[`${data.namespace}/getSchemaNameById`](this.schemaId);
@@ -203,6 +211,8 @@ export default class EditSchemaPage extends Vue {
 
   public async submit(): Promise<void> {
     try {
+      this.loading += 1;
+
       const fieldData: UnpersistedField[] = [];
       const groups: Record<string, string[]> = {};
 
@@ -217,7 +227,7 @@ export default class EditSchemaPage extends Vue {
           type: 'error',
         });
 
-        throw new Error('Schema requires fields');
+        return;
       }
 
       if (Object.keys(this.groupFieldData).some(key => this.groupFieldData[key].length === 0)) {
@@ -227,7 +237,7 @@ export default class EditSchemaPage extends Vue {
           type: 'error',
         });
 
-        throw new Error('Groups must have fields');
+        return;
       }
 
       await this.$store.dispatch(`${schema.namespace}/updateSchemaAndFields`, {
@@ -246,7 +256,14 @@ export default class EditSchemaPage extends Vue {
       });
 
       this.$router.push(`/schemas/${this.$route.params.id}`);
-    } catch (_) {}
+    } catch (_) {
+      this.$message({
+        message: 'An error occurred whilst udpating the schema, please try again later.',
+        type: 'error',
+      });
+    } finally {
+      this.loading -= 1;
+    }
   }
 
   public transformTreeFieldDataToFieldData(treeFieldData: FieldTreeData[]): UnpersistedField[] {
@@ -426,10 +443,26 @@ export default class EditSchemaPage extends Vue {
     }
   }
 
+  public async fetchSchemaById(force = false): Promise<void> {
+    try {
+      this.loading += 1;
+
+      await this.$store.dispatch(`${data.namespace}/fetchSchemaWithFieldsById`, {
+        id: this.$route.params.id,
+        force,
+      });
+    } catch (_) {
+      this.$message({
+        message: 'Unable to fetch schema: ' + this.schemaId,
+        type: 'error',
+      });
+    } finally {
+      this.loading -= 1;
+    }
+  }
+
   public beforeMount(): void {
-    this.$store.dispatch(`${data.namespace}/fetchSchemaWithFieldsById`, {
-      id: this.$route.params.id,
-    });
+    this.fetchSchemaById();
   }
 }
 </script>

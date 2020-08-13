@@ -4,12 +4,15 @@
       <h2>Import Schema</h2>
     </portal>
 
-    <div class="import-schema-page">
+    <div v-loading="loading > 0" class="import-schema-page">
       <json-editor v-model="payload" style="height: 60vh;" />
+
       <div style="padding-top: 1rem;" />
+
       <el-row type="flex" justify="space-between" align="middle">
         <el-button type="text" @click="$router.go(-1)">Cancel</el-button>
-        <el-button type="primary" @click.prevent="handleImportSchema">
+
+        <el-button type="primary" :disabled="loading > 0" @click.prevent="handleImportSchema">
           Import Schema
         </el-button>
       </el-row>
@@ -36,6 +39,8 @@ import * as schema from '~/store/schema';
 export default class ImportSchemaWithIdPage extends Vue {
   public payload = '';
 
+  public loading = 0;
+
   get schemaName(): string {
     return this.$store.getters[`${data.namespace}/getSchemaNameById`](this.schemaId);
   }
@@ -50,6 +55,8 @@ export default class ImportSchemaWithIdPage extends Vue {
 
   public async handleImportSchema(): Promise<void> {
     try {
+      this.loading += 1;
+
       await this.$store.dispatch(`${schema.namespace}/importSchema`, {
         schemaId: this.schemaId,
         payload: this.payload,
@@ -68,14 +75,27 @@ export default class ImportSchemaWithIdPage extends Vue {
         message: 'Unable to import schema, please check for any errors.',
         type: 'error',
       });
+    } finally {
+      this.loading -= 1;
     }
   }
 
-  public fetchSchemaById(force = false): Promise<void> {
-    return this.$store.dispatch(`${data.namespace}/fetchSchemaWithFieldsById`, {
-      id: this.$route.params.id,
-      force,
-    });
+  public async fetchSchemaById(force = false): Promise<void> {
+    try {
+      this.loading += 1;
+
+      await this.$store.dispatch(`${data.namespace}/fetchSchemaWithFieldsById`, {
+        id: this.$route.params.id,
+        force,
+      });
+    } catch (_) {
+      this.$message({
+        message: 'Unable to fetch schema: ' + this.schemaId,
+        type: 'error',
+      });
+    } finally {
+      this.loading -= 1;
+    }
   }
 
   @Watch('schemaId', { immediate: true })

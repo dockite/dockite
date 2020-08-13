@@ -21,7 +21,7 @@
             <el-input v-model="loginForm.password" type="password" />
           </el-form-item>
           <el-form-item>
-            <el-button native-type="submit" type="primary">
+            <el-button :disabled="loading > 0" native-type="submit" type="primary">
               {{ $t('login.labels.button') }}
             </el-button>
           </el-form-item>
@@ -53,8 +53,7 @@ interface NewInstallationQueryResponse {
   },
 })
 export default class LoginPage extends Vue {
-  @Ref()
-  readonly email!: Input;
+  public loading = 0;
 
   public error = '';
 
@@ -64,6 +63,9 @@ export default class LoginPage extends Vue {
     email: '',
     password: '',
   };
+
+  @Ref()
+  readonly email!: Input;
 
   async fetch(): Promise<void> {
     const { data } = await this.$apolloClient.query<NewInstallationQueryResponse>({
@@ -109,6 +111,8 @@ export default class LoginPage extends Vue {
 
   public async login(): Promise<void> {
     try {
+      this.loading += 1;
+
       const valid = await (this.$refs.form as Form).validate();
 
       console.log({ valid });
@@ -122,6 +126,8 @@ export default class LoginPage extends Vue {
       this.$router.push('/');
     } catch (_) {
       this.error = 'The username or password provided is incorrect.';
+    } finally {
+      this.loading -= 1;
     }
   }
 

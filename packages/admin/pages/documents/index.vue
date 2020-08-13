@@ -89,10 +89,18 @@
 
         <el-table-column label="Actions">
           <span slot-scope="scope" class="dockite-table--actions">
-            <router-link title="Edit Document" :to="`/documents/${scope.row.id}`">
+            <router-link
+              v-if="$can(`schema:${scope.row.schema.name}:update`)"
+              title="Edit Document"
+              :to="`/documents/${scope.row.id}`"
+            >
               <i class="el-icon-edit-outline" />
             </router-link>
-            <router-link title="Delete Document" :to="`/documents/${scope.row.id}/delete`">
+            <router-link
+              v-if="$can(`schema:${scope.row.schema.name}:delete`)"
+              title="Delete Document"
+              :to="`/documents/${scope.row.id}/delete`"
+            >
               <i class="el-icon-delete" />
             </router-link>
             <router-link title="View Revisions" :to="`/documents/${scope.row.id}/revisions`">

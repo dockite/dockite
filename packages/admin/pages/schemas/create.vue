@@ -4,7 +4,7 @@
       <h2>Create a new Schema</h2>
     </portal>
 
-    <div class="create-schema-page">
+    <div v-loading="loading > 0" class="create-schema-page">
       <el-steps :active="step" simple class="dockite-steps--create-schema" finish-status="success">
         <el-step title="Name" />
         <el-step title="Fields" />
@@ -81,6 +81,8 @@ interface CreateSchemaForm {
 export default class CreateSchemaPage extends Vue {
   public step = 0;
 
+  public loading = 0;
+
   public createSchemaForm: CreateSchemaForm = {
     name: '',
     title: '',
@@ -96,6 +98,8 @@ export default class CreateSchemaPage extends Vue {
   public async stepForwards(): Promise<void> {
     if (this.step === MAX_STEP) {
       try {
+        this.loading += 1;
+
         await this.$store.dispatch(
           `${schema.namespace}/createSchemaWithFields`,
           this.createSchemaForm,
@@ -110,14 +114,20 @@ export default class CreateSchemaPage extends Vue {
         });
 
         console.log(err);
+      } finally {
+        this.loading -= 1;
       }
     } else {
       try {
+        this.loading += 1;
+
         await (this.$refs[`step-${this.step + 1}`] as StepFormComponent).submit();
 
         this.step = Math.min(MAX_STEP, this.step + 1);
       } catch (err) {
         console.log(err);
+      } finally {
+        this.loading -= 1;
       }
     }
   }

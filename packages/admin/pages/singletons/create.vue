@@ -4,7 +4,7 @@
       <h2>Create a new Singleton</h2>
     </portal>
 
-    <div class="create-singleton-page">
+    <div v-loading="loading > 0" class="create-singleton-page">
       <el-steps
         :active="step"
         simple
@@ -101,6 +101,8 @@ interface CreateSingletonForm {
 export default class CreateSingletonPage extends Vue {
   public step = 0;
 
+  public loading = 0;
+
   public createSingletonForm: CreateSingletonForm = {
     name: '',
     title: '',
@@ -117,6 +119,8 @@ export default class CreateSingletonPage extends Vue {
   public async stepForwards(): Promise<void> {
     if (this.step === MAX_STEP) {
       try {
+        this.loading += 1;
+
         await this.$store.dispatch(
           `${singleton.namespace}/createSingletonWithFields`,
           this.createSingletonForm,
@@ -131,14 +135,20 @@ export default class CreateSingletonPage extends Vue {
         });
 
         console.log(err);
+      } finally {
+        this.loading -= 1;
       }
     } else {
       try {
+        this.loading += 1;
+
         await (this.$refs[`step-${this.step + 1}`] as StepFormComponent).submit();
 
         this.step = Math.min(MAX_STEP, this.step + 1);
       } catch (err) {
         console.log(err);
+      } finally {
+        this.loading -= 1;
       }
     }
   }

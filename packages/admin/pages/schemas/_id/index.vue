@@ -15,13 +15,13 @@
               <i class="el-icon-arrow-down el-icon--right" />
             </el-button>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>
+              <el-dropdown-item v-if="$can(`schema:${schemaName}:create`)">
                 <router-link :to="`/schemas/${schemaId}/create`">
                   <i class="el-icon-document-add" />
                   Create
                 </router-link>
               </el-dropdown-item>
-              <el-dropdown-item>
+              <el-dropdown-item v-if="$can('internal:schema:update')">
                 <router-link :to="`/schemas/${schemaId}/edit`">
                   <i class="el-icon-edit" />
                   Edit
@@ -33,7 +33,7 @@
                   Bulk Edit
                 </router-link>
               </el-dropdown-item>
-              <el-dropdown-item>
+              <el-dropdown-item v-if="$can('internal:schema:delete')">
                 <router-link :to="`/schemas/${schemaId}/delete`" style="color: rgb(245, 108, 108)">
                   <i class="el-icon-delete" />
                   Delete
@@ -45,7 +45,7 @@
                   Revisions
                 </router-link>
               </el-dropdown-item>
-              <el-dropdown-item>
+              <el-dropdown-item v-if="$can('internal:schema:update')">
                 <router-link :to="`/schemas/${schemaId}/import`">
                   <i class="el-icon-upload2" />
                   Import Schema

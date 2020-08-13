@@ -6,7 +6,7 @@
 
         <div>
           <el-button @click="showDocumentSelectModal = true">Select Documents</el-button>
-          <el-button type="primary" :disabled="submitting" @click="submit">
+          <el-button type="primary" :disabled="loading > 0" @click="submit">
             Update ({{ documentCount }})
           </el-button>
         </div>
@@ -19,8 +19,9 @@
       correct.
     </el-alert>
 
-    <div v-if="ready" class="create-schema-document-page pt-2">
+    <div v-loading="loading > 0" class="create-schema-document-page pt-2">
       <el-form
+        v-if="ready"
         ref="formEl"
         v-loading="submitting"
         label-position="top"
@@ -59,7 +60,7 @@
           Cancel
         </el-button>
 
-        <el-button :disabled="submitting" type="primary" @click="submit">
+        <el-button :disabled="loading > 0" type="primary" @click="submit">
           Update ({{ documentCount }})
         </el-button>
       </el-row>
@@ -100,7 +101,7 @@ export default class CreateSchemaDocumentPage extends Vue {
 
   public ready = false;
 
-  public submitting = false;
+  public loading = 0;
 
   public selectAll = false;
 
@@ -187,17 +188,28 @@ export default class CreateSchemaDocumentPage extends Vue {
     });
   }
 
-  public fetchSchemaById(): Promise<void> {
-    return this.$store.dispatch(`${data.namespace}/fetchSchemaWithFieldsById`, {
-      id: this.$route.params.id,
-    });
+  public async fetchSchemaById(force = false): Promise<void> {
+    try {
+      this.loading += 1;
+
+      await this.$store.dispatch(`${data.namespace}/fetchSchemaWithFieldsById`, {
+        id: this.$route.params.id,
+        force,
+      });
+    } catch (_) {
+      this.$message({
+        message: 'Unable to fetch schema: ' + this.schemaId,
+        type: 'error',
+      });
+    } finally {
+      this.loading -= 1;
+    }
   }
 
   public async submit(): Promise<void> {
-    this.submitting = false;
-
     try {
-      // await this.formEl.validate();
+      this.loading += 1;
+
       const payload: Record<string, any> = {
         data: pickBy(this.form, (_, key) => this.enabledFields[key] === true),
         schemaId: this.schemaId,
@@ -217,32 +229,51 @@ export default class CreateSchemaDocumentPage extends Vue {
       this.$router.push(`/schemas/${this.schemaId}`);
     } catch (_) {
       // It's any's all the way down
-      (this.formEl as any).fields
-        .filter((f: any): boolean => f.validateState === 'error')
-        .slice(0, 3)
-        .forEach((f: any): void => {
-          const groupName = this.getGroupNameFromFieldName(f.prop);
+      const errors = (this.formEl as any).fields.filter(
+        (f: any): boolean => f.validateState === 'error',
+      );
 
-          setImmediate(() => {
-            this.$message({
-              message: `${groupName}: ${f.validateMessage}`,
-              type: 'warning',
-            });
+      errors.slice(0, 4).forEach((f: any): void => {
+        const groupName = this.getGroupNameFromFieldName(f.prop.split('.').shift());
+
+        setImmediate(() => {
+          this.$message({
+            message: `${groupName}: ${f.validateMessage}`,
+            type: 'warning',
           });
         });
+      });
+
+      if (errors.length > 4) {
+        setImmediate(() => {
+          this.$message({
+            message: `And ${errors.length - 4} more errors`,
+            type: 'warning',
+          });
+        });
+      }
+
+      if (errors.length === 0) {
+        this.$message({
+          message: `An error occured during the bulk edit, please try again later.`,
+          type: 'error',
+        });
+      }
     } finally {
-      this.submitting = false;
+      this.loading -= 1;
     }
   }
 
   @Watch('schamaId', { immediate: true })
   public async handleSchemaIdChange(): Promise<void> {
+    this.loading += 1;
     this.ready = false;
 
     await this.fetchSchemaById();
     this.initialiseForm();
     this.currentTab = this.availableTabs[0];
 
+    this.loading -= 1;
     this.ready = true;
   }
 }

@@ -13,13 +13,13 @@
               <i class="el-icon-arrow-down el-icon--right" />
             </el-button>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>
+              <el-dropdown-item v-if="$can(`internal:schema:update`)">
                 <router-link :to="`/singletons/${singletonId}/edit`">
                   <i class="el-icon-edit" />
                   Edit
                 </router-link>
               </el-dropdown-item>
-              <el-dropdown-item>
+              <el-dropdown-item v-if="$can(`internal:schema:delete`)">
                 <router-link
                   :to="`/singleton/${singletonId}/delete`"
                   style="color: rgb(245, 108, 108)"
@@ -34,7 +34,7 @@
                   Revisions
                 </router-link>
               </el-dropdown-item>
-              <el-dropdown-item>
+              <el-dropdown-item v-if="$can('internal:schema:update')">
                 <router-link :to="`/singletons/${singletonId}/import`">
                   <i class="el-icon-upload2" />
                   Import Singleton
@@ -43,14 +43,20 @@
             </el-dropdown-menu>
           </el-dropdown>
 
-          <el-button type="primary" @click="submit">
+          <el-button :loading="loading > 0" type="primary" @click="submit">
             Save
           </el-button>
         </el-row>
       </el-row>
     </portal>
-    <div v-if="ready" class="singleton-document-page">
-      <el-form ref="formEl" label-position="top" :model="form" @submit.native.prevent="submit">
+    <div v-loading="loading > 0" class="singleton-document-page">
+      <el-form
+        v-if="ready"
+        ref="formEl"
+        label-position="top"
+        :model="form"
+        @submit.native.prevent="submit"
+      >
         <el-tabs v-model="currentTab" type="border-card">
           <el-tab-pane v-for="tab in availableTabs" :key="tab" :label="tab" :name="tab">
             <component
@@ -105,6 +111,8 @@ export default class CreateSingletonDocumentPage extends Vue {
   public form: Record<string, any> = {};
 
   public ready = false;
+
+  public loading = 0;
 
   public localGroups: Record<string, string[]> | null = null;
 
@@ -187,14 +195,20 @@ export default class CreateSingletonDocumentPage extends Vue {
     });
   }
 
-  public fetchSingletonById(): Promise<void> {
-    return this.$store.dispatch(`${data.namespace}/fetchSingletonWithFieldsById`, {
+  public async fetchSingletonById(): Promise<void> {
+    this.loading += 1;
+
+    await this.$store.dispatch(`${data.namespace}/fetchSingletonWithFieldsById`, {
       id: this.$route.params.id,
     });
+
+    this.loading -= 1;
   }
 
   public async submit(): Promise<void> {
     try {
+      this.loading += 1;
+
       if (!this.singleton) {
         throw new Error("Singleton hasn't been loaded");
       }
@@ -241,17 +255,28 @@ export default class CreateSingletonDocumentPage extends Vue {
           });
         });
       }
+
+      if (errors.length === 0) {
+        this.$message({
+          message: 'There was an error saving the singleton, please try again later.',
+          type: 'error',
+        });
+      }
+    } finally {
+      this.loading -= 1;
     }
   }
 
   @Watch('singletonId', { immediate: true })
   public async handleSingletonIdChange(): Promise<void> {
     this.ready = false;
+    this.loading += 1;
 
     await this.fetchSingletonById();
     this.initialiseForm();
     this.currentTab = this.availableTabs[0];
 
+    this.loading -= 1;
     this.ready = true;
   }
 }

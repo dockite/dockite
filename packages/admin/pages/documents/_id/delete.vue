@@ -25,7 +25,11 @@
           <el-button @click.prevent="$router.go(-1)">
             Cancel
           </el-button>
-          <el-button type="danger" @click="handleDeleteDocument">
+          <el-button
+            v-if="schema && $can(`schema:${schema.name}:delete`)"
+            type="danger"
+            @click="handleDeleteDocument"
+          >
             Delete
           </el-button>
         </el-row>
@@ -35,7 +39,7 @@
 </template>
 
 <script lang="ts">
-import { Document } from '@dockite/database';
+import { Document, Schema } from '@dockite/database';
 import { Component, Vue, Watch } from 'nuxt-property-decorator';
 import { Fragment } from 'vue-fragment';
 
@@ -60,8 +64,26 @@ export default class EditDocumentPage extends Vue {
     return this.$route.params.id;
   }
 
+  get schemaId(): string | null {
+    if (this.document) {
+      return this.document.schemaId;
+    }
+
+    return null;
+  }
+
+  get schema(): Schema | null {
+    return this.$store.getters[`${data.namespace}/getSchemaWithFieldsById`](this.schemaId);
+  }
+
   public fetchDocumentById(): void {
     this.$store.dispatch(`${data.namespace}/fetchDocumentById`, { id: this.documentId });
+  }
+
+  public fetchSchemaById(): Promise<void> {
+    return this.$store.dispatch(`${data.namespace}/fetchSchemaWithFieldsById`, {
+      id: this.schemaId,
+    });
   }
 
   public async handleDeleteDocument(): Promise<void> {
@@ -79,8 +101,9 @@ export default class EditDocumentPage extends Vue {
   }
 
   @Watch('documentId', { immediate: true })
-  handleDocumentIdChange(): void {
-    this.fetchDocumentById();
+  async handleDocumentIdChange(): Promise<void> {
+    await this.fetchDocumentById();
+    await this.fetchSchemaById();
   }
 }
 </script>

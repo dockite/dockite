@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-v-html -->
 <template>
   <fragment>
     <portal to="header">
@@ -9,13 +10,17 @@
       </el-row>
     </portal>
 
-    <div class="schema-revision-compare-page">
-      <!-- eslint-disable-next-line -->
-      <div :class="{'dockite-diff--highlight': highlight }" style="background: #ffffff; margin-bottom: 1rem;" v-html="diffHTML" />
+    <div v-loading="loading > 0" class="schema-revision-compare-page">
+      <div
+        :class="{ 'dockite-diff--highlight': highlight }"
+        style="background: #ffffff; margin-bottom: 1rem;"
+        v-html="diffHTML"
+      />
       <el-button
         style="width: auto"
         class="dockite-button--restore"
         type="primary"
+        :disabled="loading > 0"
         @click="restoreToRevision(primary)"
         @mouseover.native="highlight = true"
         @mouseleave.native="highlight = false"
@@ -48,7 +53,10 @@ import 'diff2html/bundles/css/diff2html.min.css';
 })
 export default class SchemaRevisionsPage extends Vue {
   public highlight = false;
+
   public diffHTML = '';
+
+  public loading = 0;
 
   @Ref()
   readonly diffDetail!: HTMLTextAreaElement;
@@ -125,21 +133,38 @@ export default class SchemaRevisionsPage extends Vue {
     return this.allSchemaRevisions.totalItems;
   }
 
-  public fetchAllSchemaRevisions(): void {
-    this.$store.dispatch(`${data.namespace}/fetchAllSchemaRevisionsForSchema`, {
+  public async fetchAllSchemaRevisions(): Promise<void> {
+    this.loading += 1;
+
+    await this.$store.dispatch(`${data.namespace}/fetchAllSchemaRevisionsForSchema`, {
       schemaId: this.schemaId,
     });
+
+    this.loading -= 1;
   }
 
-  public fetchSchemaById(force = false): Promise<void> {
-    return this.$store.dispatch(`${data.namespace}/fetchSchemaWithFieldsById`, {
-      id: this.$route.params.id,
-      force,
-    });
+  public async fetchSchemaById(force = false): Promise<void> {
+    try {
+      this.loading += 1;
+
+      await this.$store.dispatch(`${data.namespace}/fetchSchemaWithFieldsById`, {
+        id: this.$route.params.id,
+        force,
+      });
+    } catch (_) {
+      this.$message({
+        message: 'Unable to fetch schema.',
+        type: 'error',
+      });
+    } finally {
+      this.loading -= 1;
+    }
   }
 
   public async restoreToRevision(revisionId: string): Promise<void> {
     try {
+      this.loading += 1;
+
       await this.$store.dispatch(`${revision.namespace}/restoreSchemaRevision`, {
         revisionId,
         schemaId: this.schemaId,
@@ -156,6 +181,8 @@ export default class SchemaRevisionsPage extends Vue {
         message: 'Revision was unable to be restored',
         type: 'error',
       });
+    } finally {
+      this.loading -= 1;
     }
   }
 

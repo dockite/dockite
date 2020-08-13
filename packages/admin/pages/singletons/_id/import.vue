@@ -4,12 +4,19 @@
       <h2>Import Singleton</h2>
     </portal>
 
-    <div class="import-singleton-page">
+    <div v-loading="loading > 0" class="import-singleton-page">
       <json-editor v-model="payload" style="height: 60vh;" />
+
       <div style="padding-top: 1rem;" />
+
       <el-row type="flex" justify="space-between" align="middle">
         <el-button type="text" @click="$router.go(-1)">Cancel</el-button>
-        <el-button type="primary" @click.prevent="handleImportSingleton">
+        <el-button
+          v-if="$can('internal:schema:update')"
+          type="primary"
+          :disabled="loading > 0"
+          @click.prevent="handleImportSingleton"
+        >
           Import Singleton
         </el-button>
       </el-row>
@@ -36,6 +43,8 @@ import * as singleton from '~/store/singleton';
 export default class ImportSingletonWithIdPage extends Vue {
   public payload = '';
 
+  public loading = 0;
+
   get singletonName(): string {
     return this.$store.getters[`${data.namespace}/getSingletonNameById`](this.singletonId);
   }
@@ -52,6 +61,8 @@ export default class ImportSingletonWithIdPage extends Vue {
 
   public async handleImportSingleton(): Promise<void> {
     try {
+      this.loading += 1;
+
       await this.$store.dispatch(`${singleton.namespace}/importSingleton`, {
         singletonId: this.singletonId,
         payload: this.payload,
@@ -70,14 +81,20 @@ export default class ImportSingletonWithIdPage extends Vue {
         message: 'Unable to import singleton, please check for any errors.',
         type: 'error',
       });
+    } finally {
+      this.loading -= 1;
     }
   }
 
-  public fetchSingletonById(force = false): Promise<void> {
-    return this.$store.dispatch(`${data.namespace}/fetchSingletonWithFieldsById`, {
+  public async fetchSingletonById(force = false): Promise<void> {
+    this.loading += 1;
+
+    await this.$store.dispatch(`${data.namespace}/fetchSingletonWithFieldsById`, {
       id: this.$route.params.id,
       force,
     });
+
+    this.loading -= 1;
   }
 
   @Watch('singletonId', { immediate: true })

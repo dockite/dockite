@@ -9,7 +9,7 @@
             <i class="el-icon-arrow-down el-icon--right" />
           </el-button>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>
+            <el-dropdown-item v-if="$can('internal:schema:create')">
               <router-link :to="`/schemas/import`">
                 <i class="el-icon-upload2" />
                 Import Schema
@@ -20,7 +20,7 @@
       </el-row>
     </portal>
 
-    <div class="all-documents-page">
+    <div v-loading="loading > 0" class="all-documents-page">
       <el-table :data="allSchemas.results" style="width: 100%">
         <el-table-column prop="id" label="ID" sortable>
           <template slot-scope="scope">
@@ -40,10 +40,18 @@
         <el-table-column prop="updatedAt" label="Updated" :formatter="cellValueFromNow" sortable />
         <el-table-column label="Actions">
           <span slot-scope="scope" class="dockite-table--actions">
-            <router-link title="Edit Schema" :to="`/schemas/${scope.row.id}/edit`">
+            <router-link
+              v-if="$can('internal:schema:update')"
+              title="Edit Schema"
+              :to="`/schemas/${scope.row.id}/edit`"
+            >
               <i class="el-icon-edit-outline" />
             </router-link>
-            <router-link title="Delete Schema" :to="`/schemas/${scope.row.id}/delete`">
+            <router-link
+              v-if="$can('internal:schema:delete')"
+              title="Delete Schema"
+              :to="`/schemas/${scope.row.id}/delete`"
+            >
               <i class="el-icon-delete" />
             </router-link>
             <router-link title="View Revisions" :to="`/schemas/${scope.row.id}/revisions`">
@@ -79,6 +87,8 @@ import * as data from '~/store/data';
   },
 })
 export default class AllSchemasPage extends Vue {
+  public loading = 0;
+
   get allSchemas(): ManyResultSet<AllSchemasResultItem> {
     const state: data.DataState = this.$store.state[data.namespace];
 
@@ -101,8 +111,19 @@ export default class AllSchemasPage extends Vue {
     return this.allSchemas.totalPages;
   }
 
-  public fetchAllSchemas(): void {
-    this.$store.dispatch(`${data.namespace}/fetchAllSchemas`);
+  public async fetchAllSchemas(): Promise<void> {
+    try {
+      this.loading += 1;
+
+      await this.$store.dispatch(`${data.namespace}/fetchAllSchemas`);
+    } catch (_) {
+      this.$message({
+        message: 'An error occurred whilst fetching schemas, please try again later.',
+        type: 'error',
+      });
+    } finally {
+      this.loading -= 1;
+    }
   }
 
   public cellValueFromNow(_row: never, _column: never, cellValue: string, _index: never): string {

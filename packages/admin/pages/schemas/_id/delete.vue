@@ -24,7 +24,12 @@
           <el-button @click.prevent="$router.go(-1)">
             Cancel
           </el-button>
-          <el-button type="danger" @click.prevent="handleDeleteSchema">
+          <el-button
+            v-if="$can('internal:schema:delete')"
+            :disabled="loading > 0"
+            type="danger"
+            @click.prevent="handleDeleteSchema"
+          >
             Delete
           </el-button>
         </el-row>
@@ -47,6 +52,8 @@ import * as schema from '~/store/schema';
   },
 })
 export default class DeleteSchemaPage extends Vue {
+  public loading = 0;
+
   get schemaName(): string {
     return this.$store.getters[`${data.namespace}/getSchemaNameById`](this.schemaId);
   }
@@ -55,19 +62,44 @@ export default class DeleteSchemaPage extends Vue {
     return this.$route.params.id;
   }
 
-  public fetchSchemaById(): void {
-    this.$store.dispatch(`${data.namespace}/fetchSchemaWithFieldsById`, { id: this.schemaId });
+  public async fetchSchemaById(force = false): Promise<void> {
+    try {
+      this.loading += 1;
+
+      await this.$store.dispatch(`${data.namespace}/fetchSchemaWithFieldsById`, {
+        id: this.schemaId,
+        force,
+      });
+    } catch (_) {
+      this.$message({
+        message: 'Unable to fetch schema: ' + this.schemaId,
+        type: 'error',
+      });
+    } finally {
+      this.loading -= 1;
+    }
   }
 
   public async handleDeleteSchema(): Promise<void> {
-    await this.$store.dispatch(`${schema.namespace}/deleteSchema`, this.schemaId);
+    try {
+      this.loading += 1;
 
-    this.$message({
-      message: 'Schema deleted successfully',
-      type: 'success',
-    });
+      await this.$store.dispatch(`${schema.namespace}/deleteSchema`, this.schemaId);
 
-    this.$router.push('/schemas');
+      this.$message({
+        message: 'Schema deleted successfully',
+        type: 'success',
+      });
+
+      this.$router.push('/schemas');
+    } catch (_) {
+      this.$message({
+        message: 'Unable to delete schema, please try again later.',
+        type: 'error',
+      });
+    } finally {
+      this.loading -= 1;
+    }
   }
 
   @Watch('schemaId', { immediate: true })

@@ -19,6 +19,7 @@
             </el-dropdown-item>
             <el-dropdown-item>
               <router-link
+                v-if="schema && $can(`schema:${schema.name}:delete`)"
                 class="block w-full text-red-400 hover:text-red-500"
                 :to="`/documents/${documentId}/delete`"
               >

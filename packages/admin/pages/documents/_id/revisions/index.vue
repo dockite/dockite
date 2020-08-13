@@ -9,7 +9,7 @@
     </portal>
 
     <div class="all-document-documents-page">
-      <el-table :data="allDocumentRevisions.results" style="width: 100%">
+      <el-table v-loading="loading > 0" :data="allDocumentRevisions.results" style="width: 100%">
         <el-table-column prop="id" label="ID">
           <template slot-scope="scope">
             {{ scope.row.id | shortDesc }}
@@ -47,6 +47,7 @@
               v-if="scope.row.id !== 'current'"
               type="text"
               title="Restore to this revision"
+              :loading="loading > 0"
               @click="restoreToRevision(scope.row.id)"
             >
               <i class="el-icon-refresh-left" />
@@ -123,6 +124,8 @@ export default class DocumentRevisionsPage extends Vue {
   public revisionToDisplay: any | null = null;
 
   public showDiff = false;
+
+  public loading = 0;
 
   @Ref()
   readonly revisionDetail!: HTMLTextAreaElement;
@@ -214,21 +217,31 @@ export default class DocumentRevisionsPage extends Vue {
     return this.allDocumentRevisions.totalItems;
   }
 
-  public fetchAllDocumentRevisions(): void {
-    this.$store.dispatch(`${data.namespace}/fetchAllDocumentRevisionsForDocument`, {
+  public async fetchAllDocumentRevisions(): Promise<void> {
+    this.loading += 1;
+
+    await this.$store.dispatch(`${data.namespace}/fetchAllDocumentRevisionsForDocument`, {
       documentId: this.documentId,
     });
+
+    this.loading -= 1;
   }
 
-  public fetchDocumentById(force = false): Promise<void> {
-    return this.$store.dispatch(`${data.namespace}/fetchDocumentById`, {
+  public async fetchDocumentById(force = false): Promise<void> {
+    this.loading += 1;
+
+    await this.$store.dispatch(`${data.namespace}/fetchDocumentById`, {
       id: this.$route.params.id,
       force,
     });
+
+    this.loading -= 1;
   }
 
   public async restoreToRevision(revisionId: string): Promise<void> {
     try {
+      this.loading += 1;
+
       await this.$store.dispatch(`${revision.namespace}/restoreDocumentRevision`, {
         revisionId,
         documentId: this.documentId,
@@ -245,6 +258,8 @@ export default class DocumentRevisionsPage extends Vue {
         message: 'Revision was unable to be restored',
         type: 'error',
       });
+    } finally {
+      this.loading -= 1;
     }
   }
 

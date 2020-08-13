@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-v-html -->
 <template>
   <fragment>
     <portal to="header">
@@ -9,13 +10,19 @@
       </el-row>
     </portal>
 
-    <div class="document-revision-compare-page">
-      <!-- eslint-disable-next-line -->
-      <div :class="{'dockite-diff--highlight': highlight }" style="background: #ffffff; margin-bottom: 1rem;" v-html="diffHTML" />
+    <div v-loading="loading > 0" class="document-revision-compare-page">
+      <div
+        :class="{ 'dockite-diff--highlight': highlight }"
+        style="background: #ffffff; margin-bottom: 1rem;"
+        v-html="diffHTML"
+      />
+
       <el-button
+        v-if="$can('internal:document:update')"
         style="width: auto"
         class="dockite-button--restore"
         type="primary"
+        :disabled="loading > 0"
         @click="restoreToRevision(primary)"
         @mouseover.native="highlight = true"
         @mouseleave.native="highlight = false"
@@ -48,7 +55,10 @@ import 'diff2html/bundles/css/diff2html.min.css';
 })
 export default class DocumentRevisionsPage extends Vue {
   public highlight = false;
+
   public diffHTML = '';
+
+  public loading = 0;
 
   @Ref()
   readonly diffDetail!: HTMLTextAreaElement;
@@ -127,10 +137,14 @@ export default class DocumentRevisionsPage extends Vue {
     return this.allDocumentRevisions.totalItems;
   }
 
-  public fetchAllDocumentRevisions(): void {
-    this.$store.dispatch(`${data.namespace}/fetchAllDocumentRevisionsForDocument`, {
+  public async fetchAllDocumentRevisions(): Promise<void> {
+    this.loading += 1;
+
+    await this.$store.dispatch(`${data.namespace}/fetchAllDocumentRevisionsForDocument`, {
       documentId: this.documentId,
     });
+
+    this.loading -= 1;
   }
 
   public fetchDocumentById(force = false): Promise<void> {
@@ -142,6 +156,8 @@ export default class DocumentRevisionsPage extends Vue {
 
   public async restoreToRevision(revisionId: string): Promise<void> {
     try {
+      this.loading += 1;
+
       await this.$store.dispatch(`${revision.namespace}/restoreDocumentRevision`, {
         revisionId,
         documentId: this.documentId,
@@ -158,6 +174,8 @@ export default class DocumentRevisionsPage extends Vue {
         message: 'Revision was unable to be restored',
         type: 'error',
       });
+    } finally {
+      this.loading -= 1;
     }
   }
 

@@ -6,13 +6,24 @@
           Edit Singleton - <strong>{{ singletonName }}</strong>
         </h2>
 
-        <el-button @click="showSingletonSettings = true">
-          Setttings
-        </el-button>
+        <div>
+          <el-button @click="showSingletonSettings = true">
+            Setttings
+          </el-button>
+
+          <el-button
+            v-if="$can('internal:schema:update')"
+            :disabled="loading"
+            type="primary"
+            @click="submit"
+          >
+            Update
+          </el-button>
+        </div>
       </el-row>
     </portal>
 
-    <div class="edit-singleton-component">
+    <div v-loading="loading > 0" class="edit-singleton-component">
       <el-tabs v-model="currentTab" type="border-card" editable @edit="handleEditTabs">
         <el-tab-pane v-for="tab in availableTabs" :key="tab" :label="tab" :name="tab">
           <el-tree
@@ -89,7 +100,12 @@
           Cancel
         </el-button>
 
-        <el-button type="primary" @click="submit">
+        <el-button
+          v-if="$can('internal:schema:update')"
+          :disabled="loading"
+          type="primary"
+          @click="submit"
+        >
           Update
         </el-button>
       </el-row>
@@ -139,6 +155,8 @@ export default class EditSingletonPage extends Vue {
   public groupFieldData: Record<string, FieldTreeData[]> = {};
 
   public deletedFields: string[] = [];
+
+  public loading = 0;
 
   get singletonName(): string {
     return this.$store.getters[`${data.namespace}/getSingletonNameById`](this.singletonId);
@@ -192,6 +210,8 @@ export default class EditSingletonPage extends Vue {
 
   public async submit(): Promise<void> {
     try {
+      this.loading += 1;
+
       const fieldData: UnpersistedField[] = [];
       const groups: Record<string, string[]> = {};
 
@@ -206,7 +226,7 @@ export default class EditSingletonPage extends Vue {
           type: 'error',
         });
 
-        throw new Error('Singleton requires fields');
+        return;
       }
 
       if (Object.keys(this.groupFieldData).some(key => this.groupFieldData[key].length === 0)) {
@@ -216,7 +236,7 @@ export default class EditSingletonPage extends Vue {
           type: 'error',
         });
 
-        throw new Error('Groups must have fields');
+        return;
       }
 
       await this.$store.dispatch(`${singleton.namespace}/updateSingletonAndFields`, {
@@ -235,7 +255,14 @@ export default class EditSingletonPage extends Vue {
       });
 
       this.$router.push(`/singletons/${this.$route.params.id}`);
-    } catch (_) {}
+    } catch (_) {
+      this.$message({
+        message: 'An error occurred whilst saving the singleton, please try again later.',
+        type: 'error',
+      });
+    } finally {
+      this.loading -= 1;
+    }
   }
 
   public transformTreeFieldDataToFieldData(treeFieldData: FieldTreeData[]): UnpersistedField[] {
@@ -417,10 +444,14 @@ export default class EditSingletonPage extends Vue {
     }
   }
 
-  public beforeMount(): void {
-    this.$store.dispatch(`${data.namespace}/fetchSingletonWithFieldsById`, {
+  public async beforeMount(): Promise<void> {
+    this.loading += 1;
+
+    await this.$store.dispatch(`${data.namespace}/fetchSingletonWithFieldsById`, {
       id: this.$route.params.id,
     });
+
+    this.loading -= 1;
   }
 }
 </script>
