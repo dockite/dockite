@@ -1,6 +1,6 @@
 {
   "name": "@dockite/field-select",
-  "version": "0.3.0-alpha.18",
+  "version": "0.3.0-alpha.19",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
@@ -9,7 +9,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@dockite/database": "^0.4.0-alpha.11",
+    "@dockite/database": "^0.4.0-alpha.12",
     "@dockite/field": "^0.3.0-alpha.8",
     "@dockite/types": "^0.3.0-alpha.9",
     "graphql": "^15.1.0",

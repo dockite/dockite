@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.16](https://github.com/dockite/dockite/compare/@dockite/transformer@0.3.0-alpha.15...@dockite/transformer@0.3.0-alpha.16) (2020-08-13)
+
+
+### Bug Fixes
+
+* **transformer:** ignore null input types ([3c022f8](https://github.com/dockite/dockite/commit/3c022f844bce0c9f68a7eb3da91a0c31188c3e05))
+
+
+
+
+
 # [0.3.0-alpha.15](https://github.com/dockite/dockite/compare/@dockite/transformer@0.3.0-alpha.14...@dockite/transformer@0.3.0-alpha.15) (2020-08-12)
 
 **Note:** Version bump only for package @dockite/transformer
