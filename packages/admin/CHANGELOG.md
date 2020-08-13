@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.38](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.37...@dockite/admin@0.4.0-alpha.38) (2020-08-13)
+
+
+### Features
+
+* **admin:** add loading indicators ([8bd9e0d](https://github.com/dockite/dockite/commit/8bd9e0dde310007662795d7b77eb5f7e00adcdcc))
+
+
+
+
+
 # [0.4.0-alpha.37](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.36...@dockite/admin@0.4.0-alpha.37) (2020-08-12)
 
 
