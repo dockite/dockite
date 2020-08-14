@@ -129,9 +129,11 @@ export class DockiteFieldGroup extends DockiteField {
                 oldData,
               };
 
-              ctx.data[this.schemaField.name][i][
-                child.name
-              ] = await child.dockiteField.processInput(childCtx);
+              if (ctx.data[this.schemaField.name][i][child.name] !== undefined) {
+                ctx.data[this.schemaField.name][i][
+                  child.name
+                ] = await child.dockiteField.processInput(childCtx);
+              }
             }),
           );
         }),
@@ -155,9 +157,11 @@ export class DockiteFieldGroup extends DockiteField {
             oldData,
           };
 
-          ctx.data[this.schemaField.name][child.name] = await child.dockiteField.processInput(
-            childCtx,
-          );
+          if (ctx.data[this.schemaField.name][child.name] !== undefined) {
+            ctx.data[this.schemaField.name][child.name] = await child.dockiteField.processInput(
+              childCtx,
+            );
+          }
         }),
       );
     }
@@ -196,12 +200,16 @@ export class DockiteFieldGroup extends DockiteField {
 
               const field = { ...child, id: 'child' };
 
-              return dockiteField.processOutputGraphQL<any>({
-                field,
-                fieldData,
-                data,
-                args,
-              });
+              if (fieldData !== undefined) {
+                return dockiteField.processOutputGraphQL<any>({
+                  field,
+                  fieldData,
+                  data,
+                  args,
+                });
+              }
+
+              return null;
             },
           };
         }
@@ -244,9 +252,12 @@ export class DockiteFieldGroup extends DockiteField {
                 field: child as Field,
               };
 
-              ctx.data[this.schemaField.name][i][
-                child.name
-              ] = await child.dockiteField.processOutput(childCtx);
+              // If we have data for the property then we will continue to process output
+              if (ctx.data[this.schemaField.name][i][child.name] !== undefined) {
+                ctx.data[this.schemaField.name][i][
+                  child.name
+                ] = await child.dockiteField.processOutput(childCtx);
+              }
             }),
           );
         }),
@@ -269,9 +280,12 @@ export class DockiteFieldGroup extends DockiteField {
             field: child as Field,
           };
 
-          ctx.data[this.schemaField.name][child.name] = await child.dockiteField.processOutput(
-            childCtx,
-          );
+          // If we have data for the property then we will continue to process
+          if (ctx.data[this.schemaField.name][child.name] !== undefined) {
+            ctx.data[this.schemaField.name][child.name] = await child.dockiteField.processOutput(
+              childCtx,
+            );
+          }
         }),
       );
     }
@@ -303,7 +317,10 @@ export class DockiteFieldGroup extends DockiteField {
                 oldData,
               };
 
-              await child.dockiteField.validateInput(childCtx);
+              //
+              if (ctx.data[this.schemaField.name][i][child.name] !== undefined) {
+                await child.dockiteField.validateInput(childCtx);
+              }
             }),
           );
         }),
@@ -327,7 +344,10 @@ export class DockiteFieldGroup extends DockiteField {
             oldData,
           };
 
-          await child.dockiteField.validateInput(childCtx);
+          //
+          if (ctx.data[this.schemaField.name][child.name] !== undefined) {
+            await child.dockiteField.validateInput(childCtx);
+          }
         }),
       );
     }
@@ -354,7 +374,9 @@ export class DockiteFieldGroup extends DockiteField {
                 field: child as Field,
               };
 
-              await child.dockiteField.onCreate(childCtx);
+              if (ctx.data[this.schemaField.name][i][child.name] !== undefined) {
+                await child.dockiteField.onCreate(childCtx);
+              }
             }),
           );
         }),
@@ -375,7 +397,9 @@ export class DockiteFieldGroup extends DockiteField {
             field: child as Field,
           };
 
-          await child.dockiteField.onCreate(childCtx);
+          if (ctx.data[this.schemaField.name][child.name] !== undefined) {
+            await child.dockiteField.onCreate(childCtx);
+          }
         }),
       );
     }
@@ -405,7 +429,9 @@ export class DockiteFieldGroup extends DockiteField {
                 oldData,
               };
 
-              await child.dockiteField.onUpdate(childCtx);
+              if (ctx.data[this.schemaField.name][i][child.name] !== undefined) {
+                await child.dockiteField.onUpdate(childCtx);
+              }
             }),
           );
         }),
@@ -429,7 +455,9 @@ export class DockiteFieldGroup extends DockiteField {
             oldData,
           };
 
-          await child.dockiteField.onUpdate(childCtx);
+          if (ctx.data[this.schemaField.name][child.name] !== undefined) {
+            await child.dockiteField.onUpdate(childCtx);
+          }
         }),
       );
     }
@@ -456,7 +484,9 @@ export class DockiteFieldGroup extends DockiteField {
                 field: child as Field,
               };
 
-              await child.dockiteField.onSoftDelete(childCtx);
+              if (ctx.data[this.schemaField.name][i][child.name] !== undefined) {
+                await child.dockiteField.onSoftDelete(childCtx);
+              }
             }),
           );
         }),
@@ -477,7 +507,9 @@ export class DockiteFieldGroup extends DockiteField {
             field: child as Field,
           };
 
-          await child.dockiteField.onSoftDelete(childCtx);
+          if (ctx.data[this.schemaField.name][child.name] !== undefined) {
+            await child.dockiteField.onSoftDelete(childCtx);
+          }
         }),
       );
     }
@@ -504,7 +536,9 @@ export class DockiteFieldGroup extends DockiteField {
                 field: child as Field,
               };
 
-              await child.dockiteField.onPermanentDelete(childCtx);
+              if (ctx.data[this.schemaField.name][i][child.name] !== undefined) {
+                await child.dockiteField.onPermanentDelete(childCtx);
+              }
             }),
           );
         }),
@@ -525,7 +559,9 @@ export class DockiteFieldGroup extends DockiteField {
             field: child as Field,
           };
 
-          await child.dockiteField.onPermanentDelete(childCtx);
+          if (ctx.data[this.schemaField.name][child.name] !== undefined) {
+            await child.dockiteField.onPermanentDelete(childCtx);
+          }
         }),
       );
     }
