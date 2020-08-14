@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.41](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.40...@dockite/admin@0.4.0-alpha.41) (2020-08-14)
+
+
+### Features
+
+* **admin:** further loading improvements ([2381b8a](https://github.com/dockite/dockite/commit/2381b8a7dabad12ce30b1fff9ff413b86f4aba6d))
+
+
+
+
+
 # [0.4.0-alpha.40](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.39...@dockite/admin@0.4.0-alpha.40) (2020-08-13)
 
 **Note:** Version bump only for package @dockite/admin

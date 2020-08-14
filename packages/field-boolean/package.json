@@ -1,6 +1,6 @@
 {
   "name": "@dockite/field-boolean",
-  "version": "0.3.0-alpha.4",
+  "version": "0.3.0-alpha.5",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
@@ -9,7 +9,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@dockite/database": "^0.4.0-alpha.12",
+    "@dockite/database": "^0.4.0-alpha.13",
     "@dockite/field": "^0.3.0-alpha.8",
     "@dockite/types": "^0.3.0-alpha.9",
     "graphql": "^15.1.0",

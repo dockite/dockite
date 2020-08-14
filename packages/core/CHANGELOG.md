@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.32](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.31...@dockite/core@0.4.0-alpha.32) (2020-08-14)
+
+
+### Bug Fixes
+
+* add schemaId to document revisions ([74ff74a](https://github.com/dockite/dockite/commit/74ff74a4ebce62e919a09c3debc2bad75a1f2f55))
+
+
+
+
+
 # [0.4.0-alpha.31](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.30...@dockite/core@0.4.0-alpha.31) (2020-08-13)
 
 **Note:** Version bump only for package @dockite/core
