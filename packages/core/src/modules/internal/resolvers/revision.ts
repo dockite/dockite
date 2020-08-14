@@ -105,7 +105,10 @@ export class RevisionResolver {
   }
 
   @Authenticated()
-  @Authorized('internal:document:read', { derriveAlternativeScopes: false })
+  @Authorized('internal:document:read', {
+    resourceType: 'schema',
+    fieldsOrArgsToPeek: ['schemaId'],
+  })
   @Query(_returns => ManyDocumentRevisions, { nullable: true })
   public async allDocumentRevisions(
     @Arg('documentId', _type => String)
@@ -134,6 +137,7 @@ export class RevisionResolver {
       createdAt: document.updatedAt,
       updatedAt: document.updatedAt,
       documentId: document.id,
+      schemaId: document.schemaId,
       user: document.user,
       userId: document.userId,
     };
@@ -199,6 +203,7 @@ export class RevisionResolver {
         documentId: document.id,
         data: cloneDeep(document.data),
         userId: document.userId ?? '',
+        schemaId: document.schemaId,
       });
 
       document.data = revision.data;

@@ -381,6 +381,7 @@ export class DocumentResolver {
     const revision = revisionRepository.create({
       documentId: document.id,
       data: cloneDeep(document.data),
+      schemaId: document.schemaId,
       userId: document.userId ?? '',
     });
 
@@ -476,8 +477,10 @@ export class DocumentResolver {
       // Create the corresponding revisions
       await getManager().query(
         `
-          INSERT INTO ${revisionRepository.metadata.tableName}("documentId", "data", "userId")
-          SELECT d."id", d."data", d."userId"
+          INSERT INTO ${
+            revisionRepository.metadata.tableName
+          }("documentId", "data", "userId", "schemaId")
+          SELECT d."id", d."data", d."userId", d."schemaId"
           FROM ${documentRepository.metadata.tableName} d
           WHERE d."schemaId" = $1
           ${documentIds && documentIds.length > 0 ? 'AND WHERE d."id" = ANY($2::text[])' : ''}

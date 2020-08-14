@@ -35,6 +35,10 @@ export class DocumentRevision {
   @GraphQLField(_type => String)
   public documentId!: string;
 
+  @Column()
+  @GraphQLField(_type => String)
+  public schemaId!: string;
+
   @ManyToOne(
     _type => Document,
     document => document.revisions,

@@ -637,6 +637,7 @@ const createGraphQLMutationsForSchema = async (
               documentId: document.id,
               data: cloneDeep(document.data),
               userId: document.userId ?? '',
+              schemaId: document.schemaId,
             });
 
             document.data = omit(input, 'id');
