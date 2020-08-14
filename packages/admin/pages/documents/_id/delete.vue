@@ -26,7 +26,9 @@
             Cancel
           </el-button>
           <el-button
-            v-if="schema && $can(`schema:${schema.name}:delete`)"
+            v-if="
+              schema && $can('internal:document:delete', `schema:${schema && schema.name}:delete`)
+            "
             :disabled="loading > 0"
             type="danger"
             @click="handleDeleteDocument"

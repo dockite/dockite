@@ -152,14 +152,22 @@ export class UserResolver {
     });
 
     const emailTemplate = await fsPromise;
-    const emailContent = replaceTemplate(emailTemplate, {
+
+    const templateParams: Record<string, any> = {
       appTitle: config.app.title,
       firstName: creator.firstName,
       lastName: creator.lastName,
       inviteEmail: email,
       invitePassword: password,
       appURL: config.app.url,
-    });
+    };
+
+    if (!process.env.DISABLE_MARKETING) {
+      templateParams.marketing =
+        '- Powered by <a href="https://dockite.app" style="color: rgb(43, 108, 176); text-decoration: none; font-weight: bold;">Dockite</a>';
+    }
+
+    const emailContent = replaceTemplate(emailTemplate, templateParams);
 
     await Promise.all([
       userRepository.save(user),
@@ -242,14 +250,22 @@ export class UserResolver {
     user.password = await hash(newPassword, 10);
 
     const emailTemplate = await fsPromise;
-    const emailContent = replaceTemplate(emailTemplate, {
+
+    const templateParams: Record<string, any> = {
       appTitle: config.app.title,
       firstName: user.firstName,
       lastName: user.lastName,
       inviteEmail: email,
       invitePassword: newPassword,
       appURL: config.app.url,
-    });
+    };
+
+    if (!process.env.DISABLE_MARKETING) {
+      templateParams.marketing =
+        '- Powered by <a href="https://dockite.app" style="color: rgb(43, 108, 176); text-decoration: none; font-weight: bold;">Dockite</a>';
+    }
+
+    const emailContent = replaceTemplate(emailTemplate, templateParams);
 
     await Promise.all([
       userRepository.save(user),

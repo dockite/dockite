@@ -15,7 +15,9 @@
               <i class="el-icon-arrow-down el-icon--right" />
             </el-button>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item v-if="$can(`schema:${schemaName}:create`)">
+              <el-dropdown-item
+                v-if="$can('internal:document:create', `schema:${schema && schema.name}:create`)"
+              >
                 <router-link :to="`/schemas/${schemaId}/create`">
                   <i class="el-icon-document-add" />
                   Create

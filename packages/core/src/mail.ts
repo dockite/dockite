@@ -12,6 +12,7 @@ const transport = createTransport({
     user: config.mail.username,
     pass: config.mail.password,
   },
+  requireTLS: true,
 });
 
 export const sendMail = async (options: Omit<SendMailOptions, 'from'>): Promise<void> => {

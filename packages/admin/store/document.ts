@@ -45,18 +45,25 @@ export const getters: GetterTree<DocumentState, RootState> = {};
 
 export const actions: ActionTree<DocumentState, RootState> = {
   async createDocument(_, payload: CreateDocumentPayload): Promise<void> {
-    const { data } = await this.$apolloClient.mutate<CreateDocumentMutationResponse>({
+    const { data: createDocumentData } = await this.$apolloClient.mutate<
+      CreateDocumentMutationResponse
+    >({
       mutation: CreateDocumentMutation,
       variables: {
         schemaId: payload.schemaId,
         data: payload.data,
         locale: DEFAULT_LOCALE,
       },
+      update: () => {
+        this.$apolloClient.resetStore();
+      },
     });
 
-    if (!data?.createDocument) {
+    if (!createDocumentData?.createDocument) {
       throw new Error('Unable to create document');
     }
+
+    this.commit(`${data.namespace}/clearDocumentData`);
   },
 
   async updateDocument(_, payload: UpdateDocumentPayload): Promise<void> {
