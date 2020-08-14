@@ -246,4 +246,9 @@ export default class CreateSchemaDocumentPage extends Vue {
 }
 </script>
 
-<style></style>
+<style lang="scss">
+.create-schema-document-page {
+  width: 100%;
+  min-height: 400px;
+}
+</style>

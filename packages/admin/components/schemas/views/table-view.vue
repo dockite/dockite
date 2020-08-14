@@ -11,7 +11,7 @@
     </portal>
 
     <el-table
-      v-if="schema && findDocumentsBySchemaId.results"
+      v-loading="loading > 0"
       :data="findDocumentsBySchemaId.results"
       style="width: 100%;"
       class="dockite-table--document el-table--scrollable-x"
@@ -27,6 +27,7 @@
           </router-link>
         </template>
       </el-table-column>
+
       <el-table-column
         v-for="field in fieldsToDisplay"
         :key="field.name"
@@ -56,24 +57,31 @@
           {{ scope.row.data[field.name] }}
         </template>
       </el-table-column>
+
       <el-table-column
         sortable="custom"
         prop="createdAt"
         label="Created"
         :formatter="cellValueFromNow"
       />
+
       <el-table-column
         sortable="custom"
         prop="updatedAt"
         label="Updated"
         :formatter="cellValueFromNow"
       />
+
       <el-table-column label="Actions">
         <span slot-scope="scope" class="dockite-table--actions">
           <router-link title="Edit Document" :to="`/documents/${scope.row.id}`">
             <i class="el-icon-edit-outline" />
           </router-link>
-          <router-link title="Delete Document" :to="`/documents/${scope.row.id}/delete`">
+          <router-link
+            v-if="$can('internal:document:delete')"
+            title="Delete Document"
+            :to="`/documents/${scope.row.id}/delete`"
+          >
             <i class="el-icon-delete" />
           </router-link>
           <router-link title="View Revisions" :to="`/documents/${scope.row.id}/revisions`">
@@ -140,6 +148,8 @@ export default class SchemaDocumentsPage extends Vue {
 
   public supportedOperators = SupportedOperators;
 
+  public loading = 0;
+
   get findDocumentsBySchemaId(): ManyResultSet<
     FindDocumentResultItem | SearchDocumentsWithSchemaResultItem
   > {
@@ -194,22 +204,44 @@ export default class SchemaDocumentsPage extends Vue {
     return this.findDocumentsBySchemaId.totalItems;
   }
 
-  public fetchFindDocumentsBySchemaId(page = 1): void {
-    this.$store.dispatch(`${data.namespace}/fetchFindDocumentsBySchemaId`, {
-      schemaId: this.schemaId,
-      page,
-      filters: this.filters,
-      sort: this.sortConfig,
-    });
+  public async fetchFindDocumentsBySchemaId(page = 1): Promise<void> {
+    try {
+      this.loading += 1;
+
+      await this.$store.dispatch(`${data.namespace}/fetchFindDocumentsBySchemaId`, {
+        schemaId: this.schemaId,
+        page,
+        filters: this.filters,
+        sort: this.sortConfig,
+      });
+    } catch (_) {
+      this.$message({
+        message: 'Failed to retrieve documents, please try again later.',
+        type: 'error',
+      });
+    } finally {
+      this.loading -= 1;
+    }
   }
 
-  public fetchSearchDocumentsWithSchema(term: string, page = 1): void {
-    this.$store.dispatch(`${data.namespace}/fetchSearchDocumentsWithSchema`, {
-      term,
-      page,
-      schemaId: this.schemaId,
-      sort: this.sortConfig,
-    });
+  public async fetchSearchDocumentsWithSchema(term: string, page = 1): Promise<void> {
+    try {
+      this.loading += 1;
+
+      await this.$store.dispatch(`${data.namespace}/fetchSearchDocumentsWithSchema`, {
+        term,
+        page,
+        schemaId: this.schemaId,
+        sort: this.sortConfig,
+      });
+    } catch (_) {
+      this.$message({
+        message: 'Failed to retrieve documents, please try again later.',
+        type: 'error',
+      });
+    } finally {
+      this.loading -= 1;
+    }
   }
 
   public cellValueFromNow(_row: never, _column: never, cellValue: string, _index: never): string {

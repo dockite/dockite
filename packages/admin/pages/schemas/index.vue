@@ -20,7 +20,7 @@
       </el-row>
     </portal>
 
-    <div v-loading="loading > 0" class="all-documents-page">
+    <div v-loading="loading > 0" class="all-schemas-page">
       <el-table :data="allSchemas.results" style="width: 100%">
         <el-table-column prop="id" label="ID" sortable>
           <template slot-scope="scope">
@@ -136,4 +136,9 @@ export default class AllSchemasPage extends Vue {
 }
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+.all-schemas-page {
+  width: 100%;
+  min-height: 400px;
+}
+</style>

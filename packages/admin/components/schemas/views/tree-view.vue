@@ -1,5 +1,5 @@
 <template>
-  <div class="tree-view">
+  <div v-loading="loading > 0" class="tree-view">
     <el-tree
       ref="tree"
       :data="documentTree"
@@ -59,6 +59,8 @@ interface DocumentTreeData extends TreeData {
 export default class SchemaDocumentsPage extends Vue {
   public documentTree: DocumentTreeData[] = [];
 
+  public loading = 0;
+
   @Ref()
   public tree!: Tree<any, TreeData>;
 
@@ -89,11 +91,22 @@ export default class SchemaDocumentsPage extends Vue {
   }
 
   public fetchFindDocumentsBySchemaId(page = 1): void {
-    this.$store.dispatch(`${data.namespace}/fetchFindDocumentsBySchemaId`, {
-      schemaId: this.schemaId,
-      page,
-      perPage: MAX_32_BIT_NUMBER,
-    });
+    try {
+      this.loading += 1;
+
+      this.$store.dispatch(`${data.namespace}/fetchFindDocumentsBySchemaId`, {
+        schemaId: this.schemaId,
+        page,
+        perPage: MAX_32_BIT_NUMBER,
+      });
+    } catch (_) {
+      this.$message({
+        message: 'Failed to retrieve documents, please try again later.',
+        type: 'error',
+      });
+    } finally {
+      this.loading -= 1;
+    }
   }
 
   public makeDocumentTree(parentId: string | null = null): DocumentTreeData[] {
@@ -151,6 +164,8 @@ export default class SchemaDocumentsPage extends Vue {
 
   public async handleSaveTree(): Promise<void> {
     try {
+      this.loading += 1;
+
       const documents = this.flattenDocumentTree(this.documentTree);
 
       await Promise.all(
@@ -174,6 +189,8 @@ export default class SchemaDocumentsPage extends Vue {
         message: 'Unable to save tree, please try again later.',
         type: 'error',
       });
+    } finally {
+      this.loading -= 1;
     }
   }
 

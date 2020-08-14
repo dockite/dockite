@@ -305,6 +305,7 @@ export default class AllDocumentsPage extends Vue {
 <style lang="scss">
 .all-documents-page {
   background: #ffffff;
+  min-height: 400px;
 }
 
 .dockite-element--pagination {

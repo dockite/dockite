@@ -31,11 +31,11 @@
       </el-row>
     </portal>
 
-    <div v-if="ready" class="update-document-page">
+    <div v-loading="loading > 0" class="update-document-page">
       <div>
         <el-form
+          v-if="ready"
           ref="formEl"
-          v-loading="loading > 0"
           label-position="top"
           :model="form"
           @submit.native.prevent="submit"
@@ -382,6 +382,7 @@ export default class UpdateDocumentPage extends Vue {
 <style lang="scss">
 .update-document-page {
   width: 100%;
+  min-height: 400px;
 }
 
 .dockite-document--actions-drawer {

@@ -18,7 +18,7 @@
       </el-row>
     </portal>
 
-    <div v-loading="loading > 0" class="edit-schema-component">
+    <div v-loading="loading > 0" class="edit-schema-page">
       <el-tabs v-model="currentTab" type="border-card" editable @edit="handleEditTabs">
         <el-tab-pane v-for="tab in availableTabs" :key="tab" :label="tab" :name="tab">
           <el-tree
@@ -478,6 +478,10 @@ export default class EditSchemaPage extends Vue {
 </script>
 
 <style lang="scss">
+.edit-schema-page {
+  min-height: 400px;
+}
+
 .dockite-button--dashed {
   border-style: dashed;
 }
