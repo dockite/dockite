@@ -48,9 +48,9 @@ export class FieldSubscriber implements EntitySubscriberInterface {
       .update()
       .set({
         data: () =>
-          `data || '{ "${event.entity.name}": ${
-            event.entity.settings.default ? JSON.stringify(event.entity.settings.default) : null
-          } }'`,
+          `data || '{ "${event.entity.name}": ${this.dataToJSONBValue(
+            event.entity.settings.default,
+          )} }'`,
         updatedAt: () => '"updatedAt"',
       })
       .where('schemaId = :schemaId', { schemaId: event.entity.schemaId })
@@ -68,5 +68,29 @@ export class FieldSubscriber implements EntitySubscriberInterface {
       })
       .where('schemaId = :schemaId', { schemaId: event.entity?.schemaId })
       .execute();
+  }
+
+  private dataToJSONBValue(data: any): any {
+    if (typeof data === 'string') {
+      return `"${data}"`;
+    }
+
+    if (typeof data === 'boolean') {
+      return data;
+    }
+
+    if (typeof data === 'number') {
+      return data;
+    }
+
+    if (typeof data === 'undefined' || data === null) {
+      return null;
+    }
+
+    if (data instanceof Date) {
+      return `"${data.toISOString()}"`;
+    }
+
+    return `"${data}"`;
   }
 }
