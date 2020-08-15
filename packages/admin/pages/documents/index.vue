@@ -15,7 +15,7 @@
       </el-row>
     </portal>
 
-    <div v-loading="loading > 0" class="all-documents-page">
+    <div v-loading="loading > 0" class="all-documents-page el-loading-parent__min-height">
       <el-table
         :loading="documents.results.length === 0"
         :data="documents.results"
@@ -305,7 +305,6 @@ export default class AllDocumentsPage extends Vue {
 <style lang="scss">
 .all-documents-page {
   background: #ffffff;
-  min-height: 400px;
 }
 
 .dockite-element--pagination {

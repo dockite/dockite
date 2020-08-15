@@ -4,7 +4,7 @@
       <h2>Create a new Schema</h2>
     </portal>
 
-    <div v-loading="loading > 0" class="create-schema-page">
+    <div v-loading="loading > 0" class="create-schema-page el-loading-parent__min-height">
       <el-steps :active="step" simple class="dockite-steps--create-schema" finish-status="success">
         <el-step title="Name" />
         <el-step title="Fields" />

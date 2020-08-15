@@ -4,7 +4,7 @@
       <h2>Update {{ form.name }}</h2>
     </portal>
 
-    <div v-loading="loading > 0" class="dockite-update-role-page">
+    <div v-loading="loading > 0" class="dockite-update-role-page el-loading-parent__min-height">
       <el-form
         ref="formRef"
         :model="form"

@@ -9,7 +9,7 @@
       </el-row>
     </portal>
 
-    <div v-loading="loading > 0" class="all-users-page">
+    <div v-loading="loading > 0" class="all-users-page el-loading-parent__min-height">
       <el-table :data="allUsers.results" style="width: 100%">
         <el-table-column prop="id" label="ID">
           <template slot-scope="scope">

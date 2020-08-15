@@ -7,7 +7,7 @@
           {{ documentIdentifier }}
         </h2>
 
-        <el-dropdown v-loading="loading > 0" split-button @click="submit">
+        <el-dropdown split-button @click="submit">
           Save and Publish
           <el-dropdown-menu slot="dropdown">
             <!-- <el-dropdown-item>Save as Draft</el-dropdown-item> -->
@@ -31,7 +31,7 @@
       </el-row>
     </portal>
 
-    <div v-loading="loading > 0" class="update-document-page">
+    <div v-loading="loading > 0" class="update-document-page el-loading-parent__min-height">
       <div>
         <el-form
           v-if="ready"
@@ -72,7 +72,7 @@
         :visible.sync="showHistoryDrawer"
       >
         <div class="dockite-document--actions-drawer-revisions p-3">
-          <el-alert type="info" show-icon :closable="false" class="mb-2">
+          <el-alert v-if="document" type="info" show-icon :closable="false" class="mb-2">
             <template slot="title">
               Updated by {{ document.user.firstName }} {{ document.user.lastName }}
             </template>
@@ -385,7 +385,6 @@ export default class UpdateDocumentPage extends Vue {
 <style lang="scss">
 .update-document-page {
   width: 100%;
-  min-height: 400px;
 }
 
 .dockite-document--actions-drawer {

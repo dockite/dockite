@@ -10,7 +10,10 @@
       </el-row>
     </portal>
 
-    <div v-loading="loading > 0" class="document-revision-compare-page">
+    <div
+      v-loading="loading > 0"
+      class="document-revision-compare-page el-loading-parent__min-height"
+    >
       <div
         :class="{ 'dockite-diff--highlight': highlight }"
         style="background: #ffffff; margin-bottom: 1rem;"

@@ -8,8 +8,8 @@
       </el-row>
     </portal>
 
-    <div class="all-document-documents-page">
-      <el-table v-loading="loading > 0" :data="allDocumentRevisions.results" style="width: 100%">
+    <div v-loading="loading > 0" class="all-document-documents-page el-loading-parent__min-height">
+      <el-table :data="allDocumentRevisions.results" style="width: 100%">
         <el-table-column prop="id" label="ID">
           <template slot-scope="scope">
             {{ scope.row.id | shortDesc }}

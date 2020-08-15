@@ -8,7 +8,7 @@
       </el-row>
     </portal>
 
-    <div class="all-singleton-singletons-page">
+    <div class="all-singleton-singletons-page el-loading-parent__min-height">
       <el-table :data="allSingletonRevisions.results" style="width: 100%">
         <el-table-column prop="id" label="ID">
           <template slot-scope="scope">

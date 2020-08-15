@@ -70,7 +70,7 @@
       </el-select>
     </portal>
 
-    <div class="all-schema-documents-page">
+    <div class="all-schema-documents-page el-loading-parent__min-height">
       <component :is="currentView" />
     </div>
   </fragment>

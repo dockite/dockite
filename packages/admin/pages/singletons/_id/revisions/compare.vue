@@ -9,7 +9,7 @@
       </el-row>
     </portal>
 
-    <div class="singleton-revision-compare-page">
+    <div class="singleton-revision-compare-page el-loading-parent__min-height">
       <!-- eslint-disable-next-line -->
       <div
         :class="{ 'dockite-diff--highlight': highlight }"

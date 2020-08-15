@@ -3,7 +3,7 @@
     <portal to="header">
       <h2>Account - {{ fullName }}</h2>
     </portal>
-    <div class="dockite-account-page">
+    <div class="dockite-account-page el-loading-parent__min-height">
       <el-form v-if="user" label-position="top" @submit.native.prevent>
         <el-form-item label="First Name">
           <el-input :disabled="true" :value="user.firstName"></el-input>

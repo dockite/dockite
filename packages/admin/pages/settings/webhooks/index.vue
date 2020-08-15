@@ -9,7 +9,7 @@
       </el-row>
     </portal>
 
-    <div v-loading="loading > 0" class="all-documents-page">
+    <div v-loading="loading > 0" class="all-documents-page el-loading-parent__min-height">
       <el-table :data="allWebhooks.results" style="width: 100%">
         <el-table-column prop="id" label="ID">
           <template slot-scope="scope">

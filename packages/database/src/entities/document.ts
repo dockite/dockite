@@ -91,5 +91,6 @@ export class Document {
   public externalUserId?: string;
 
   @ManyToOne(_type => User, { nullable: true, onDelete: 'SET NULL' })
+  @GraphQLField(_type => User, { nullable: true })
   public user!: User;
 }

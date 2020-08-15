@@ -4,7 +4,7 @@
       <h2>Edit - {{ (webhook && webhook.name) || '' }}</h2>
     </portal>
 
-    <div v-loading="loading > 0" class="all-webhook-calls-page">
+    <div v-loading="loading > 0" class="all-webhook-calls-page el-loading-parent__min-height">
       <el-table :data="findWebhookCallsByWebhookId.results" style="width: 100%">
         <el-table-column prop="id" label="ID">
           <template slot-scope="scope">

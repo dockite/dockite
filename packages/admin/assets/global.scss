@@ -96,3 +96,8 @@ li.el-dropdown-menu__item a::before {
 .el-form-item__description {
   padding-top: 7px;
 }
+
+.el-loading-parent__min-height.el-loading-parent--relative {
+  transition: all 300ms;
+  min-height: 60vh;
+}

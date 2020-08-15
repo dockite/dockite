@@ -64,7 +64,7 @@ export class DocumentResolver {
 
     const document = await repository.findOne({
       where: { id },
-      relations: ['schema', 'schema.fields'],
+      relations: ['schema', 'schema.fields', 'user'],
     });
 
     if (!document) {

@@ -4,7 +4,7 @@
       <h2>Create Webhook</h2>
     </portal>
 
-    <div v-loading="loading > 0" class="dockite-create-webhook-page">
+    <div v-loading="loading > 0" class="dockite-create-webhook-page el-loading-parent__min-height">
       <el-form
         ref="formRef"
         :model="form"

@@ -4,7 +4,7 @@
       <h2>Create a new Singleton</h2>
     </portal>
 
-    <div v-loading="loading > 0" class="create-singleton-page">
+    <div v-loading="loading > 0" class="create-singleton-page el-loading-parent__min-height">
       <el-steps
         :active="step"
         simple

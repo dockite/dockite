@@ -12,7 +12,7 @@
         </el-button>
       </el-row>
     </portal>
-    <div v-loading="loading > 0" class="create-schema-document-page">
+    <div v-loading="loading > 0" class="create-schema-document-page el-loading-parent__min-height">
       <el-form
         v-if="ready"
         ref="formEl"
@@ -249,6 +249,5 @@ export default class CreateSchemaDocumentPage extends Vue {
 <style lang="scss">
 .create-schema-document-page {
   width: 100%;
-  min-height: 400px;
 }
 </style>

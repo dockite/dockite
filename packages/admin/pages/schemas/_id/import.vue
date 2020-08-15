@@ -4,7 +4,7 @@
       <h2>Import Schema</h2>
     </portal>
 
-    <div v-loading="loading > 0" class="import-schema-page">
+    <div v-loading="loading > 0" class="import-schema-page el-loading-parent__min-height">
       <json-editor v-model="payload" style="height: 60vh;" />
 
       <div style="padding-top: 1rem;" />

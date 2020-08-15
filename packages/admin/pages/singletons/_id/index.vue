@@ -49,7 +49,7 @@
         </el-row>
       </el-row>
     </portal>
-    <div v-loading="loading > 0" class="singleton-document-page">
+    <div v-loading="loading > 0" class="singleton-document-page el-loading-parent__min-height">
       <el-form
         v-if="ready"
         ref="formEl"

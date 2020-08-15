@@ -23,7 +23,7 @@
       </el-row>
     </portal>
 
-    <div v-loading="loading > 0" class="edit-singleton-component">
+    <div v-loading="loading > 0" class="edit-singleton-page el-loading-parent__min-height">
       <el-tabs v-model="currentTab" type="border-card" editable @edit="handleEditTabs">
         <el-tab-pane v-for="tab in availableTabs" :key="tab" :label="tab" :name="tab">
           <el-tree

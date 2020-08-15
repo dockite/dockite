@@ -10,5 +10,11 @@ query GetDocument($id: String!) {
     releaseId
     schemaId
     userId
+    user {
+      id
+      firstName
+      lastName
+      email
+    }
   }
 }

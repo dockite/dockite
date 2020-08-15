@@ -9,7 +9,7 @@
       </h2>
     </portal>
 
-    <div v-loading="loading > 0" class="delete-document-page">
+    <div v-loading="loading > 0" class="delete-document-page el-loading-parent__min-height">
       <el-card>
         <template slot="header">
           <h3>Are you sure you want to delete {{ singletonName }}?</h3>

@@ -9,7 +9,7 @@
       </el-row>
     </portal>
 
-    <div v-loading="loading > 0" class="all-roles-page">
+    <div v-loading="loading > 0" class="all-roles-page el-loading-parent__min-height">
       <el-table :data="allRoles.results" style="width: 100%">
         <el-table-column prop="name" label="Name">
           <template slot-scope="scope">

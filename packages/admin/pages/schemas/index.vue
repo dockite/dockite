@@ -20,7 +20,7 @@
       </el-row>
     </portal>
 
-    <div v-loading="loading > 0" class="all-schemas-page">
+    <div v-loading="loading > 0" class="all-schemas-page el-loading-parent__min-height">
       <el-table :data="allSchemas.results" style="width: 100%">
         <el-table-column prop="id" label="ID" sortable>
           <template slot-scope="scope">
@@ -139,6 +139,5 @@ export default class AllSchemasPage extends Vue {
 <style lang="scss">
 .all-schemas-page {
   width: 100%;
-  min-height: 400px;
 }
 </style>

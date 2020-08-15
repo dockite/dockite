@@ -19,7 +19,10 @@
       correct.
     </el-alert>
 
-    <div v-loading="loading > 0" class="create-schema-document-page pt-2">
+    <div
+      v-loading="loading > 0"
+      class="create-schema-document-page pt-2 el-loading-parent__min-height"
+    >
       <el-form
         v-if="ready"
         ref="formEl"
