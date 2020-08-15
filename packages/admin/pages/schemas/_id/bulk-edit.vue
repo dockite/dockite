@@ -23,7 +23,6 @@
       <el-form
         v-if="ready"
         ref="formEl"
-        v-loading="submitting"
         label-position="top"
         :model="form"
         @submit.native.prevent="submit"

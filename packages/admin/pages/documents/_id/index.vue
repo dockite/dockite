@@ -65,16 +65,25 @@
       >
         <i class="el-icon-caret-left"></i>
       </div>
+
       <el-drawer
         custom-class="dockite-document--history-drawer"
         title="Document History"
         :visible.sync="showHistoryDrawer"
       >
         <div class="dockite-document--actions-drawer-revisions p-3">
+          <el-alert type="info" show-icon :closable="false" class="mb-2">
+            <template slot="title">
+              Updated by {{ document.user.firstName }} {{ document.user.lastName }}
+            </template>
+
+            Update occurred {{ document.updatedAt | fromNow }}
+          </el-alert>
+
           <el-alert
             v-for="revision in revisions"
             :key="revision.id"
-            style="margin-bottom: 0.75rem;"
+            class="mb-2"
             type="info"
             :closable="false"
             show-icon
@@ -89,12 +98,6 @@
             >
               Compare changes
             </router-link>
-          </el-alert>
-          <el-alert v-if="revisions.length === 0" type="warning" show-icon :closable="false">
-            <template slot="title">
-              No changes yet!
-            </template>
-            Once changes occur they will appear here with a link to view the differences.
           </el-alert>
         </div>
       </el-drawer>
