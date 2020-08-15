@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.42](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.41...@dockite/admin@0.4.0-alpha.42) (2020-08-15)
+
+
+### Bug Fixes
+
+* **admin:** loading flashing and initial revision ([20086ab](https://github.com/dockite/dockite/commit/20086ab937596eac64b063183eda43c9dac23beb))
+* **admin:** resolve frontend authorization ([e5a6dc9](https://github.com/dockite/dockite/commit/e5a6dc984c6a3e7b969aa57433015b10a5dd0786))
+* **admin:** show current document in revisions sidebar ([e43c476](https://github.com/dockite/dockite/commit/e43c476e03a907600d7dff8d027e0d4f643cf31c))
+
+
+### Features
+
+* add password resets and refine authorization ([c7ce7cc](https://github.com/dockite/dockite/commit/c7ce7ccf61d722e0ba0970e1cf0d6b79212e0d65))
+
+
+
+
+
 # [0.4.0-alpha.41](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.40...@dockite/admin@0.4.0-alpha.41) (2020-08-14)
 
 

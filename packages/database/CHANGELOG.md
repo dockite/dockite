@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.14](https://github.com/dockite/dockite/compare/@dockite/database@0.4.0-alpha.13...@dockite/database@0.4.0-alpha.14) (2020-08-15)
+
+
+### Bug Fixes
+
+* **admin:** loading flashing and initial revision ([20086ab](https://github.com/dockite/dockite/commit/20086ab937596eac64b063183eda43c9dac23beb))
+
+
+### Features
+
+* add password resets and refine authorization ([c7ce7cc](https://github.com/dockite/dockite/commit/c7ce7ccf61d722e0ba0970e1cf0d6b79212e0d65))
+
+
+
+
+
 # [0.4.0-alpha.13](https://github.com/dockite/dockite/compare/@dockite/database@0.4.0-alpha.12...@dockite/database@0.4.0-alpha.13) (2020-08-14)
 
 

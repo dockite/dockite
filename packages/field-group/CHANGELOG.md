@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.28](https://github.com/dockite/dockite/compare/@dockite/field-group@0.4.0-alpha.27...@dockite/field-group@0.4.0-alpha.28) (2020-08-15)
+
+
+### Bug Fixes
+
+* **field-group:** conditional execution of child hooks ([8301f00](https://github.com/dockite/dockite/commit/8301f0089f8982741af010d22f72188b4b5039de))
+
+
+
+
+
 # [0.4.0-alpha.27](https://github.com/dockite/dockite/compare/@dockite/field-group@0.4.0-alpha.26...@dockite/field-group@0.4.0-alpha.27) (2020-08-14)
 
 **Note:** Version bump only for package @dockite/field-group

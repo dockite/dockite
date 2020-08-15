@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.33](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.32...@dockite/core@0.4.0-alpha.33) (2020-08-15)
+
+
+### Bug Fixes
+
+* **admin:** loading flashing and initial revision ([20086ab](https://github.com/dockite/dockite/commit/20086ab937596eac64b063183eda43c9dac23beb))
+* **admin:** resolve frontend authorization ([e5a6dc9](https://github.com/dockite/dockite/commit/e5a6dc984c6a3e7b969aa57433015b10a5dd0786))
+* **core:** better handling of default values ([1774034](https://github.com/dockite/dockite/commit/17740340b8a83ebe1d9f4d37127b985c8ba71b81))
+* **core:** resolve invalid links in emails ([dd28146](https://github.com/dockite/dockite/commit/dd28146653f70a8e5529414e2872a0be28405919))
+
+
+### Features
+
+* add password resets and refine authorization ([c7ce7cc](https://github.com/dockite/dockite/commit/c7ce7ccf61d722e0ba0970e1cf0d6b79212e0d65))
+
+
+
+
+
 # [0.4.0-alpha.32](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.31...@dockite/core@0.4.0-alpha.32) (2020-08-14)
 
 
