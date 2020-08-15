@@ -14,6 +14,10 @@ const guest: Middleware = ({ redirect }) => {
 
     const apolloTokenDecoded: ApolloTokenDecoded = JSON.parse(apolloTokenDecodedRaw);
 
+    console.log(apolloTokenDecoded);
+
+    console.log(Date.now() / 1000 < apolloTokenDecoded.exp);
+
     if (Date.now() / 1000 < apolloTokenDecoded.exp) {
       return redirect('/');
     }

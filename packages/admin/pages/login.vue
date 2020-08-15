@@ -21,9 +21,15 @@
             <el-input v-model="loginForm.password" type="password" />
           </el-form-item>
           <el-form-item>
-            <el-button :disabled="loading > 0" native-type="submit" type="primary">
-              {{ $t('login.labels.button') }}
-            </el-button>
+            <div class="flex justify-between items-center">
+              <router-link to="/forgotten-password">
+                Forgotten password?
+              </router-link>
+
+              <el-button :disabled="loading > 0" native-type="submit" type="primary">
+                {{ $t('login.labels.button') }}
+              </el-button>
+            </div>
           </el-form-item>
         </el-form>
       </div>

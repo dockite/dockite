@@ -21,7 +21,7 @@ const plugin: Plugin = (ctx, inject) => {
   inject('can', (...possibleScopes: string[]): boolean => {
     const scopes = ctx.store.state.auth?.user?.normalizedScopes ?? [];
 
-    const [firstScope, ...remainingScopes] = possibleScopes;
+    const [firstScope, ...remainingScopes] = possibleScopes.map(x => x.toLowerCase());
 
     return ability.can(scopes, firstScope, ...remainingScopes);
   });

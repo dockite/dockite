@@ -7,9 +7,14 @@ import {
   LoginMutationResponse,
   RegisterFirstUserMutationResponse,
   MeQueryResponse,
+  ForgottenPasswordMutationResponse,
+  ResetForgottenPasswordMutationResponse,
 } from '~/common/types';
+import ForgottenPasswordMutation from '~/graphql/mutations/forgotten-password.gql';
 import LoginMutation from '~/graphql/mutations/login.gql';
+import LogoutMutation from '~/graphql/mutations/logout.gql';
 import RegisterFirstUserMutation from '~/graphql/mutations/register-first-user.gql';
+import ResetForgottenPasswordMutation from '~/graphql/mutations/reset-forgotten-password.gql';
 import MeQuery from '~/graphql/queries/me.gql';
 
 interface JWTToken {
@@ -104,12 +109,16 @@ export const actions: ActionTree<AuthState, RootState> = {
     commit('setAuthenticated', true);
   },
 
-  logout({ commit }) {
+  async logout({ commit }): Promise<void> {
+    await this.$apolloClient.mutate({
+      mutation: LogoutMutation,
+    });
+
     commit('clearToken');
     commit('setUser', null);
     commit('setAuthenticated', false);
 
-    this.$apolloClient.clearStore();
+    await this.$apolloClient.clearStore();
   },
 
   async fetchUser({ commit }): Promise<void> {
@@ -122,6 +131,28 @@ export const actions: ActionTree<AuthState, RootState> = {
     }
 
     commit('setUser', data.me);
+  },
+
+  async forgottenPassword(_, payload: string): Promise<void> {
+    const { data } = await this.$apolloClient.mutate<ForgottenPasswordMutationResponse>({
+      mutation: ForgottenPasswordMutation,
+      variables: { email: payload },
+    });
+
+    if (!data) {
+      throw new Error('unable to process forgotten password request');
+    }
+  },
+
+  async resetForgottenPassword(_, payload: { token: string; password: string }): Promise<void> {
+    const { data } = await this.$apolloClient.mutate<ResetForgottenPasswordMutationResponse>({
+      mutation: ResetForgottenPasswordMutation,
+      variables: { token: payload.token, password: payload.password },
+    });
+
+    if (!data) {
+      throw new Error('unable to process forgotten password reset');
+    }
   },
 };
 

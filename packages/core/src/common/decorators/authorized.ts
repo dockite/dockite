@@ -3,6 +3,7 @@ import { ForbiddenError } from 'apollo-server-express';
 import { createMethodDecorator } from 'type-graphql';
 import { FindManyResult } from '@dockite/types';
 import { getScopeResourceById } from '@dockite/manager';
+import { getRepository } from 'typeorm';
 
 import { GlobalContext } from '../types';
 
@@ -11,6 +12,9 @@ interface AuthorizerOptions {
   checkArgs: boolean;
   derriveAlternativeScopes: boolean;
   resourceType: string | null;
+  lookAhead: boolean;
+  entity: any | null;
+  entityIdArg: string | null;
 }
 
 // Default Options
@@ -19,6 +23,9 @@ const defaultAuthorizerOptions: AuthorizerOptions = {
   checkArgs: false,
   derriveAlternativeScopes: true,
   resourceType: null,
+  lookAhead: false,
+  entity: null,
+  entityIdArg: null,
 };
 
 const derriveAlternativeScopesAccess = (
@@ -82,6 +89,28 @@ export const Authorized = (
     const idsToPeek = Array.isArray(mergedOptions.fieldsOrArgsToPeek)
       ? mergedOptions.fieldsOrArgsToPeek
       : [mergedOptions.fieldsOrArgsToPeek];
+
+    if (mergedOptions.lookAhead && mergedOptions.entity && mergedOptions.entityIdArg) {
+      const entity = await getRepository(mergedOptions.entity)
+        .findOneOrFail(args[mergedOptions.entityIdArg])
+        .catch(() => null);
+
+      if (!entity) {
+        throw new ForbiddenError('Not Authorized');
+      }
+
+      const allowed = derriveAlternativeScopesAccess(
+        idsToPeek,
+        entity as Record<string, any>,
+        resourceType,
+        actionType,
+        user.normalizedScopes,
+      );
+
+      if (allowed) {
+        return next();
+      }
+    }
 
     if (info.operation.operation === 'mutation' || mergedOptions.checkArgs === true) {
       const allowed = derriveAlternativeScopesAccess(

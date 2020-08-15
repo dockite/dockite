@@ -1,6 +1,9 @@
 import { createTransport, SendMailOptions } from 'nodemailer';
+import debug from 'debug';
 
 import { getConfig } from './config';
+
+const log = debug('dockite:core:mail');
 
 const config = getConfig();
 
@@ -16,8 +19,10 @@ const transport = createTransport({
 });
 
 export const sendMail = async (options: Omit<SendMailOptions, 'from'>): Promise<void> => {
-  transport.sendMail({
-    ...options,
-    from: config.mail.fromAddress,
-  });
+  transport
+    .sendMail({
+      ...options,
+      from: config.mail.fromAddress,
+    })
+    .catch(err => log(err));
 };

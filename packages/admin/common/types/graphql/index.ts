@@ -23,6 +23,14 @@ export interface RegisterFirstUserMutationResponse {
   };
 }
 
+export interface ForgottenPasswordMutationResponse {
+  forgottenPassword: boolean;
+}
+
+export interface ResetForgottenPasswordMutationResponse {
+  resetForgottenPassword: boolean;
+}
+
 export interface MeQueryResponse {
   me: {
     id: string;

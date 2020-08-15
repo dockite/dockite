@@ -165,6 +165,8 @@ export class UserResolver {
     if (!process.env.DISABLE_MARKETING) {
       templateParams.marketing =
         '- Powered by <a href="https://dockite.app" style="color: rgb(43, 108, 176); text-decoration: none; font-weight: bold;">Dockite</a>';
+    } else {
+      templateParams.marketing = '';
     }
 
     const emailContent = replaceTemplate(emailTemplate, templateParams);
@@ -263,6 +265,8 @@ export class UserResolver {
     if (!process.env.DISABLE_MARKETING) {
       templateParams.marketing =
         '- Powered by <a href="https://dockite.app" style="color: rgb(43, 108, 176); text-decoration: none; font-weight: bold;">Dockite</a>';
+    } else {
+      templateParams.marketing = '';
     }
 
     const emailContent = replaceTemplate(emailTemplate, templateParams);

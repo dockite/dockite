@@ -2,38 +2,42 @@ import { Plugin } from '@nuxt/types';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { ApolloClient } from 'apollo-client';
 import { ApolloLink } from 'apollo-link';
-import { setContext } from 'apollo-link-context';
 import { createHttpLink } from 'apollo-link-http';
 
 const refreshTokenLink = new ApolloLink((operation, forward) => {
   return forward(operation).map(response => {
     const context = operation.getContext();
 
-    const { headers } = context;
+    if (context.response && context.response.headers) {
+      const { headers } = context.response;
 
-    if (headers.authorization) {
-      const [, token] = headers.authorization.split('Bearer ');
-      const [, claims] = token.split('.');
+      if (headers.get('authorization')) {
+        const [, token] = headers.get('authorization').split('Bearer ');
+        const [, claims] = token.split('.');
 
-      const tokenDecoded = atob(claims);
+        const tokenDecoded = atob(claims);
 
-      window.localStorage.setItem('apollo-token', token);
-      window.localStorage.setItem('apollo-token-decoded', tokenDecoded);
+        window.localStorage.setItem('apollo-token', token);
+        window.localStorage.setItem('apollo-token-decoded', tokenDecoded);
+      }
     }
 
     return response;
   });
 });
 
-const authLink = setContext((_, { headers }) => {
+const authLink = new ApolloLink((operation, forward) => {
   const token = localStorage.getItem('apollo-token');
 
-  return {
-    headers: {
-      ...headers,
-      authorization: token ? `Bearer ${token}` : '',
-    },
-  };
+  if (token) {
+    operation.setContext({
+      headers: {
+        authorization: token,
+      },
+    });
+  }
+
+  return forward(operation);
 });
 
 const plugin: Plugin = (context, inject) => {

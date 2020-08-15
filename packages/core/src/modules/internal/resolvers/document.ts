@@ -519,6 +519,10 @@ export class DocumentResolver {
   @Authenticated()
   @Authorized('internal:document:delete', {
     resourceType: 'schema',
+    lookAhead: true,
+    fieldsOrArgsToPeek: ['schemaId'],
+    entity: Document,
+    entityIdArg: 'id',
   })
   @Mutation(_returns => Boolean)
   async removeDocument(@Arg('id') id: string): Promise<boolean> {

@@ -68,7 +68,7 @@ export const createServer = async (): Promise<Express> => {
     context: createGlobalContext,
     introspection: true,
     playground: true,
-    // tracing: true,
+    tracing: !!process.env.DOCKITE_APOLLO_TRACING,
   });
 
   const externalServer = new ApolloServer({
@@ -76,19 +76,19 @@ export const createServer = async (): Promise<Express> => {
     context: (ctx: SessionContext): SessionContext => ctx,
     introspection: true,
     playground: true,
-    // tracing: true,
+    tracing: !!process.env.DOCKITE_APOLLO_TRACING,
   });
 
   log('attaching servers');
   internalServer.applyMiddleware({
     app,
     path: `/${INTERNAL_GRAPHQL_PATH}`,
-    cors: { origin: true, credentials: true },
+    cors: { origin: true, credentials: true, exposedHeaders: 'authorization' },
   });
   externalServer.applyMiddleware({
     app,
     path: `/${EXTERNAL_GRAPHQL_PATH}`,
-    cors: { origin: true, credentials: true },
+    cors: { origin: true, credentials: true, exposedHeaders: 'authorization' },
   });
 
   /**

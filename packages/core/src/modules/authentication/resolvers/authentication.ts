@@ -135,4 +135,14 @@ export class Authentication {
 
     return { user, token: bearerToken };
   }
+
+  @Mutation(_returns => Boolean)
+  public async logout(@Ctx() ctx: GlobalContext): Promise<true> {
+    ctx.res.cookie('refreshToken', '', {
+      httpOnly: true,
+      expires: new Date(Date.now() - 1000 * 60 * 5),
+    });
+
+    return true;
+  }
 }
