@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.10](https://github.com/dockite/dockite/compare/@dockite/module-s3-presign@0.3.0-alpha.9...@dockite/module-s3-presign@0.3.0-alpha.10) (2020-08-16)
+
+
+### Features
+
+* **field-media-manager:** add the media manager field ([33d9ac8](https://github.com/dockite/dockite/commit/33d9ac8c0e9d6a07ad9a8a240dd4b963549a0e90))
+
+
+
+
+
 # [0.3.0-alpha.9](https://github.com/dockite/dockite/compare/@dockite/module-s3-presign@0.3.0-alpha.8...@dockite/module-s3-presign@0.3.0-alpha.9) (2020-08-03)
 
 **Note:** Version bump only for package @dockite/module-s3-presign
