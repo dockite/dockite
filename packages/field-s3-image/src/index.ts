@@ -75,6 +75,7 @@ export class DockiteFieldS3Image extends DockiteField {
     endpoint: 's3.amazonaws.com',
     bucket: '',
     pathPrefix: null,
+    public: false,
   };
 
   public async inputType(): Promise<GraphQLInputType> {

@@ -15,3 +15,5 @@ export default async function(): Promise<GraphQLModule> {
     context: (ctx): GlobalContext => ctx,
   });
 }
+
+export * from './resolver';

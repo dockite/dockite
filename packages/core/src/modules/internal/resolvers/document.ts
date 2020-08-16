@@ -226,6 +226,7 @@ export class DocumentResolver {
   @Authenticated()
   @Authorized('internal:document:read', {
     resourceType: 'schema',
+    fieldsOrArgsToPeek: ['schemaId'],
   })
   @Query(_returns => ManyDocuments)
   async searchDocuments(
@@ -540,6 +541,8 @@ export class DocumentResolver {
         schema.fields.map(async field => {
           const fieldData = data[field.name] ?? null;
 
+          field.schema = schema;
+
           await field.dockiteField!.onSoftDelete({ field, fieldData, data, document });
         }),
       );
@@ -570,6 +573,8 @@ export class DocumentResolver {
       await Promise.all(
         schema.fields.map(field => {
           const fieldData = data[field.name] ?? null;
+
+          field.schema = schema;
 
           return Promise.resolve(
             field.dockiteField!.onPermanentDelete({ field, fieldData, data, document }),

@@ -5,6 +5,7 @@ import Axios, { AxiosError, AxiosResponse, Method } from 'axios';
 import debug from 'debug';
 import { graphql } from 'graphql';
 import { getRepository, InsertResult } from 'typeorm';
+import { stringify } from 'flatted';
 
 const log = debug('dockite:core:webhooks');
 
@@ -40,7 +41,7 @@ export const fireWebhooks = async (entity: any, action: WebhookAction): Promise<
             data:
               webhook.method.toLowerCase() === 'get'
                 ? undefined
-                : JSON.stringify(entity, dockiteFieldReplacer),
+                : stringify(entity, dockiteFieldReplacer),
           }).then(
             (response: AxiosResponse) => {
               return webhookCallRepository.insert({
@@ -51,7 +52,7 @@ export const fireWebhooks = async (entity: any, action: WebhookAction): Promise<
                   data:
                     webhook.method.toLowerCase() === 'get'
                       ? undefined
-                      : JSON.stringify(entity, dockiteFieldReplacer),
+                      : stringify(entity, dockiteFieldReplacer),
                 },
                 response: { headers: response.headers, data: response.data },
                 status: response.status,
@@ -72,7 +73,7 @@ export const fireWebhooks = async (entity: any, action: WebhookAction): Promise<
                   data:
                     webhook.method.toLowerCase() === 'get'
                       ? undefined
-                      : JSON.stringify(entity, dockiteFieldReplacer),
+                      : stringify(entity, dockiteFieldReplacer),
                 },
                 response: {
                   headers: error.response?.headers ?? {},
@@ -103,7 +104,7 @@ export const fireWebhooks = async (entity: any, action: WebhookAction): Promise<
               return Axios({
                 url: webhook.url,
                 method: webhook.method as Method,
-                data: webhook.method.toLowerCase() === 'get' ? undefined : JSON.stringify(result),
+                data: webhook.method.toLowerCase() === 'get' ? undefined : stringify(result),
               }).then(
                 (response: AxiosResponse) => {
                   return webhookCallRepository.insert({
@@ -111,8 +112,7 @@ export const fireWebhooks = async (entity: any, action: WebhookAction): Promise<
                     request: {
                       url: webhook.url,
                       method: webhook.method,
-                      data:
-                        webhook.method.toLowerCase() === 'get' ? undefined : JSON.stringify(result),
+                      data: webhook.method.toLowerCase() === 'get' ? undefined : stringify(result),
                     },
                     response: { headers: response.headers, data: response.data },
                     status: response.status,
@@ -130,8 +130,7 @@ export const fireWebhooks = async (entity: any, action: WebhookAction): Promise<
                     request: {
                       url: webhook.url,
                       method: webhook.method,
-                      data:
-                        webhook.method.toLowerCase() === 'get' ? undefined : JSON.stringify(result),
+                      data: webhook.method.toLowerCase() === 'get' ? undefined : stringify(result),
                     },
                     response: {
                       headers: error.response?.headers ?? {},

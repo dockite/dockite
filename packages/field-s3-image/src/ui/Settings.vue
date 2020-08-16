@@ -93,7 +93,7 @@
       </small>
     </el-form-item>
 
-    <el-form-item v-show="!settings.pathPrefix" label="Path Prefix" prop="settings.pathPrefix">
+    <el-form-item label="Path Prefix" prop="settings.pathPrefix">
       <el-input v-model="settings.pathPrefix" style="width: 100%" />
       <small>
         The prefix for the S3 object, if left empty the schema name will be used.
@@ -142,6 +142,13 @@
       <el-input v-model="settings.bucket" style="width: 100%" />
       <small>
         The bucket name for the S3 compatible storage provider
+      </small>
+    </el-form-item>
+
+    <el-form-item label="Make public?" prop="settings.public">
+      <el-switch v-model="settings.public" />
+      <small>
+        Whether to make the uploaded items available for public reading.
       </small>
     </el-form-item>
   </div>

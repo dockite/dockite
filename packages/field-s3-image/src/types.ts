@@ -37,6 +37,7 @@ export interface S3ImageFieldSettings extends S3Settings {
   max: number;
   useSchemaS3Settings: boolean;
   pathPrefix: string | null;
+  public: boolean;
 }
 
 export interface DockiteFieldS3ImageEntity extends Field {
