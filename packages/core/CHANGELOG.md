@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.36](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.35...@dockite/core@0.4.0-alpha.36) (2020-08-17)
+
+
+### Bug Fixes
+
+* **core:** incorrect password email template ([79423ae](https://github.com/dockite/dockite/commit/79423ae08406ea1833c1612f2c77e34a5e0d4648))
+
+
+
+
+
 # [0.4.0-alpha.35](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.34...@dockite/core@0.4.0-alpha.35) (2020-08-17)
 
 
