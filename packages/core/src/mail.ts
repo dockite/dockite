@@ -19,7 +19,7 @@ const transport = createTransport({
 });
 
 export const sendMail = async (options: Omit<SendMailOptions, 'from'>): Promise<void> => {
-  transport
+  await transport
     .sendMail({
       ...options,
       from: config.mail.fromAddress,

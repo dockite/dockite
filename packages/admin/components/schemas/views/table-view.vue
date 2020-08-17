@@ -78,7 +78,12 @@
             <i class="el-icon-edit-outline" />
           </router-link>
           <router-link
-            v-if="$can('internal:document:delete')"
+            v-if="
+              $can(
+                'internal:document:delete',
+                `schema:${scope.row.schema && scope.row.schema.name}:delete`,
+              )
+            "
             title="Delete Document"
             :to="`/documents/${scope.row.id}/delete`"
           >
