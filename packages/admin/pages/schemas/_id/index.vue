@@ -41,7 +41,10 @@
                   Delete
                 </router-link>
               </el-dropdown-item>
-              <el-dropdown-item divided>
+              <el-dropdown-item
+                v-if="$can('internal:schema:read', 'internal:schema:update')"
+                divided
+              >
                 <router-link :to="`/schemas/${schemaId}/revisions`">
                   <i class="el-icon-document-copy" />
                   Revisions

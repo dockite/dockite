@@ -173,15 +173,18 @@ export default class S3ImageFieldInputComponent extends Vue {
     try {
       const checksum = await this.getSHA256ChecksumFromFile(file);
 
+      const path = [
+        this.settings.pathPrefix || this.schema.name,
+        checksum.substring(0, 8),
+        file.name.toLowerCase(),
+      ].join('/');
+
       const { data: presignUrlData } = await this.$apolloClient.mutate({
         mutation: presignURLMutation,
         variables: {
           input: {
             ...this.s3Settings,
-            object: `${this.settings.pathPrefix || this.schema.name}/${checksum.substring(
-              0,
-              8,
-            )}/${file.name.toLowerCase()}`,
+            object: path,
           },
         },
       });
@@ -206,6 +209,7 @@ export default class S3ImageFieldInputComponent extends Vue {
             checksum,
             size: file.size,
             url: fileUrl,
+            path,
           },
         ];
       } else {
@@ -217,6 +221,7 @@ export default class S3ImageFieldInputComponent extends Vue {
             checksum,
             size: file.size,
             url: fileUrl,
+            path,
           },
         ];
       }

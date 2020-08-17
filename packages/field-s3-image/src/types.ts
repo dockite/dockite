@@ -7,6 +7,7 @@ export interface S3ImageType {
   size: number;
   type: string;
   checksum: string;
+  path: string;
 }
 
 export type MultipleS3ImageType = S3ImageType[];
