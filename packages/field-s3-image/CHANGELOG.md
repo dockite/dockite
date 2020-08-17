@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.22](https://github.com/dockite/dockite/compare/@dockite/field-s3-image@0.3.0-alpha.21...@dockite/field-s3-image@0.3.0-alpha.22) (2020-08-17)
+
+
+### Features
+
+* **field-s3-image:** add path to image items ([10ea589](https://github.com/dockite/dockite/commit/10ea589583c8c600dcc82c3667603749c6d8be40))
+
+
+
+
+
 # [0.3.0-alpha.21](https://github.com/dockite/dockite/compare/@dockite/field-s3-image@0.3.0-alpha.20...@dockite/field-s3-image@0.3.0-alpha.21) (2020-08-16)
 
 
