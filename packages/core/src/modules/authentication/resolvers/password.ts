@@ -37,7 +37,7 @@ export class PasswordResolver {
     const { id: passwordResetToken } = await passwordResetRepository.save(passwordReset);
 
     const template = await fs.readFile(
-      path.resolve(path.join(__dirname, '../mail-templates/new-account.html')),
+      path.resolve(path.join(__dirname, '../mail-templates/forgotten-password.html')),
       'utf-8',
     );
 
