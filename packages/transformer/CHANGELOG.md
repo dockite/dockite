@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.20](https://github.com/dockite/dockite/compare/@dockite/transformer@0.3.0-alpha.19...@dockite/transformer@0.3.0-alpha.20) (2020-08-18)
+
+
+### Features
+
+* **transformer:** add find query for semantics ([39bcb41](https://github.com/dockite/dockite/commit/39bcb41d0aea7d156a28022514f723fd51a018b0))
+
+
+
+
+
 # [0.3.0-alpha.19](https://github.com/dockite/dockite/compare/@dockite/transformer@0.3.0-alpha.18...@dockite/transformer@0.3.0-alpha.19) (2020-08-16)
 
 
