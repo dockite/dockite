@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.2.0-alpha.19](https://github.com/dockite/dockite/compare/@dockite/field-slug@0.2.0-alpha.18...@dockite/field-slug@0.2.0-alpha.19) (2020-08-18)
+
+
+### Bug Fixes
+
+* assorted fixes based on testing ([4027918](https://github.com/dockite/dockite/commit/402791823780c1bb3d197b8d99dfbedd312966a6))
+
+
+
+
+
 # [0.2.0-alpha.18](https://github.com/dockite/dockite/compare/@dockite/field-slug@0.2.0-alpha.17...@dockite/field-slug@0.2.0-alpha.18) (2020-08-15)
 
 **Note:** Version bump only for package @dockite/field-slug
