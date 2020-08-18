@@ -317,11 +317,6 @@ export class DocumentResolver {
 
     const { id: userId } = ctx.user!; // eslint-disable-line
 
-    const initialData: Record<string, null> = schema.fields.reduce(
-      (acc, curr) => ({ ...acc, [curr.name]: null }),
-      {},
-    );
-
     await Promise.all(
       schema.fields.map(async field => {
         const fieldData = data[field.name] ?? null;
@@ -334,6 +329,8 @@ export class DocumentResolver {
         await field.dockiteField!.onCreate(hookContext);
       }),
     );
+
+    const initialData = this.makeInitialData(schema);
 
     const document = documentRepository.create({
       locale,
@@ -591,5 +588,12 @@ export class DocumentResolver {
     } catch {
       return false;
     }
+  }
+
+  private makeInitialData(schema: Schema): Record<string, any> {
+    return schema.fields.reduce(
+      (acc, curr) => ({ ...acc, [curr.name]: curr.settings.default ?? null }),
+      {},
+    );
   }
 }

@@ -42,12 +42,16 @@ export class DockiteFieldSelect extends DockiteField {
 
     let input: string | string[] = ctx.fieldData;
 
-    if (input === null && !settings.required) {
+    if (!input && !settings.required) {
       return;
     }
 
     if (!Array.isArray(input)) {
       input = [input];
+    }
+
+    if (input.length === 0 && !settings.required) {
+      return;
     }
 
     const invalid = input.some(i => !Object.values(this.schemaField.settings.options).includes(i));

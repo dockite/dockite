@@ -1,6 +1,12 @@
 import { DockiteField } from '@dockite/field';
-import { GraphQLInputType, GraphQLOutputType, GraphQLScalarType, GraphQLString } from 'graphql';
-import { HookContext } from '@dockite/types';
+import {
+  GraphQLInputType,
+  GraphQLOutputType,
+  GraphQLScalarType,
+  GraphQLString,
+  GraphQLError,
+} from 'graphql';
+import { HookContext, HookContextWithOldData } from '@dockite/types';
 import { Document } from '@dockite/database';
 import slugify from 'slugify';
 
@@ -47,24 +53,37 @@ export class DockiteFieldSlug extends DockiteField {
     return DockiteFieldSlugType;
   }
 
+  public async validateInputGraphQL(ctx: HookContextWithOldData): Promise<void> {
+    const slugCount = await this.getSlugCount(ctx.fieldData, ctx.document?.id ?? null);
+
+    if (slugCount > 0) {
+      throw new GraphQLError(`${this.schemaField.name}: slug provided has already been used`);
+    }
+  }
+
   public async processInput<T>(ctx: HookContext): Promise<T> {
     let count;
     let increment = 0;
-    let slug = slugify(ctx.fieldData, { lower: true, replacement: '-' });
 
-    const documentId = ctx.document?.id ?? null;
+    let slug = ctx.fieldData;
 
-    let shouldContinue = true;
+    if (slug) {
+      slug = slugify(ctx.fieldData, { lower: true, replacement: '-' });
 
-    while (shouldContinue === true) {
-      // eslint-disable-next-line no-await-in-loop
-      count = await this.getSlugCount(slug, documentId);
+      const documentId = ctx.document?.id ?? null;
 
-      if (count > 0) {
-        increment += 1;
-        slug = slugify(`${ctx.fieldData}-${increment}`, { lower: true, replacement: '-' });
-      } else {
-        shouldContinue = false;
+      let shouldContinue = true;
+
+      while (shouldContinue === true) {
+        // eslint-disable-next-line no-await-in-loop
+        count = await this.getSlugCount(slug, documentId);
+
+        if (count > 0) {
+          increment += 1;
+          slug = slugify(`${ctx.fieldData}-${increment}`, { lower: true, replacement: '-' });
+        } else {
+          shouldContinue = false;
+        }
       }
     }
 
