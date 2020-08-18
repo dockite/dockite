@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.21](https://github.com/dockite/dockite/compare/@dockite/transformer@0.3.0-alpha.20...@dockite/transformer@0.3.0-alpha.21) (2020-08-18)
+
+
+### Bug Fixes
+
+* **transformer:** infer graphql type based on required status ([8e6af52](https://github.com/dockite/dockite/commit/8e6af528a1d459a28a98a9b604042c60dc967cf1))
+
+
+
+
+
 # [0.3.0-alpha.20](https://github.com/dockite/dockite/compare/@dockite/transformer@0.3.0-alpha.19...@dockite/transformer@0.3.0-alpha.20) (2020-08-18)
 
 
