@@ -175,9 +175,15 @@ const createGraphQLInputObjectTypesForSchema = async (
 
       // Finally add the field to the map
       if (inputType !== null) {
-        inputTypeFieldMap[field.name] = {
-          type: GraphQLNonNull(inputType),
-        };
+        if (field.settings.required) {
+          inputTypeFieldMap[field.name] = {
+            type: GraphQLNonNull(inputType),
+          };
+        } else {
+          inputTypeFieldMap[field.name] = {
+            type: inputType,
+          };
+        }
       }
     }),
   );
