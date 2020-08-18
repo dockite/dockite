@@ -263,6 +263,7 @@ const createGraphQLQueriesForSchema = async (
   const { schema, orm, graphqlObjectType } = config;
 
   const allQuery = `all${schema.name}`;
+  const findQuery = `find${schema.name}`;
   const getQuery = `get${schema.name}`;
 
   const repository = orm.getRepository(Document);
@@ -316,6 +317,85 @@ const createGraphQLQueriesForSchema = async (
     },
 
     [allQuery]: {
+      type: findManyObjectType,
+      description: schema.settings.description ?? `Retrieves all ${schema.name}`,
+      args: {
+        page: { type: GraphQLInt, defaultValue: 1 },
+        perPage: { type: GraphQLInt, defaultValue: 25 },
+        where: { type: WhereBuilderInputType },
+        sort: { type: DockiteGraphqlSortInputType },
+      },
+      async resolve(_context, args, ctx, info): Promise<FindManyResult<any>> {
+        const { sort, where, page, perPage } = args;
+
+        if (schema.settings.enableQueryAuthentication) {
+          if (ctx.user) {
+            const user = await orm.getRepository(User).findOneOrFail(ctx.user.id);
+
+            if (
+              !can(
+                user.normalizedScopes,
+                'internal:document:read',
+                `schema:${schema.name.toLowerCase()}:read`,
+              )
+            ) {
+              throw new Error('You are not authorized to perform this action');
+            }
+          } else {
+            const authenticated = await isAuthenticatedAndAuthorized(config, ctx, info, allQuery);
+
+            if (!authenticated) {
+              throw new Error('You are not authorized to perform this action');
+            }
+          }
+        }
+
+        const qb = repository
+          .createQueryBuilder('document')
+          .where('document.schemaId = :schemaId', { schemaId: schema.id });
+
+        if (where) {
+          WhereBuilder.Build(qb, where);
+        }
+
+        if (sort) {
+          // Throw on any invalid input
+          if (!/^[_A-Za-z][_0-9A-Za-z]*(\.[_A-Za-z][_0-9A-Za-z]*)*$/.test(sort.name)) {
+            throw new Error('Invalid sorting name provided');
+          }
+
+          const columnPath = strToColumnPath(sort.name);
+
+          // This handle the case where typeorm can't add abritary orderBy's to a query
+          // by adding the column to order by to the select column we can avoid breaking typeorm
+          // and successfully get our results.
+          if (sort.name.startsWith('data')) {
+            qb.addSelect(`document.${strToColumnPath(sort.name)}`, 'typeorm_sorter_fix');
+            qb.orderBy('typeorm_sorter_fix', sort.direction);
+          } else {
+            qb.orderBy(`document.${columnPath}`, sort.direction);
+          }
+        } else {
+          qb.orderBy('document.updatedAt', 'DESC');
+        }
+
+        qb.take(perPage).skip(perPage * (page - 1));
+
+        const [results, totalItems] = await qb.getManyAndCount();
+
+        const totalPages = Math.ceil(totalItems / perPage);
+
+        return {
+          results: results.map(doc => ({ id: doc.id, ...doc.data })),
+          totalItems,
+          currentPage: page,
+          hasNextPage: page < totalPages,
+          totalPages,
+        };
+      },
+    },
+
+    [findQuery]: {
       type: findManyObjectType,
       description: schema.settings.description ?? `Retrieves all ${schema.name}`,
       args: {
