@@ -12,14 +12,14 @@
     </el-alert>
     <div v-else>
       <el-upload
-        v-show="fieldData.length < settings.max"
+        v-show="limit > 0 && fieldData.length < limit"
         :key="key"
         action="#"
-        mutiple
+        :multiple="settings.multiple"
         :accept="settings.acceptedExtensions.join(',')"
         :http-request="handleUpload"
         :before-upload="handleBeforeUpload"
-        :limit="settings.max"
+        :limit="limit"
         :show-file-list="false"
       >
         <el-button type="primary">
@@ -169,6 +169,18 @@ export default class S3ImageFieldInputComponent extends Vue {
     }
   }
 
+  get limit(): number {
+    if (this.settings.max > 0) {
+      return this.settings.max;
+    }
+
+    if (this.settings.multiple) {
+      return Infinity;
+    }
+
+    return 1;
+  }
+
   async handleUpload({ file }: { file: File }) {
     try {
       const checksum = await this.getSHA256ChecksumFromFile(file);
@@ -185,6 +197,7 @@ export default class S3ImageFieldInputComponent extends Vue {
           input: {
             ...this.s3Settings,
             object: path,
+            public: this.settings.public,
           },
         },
       });
