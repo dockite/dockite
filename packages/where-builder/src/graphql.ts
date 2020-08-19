@@ -43,4 +43,16 @@ export const WhereBuilderInputType = new GraphQLScalarType({
 
     throw new Error('Unexpected Code Path');
   },
+
+  parseLiteral(ast, variables): Record<string, any> {
+    const value = GraphQLJSONObject.parseLiteral(ast, variables);
+
+    const valid = validator(value);
+
+    if (!valid) {
+      throw new Error('Invalid input provided');
+    }
+
+    return value;
+  },
 });
