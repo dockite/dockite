@@ -2,20 +2,28 @@
   <el-dialog
     custom-class="dockite-document-select--modal"
     title="Select Documents"
+    lock-scroll
+    append-to-body
     :visible.sync="visibleSync"
   >
-    <div class="flex flex-row justify-between items-center pb-3">
-      <el-button size="medium" @click="handleSelectAll">
-        Select All
-      </el-button>
-      <portal-target name="header-extra" />
+    <div>
+      <div class="sticky bg-white top-0 flex z-10 flex-row justify-between items-center py-3">
+        <el-button size="medium" @click="handleSelectAll">
+          Select All
+        </el-button>
+
+        <portal-target name="header-extra" />
+      </div>
+
+      <table-view :selected-items.sync="selectedDocumentsSync" :selectable="true" />
     </div>
-    <table-view :selected-items.sync="selectedDocumentsSync" :selectable="true"></table-view>
 
     <template slot="footer">
-      <el-button type="primary" @click="visibleSync = false">
-        Confirm
-      </el-button>
+      <div class="pt-3">
+        <el-button type="primary" @click="visibleSync = false">
+          Confirm
+        </el-button>
+      </div>
     </template>
   </el-dialog>
 </template>
@@ -87,11 +95,18 @@ export default class SchemaDocumentsPage extends Vue {
 
 .dockite-document-select--modal {
   width: 80%;
-  height: auto;
   max-height: 60vh;
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
 
   .el-dialog__body {
+    overflow: hidden;
+    overflow-y: auto;
+
     padding: 1rem;
+    padding-top: 0;
   }
 }
 </style>
