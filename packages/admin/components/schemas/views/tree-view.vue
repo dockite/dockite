@@ -56,7 +56,7 @@ interface DocumentTreeData extends TreeData {
     Fragment,
   },
 })
-export default class SchemaDocumentsPage extends Vue {
+export default class TreeViewComponent extends Vue {
   public documentTree: DocumentTreeData[] = [];
 
   public loading = 0;
@@ -160,6 +160,12 @@ export default class SchemaDocumentsPage extends Vue {
     } else {
       node.data.__document.data[this.schema.settings.treeViewField] = null;
     }
+
+    if (parent) {
+      parent.childNodes.forEach((node, i) => {
+        node.data.__document.data[this.schema.settings.treeViewSortField] = i;
+      });
+    }
   }
 
   public async handleSaveTree(): Promise<void> {
@@ -199,6 +205,7 @@ export default class SchemaDocumentsPage extends Vue {
     this.$store.dispatch(`${data.namespace}/fetchSchemaWithFieldsById`, {
       id: this.$route.params.id,
     });
+
     await this.fetchFindDocumentsBySchemaId(1);
   }
 
@@ -208,7 +215,7 @@ export default class SchemaDocumentsPage extends Vue {
   }
 
   mounted(): void {
-    this.handleSchemaIdChange();
+    this.handleSchemaIdChange().then(() => this.handleDocumentsChange());
   }
 }
 </script>
