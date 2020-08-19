@@ -1,7 +1,6 @@
 <template>
-  <el-form-item :label="fieldConfig.title" :prop="name" :rules="rules" class="dockite-field-string">
+  <el-form-item :label="fieldConfig.title" :prop="name" :rules="rules" class="dockite-field-slug">
     <el-input v-model="fieldData" />
-    <el-switch v-model="freezeSlug" :active-text="`Freeze ${fieldConfig.title}`"></el-switch>
 
     <div class="el-form-item__description">
       {{ fieldConfig.description }}
@@ -61,6 +60,10 @@ export default class SlugFieldInputComponent extends Vue {
 
   @Watch('formData', { deep: true })
   handleFormDataChange() {
+    if (this.fieldData === '') {
+      this.freezeSlug = false;
+    }
+
     if (
       this.settings.fieldToSlugify &&
       this.formData[this.settings.fieldToSlugify] &&
