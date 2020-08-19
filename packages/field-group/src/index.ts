@@ -19,6 +19,7 @@ import {
   Source,
 } from 'graphql';
 import { Schema } from '@dockite/database';
+import { merge } from 'lodash';
 
 import { GroupFieldSettings } from './types';
 
@@ -108,6 +109,28 @@ export class DockiteFieldGroup extends DockiteField {
 
   public async processInput<T>(ctx: HookContextWithOldData): Promise<T> {
     const childFields = this.getMappedChildFields();
+    const settings = this.schemaField.settings as GroupFieldSettings;
+
+    if (!ctx.data[this.schemaField.name]) {
+      if (settings.repeatable) {
+        ctx.data[this.schemaField.name] = [];
+      } else {
+        ctx.data[this.schemaField.name] = this.makeInitialFieldData(childFields);
+      }
+    } else if (settings.repeatable && Array.isArray(ctx.data[this.schemaField.name])) {
+      ctx.data[this.schemaField.name].forEach((_: any, i: number): void => {
+        ctx.data[this.schemaField.name][i] = merge(
+          this.makeInitialFieldData(childFields),
+          ctx.data[this.schemaField.name][i],
+        );
+      });
+    } else {
+      ctx.data[this.schemaField.name] = merge(
+        this.makeInitialFieldData(childFields),
+        ctx.data[this.schemaField.name],
+      );
+    }
+
     if (Array.isArray(ctx.fieldData)) {
       await Promise.all(
         ctx.fieldData.map(async (_, i) => {
@@ -592,6 +615,16 @@ export class DockiteFieldGroup extends DockiteField {
 
         await child.dockiteField.onFieldUpdate();
       }),
+    );
+  }
+
+  private makeInitialFieldData(fields: Pick<Field, 'name' | 'settings'>[]): Record<string, any> {
+    return fields.reduce(
+      (curr, acc) => ({
+        ...curr,
+        [acc.name]: acc.settings.default ?? null,
+      }),
+      {},
     );
   }
 }

@@ -153,7 +153,8 @@ const createGraphQLInputObjectTypesForSchema = async (
     },
   });
 
-  const inputTypeFieldMap: GraphQLInputFieldConfigMap = {};
+  const createInputTypeFieldMap: GraphQLInputFieldConfigMap = {};
+  const updateInputTypeFieldMap: GraphQLInputFieldConfigMap = {};
 
   await Promise.all(
     schema.fields.map(async field => {
@@ -175,12 +176,20 @@ const createGraphQLInputObjectTypesForSchema = async (
 
       // Finally add the field to the map
       if (inputType !== null) {
-        if (field.settings.required) {
-          inputTypeFieldMap[field.name] = {
+        console.log({
+          field: field.name,
+          default: field.settings.default,
+        });
+        if (field.settings.required && field.settings.default === undefined) {
+          createInputTypeFieldMap[field.name] = {
             type: GraphQLNonNull(inputType),
           };
         } else {
-          inputTypeFieldMap[field.name] = {
+          createInputTypeFieldMap[field.name] = {
+            type: inputType,
+          };
+
+          updateInputTypeFieldMap[field.name] = {
             type: inputType,
           };
         }
@@ -190,16 +199,16 @@ const createGraphQLInputObjectTypesForSchema = async (
 
   const createInput = new GraphQLInputObjectType({
     name: `Create${schema.name}InputType`,
-    fields: cloneDeep(inputTypeFieldMap),
+    fields: cloneDeep(createInputTypeFieldMap),
   });
 
-  inputTypeFieldMap.id = {
+  updateInputTypeFieldMap.id = {
     type: GraphQLNonNull(GraphQLString),
   };
 
   const updateInput = new GraphQLInputObjectType({
     name: `Update${schema.name}InputType`,
-    fields: cloneDeep(inputTypeFieldMap),
+    fields: cloneDeep(updateInputTypeFieldMap),
   });
 
   return {
@@ -608,6 +617,12 @@ const createGraphQLMutationsForSchema = async (
                 );
               }
 
+              input[field.name] = await field.dockiteField.processInputGraphQL<any>({
+                data: input,
+                field,
+                fieldData: input[field.name],
+              });
+
               await field.dockiteField.validateInputGraphQL({
                 data: input,
                 fieldData: input[field.name],
@@ -618,12 +633,6 @@ const createGraphQLMutationsForSchema = async (
                 data: input,
                 fieldData: input[field.name],
                 field,
-              });
-
-              input[field.name] = await field.dockiteField.processInputGraphQL<any>({
-                data: input,
-                field,
-                fieldData: input[field.name],
               });
             }),
           );
@@ -696,6 +705,13 @@ const createGraphQLMutationsForSchema = async (
                   );
                 }
 
+                input[field.name] = await field.dockiteField.processInputGraphQL<any>({
+                  data: input,
+                  field,
+                  fieldData: input[field.name],
+                  document,
+                });
+
                 await field.dockiteField.validateInputGraphQL({
                   data: input,
                   fieldData: input[field.name],
@@ -709,13 +725,6 @@ const createGraphQLMutationsForSchema = async (
                   fieldData: input[field.name],
                   field,
                   oldData: cloneDeep(document.data),
-                  document,
-                });
-
-                input[field.name] = await field.dockiteField.processInputGraphQL<any>({
-                  data: input,
-                  field,
-                  fieldData: input[field.name],
                   document,
                 });
               }),
