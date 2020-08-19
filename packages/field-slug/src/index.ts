@@ -61,7 +61,23 @@ export class DockiteFieldSlug extends DockiteField {
     }
   }
 
-  public async processInput<T>(ctx: HookContext): Promise<T> {
+  public async processInputGraphQL<T>(ctx: HookContext): Promise<T> {
+    const settings = this.schemaField.settings as SlugFieldSettings;
+
+    let slug = ctx.fieldData;
+
+    if (slug) {
+      slug = slugify(ctx.fieldData, { lower: true, replacement: '-' });
+    } else if (settings.fieldToSlugify) {
+      slug = slugify(ctx.data[settings.fieldToSlugify], { lower: true, replacement: '-' });
+    } else {
+      slug = null;
+    }
+
+    return (slug as any) as T;
+  }
+
+  public async processInputRaw<T>(ctx: HookContext): Promise<T> {
     let count;
     let increment = 0;
 
