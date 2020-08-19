@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.2.0-alpha.17](https://github.com/dockite/dockite/compare/@dockite/where-builder@0.2.0-alpha.16...@dockite/where-builder@0.2.0-alpha.17) (2020-08-19)
+
+
+### Bug Fixes
+
+* **where-builder:** handle graphql literals ([1846d6d](https://github.com/dockite/dockite/commit/1846d6deb87aa2401ba18c59cbaf8d76ded354b1))
+
+
+
+
+
 # [0.2.0-alpha.16](https://github.com/dockite/dockite/compare/@dockite/where-builder@0.2.0-alpha.15...@dockite/where-builder@0.2.0-alpha.16) (2020-08-15)
 
 **Note:** Version bump only for package @dockite/where-builder
