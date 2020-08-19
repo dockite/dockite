@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.40](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.39...@dockite/core@0.4.0-alpha.40) (2020-08-19)
+
+
+### Bug Fixes
+
+* handle defaults in transformer ([7638acd](https://github.com/dockite/dockite/commit/7638acdea88c0ffbdd3171d8c7e60cd0278b2526))
+
+
+
+
+
 # [0.4.0-alpha.39](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.38...@dockite/core@0.4.0-alpha.39) (2020-08-18)
 
 

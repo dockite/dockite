@@ -1,6 +1,6 @@
 {
   "name": "@dockite/field-slug",
-  "version": "0.2.0-alpha.19",
+  "version": "0.2.0-alpha.20",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
