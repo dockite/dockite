@@ -1,7 +1,6 @@
 <template>
   <div>
     <el-menu
-      :router="true"
       class="dockite-aside--el-menu dockite-aside--fixed fixed overflow-y-auto"
       :collapse="isCollapse"
       :background-color="backgroundColor"
@@ -12,13 +11,17 @@
         <logo fill-color="transparent" height="100%" />
       </div>
       <el-menu-item index="/">
-        <i class="el-icon-s-home"></i>
-        <span slot="title">{{ $t('sideMenu.home') }}</span>
+        <router-link slot="title" style="color: inherit" class="block" to="/">
+          <i class="el-icon-s-home"></i>
+          <span>{{ $t('sideMenu.home') }}</span>
+        </router-link>
       </el-menu-item>
 
       <el-menu-item v-if="$can('internal:schema:read')" index="/documents">
-        <i class="el-icon-document"></i>
-        <span slot="title">{{ $t('sideMenu.documents') }}s</span>
+        <router-link slot="title" style="color: inherit" class="block" to="/documents">
+          <i class="el-icon-document"></i>
+          <span>{{ $t('sideMenu.documents') }}s</span>
+        </router-link>
       </el-menu-item>
 
       <el-submenu v-else index="/documents">
@@ -28,7 +31,9 @@
         </template>
 
         <el-menu-item index="/documents">
-          <span slot="title">All {{ $t('sideMenu.documents') }}s</span>
+          <router-link slot="title" to="/documents" class="block" style="color: inherit">
+            <span>All {{ $t('sideMenu.documents') }}s</span>
+          </router-link>
         </el-menu-item>
 
         <el-menu-item-group
@@ -40,7 +45,14 @@
             :key="schema.id"
             :index="`/schemas/${schema.id}`"
           >
-            <span slot="title">{{ schema.title }}</span>
+            <router-link
+              slot="title"
+              style="color: inherit"
+              class="block"
+              :to="`/schemas/${schema.id}`"
+            >
+              <span>{{ schema.title }}</span>
+            </router-link>
           </el-menu-item>
         </el-menu-item-group>
       </el-submenu>
@@ -50,12 +62,18 @@
           <i class="el-icon-s-grid"></i>
           <span slot="title">{{ $t('sideMenu.schemas') }}s</span>
         </template>
+
         <el-menu-item-group title="Management">
           <el-menu-item index="/schemas">
-            <span slot="title">All {{ $t('sideMenu.schemas') }}s</span>
+            <router-link slot="title" style="color: inherit" class="block" to="/schemas">
+              <span>All {{ $t('sideMenu.schemas') }}s</span>
+            </router-link>
           </el-menu-item>
+
           <el-menu-item index="/schemas/create">
-            <span slot="title">Create {{ $t('sideMenu.schemas') }}</span>
+            <router-link slot="title" style="color: inherit" class="block" to="/schemas/create">
+              <span>Create {{ $t('sideMenu.schemas') }}</span>
+            </router-link>
           </el-menu-item>
         </el-menu-item-group>
         <el-menu-item-group v-if="allSchemas" :title="$t('sideMenu.schemas') + 's'">
@@ -64,7 +82,14 @@
             :key="schema.id"
             :index="`/schemas/${schema.id}`"
           >
-            <span slot="title">{{ schema.title }}</span>
+            <router-link
+              slot="title"
+              style="color: inherit"
+              class="block"
+              :to="`/schemas/${schema.id}`"
+            >
+              <span>{{ schema.title }}</span>
+            </router-link>
           </el-menu-item>
         </el-menu-item-group>
       </el-submenu>
@@ -77,14 +102,21 @@
           <i class="el-icon-notebook-2"></i>
           <span slot="title">{{ $t('sideMenu.singletons') }}s</span>
         </template>
+
         <el-menu-item-group v-if="$can('internal:singleton:read')" title="Management">
           <el-menu-item index="/singletons">
-            <span slot="title">All {{ $t('sideMenu.singletons') }}s</span>
+            <router-link slot="title" style="color: inherit" class="block" to="/singletons">
+              <span>All {{ $t('sideMenu.singletons') }}s</span>
+            </router-link>
           </el-menu-item>
+
           <el-menu-item v-if="$can('internal:singleton:create')" index="/singletons/create">
-            <span slot="title">Create {{ $t('sideMenu.singletons') }}</span>
+            <router-link slot="title" style="color: inherit" class="block" to="/singletons/create">
+              <span>Create {{ $t('sideMenu.singletons') }}</span>
+            </router-link>
           </el-menu-item>
         </el-menu-item-group>
+
         <el-menu-item-group
           v-if="allSingletons && allSingletons.results && allSingletons.results.length > 0"
           :title="$t('sideMenu.singletons') + 's'"
@@ -94,9 +126,17 @@
             :key="schema.id"
             :index="`/singletons/${schema.id}`"
           >
-            <span slot="title">{{ schema.title }}</span>
+            <router-link
+              slot="title"
+              style="color: inherit"
+              class="block"
+              :to="`/singletons/${schema.id}`"
+            >
+              <span>{{ schema.title }}</span>
+            </router-link>
           </el-menu-item>
         </el-menu-item-group>
+
         <span v-else>
           <el-menu-item>
             <i class="el-icon-warning"></i>
@@ -126,24 +166,32 @@
         </template>
 
         <el-menu-item v-if="$can('internal:users:read')" index="/settings/users">
-          <i class="el-icon-user"></i>
-          <span slot="title">{{ $t('sideMenu.users') }}</span>
+          <router-link slot="title" style="color: inherit" class="block" to="/settings/users">
+            <i class="el-icon-user"></i>
+            <span>{{ $t('sideMenu.users') }}</span>
+          </router-link>
         </el-menu-item>
 
         <el-menu-item v-if="$can('internal:roles:read')" index="/settings/roles">
-          <i class="el-icon-lock"></i>
-          <span slot="title">{{ $t('sideMenu.roles') }}</span>
+          <router-link slot="title" style="color: inherit" class="block" to="/settings/roles">
+            <i class="el-icon-lock"></i>
+            <span>{{ $t('sideMenu.roles') }}</span>
+          </router-link>
         </el-menu-item>
 
         <el-menu-item v-if="$can('internal:webhooks:read')" index="/settings/webhooks">
-          <i class="el-icon-connection"></i>
-          <span slot="title">{{ $t('sideMenu.webhooks') }}</span>
+          <router-link slot="title" style="color: inherit" class="block" to="/settings/webhooks">
+            <i class="el-icon-connection"></i>
+            <span>{{ $t('sideMenu.webhooks') }}</span>
+          </router-link>
         </el-menu-item>
       </el-submenu>
 
       <el-menu-item index="/account">
-        <i class="el-icon-user"></i>
-        <span slot="title">{{ $t('sideMenu.account') }}</span>
+        <router-link slot="title" style="color: inherit" class="block" to="/account">
+          <i class="el-icon-user"></i>
+          <span>{{ $t('sideMenu.account') }}</span>
+        </router-link>
       </el-menu-item>
 
       <el-menu-item index="#logout" @click.native.prevent="logout">
