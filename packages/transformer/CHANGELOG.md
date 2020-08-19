@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.24](https://github.com/dockite/dockite/compare/@dockite/transformer@0.3.0-alpha.23...@dockite/transformer@0.3.0-alpha.24) (2020-08-19)
+
+
+### Bug Fixes
+
+* **transformer:** initial field values during create ([223674f](https://github.com/dockite/dockite/commit/223674f088dbfb4a107d283df9b3153f34ecc354))
+
+
+
+
+
 # [0.3.0-alpha.23](https://github.com/dockite/dockite/compare/@dockite/transformer@0.3.0-alpha.22...@dockite/transformer@0.3.0-alpha.23) (2020-08-19)
 
 **Note:** Version bump only for package @dockite/transformer
