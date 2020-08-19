@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.43](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.42...@dockite/core@0.4.0-alpha.43) (2020-08-19)
+
+
+### Bug Fixes
+
+* bulk-edit sql errors and presentation ([98a0587](https://github.com/dockite/dockite/commit/98a0587b77e52a0d47a1c45ed4f9bec45411d69b))
+
+
+
+
+
 # [0.4.0-alpha.42](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.41...@dockite/core@0.4.0-alpha.42) (2020-08-19)
 
 **Note:** Version bump only for package @dockite/core

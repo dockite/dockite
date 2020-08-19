@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.47](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.46...@dockite/admin@0.4.0-alpha.47) (2020-08-19)
+
+
+### Bug Fixes
+
+* bulk-edit sql errors and presentation ([98a0587](https://github.com/dockite/dockite/commit/98a0587b77e52a0d47a1c45ed4f9bec45411d69b))
+* **admin:** bulk-edit modal breaking container ([0800aeb](https://github.com/dockite/dockite/commit/0800aeb343e16859be72195444aa0fd8bbdd06a7))
+* **admin:** replace sidemenu with router-links ([24b1bee](https://github.com/dockite/dockite/commit/24b1bee8ccd30526a5a8993f4c90f8cfc3649a7c))
+
+
+### Features
+
+* **admin:** tree view to update sort field ([5274cb5](https://github.com/dockite/dockite/commit/5274cb524aab76455bd47a856202789c4c795c5e))
+
+
+
+
+
 # [0.4.0-alpha.46](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.45...@dockite/admin@0.4.0-alpha.46) (2020-08-19)
 
 **Note:** Version bump only for package @dockite/admin
