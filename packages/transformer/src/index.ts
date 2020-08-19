@@ -1,5 +1,5 @@
 import { can } from '@dockite/ability';
-import { Schema, Document, User, DocumentRevision, SchemaType } from '@dockite/database';
+import { Schema, Document, User, DocumentRevision, SchemaType, Field } from '@dockite/database';
 import {
   DockiteFieldStatic,
   GlobalContext,
@@ -100,6 +100,15 @@ const isAuthenticatedAndAuthorized = async (
   }
 
   return authenticated;
+};
+
+const makeInitialFieldDataForDocument = (fields: Field[]): Record<string, any> => {
+  return fields.reduce((acc, curr) => {
+    return {
+      ...acc,
+      [curr.name]: curr.settings.default ?? null,
+    };
+  }, {});
 };
 
 /**
@@ -578,7 +587,12 @@ const createGraphQLMutationsForSchema = async (
           let internalUserId = anonymousUser.id;
           let externalUserId = '';
 
-          const { input } = args;
+          let { input } = args;
+
+          input = {
+            ...makeInitialFieldDataForDocument(schema.fields),
+            ...input,
+          };
 
           if (ctx.user) {
             internalUserId = ctx.user.id;
@@ -660,7 +674,7 @@ const createGraphQLMutationsForSchema = async (
           input: { type: inputTypes.update },
         },
         async resolve(_context, args, ctx, info): Promise<object> {
-          const { input } = args;
+          let { input } = args;
 
           try {
             let internalUserId = anonymousUser.id;
@@ -696,6 +710,11 @@ const createGraphQLMutationsForSchema = async (
             }
 
             const document = await documentRepository.findOneOrFail(input.id);
+
+            input = {
+              ...document.data,
+              ...input,
+            };
 
             await Promise.all(
               schema.fields.map(async field => {
