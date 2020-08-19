@@ -6,7 +6,11 @@
 
         <div>
           <el-button @click="showDocumentSelectModal = true">Select Documents</el-button>
-          <el-button type="primary" :disabled="loading > 0" @click="submit">
+          <el-button
+            :disabled="loading > 0 || (selectedDocuments.length === 0 && !selectAll)"
+            type="primary"
+            @click="submit"
+          >
             Update ({{ documentCount }})
           </el-button>
         </div>
@@ -33,7 +37,10 @@
         <el-tabs v-model="currentTab" type="border-card">
           <el-tab-pane v-for="tab in availableTabs" :key="tab" :label="tab" :name="tab">
             <div v-for="field in getFieldsByGroupName(tab)" :key="field.id">
-              <div class="flex justify-between items-center -mx-3">
+              <div
+                v-if="$dockiteFieldManager[field.type].input"
+                class="flex justify-between items-center -mx-3"
+              >
                 <div class="w-full px-3">
                   <component
                     :is="$dockiteFieldManager[field.type].input"
@@ -49,7 +56,7 @@
                   <el-switch
                     v-model="enabledFields[field.name]"
                     class="flex-1"
-                    active-text="Bulk Edit"
+                    active-text="Update"
                   />
                 </div>
               </div>
@@ -62,7 +69,11 @@
           Cancel
         </el-button>
 
-        <el-button :disabled="loading > 0" type="primary" @click="submit">
+        <el-button
+          :disabled="loading > 0 || (selectedDocuments.length === 0 && !selectAll)"
+          type="primary"
+          @click="submit"
+        >
           Update ({{ documentCount }})
         </el-button>
       </el-row>
@@ -217,7 +228,7 @@ export default class CreateSchemaDocumentPage extends Vue {
         schemaId: this.schemaId,
       };
 
-      if (this.selectAll) {
+      if (!this.selectAll) {
         payload.documentIds = this.selectedDocuments;
       }
 

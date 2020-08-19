@@ -469,6 +469,7 @@ export class DocumentResolver {
       // If we were given a specific set of documents to update add those to
       // the params.
       if (documentIds && documentIds.length > 0) {
+        // params.push(documentIds.map(x => `'${x}'`).join(', '));
         params.push(documentIds);
       }
 
@@ -481,7 +482,7 @@ export class DocumentResolver {
           SELECT d."id", d."data", d."userId", d."schemaId"
           FROM ${documentRepository.metadata.tableName} d
           WHERE d."schemaId" = $1
-          ${documentIds && documentIds.length > 0 ? 'AND WHERE d."id" = ANY($2::text[])' : ''}
+          ${documentIds && documentIds.length > 0 ? 'AND d."id"::text = ANY($2)' : ''}
           `,
         params,
       );
