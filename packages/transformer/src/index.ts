@@ -334,7 +334,12 @@ const createGraphQLQueriesForSchema = async (
           }
         }
 
-        const document = await repository.findOneOrFail(id);
+        const document = await repository.findOneOrFail({
+          where: {
+            id,
+            schemaId: schema.id,
+          },
+        });
 
         return { id: document.id, ...document.data };
       },
