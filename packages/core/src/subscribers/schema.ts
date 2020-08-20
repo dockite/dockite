@@ -18,13 +18,16 @@ export class SchemaSubscriber implements EntitySubscriberInterface {
 
   afterInsert(event: InsertEvent<Schema>): void {
     fireWebhooks(event.entity, WebhookAction.SchemaCreate);
+    fireWebhooks(event.entity, `schema:${event.entity.name ?? 'unknown'}:create`);
   }
 
   afterUpdate(event: UpdateEvent<Schema>): void {
     fireWebhooks(event.entity, WebhookAction.SchemaUpdate);
+    fireWebhooks(event.entity, `schema:${event.entity.name ?? 'unknown'}:update`);
   }
 
   afterRemove(event: RemoveEvent<Schema>): void {
     fireWebhooks(event.entity as Schema, WebhookAction.SchemaDelete);
+    fireWebhooks(event.entity, `schema:${(event.entity as Schema).name ?? 'unknown'}:delete`);
   }
 }

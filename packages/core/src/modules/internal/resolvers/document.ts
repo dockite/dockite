@@ -337,6 +337,7 @@ export class DocumentResolver {
       locale,
       data: { ...initialData, ...data },
       schemaId,
+      schema,
       releaseId,
       userId,
     });

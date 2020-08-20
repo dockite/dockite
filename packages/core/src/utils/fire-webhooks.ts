@@ -17,7 +17,7 @@ const dockiteFieldReplacer = (key: string, value: any): any => {
   return value;
 };
 
-export const fireWebhooks = async (entity: any, action: WebhookAction): Promise<void> => {
+export const fireWebhooks = async (entity: any, action: WebhookAction | string): Promise<void> => {
   const webhookRepository = getRepository(Webhook);
   const webhookCallRepository = getRepository(WebhookCall);
 

@@ -85,6 +85,8 @@ import 'codemirror-graphql/lint';
 import 'codemirror-graphql/mode';
 import 'codemirror/theme/nord.css';
 
+import { ManyResultSet, AllSchemasResultItem } from '../../../../common/types';
+
 import { RequestMethod } from '~/common/types';
 import Logo from '~/components/base/logo.vue';
 import * as auth from '~/store/auth';
@@ -121,6 +123,12 @@ export default class CreateWebhookPage extends Vue {
     return this.$store.getters[`${auth.namespace}/fullName`];
   }
 
+  get allSchemas(): ManyResultSet<AllSchemasResultItem> {
+    const state: data.DataState = this.$store.state[data.namespace];
+
+    return state.allSchemas;
+  }
+
   get webhookId(): string {
     return this.$route.params.id;
   }
@@ -130,7 +138,24 @@ export default class CreateWebhookPage extends Vue {
   }
 
   get webhookActions(): string[] {
-    return Object.values(WebhookAction);
+    const actions: string[] = [];
+
+    actions.push(...Object.values(WebhookAction));
+
+    this.allSchemas.results.forEach(schema => {
+      const schemaName = schema.name.toLowerCase();
+
+      actions.push(
+        `schema:${schemaName}:create`,
+        `schema:${schemaName}:update`,
+        `schema:${schemaName}:delete`,
+        `document:${schemaName}:create`,
+        `document:${schemaName}:update`,
+        `document:${schemaName}:delete`,
+      );
+    });
+
+    return actions;
   }
 
   get requestMethods(): string[] {
@@ -236,6 +261,12 @@ export default class CreateWebhookPage extends Vue {
     }
   }
 
+  async fetchAllSchemas(): Promise<void> {
+    if (this.allSchemas.results.length === 0) {
+      await this.$store.dispatch(`${data.namespace}/fetchAllSchemas`);
+    }
+  }
+
   @Watch('webhook', { immediate: true })
   handleWebhookChange(): void {
     if (this.webhook) {
@@ -299,6 +330,7 @@ export default class CreateWebhookPage extends Vue {
 
   mounted(): void {
     this.fetchWebhookById();
+    this.fetchAllSchemas();
   }
 }
 </script>
