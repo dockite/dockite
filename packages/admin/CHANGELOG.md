@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.48](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.47...@dockite/admin@0.4.0-alpha.48) (2020-08-20)
+
+
+### Features
+
+* **field-sort-index:** add the sort index field ([3d1b66e](https://github.com/dockite/dockite/commit/3d1b66e7482e187d785b48f336940d0479c18cf9))
+
+
+
+
+
 # [0.4.0-alpha.47](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.46...@dockite/admin@0.4.0-alpha.47) (2020-08-19)
 
 
