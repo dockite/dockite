@@ -35,6 +35,7 @@
       <el-form-item v-show="settings.enableTreeView" label="Field for Tree View">
         <el-select
           v-model="settings.treeViewField"
+          clearable
           style="width: 100%;"
           filterable
           default-first-option
@@ -80,7 +81,7 @@
           default-first-option
         >
           <el-option
-            v-for="field in schemaFields"
+            v-for="field in sortFields"
             :key="field.name"
             :label="field.title"
             :value="field.name"
@@ -144,6 +145,10 @@ export default class SchemaSettingsComponent extends Vue {
     }
 
     return [];
+  }
+
+  get sortFields(): Field[] {
+    return this.schemaFields.filter(field => field.type === 'sort-index');
   }
 
   get canEnableTreeView(): boolean {

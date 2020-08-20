@@ -25,8 +25,7 @@
           <el-form-item label="Name" prop="name">
             <el-input ref="fieldName" v-model="field.name" />
             <small>
-              The identifier of the field, must be lowercase and may only contain alphanumeric
-              characters, underscores and dashses.
+              The identifier for the field, must be a valid GraphQL field name.
             </small>
           </el-form-item>
 

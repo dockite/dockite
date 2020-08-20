@@ -161,16 +161,18 @@ export default class TreeViewComponent extends Vue {
       node.data.__document.data[this.schema.settings.treeViewField] = null;
     }
 
-    if (parent) {
-      parent.childNodes.forEach((node, i) => {
-        node.data.__document.data[this.schema.settings.treeViewSortField] = i;
-      });
+    if (this.schema.settings.treeViewSortField) {
+      this.assignOrderToTree(this.documentTree);
     }
   }
 
   public async handleSaveTree(): Promise<void> {
     try {
       this.loading += 1;
+
+      if (this.schema.settings.treeViewSortField) {
+        this.assignOrderToTree(this.documentTree);
+      }
 
       const documents = this.flattenDocumentTree(this.documentTree);
 
@@ -198,6 +200,16 @@ export default class TreeViewComponent extends Vue {
     } finally {
       this.loading -= 1;
     }
+  }
+
+  public assignOrderToTree(tree: DocumentTreeData[]): void {
+    tree.forEach((node, i) => {
+      node.__document.data[this.schema.settings.treeViewSortField] = i;
+
+      if (node.children) {
+        this.assignOrderToTree(node.children);
+      }
+    });
   }
 
   @Watch('schemaId', { immediate: true })

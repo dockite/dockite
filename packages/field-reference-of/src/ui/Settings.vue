@@ -22,7 +22,7 @@
         v-model="fieldName"
         filterable
         style="width: 100%"
-        placeholder="Select the the reference field name"
+        placeholder="Select the reference field name"
       >
         <el-option
           v-for="field in referenceFields"

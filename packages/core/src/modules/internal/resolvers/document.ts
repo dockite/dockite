@@ -323,8 +323,9 @@ export class DocumentResolver {
 
         const hookContext: HookContext = { field, fieldData, data };
 
-        await field.dockiteField!.validateInputRaw(hookContext);
         data[field.name] = await field.dockiteField!.processInputRaw(hookContext);
+
+        await field.dockiteField!.validateInputRaw(hookContext);
 
         await field.dockiteField!.onCreate(hookContext);
       }),
@@ -395,9 +396,9 @@ export class DocumentResolver {
           document,
         };
 
-        await field.dockiteField!.validateInputRaw(hookContext);
-
         data[field.name] = await field.dockiteField!.processInputRaw(hookContext);
+
+        await field.dockiteField!.validateInputRaw(hookContext);
 
         await field.dockiteField!.onUpdate(hookContext);
       }),
@@ -455,9 +456,9 @@ export class DocumentResolver {
             data,
           };
 
-          await field.dockiteField!.validateInputRaw(hookContext);
-
           data[field.name] = await field.dockiteField!.processInputRaw(hookContext);
+
+          await field.dockiteField!.validateInputRaw(hookContext);
 
           await field.dockiteField!.onUpdate(hookContext);
         }),
@@ -548,7 +549,9 @@ export class DocumentResolver {
       await repository.softRemove(document);
 
       return true;
-    } catch {
+    } catch (err) {
+      console.log(err);
+
       return false;
     }
   }

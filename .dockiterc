@@ -39,7 +39,8 @@
     "@dockite/field-conditional-boolean",
     "@dockite/field-conditional-select",
     "@dockite/field-wysiwyg",
-    "@dockite/field-media-manager"
+    "@dockite/field-media-manager",
+    "@dockite/field-sort-index",
   ],
   "modules": {
     "internal": [
