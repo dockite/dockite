@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.25](https://github.com/dockite/dockite/compare/@dockite/field-s3-image@0.3.0-alpha.24...@dockite/field-s3-image@0.3.0-alpha.25) (2020-08-21)
+
+
+### Bug Fixes
+
+* handle bulk edit with media fields ([8626f2e](https://github.com/dockite/dockite/commit/8626f2e2569c9fb6ebcfa8ffbee73aa15ff5037e))
+
+
+
+
+
 # [0.3.0-alpha.24](https://github.com/dockite/dockite/compare/@dockite/field-s3-image@0.3.0-alpha.23...@dockite/field-s3-image@0.3.0-alpha.24) (2020-08-21)
 
 **Note:** Version bump only for package @dockite/field-s3-image

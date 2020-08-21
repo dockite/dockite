@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.50](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.49...@dockite/admin@0.4.0-alpha.50) (2020-08-21)
+
+
+### Bug Fixes
+
+* handle bulk edit with media fields ([8626f2e](https://github.com/dockite/dockite/commit/8626f2e2569c9fb6ebcfa8ffbee73aa15ff5037e))
+
+
+
+
+
 # [0.4.0-alpha.49](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.48...@dockite/admin@0.4.0-alpha.49) (2020-08-21)
 
 
