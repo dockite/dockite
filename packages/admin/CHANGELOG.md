@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.51](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.50...@dockite/admin@0.4.0-alpha.51) (2020-08-21)
+
+
+### Features
+
+* **admin:** add filters to query params ([a46d964](https://github.com/dockite/dockite/commit/a46d964526c7b7b0736bc413ae68fd4d621c6027))
+
+
+
+
+
 # [0.4.0-alpha.50](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.49...@dockite/admin@0.4.0-alpha.50) (2020-08-21)
 
 

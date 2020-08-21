@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.2.0-alpha.19](https://github.com/dockite/dockite/compare/@dockite/where-builder@0.2.0-alpha.18...@dockite/where-builder@0.2.0-alpha.19) (2020-08-21)
+
+
+### Features
+
+* **admin:** add filters to query params ([a46d964](https://github.com/dockite/dockite/commit/a46d964526c7b7b0736bc413ae68fd4d621c6027))
+
+
+
+
+
 # [0.2.0-alpha.18](https://github.com/dockite/dockite/compare/@dockite/where-builder@0.2.0-alpha.17...@dockite/where-builder@0.2.0-alpha.18) (2020-08-21)
 
 **Note:** Version bump only for package @dockite/where-builder
