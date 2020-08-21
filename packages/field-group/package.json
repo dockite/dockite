@@ -1,6 +1,6 @@
 {
   "name": "@dockite/field-group",
-  "version": "0.4.0-alpha.29",
+  "version": "0.4.0-alpha.30",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
@@ -9,9 +9,9 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@dockite/database": "^0.4.0-alpha.14",
-    "@dockite/field": "^0.3.0-alpha.8",
-    "@dockite/types": "^0.3.0-alpha.9",
+    "@dockite/database": "^0.4.0-alpha.15",
+    "@dockite/field": "^0.3.0-alpha.9",
+    "@dockite/types": "^0.3.0-alpha.10",
     "graphql": "^15.1.0",
     "graphql-type-json": "^0.3.1",
     "lodash": "^4.17.15",

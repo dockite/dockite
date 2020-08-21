@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.45](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.44...@dockite/core@0.4.0-alpha.45) (2020-08-21)
+
+
+### Features
+
+* **core:** add per schema webhook support ([5623c31](https://github.com/dockite/dockite/commit/5623c315d65daa5b26a7c8944805ca1106cc6f65))
+
+
+
+
+
 # [0.4.0-alpha.44](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.43...@dockite/core@0.4.0-alpha.44) (2020-08-20)
 
 

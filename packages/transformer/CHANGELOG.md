@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.25](https://github.com/dockite/dockite/compare/@dockite/transformer@0.3.0-alpha.24...@dockite/transformer@0.3.0-alpha.25) (2020-08-21)
+
+
+### Bug Fixes
+
+* **transformer:** schema access from get resolver ([74e5f64](https://github.com/dockite/dockite/commit/74e5f64e8ad05385672a1f31a5e074a6cebc31f0))
+
+
+
+
+
 # [0.3.0-alpha.24](https://github.com/dockite/dockite/compare/@dockite/transformer@0.3.0-alpha.23...@dockite/transformer@0.3.0-alpha.24) (2020-08-19)
 
 
