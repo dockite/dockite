@@ -49,6 +49,8 @@
                     :name="field.name"
                     :field-config="field"
                     :form-data="form"
+                    :schema="schema"
+                    :groups.sync="groups"
                   >
                   </component>
                 </div>
@@ -124,6 +126,8 @@ export default class CreateSchemaDocumentPage extends Vue {
 
   public showDocumentSelectModal = false;
 
+  public localGroups: Record<string, string[]> | null = null;
+
   @Ref()
   readonly formEl!: Form;
 
@@ -156,11 +160,19 @@ export default class CreateSchemaDocumentPage extends Vue {
   }
 
   get groups(): Record<string, string[]> {
+    if (this.localGroups && Object.keys(this.localGroups).length > 0) {
+      return this.localGroups;
+    }
+
     if (this.schema) {
       return this.schema.groups;
     }
 
     return {};
+  }
+
+  set groups(value: Record<string, string[]>) {
+    this.localGroups = { ...value };
   }
 
   get availableTabs(): string[] {

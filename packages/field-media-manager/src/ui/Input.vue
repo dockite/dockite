@@ -7,88 +7,104 @@
     :class="{ 'is-error': errors.length > 0 }"
     class="dockite-field-media-manager"
   >
-    <el-alert v-if="!s3Settings" title="No S3 settings found" type="error" show-icon>
-      No available S3 settings were found on either the field or schema, please check to make sure
-      they are configured
+    <el-alert
+      v-if="bulkEditMode"
+      title="Not compatible with bulk edit mode"
+      type="error"
+      show-icon
+      :closable="false"
+    >
+      The media manager field is incompatible with bulk edit mode, images may only be assigned per
+      document.
     </el-alert>
-
     <div v-else>
-      <el-upload
-        v-if="fieldData"
-        v-show="settings.max === 0 || fieldData.items.length < settings.max"
-        :key="key"
-        action="#"
-        mutiple
-        :accept="settings.acceptedExtensions.join(',')"
-        :http-request="handleUpload"
-        :before-upload="handleBeforeUpload"
-        :limit="settings.max !== 0 ? settings.max : Infinity"
-        :show-file-list="false"
-      >
-        <el-button type="primary" :disabled="loading > 0">
-          Click to upload
-        </el-button>
+      <el-alert v-if="!s3Settings" title="No S3 settings found" type="error" show-icon>
+        No available S3 settings were found on either the field or schema, please check to make sure
+        they are configured
+      </el-alert>
 
-        <div slot="tip" class="el-upload__tip">
-          Accepted files: {{ settings.acceptedExtensions.join(', ') }}
-          <span v-if="settings.maxSizeKB > 0">
-            with a file size less than {{ settings.maxSizeKB }} KB
-          </span>
-        </div>
-      </el-upload>
-
-      <ul v-if="fieldData" class="el-upload-list el-upload-list--picture">
-        <li
-          v-for="(file, index) in fieldData.items"
-          :key="file.checksum"
-          tabindex="0"
-          class="el-upload-list__item is-success"
+      <div v-else>
+        <el-upload
+          v-if="fieldData"
+          v-show="settings.max === 0 || fieldData.items.length < settings.max"
+          :key="key"
+          action="#"
+          mutiple
+          :accept="settings.acceptedExtensions.join(',')"
+          :http-request="handleUpload"
+          :before-upload="handleBeforeUpload"
+          :limit="settings.max !== 0 ? settings.max : Infinity"
+          :show-file-list="false"
         >
-          <img
-            v-if="isImage(file.filename)"
-            :src="file.url"
-            class="el-upload-list__item-thumbnail"
-          />
+          <el-button type="primary" :disabled="loading > 0">
+            Click to upload
+          </el-button>
 
-          <div v-else class="el-upload-list__item-thumbnail">
-            <i class="el-icon-picture-outline font-xl" />
-          </div>
-
-          <div class="dockite-field-media-manager--item">
-            <span class="el-upload-list__item-name dockite-field-media-manager--item-name">
-              {{ file.filename }}
+          <div slot="tip" class="el-upload__tip">
+            Accepted files: {{ settings.acceptedExtensions.join(', ') }}
+            <span v-if="settings.maxSizeKB > 0">
+              with a file size less than {{ settings.maxSizeKB }} KB
             </span>
-
-            <div class="dockite-field-media-manager--item-copy">
-              <el-button type="text" @click="handleCopyClick(file, 'markdown')">
-                Copy Markdown
-              </el-button>
-              <el-button type="text" @click="handleCopyClick(file, 'html')">
-                Copy HTML
-              </el-button>
-              <el-button type="text" @click="handleCopyClick(file, 'plain')">
-                Copy URL
-              </el-button>
-            </div>
           </div>
+        </el-upload>
 
-          <label class="el-upload-list__item-status-label">
-            <i class="el-icon-upload-success el-icon-check" />
-          </label>
+        <ul v-if="fieldData" class="el-upload-list el-upload-list--picture">
+          <li
+            v-for="(file, index) in fieldData.items"
+            :key="file.checksum"
+            tabindex="0"
+            class="el-upload-list__item is-success"
+          >
+            <img
+              v-if="isImage(file.filename)"
+              :src="file.url"
+              class="el-upload-list__item-thumbnail"
+            />
 
-          <i class="el-icon-close" @click="handleRemoveUpload(index)" />
-          <i class="el-icon-close-tip">
-            press delete to remove
-          </i>
-        </li>
-      </ul>
+            <div v-else class="el-upload-list__item-thumbnail">
+              <i class="el-icon-picture-outline font-xl" />
+            </div>
 
-      <div v-for="(error, index) in errors" :key="index" class="dockite-field-media-manager--error">
-        {{ error }}
-      </div>
+            <div class="dockite-field-media-manager--item">
+              <span class="el-upload-list__item-name dockite-field-media-manager--item-name">
+                {{ file.filename }}
+              </span>
 
-      <div class="el-form-item__description">
-        {{ fieldConfig.description }}
+              <div class="dockite-field-media-manager--item-copy">
+                <el-button type="text" @click="handleCopyClick(file, 'markdown')">
+                  Copy Markdown
+                </el-button>
+                <el-button type="text" @click="handleCopyClick(file, 'html')">
+                  Copy HTML
+                </el-button>
+                <el-button type="text" @click="handleCopyClick(file, 'plain')">
+                  Copy URL
+                </el-button>
+              </div>
+            </div>
+
+            <label class="el-upload-list__item-status-label">
+              <i class="el-icon-upload-success el-icon-check" />
+            </label>
+
+            <i class="el-icon-close" @click="handleRemoveUpload(index)" />
+            <i class="el-icon-close-tip">
+              press delete to remove
+            </i>
+          </li>
+        </ul>
+
+        <div
+          v-for="(error, index) in errors"
+          :key="index"
+          class="dockite-field-media-manager--error"
+        >
+          {{ error }}
+        </div>
+
+        <div class="el-form-item__description">
+          {{ fieldConfig.description }}
+        </div>
       </div>
     </div>
   </el-form-item>
@@ -141,6 +157,9 @@ export default class MediaManagerFieldInputComponent extends Vue {
 
   @Prop({ required: true, type: Object })
   readonly schema!: Schema;
+
+  @Prop({ default: () => false })
+  readonly bulkEditMode!: boolean;
 
   public rules: object[] = [];
 

@@ -6,63 +6,74 @@
     :class="{ 'is-error': errors.length > 0 }"
     class="dockite-field-s3-image"
   >
-    <el-alert v-if="!s3Settings" title="No S3 settings found" type="error" show-icon>
-      No available S3 settings were found on either the field or schema, please check to make sure
-      they are configured
+    <el-alert
+      v-if="bulkEditMode"
+      title="Not compatible with bulk edit mode"
+      type="error"
+      show-icon
+      :closable="false"
+    >
+      The image field is incompatible with bulk edit mode, images may only be assigned per document.
     </el-alert>
     <div v-else>
-      <el-upload
-        v-show="limit > 0 && fieldData.length < limit"
-        :key="key"
-        action="#"
-        :multiple="settings.multiple"
-        :accept="settings.acceptedExtensions.join(',')"
-        :http-request="handleUpload"
-        :before-upload="handleBeforeUpload"
-        :limit="limit"
-        :show-file-list="false"
-      >
-        <el-button type="primary">
-          Click to upload
-        </el-button>
-        <div slot="tip" class="el-upload__tip">
-          {{ settings.acceptedExtensions.join(', ') }} files with a size less than
-          {{ settings.maxSizeKB }} KB
-        </div>
-      </el-upload>
-      <ul class="el-upload-list el-upload-list--picture">
-        <li
-          v-for="(file, index) in fieldData"
-          :key="file.checksum"
-          tabindex="0"
-          class="el-upload-list__item is-success"
+      <el-alert v-if="!s3Settings" title="No S3 settings found" type="error" show-icon>
+        No available S3 settings were found on either the field or schema, please check to make sure
+        they are configured
+      </el-alert>
+      <div v-else>
+        <el-upload
+          v-show="limit > 0 && fieldData.length < limit"
+          :key="key"
+          action="#"
+          :multiple="settings.multiple"
+          :accept="settings.acceptedExtensions.join(',')"
+          :http-request="handleUpload"
+          :before-upload="handleBeforeUpload"
+          :limit="limit"
+          :show-file-list="false"
         >
-          <img :src="file.url" :alt="file.alt" class="el-upload-list__item-thumbnail" />
-
-          <div class="dockite-field-s3-image--item">
-            <a class="el-upload-list__item-name dockite-field-s3-image--item-name">
-              <i class="el-icon-document" />
-              {{ file.name }} - {{ index }}
-            </a>
-
-            <el-input v-model="file.alt" size="small" placeholder="Image alt text" />
+          <el-button type="primary">
+            Click to upload
+          </el-button>
+          <div slot="tip" class="el-upload__tip">
+            {{ settings.acceptedExtensions.join(', ') }} files with a size less than
+            {{ settings.maxSizeKB }} KB
           </div>
+        </el-upload>
+        <ul class="el-upload-list el-upload-list--picture">
+          <li
+            v-for="(file, index) in fieldData"
+            :key="file.checksum"
+            tabindex="0"
+            class="el-upload-list__item is-success"
+          >
+            <img :src="file.url" :alt="file.alt" class="el-upload-list__item-thumbnail" />
 
-          <label class="el-upload-list__item-status-label">
-            <i class="el-icon-upload-success el-icon-check" />
-          </label>
+            <div class="dockite-field-s3-image--item">
+              <a class="el-upload-list__item-name dockite-field-s3-image--item-name">
+                <i class="el-icon-document" />
+                {{ file.name }} - {{ index }}
+              </a>
 
-          <i class="el-icon-close" @click="handleRemoveUpload(index)" />
-          <i class="el-icon-close-tip">
-            press delete to remove
-          </i>
-        </li>
-      </ul>
-      <div v-for="(error, index) in errors" :key="index" class="dockite-field-s3-image--error">
-        {{ error }}
-      </div>
-      <div class="el-form-item__description">
-        {{ fieldConfig.description }}
+              <el-input v-model="file.alt" size="small" placeholder="Image alt text" />
+            </div>
+
+            <label class="el-upload-list__item-status-label">
+              <i class="el-icon-upload-success el-icon-check" />
+            </label>
+
+            <i class="el-icon-close" @click="handleRemoveUpload(index)" />
+            <i class="el-icon-close-tip">
+              press delete to remove
+            </i>
+          </li>
+        </ul>
+        <div v-for="(error, index) in errors" :key="index" class="dockite-field-s3-image--error">
+          {{ error }}
+        </div>
+        <div class="el-form-item__description">
+          {{ fieldConfig.description }}
+        </div>
       </div>
     </div>
   </el-form-item>
@@ -109,6 +120,9 @@ export default class S3ImageFieldInputComponent extends Vue {
 
   @Prop({ required: true, type: Object })
   readonly schema!: Schema;
+
+  @Prop({ default: () => false })
+  readonly bulkEditMode!: boolean;
 
   public rules: object[] = [];
 
