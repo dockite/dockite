@@ -36,19 +36,38 @@
         :prop="`data.${field.name}`"
       >
         <template slot="header" slot-scope="{ column }">
-          {{ column.label }} {{ filters.some(f => f.name === field.name) ? '*' : '' }}
+          {{ column.label }}
 
           <!-- You gotta stop it from propogating twice for "reasons" -->
-          <el-popover v-if="term === ''" width="250" trigger="click" @click.native.stop>
-            <span slot="reference" class="el-table__column-filter-trigger" @click.stop>
-              <i class="el-icon-arrow-down el-icon-arrow-up"></i>
-            </span>
+          <el-popover
+            v-if="term === ''"
+            width="250"
+            trigger="click"
+            class="dockite-table-filter--popover"
+            @click.native.stop
+          >
+            <div slot="reference" class="el-table__column-filter-trigger w-full pb-1" @click.stop>
+              <div
+                class="w-full border rounded h-6 leading-6 px-2 text-xs font-normal"
+                :class="{
+                  'bg-gray-200': filters[field.name],
+                  'font-semibold': filters[field.name],
+                }"
+              >
+                <span v-if="filters[field.name]">
+                  {{ filters[field.name].operator }} '{{ filters[field.name].value }}'
+                </span>
+                <span v-else>
+                  Apply a filter..
+                </span>
+              </div>
+            </div>
 
             <filter-input
+              v-if="filters[field.name] !== undefined"
+              v-model="filters[field.name]"
               :options="supportedOperators"
               :prop="field.name"
-              @add-filter="handleFilterAdd"
-              @remove-filter="handleFilterRemove"
             />
           </el-popover>
         </template>
@@ -116,7 +135,7 @@
 <script lang="ts">
 import { Schema, Field, Document } from '@dockite/database';
 import { DockiteGraphqlSortInput, DockiteSortDirection } from '@dockite/types';
-import { SupportedOperators, Constraint } from '@dockite/where-builder';
+import { Operators, Constraint, ConstraintOperator } from '@dockite/where-builder';
 import { formatDistanceToNow } from 'date-fns';
 import { Component, Vue, Watch, Prop } from 'nuxt-property-decorator';
 import { Fragment } from 'vue-fragment';
@@ -127,8 +146,8 @@ import {
   SearchDocumentsWithSchemaResultItem,
   TableSortChangeEvent,
   TableSortDirection,
-} from '../../../common/types';
-
+} from '~/common/types';
+import { greedySplit } from '~/common/utils';
 import FilterInput from '~/components/base/filter-input.vue';
 import * as data from '~/store/data';
 
@@ -147,11 +166,11 @@ export default class SchemaDocumentsPage extends Vue {
 
   public term = '';
 
-  public filters: Constraint[] = [];
+  public filters: Record<string, Constraint | null> = {};
 
   public sortConfig: DockiteGraphqlSortInput | null = null;
 
-  public supportedOperators = SupportedOperators;
+  public supportedOperators = Operators;
 
   public loading = 0;
 
@@ -216,7 +235,7 @@ export default class SchemaDocumentsPage extends Vue {
       await this.$store.dispatch(`${data.namespace}/fetchFindDocumentsBySchemaId`, {
         schemaId: this.schemaId,
         page,
-        filters: this.filters,
+        filters: Object.values(this.filters).filter(filter => filter !== null),
         sort: this.sortConfig,
       });
     } catch (_) {
@@ -261,14 +280,6 @@ export default class SchemaDocumentsPage extends Vue {
     }
   }
 
-  public handleFilterAdd(constraint: Constraint): void {
-    this.filters = [...this.filters.filter(f => f.name !== constraint.name), constraint];
-  }
-
-  public handleFilterRemove(name: string): void {
-    this.filters = this.filters.filter(f => f.name !== name);
-  }
-
   public handleSortChange({ prop, order }: TableSortChangeEvent): void {
     if (order === null) {
       this.sortConfig = null;
@@ -290,17 +301,67 @@ export default class SchemaDocumentsPage extends Vue {
     );
   }
 
-  @Watch('filters')
-  handleFilterChange(): void {
+  @Watch('filters', { deep: true })
+  handleFilterChange(newValue: Record<string, Constraint | null>): void {
+    const filters = Object.values(newValue).filter(x => x !== null);
+
+    if (filters.length > 0) {
+      const queryParams = filters.reduce((acc, curr) => {
+        if (!curr) {
+          return acc;
+        }
+
+        return {
+          ...acc,
+          [curr.name]: curr.operator + '|' + curr.value,
+        };
+      }, {});
+
+      this.$router.push({
+        query: queryParams,
+      });
+    }
+
     this.fetchFindDocumentsBySchemaId(1);
   }
 
   @Watch('schemaId', { immediate: true })
-  handleSchemaIdChange(): void {
-    this.fetchFindDocumentsBySchemaId(1);
-    this.$store.dispatch(`${data.namespace}/fetchSchemaWithFieldsById`, {
+  async handleSchemaIdChange(): Promise<void> {
+    await this.$store.dispatch(`${data.namespace}/fetchSchemaWithFieldsById`, {
       id: this.$route.params.id,
     });
+
+    this.schema.fields.forEach(field => {
+      if (!this.filters[field.name]) {
+        Vue.set(this.filters, field.name, null);
+      }
+    });
+
+    this.handleRouteQueryChange();
+
+    this.fetchFindDocumentsBySchemaId(1);
+  }
+
+  @Watch('$route.query', { deep: true })
+  handleRouteQueryChange(): void {
+    if (Object.keys(this.$route.query).length > 0) {
+      const filters: Record<string, Constraint> = {};
+
+      Object.keys(this.$route.query).forEach(param => {
+        const [operator, value] = greedySplit(this.$route.query[param] as string, '|', 1);
+
+        filters[param] = {
+          name: param,
+          operator: operator as ConstraintOperator,
+          value,
+        };
+      });
+
+      this.filters = {
+        ...this.filters,
+        ...filters,
+      };
+    }
   }
 
   @Watch('term')
@@ -315,9 +376,28 @@ export default class SchemaDocumentsPage extends Vue {
 <style lang="scss">
 .table-view {
   background: #ffffff;
+
+  .dockite-table--document {
+    th {
+      padding: 0;
+    }
+
+    th .cell {
+      padding: 0.5rem 12px 1.5rem 12px;
+      display: flex;
+      align-items: center;
+    }
+  }
 }
 
 .dockite-element--pagination {
   padding: 1rem;
+}
+
+.dockite-table-filter--popover {
+  position: absolute;
+  width: 90%;
+  bottom: 0;
+  left: 12px;
 }
 </style>

@@ -14,7 +14,7 @@
         default-first-option
         placeholder="Select"
       >
-        <el-option v-for="option in options" :key="option" :value="option" :label="option" />
+        <el-option v-for="(_, option) in options" :key="option" :value="option" :label="option" />
       </el-select>
     </el-input>
 
@@ -32,10 +32,9 @@
         <el-tooltip placement="bottom">
           <i class="el-icon-question" style="padding-right: 0.25rem;"></i>
           <div slot="content">
-            <div v-for="option in options" :key="option">
+            <div v-for="(description, option) in options" :key="option">
               <strong> {{ option }}: </strong>
-              Lorem, ipsum dolor sit amet consectetur adipisicing elit. Magni reiciendis a ipsum sit
-              velit iure nam reprehenderit officiis.
+              {{ description }}
             </div>
           </div>
         </el-tooltip>
@@ -49,7 +48,7 @@
 
 <script lang="ts">
 import { Constraint, ConstraintOperator } from '@dockite/where-builder';
-import { Component, Prop, Vue } from 'nuxt-property-decorator';
+import { Component, Prop, Vue, Watch } from 'nuxt-property-decorator';
 
 @Component
 export default class FilterInputComponent extends Vue {
@@ -59,9 +58,12 @@ export default class FilterInputComponent extends Vue {
   @Prop()
   readonly options!: ConstraintOperator[];
 
+  @Prop()
+  readonly value!: Constraint | null;
+
   public filter = '';
 
-  public operator = this.options[0];
+  public operator = Object.keys(this.options)[0] as ConstraintOperator;
 
   get constraint(): Constraint {
     return {
@@ -76,8 +78,14 @@ export default class FilterInputComponent extends Vue {
   }
 
   public handleApplyFilter(): void {
-    if (this.canSubmit) {
-      this.$emit('add-filter', this.constraint);
+    this.$emit('input', this.constraint);
+  }
+
+  @Watch('value', { immediate: true })
+  public handleValueChange(): void {
+    if (this.value !== null) {
+      this.filter = this.value.value;
+      this.operator = this.value.operator;
     }
   }
 
@@ -85,7 +93,7 @@ export default class FilterInputComponent extends Vue {
     this.filter = '';
     this.operator = this.options[0];
 
-    this.$emit('remove-filter', this.prop);
+    this.$emit('input', null);
   }
 }
 </script>

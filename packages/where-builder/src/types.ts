@@ -1,25 +1,28 @@
+/* eslint-disable @typescript-eslint/camelcase */
 import { WhereExpression } from 'typeorm';
 
-export const SupportedOperators = [
-  '$like',
-  '$ilike',
-  '$eq',
-  '$ne',
-  '$gt',
-  '$gt_date',
-  '$gte',
-  '$gte_date',
-  '$lt',
-  '$lt_date',
-  '$lte',
-  '$lte_date',
-  '$regex',
-  '$array_contains',
-  '$null',
-  '$not_null',
-] as const;
+export const Operators = {
+  $like: 'Checks for a value containing the input provided (case-sensitive)',
+  $ilike: 'Checks for a value containing the input provided (case-insensitive)',
+  $eq: 'Checks for a value is the same as the input provided',
+  $ne: 'Checks for a value that is not the same as the input provided',
+  $gt: 'Checks for a value that is greater than the input provided',
+  $gt_date: 'Checks for a date that is greater than the date provided',
+  $gte: 'Checks for a value that is greater than or equal to the input provided',
+  $gte_date: 'Checks for a date that is greater than the date provided',
+  $lt: 'Checks for a value that is less than the input provided',
+  $lt_date: 'Checks for a date that is less than the date provided',
+  $lte: 'Checks for a value that is less than or equal to the input provided',
+  $lte_date: 'Checks for a date that is less than the date provided',
+  $regex: 'Checks for a value matching the regex provided',
+  $array_contains: 'Checks if an array contains the input provided',
+  $null: 'Checks for values which are null',
+  $not_null: 'Checks for values which are not null',
+};
 
-export type ConstraintOperator = typeof SupportedOperators[number];
+export const SupportedOperators = Object.keys(Operators);
+
+export type ConstraintOperator = keyof typeof Operators;
 
 export type ConstraintHandlerFn = (qb: WhereExpression, constraint: Constraint) => void;
 
