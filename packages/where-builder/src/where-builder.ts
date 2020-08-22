@@ -95,14 +95,14 @@ const ConstraintHandlerMap: Record<ConstraintOperator, ConstraintHandlerFn> = {
     const param = randomBytes(6).toString('hex');
     const name = columnPartsToColumn(['data', ...constraint.name.split('.')], 'text');
 
-    qb.andWhere(`${name} LIKE '%:${param}%'`, { [param]: constraint.value });
+    qb.andWhere(`${name} LIKE :${param}`, { [param]: `%${constraint.value}%` });
   },
 
   $ilike: (qb, constraint) => {
     const param = randomBytes(6).toString('hex');
     const name = columnPartsToColumn(['data', ...constraint.name.split('.')], 'text');
 
-    qb.andWhere(`${name} ILIKE '%:${param}%'`, { [param]: constraint.value });
+    qb.andWhere(`${name} ILIKE :${param}`, { [param]: `%${constraint.value}%` });
   },
 
   $array_contains: (qb, constraint) => {
