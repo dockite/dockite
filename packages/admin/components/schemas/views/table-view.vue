@@ -48,18 +48,23 @@
           >
             <div slot="reference" class="el-table__column-filter-trigger w-full pb-1" @click.stop>
               <div
-                class="w-full border rounded h-6 leading-6 px-2 text-xs font-normal"
+                class="w-full border rounded h-6 px-2 text-xs font-normal flex justify-between items-center"
                 :class="{
                   'bg-gray-200': filters[field.name],
                   'font-semibold': filters[field.name],
                 }"
               >
-                <span v-if="filters[field.name]">
-                  {{ filters[field.name].operator }} '{{ filters[field.name].value }}'
-                </span>
-                <span v-else>
-                  Apply a filter..
-                </span>
+                <template v-if="filters[field.name]">
+                  <span>{{ filters[field.name].operator }} "{{ filters[field.name].value }}"</span>
+                  <i
+                    class="el-icon-close cursor-pointer hover:bg-gray-400 text-lg p-1 rounded-full"
+                    @click.stop="filters[field.name] = null"
+                  />
+                </template>
+                <template v-else>
+                  <span>Apply a filter..</span>
+                  <i class="el-icon-arrow-down cursor-pointer text-lg p-1 rounded-full" />
+                </template>
               </div>
             </div>
 
@@ -73,7 +78,13 @@
         </template>
 
         <template slot-scope="scope">
-          {{ scope.row.data[field.name] }}
+          <span v-if="field.type === 'reference' && scope.row.data[field.name]">
+            {{ scope.row.data[field.name].identifier }}
+          </span>
+
+          <span v-else>
+            {{ scope.row.data[field.name] }}
+          </span>
         </template>
       </el-table-column>
 
@@ -383,6 +394,8 @@ export default class SchemaDocumentsPage extends Vue {
     }
 
     th .cell {
+      white-space: nowrap;
+      text-overflow: ellipsis;
       padding: 0.5rem 12px 1.5rem 12px;
       display: flex;
       align-items: center;
