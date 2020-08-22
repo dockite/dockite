@@ -9,7 +9,7 @@
       </div>
     </el-form-item>
 
-    <el-form-item label="Required">
+    <el-form-item label="Allow Multiple">
       <el-switch v-model="settings.multiple" />
 
       <div class="el-form-item__description">
