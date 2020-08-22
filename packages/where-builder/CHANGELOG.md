@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.2.0-alpha.20](https://github.com/dockite/dockite/compare/@dockite/where-builder@0.2.0-alpha.19...@dockite/where-builder@0.2.0-alpha.20) (2020-08-22)
+
+
+### Bug Fixes
+
+* **where-builder:** update like handling ([c7d8e3a](https://github.com/dockite/dockite/commit/c7d8e3abb5afb063a747efc1d9771b4bd72bdabc))
+
+
+
+
+
 # [0.2.0-alpha.19](https://github.com/dockite/dockite/compare/@dockite/where-builder@0.2.0-alpha.18...@dockite/where-builder@0.2.0-alpha.19) (2020-08-21)
 
 
