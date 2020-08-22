@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.53](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.52...@dockite/admin@0.4.0-alpha.53) (2020-08-22)
+
+
+### Features
+
+* **admin:** add handling for reference identifiers ([4249801](https://github.com/dockite/dockite/commit/42498016098dc5811a95532903c84db4e3a0f52d))
+
+
+
+
+
 # [0.4.0-alpha.52](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.51...@dockite/admin@0.4.0-alpha.52) (2020-08-22)
 
 
