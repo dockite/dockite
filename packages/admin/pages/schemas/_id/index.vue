@@ -63,7 +63,7 @@
     </portal>
 
     <portal to="opposite-breadcrumb">
-      <el-select v-model="currentView" size="medium">
+      <el-select v-if="availableViews.length > 1" v-model="currentView" size="medium">
         <el-option
           v-for="view in availableViews"
           :key="view"

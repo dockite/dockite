@@ -8,6 +8,7 @@ import {
   GraphQLString,
   GraphQLUnionType,
 } from 'graphql';
+import { GraphQLJSON } from 'graphql-type-json';
 import { startCase } from 'lodash';
 import { FieldIOContext, FieldContext } from '@dockite/types';
 
@@ -67,6 +68,15 @@ export class DockiteFieldReference extends DockiteField {
     const unionTypes = dockiteSchemas
       .filter(schema => schemaIds.includes(schema.id))
       .map(schema => graphqlTypes.get(schema.name));
+
+    if (unionTypes.length === 0) {
+      console.error(
+        `[ERROR]: No schemas found for "${this.schemaField.name}" of "${this.schemaField.schema
+          ?.name ?? 'Unknown'}"`,
+      );
+
+      return GraphQLJSON;
+    }
 
     if (unionTypes.length === 1) {
       const [outputType] = unionTypes;

@@ -11,17 +11,31 @@
         <logo fill-color="transparent" height="100%" />
       </div>
       <el-menu-item index="/">
-        <router-link slot="title" style="color: inherit" class="block" to="/">
-          <i class="el-icon-s-home"></i>
-          <span>{{ $t('sideMenu.home') }}</span>
-        </router-link>
+        <i class="el-icon-s-home"></i>
+        <span slot="title">
+          <a
+            style="color: inherit"
+            :class="[isCollapse ? '' : 'inline-block w-full']"
+            href="/"
+            @click.prevent="$router.push($event.target.getAttribute('href'))"
+          >
+            {{ $t('sideMenu.home') }}
+          </a>
+        </span>
       </el-menu-item>
 
       <el-menu-item v-if="$can('internal:schema:read')" index="/documents">
-        <router-link slot="title" style="color: inherit" class="block" to="/documents">
-          <i class="el-icon-document"></i>
-          <span>{{ $t('sideMenu.documents') }}s</span>
-        </router-link>
+        <i class="el-icon-document"></i>
+        <span slot="title">
+          <a
+            style="color: inherit"
+            :class="[isCollapse ? '' : 'inline-block w-full']"
+            href="/documents"
+            @click.prevent="$router.push($event.target.getAttribute('href'))"
+          >
+            {{ $t('sideMenu.documents') }}s
+          </a>
+        </span>
       </el-menu-item>
 
       <el-submenu v-else index="/documents">
@@ -31,9 +45,11 @@
         </template>
 
         <el-menu-item index="/documents">
-          <router-link slot="title" to="/documents" class="block" style="color: inherit">
-            <span>All {{ $t('sideMenu.documents') }}s</span>
-          </router-link>
+          <span slot="title">
+            <a :class="[isCollapse ? '' : 'inline-block w-full']" style="color: inherit">
+              All {{ $t('sideMenu.documents') }}s
+            </a>
+          </span>
         </el-menu-item>
 
         <el-menu-item-group
@@ -41,18 +57,20 @@
           title="Schema Documents"
         >
           <el-menu-item
-            v-for="schema in allSchemas.results"
+            v-for="schema in sortBy(allSchemas.results, 'title')"
             :key="schema.id"
             :index="`/schemas/${schema.id}`"
           >
-            <router-link
-              slot="title"
-              style="color: inherit"
-              class="block"
-              :to="`/schemas/${schema.id}`"
-            >
-              <span>{{ schema.title }}</span>
-            </router-link>
+            <span slot="title">
+              <a
+                style="color: inherit"
+                :class="[isCollapse ? '' : 'inline-block w-full']"
+                :href="`/schemas/${schema.id}`"
+                @click.prevent="$router.push($event.target.getAttribute('href'))"
+              >
+                {{ schema.title }}
+              </a>
+            </span>
           </el-menu-item>
         </el-menu-item-group>
       </el-submenu>
@@ -65,31 +83,47 @@
 
         <el-menu-item-group title="Management">
           <el-menu-item index="/schemas">
-            <router-link slot="title" style="color: inherit" class="block" to="/schemas">
-              <span>All {{ $t('sideMenu.schemas') }}s</span>
-            </router-link>
+            <span slot="title">
+              <a
+                style="color: inherit"
+                :class="[isCollapse ? '' : 'inline-block w-full']"
+                href="/schemas"
+                @click.prevent="$router.push($event.target.getAttribute('href'))"
+              >
+                All {{ $t('sideMenu.schemas') }}s
+              </a>
+            </span>
           </el-menu-item>
 
           <el-menu-item index="/schemas/create">
-            <router-link slot="title" style="color: inherit" class="block" to="/schemas/create">
-              <span>Create {{ $t('sideMenu.schemas') }}</span>
-            </router-link>
+            <span slot="title">
+              <a
+                style="color: inherit"
+                :class="[isCollapse ? '' : 'inline-block w-full']"
+                href="/schemas/create"
+                @click.prevent="$router.push($event.target.getAttribute('href'))"
+              >
+                Create {{ $t('sideMenu.schemas') }}
+              </a>
+            </span>
           </el-menu-item>
         </el-menu-item-group>
         <el-menu-item-group v-if="allSchemas" :title="$t('sideMenu.schemas') + 's'">
           <el-menu-item
-            v-for="schema in allSchemas.results"
+            v-for="schema in sortBy(allSchemas.results, 'title')"
             :key="schema.id"
             :index="`/schemas/${schema.id}`"
           >
-            <router-link
-              slot="title"
-              style="color: inherit"
-              class="block"
-              :to="`/schemas/${schema.id}`"
-            >
-              <span>{{ schema.title }}</span>
-            </router-link>
+            <span slot="title">
+              <a
+                style="color: inherit"
+                :class="[isCollapse ? '' : 'inline-block w-full']"
+                :href="`/schemas/${schema.id}`"
+                @click.prevent="$router.push($event.target.getAttribute('href'))"
+              >
+                {{ schema.title }}
+              </a>
+            </span>
           </el-menu-item>
         </el-menu-item-group>
       </el-submenu>
@@ -105,15 +139,29 @@
 
         <el-menu-item-group v-if="$can('internal:singleton:read')" title="Management">
           <el-menu-item index="/singletons">
-            <router-link slot="title" style="color: inherit" class="block" to="/singletons">
-              <span>All {{ $t('sideMenu.singletons') }}s</span>
-            </router-link>
+            <span slot="title">
+              <a
+                style="color: inherit"
+                :class="[isCollapse ? '' : 'inline-block w-full']"
+                href="/singletons"
+                @click.prevent="$router.push($event.target.getAttribute('href'))"
+              >
+                All {{ $t('sideMenu.singletons') }}s
+              </a>
+            </span>
           </el-menu-item>
 
           <el-menu-item v-if="$can('internal:singleton:create')" index="/singletons/create">
-            <router-link slot="title" style="color: inherit" class="block" to="/singletons/create">
-              <span>Create {{ $t('sideMenu.singletons') }}</span>
-            </router-link>
+            <span slot="title">
+              <a
+                style="color: inherit"
+                :class="[isCollapse ? '' : 'inline-block w-full']"
+                href="/singletons/create"
+                @click.prevent="$router.push($event.target.getAttribute('href'))"
+              >
+                Create {{ $t('sideMenu.singletons') }}
+              </a>
+            </span>
           </el-menu-item>
         </el-menu-item-group>
 
@@ -126,14 +174,16 @@
             :key="schema.id"
             :index="`/singletons/${schema.id}`"
           >
-            <router-link
-              slot="title"
-              style="color: inherit"
-              class="block"
-              :to="`/singletons/${schema.id}`"
-            >
-              <span>{{ schema.title }}</span>
-            </router-link>
+            <span slot="title">
+              <a
+                style="color: inherit"
+                :class="[isCollapse ? '' : 'inline-block w-full']"
+                :href="`/singletons/${schema.id}`"
+                @click.prevent="$router.push($event.target.getAttribute('href'))"
+              >
+                {{ schema.title }}
+              </a>
+            </span>
           </el-menu-item>
         </el-menu-item-group>
 
@@ -166,32 +216,60 @@
         </template>
 
         <el-menu-item v-if="$can('internal:users:read')" index="/settings/users">
-          <router-link slot="title" style="color: inherit" class="block" to="/settings/users">
-            <i class="el-icon-user"></i>
-            <span>{{ $t('sideMenu.users') }}</span>
-          </router-link>
+          <i class="el-icon-user"></i>
+          <span slot="title">
+            <a
+              style="color: inherit"
+              :class="[isCollapse ? '' : 'inline-block w-full']"
+              href="/settings/users"
+              @click.prevent="$router.push($event.target.getAttribute('href'))"
+            >
+              {{ $t('sideMenu.users') }}
+            </a>
+          </span>
         </el-menu-item>
 
         <el-menu-item v-if="$can('internal:roles:read')" index="/settings/roles">
-          <router-link slot="title" style="color: inherit" class="block" to="/settings/roles">
-            <i class="el-icon-lock"></i>
-            <span>{{ $t('sideMenu.roles') }}</span>
-          </router-link>
+          <i class="el-icon-lock"></i>
+          <span slot="title">
+            <a
+              style="color: inherit"
+              :class="[isCollapse ? '' : 'inline-block w-full']"
+              href="/settings/roles"
+              @click.prevent="$router.push($event.target.getAttribute('href'))"
+            >
+              {{ $t('sideMenu.roles') }}
+            </a>
+          </span>
         </el-menu-item>
 
         <el-menu-item v-if="$can('internal:webhooks:read')" index="/settings/webhooks">
-          <router-link slot="title" style="color: inherit" class="block" to="/settings/webhooks">
-            <i class="el-icon-connection"></i>
-            <span>{{ $t('sideMenu.webhooks') }}</span>
-          </router-link>
+          <i class="el-icon-connection"></i>
+          <span slot="title">
+            <a
+              style="color: inherit"
+              :class="[isCollapse ? '' : 'inline-block w-full']"
+              href="/settings/webhooks"
+              @click.prevent="$router.push($event.target.getAttribute('href'))"
+            >
+              {{ $t('sideMenu.webhooks') }}
+            </a>
+          </span>
         </el-menu-item>
       </el-submenu>
 
       <el-menu-item index="/account">
-        <router-link slot="title" style="color: inherit" class="block" to="/account">
-          <i class="el-icon-user"></i>
-          <span>{{ $t('sideMenu.account') }}</span>
-        </router-link>
+        <i class="el-icon-user"></i>
+        <span slot="title">
+          <a
+            style="color: inherit"
+            :class="[isCollapse ? '' : 'inline-block w-full']"
+            href="/account"
+            @click.prevent="$router.push($event.target.getAttribute('href'))"
+          >
+            {{ $t('sideMenu.account') }}
+          </a>
+        </span>
       </el-menu-item>
 
       <el-menu-item index="#logout" @click.native.prevent="logout">
@@ -215,6 +293,7 @@
 </template>
 
 <script lang="ts">
+import { sortBy } from 'lodash';
 import { Component, Vue } from 'nuxt-property-decorator';
 import { Fragment } from 'vue-fragment';
 
@@ -241,6 +320,8 @@ export default class SideMenuComponent extends Vue {
   public activeTextColor = NAV_ACTIVE_TEXT_COLOR;
 
   public textColor = NAV_TEXT_COLOR;
+
+  public sortBy = sortBy;
 
   get allSchemas(): ManyResultSet<AllSchemasResultItem> {
     const state: data.DataState = this.$store.state[data.namespace];

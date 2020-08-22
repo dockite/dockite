@@ -15,7 +15,10 @@
           </small>
         </p>
       </div>
-      <a class="dockite-field reference remove" @click.prevent="handleClearReference">
+      <a
+        class="dockite-field reference remove cursor-pointer"
+        @click.prevent="handleClearReference"
+      >
         <i class="el-icon-close" />
       </a>
     </div>
@@ -27,6 +30,7 @@
     <el-dialog
       custom-class="dockite-dialog--reference-selection"
       :visible="dialogVisible"
+      :destroy-on-close="true"
       title="Select a Document"
       @close="dialogVisible = false"
     >
@@ -86,6 +90,7 @@ interface SchemaResults {
 interface Reference {
   id: string;
   schemaId: string;
+  identifier: string;
 }
 
 @Component({
@@ -153,7 +158,7 @@ export default class ReferenceFieldInputComponent extends Vue {
       return data.identifier;
     }
 
-    return data.id;
+    return this.document.id;
   }
 
   @Watch('fieldData', { immediate: true })
@@ -169,6 +174,7 @@ export default class ReferenceFieldInputComponent extends Vue {
       this.fieldData = {
         id: this.document.id,
         schemaId: this.document.schema.id,
+        identifier: this.documentIdentifier,
       };
 
       this.dialogVisible = false;
@@ -267,6 +273,7 @@ export default class ReferenceFieldInputComponent extends Vue {
 
   public handleClearReference(): void {
     this.fieldData = null;
+    this.document = null;
 
     this.page = 1;
 

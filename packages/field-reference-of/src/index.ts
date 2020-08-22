@@ -10,6 +10,7 @@ import {
   GraphQLObjectType,
   GraphQLOutputType,
   GraphQLString,
+  GraphQLBoolean,
 } from 'graphql';
 
 import { ReferenceOfFieldSettings } from './types';
@@ -57,6 +58,16 @@ export class DockiteFieldReferenceOf extends DockiteField {
     const [schemaType] = dockiteSchemas
       .filter(schema => schemaId === schema.id)
       .map(schema => graphqlTypes.get(schema.name));
+
+    if (!schemaType) {
+      console.error(
+        `[ERROR]: No schema found for "${this.schemaField.name}" of "${this.schemaField.schema
+          ?.name ?? 'Unknown'}"`,
+      );
+
+      // This should handle empty cases
+      return GraphQLList(GraphQLBoolean);
+    }
 
     return new GraphQLList(schemaType as GraphQLObjectType);
   }
