@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.55](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.54...@dockite/admin@0.4.0-alpha.55) (2020-08-23)
+
+
+### Bug Fixes
+
+* **core:** resolve schema revision auth ([53d1086](https://github.com/dockite/dockite/commit/53d1086f4c21f589c6a37abc4870d21b4acd03ad))
+
+
+### Features
+
+* **admin:** support moving fields across tabs ([02c9e40](https://github.com/dockite/dockite/commit/02c9e402a9d7f577143261487f6fefb6849b977b))
+
+
+
+
+
 # [0.4.0-alpha.54](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.53...@dockite/admin@0.4.0-alpha.54) (2020-08-22)
 
 **Note:** Version bump only for package @dockite/admin

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.48](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.47...@dockite/core@0.4.0-alpha.48) (2020-08-23)
+
+
+### Bug Fixes
+
+* **core:** resolve schema revision auth ([53d1086](https://github.com/dockite/dockite/commit/53d1086f4c21f589c6a37abc4870d21b4acd03ad))
+
+
+
+
+
 # [0.4.0-alpha.47](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.46...@dockite/core@0.4.0-alpha.47) (2020-08-22)
 
 **Note:** Version bump only for package @dockite/core
