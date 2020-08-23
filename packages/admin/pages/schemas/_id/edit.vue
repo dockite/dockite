@@ -511,7 +511,7 @@ export default class EditSchemaPage extends Vue {
     this.dirty = true;
   }
 
-  public beforeRouteLeave(_to, _from, next: () => any): void {
+  public beforeRouteLeave(_to: never, _from: never, next: () => any): void {
     if (this.dirty) {
       this.$confirm('You still have unsaved changes. Continue?', 'Warning', {
         confirmButtonText: 'OK',

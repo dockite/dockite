@@ -60,7 +60,7 @@ class ManyDocumentRevisions {
 @Resolver()
 export class RevisionResolver {
   @Authenticated()
-  @Authorized('internal:schema:read', { derriveAlternativeScopes: false })
+  @Authorized('internal:schema:read', { checkArgs: true, fieldsOrArgsToPeek: 'schemaId' })
   @Query(_returns => ManySchemaRevisions, { nullable: true })
   public async allSchemaRevisions(
     @Arg('schemaId', _type => String)
@@ -178,7 +178,12 @@ export class RevisionResolver {
   }
 
   @Authenticated()
-  @Authorized('internal:document:update', { derriveAlternativeScopes: false })
+  @Authorized('internal:document:update', {
+    lookAhead: true,
+    entity: Document,
+    entityIdArg: 'documentId',
+    fieldsOrArgsToPeek: 'schemaId',
+  })
   @Mutation(_returns => Boolean)
   async restoreDocumentRevision(
     @Arg('revisionId', _type => String)
