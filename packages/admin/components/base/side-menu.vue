@@ -273,7 +273,7 @@
       </el-menu-item>
 
       <el-menu-item index="#logout" @click.native.prevent="logout">
-        <i class="el-icon-refresh-left"></i>
+        <i class="el-icon-switch-button"></i>
         <span slot="title">Logout</span>
       </el-menu-item>
 

@@ -7,7 +7,7 @@
           {{ documentIdentifier }}
         </h2>
 
-        <el-dropdown split-button @click="submit">
+        <el-dropdown :disabled="!dirty" split-button @click="submit">
           Save and Publish
           <el-dropdown-menu slot="dropdown">
             <!-- <el-dropdown-item>Save as Draft</el-dropdown-item> -->
@@ -140,6 +140,8 @@ export default class UpdateDocumentPage extends Vue {
 
   public localGroups: Record<string, string[]> | null = null;
 
+  public dirty = false;
+
   @Ref()
   readonly formEl!: Form;
 
@@ -261,6 +263,10 @@ export default class UpdateDocumentPage extends Vue {
         Vue.set(this.form, field.name, field.settings.default ?? null);
       }
     });
+
+    this.$nextTick(() => {
+      this.dirty = false;
+    });
   }
 
   public async fetchSchemaById(): Promise<void> {
@@ -378,6 +384,11 @@ export default class UpdateDocumentPage extends Vue {
     this.currentTab = this.availableTabs[0];
 
     this.ready = true;
+  }
+
+  @Watch('form', { deep: true })
+  public handleFormChange(): void {
+    this.dirty = true;
   }
 }
 </script>

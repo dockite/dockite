@@ -11,7 +11,7 @@
             Setttings
           </el-button>
 
-          <el-button type="primary" :disabled="loading > 0" @click="submit">
+          <el-button type="primary" :disabled="loading > 0 || !dirty" @click="submit">
             Update
           </el-button>
         </div>
@@ -33,19 +33,39 @@
               <span>{{ node.label }}</span>
               <span>
                 <el-tag size="mini">{{ data.dockite.name }}: {{ data.dockite.type }}</el-tag>
-                <el-button type="text" size="mini" @click="fieldToBeEdited = data">
-                  Edit
+
+                <el-button size="mini" type="text" @click="fieldToBeEdited = data">
+                  <i class="el-icon-edit-outline px-1" />
                 </el-button>
+
                 <el-popconfirm
                   title="Are you sure? All documents will lose any data stored for this field."
                   confirm-button-text="Delete"
                   cancel-button-text="Cancel"
                   @onConfirm="handleRemoveField(node, data)"
                 >
-                  <el-button slot="reference" type="text" size="mini">
-                    Remove
+                  <el-button slot="reference" size="mini" type="text">
+                    <i class="el-icon-delete pr-1" />
                   </el-button>
                 </el-popconfirm>
+
+                <el-popover placement="top" width="160" trigger="hover">
+                  <label for="" class="el-form-item__label">
+                    Move to
+                  </label>
+                  <el-select @change="v => handleMoveTab(node, data, v)">
+                    <el-option
+                      v-for="moveableTab in availableTabs"
+                      :key="moveableTab"
+                      :value="moveableTab"
+                      :label="moveableTab"
+                    />
+                  </el-select>
+
+                  <el-button slot="reference" size="mini" type="text">
+                    Move <strong>🡒</strong>
+                  </el-button>
+                </el-popover>
               </span>
             </span>
           </el-tree>
@@ -93,7 +113,7 @@
           Cancel
         </el-button>
 
-        <el-button :disabled="loading > 0" type="primary" @click="submit">
+        <el-button :disabled="loading > 0 || !dirty" type="primary" @click="submit">
           Update
         </el-button>
       </el-row>
@@ -130,6 +150,8 @@ const ALLOWED_DROP_TYPES: string[] = JSON.parse(process.env.ALLOWED_DROP_TYPES a
   },
 })
 export default class EditSchemaPage extends Vue {
+  public dirty = false;
+
   public showAddField = false;
 
   public currentTab = 'Default';
@@ -342,6 +364,32 @@ export default class EditSchemaPage extends Vue {
     });
   }
 
+  public handleMoveTab(
+    node: TreeNode<string, FieldTreeData>,
+    data: FieldTreeData,
+    v: string,
+  ): void {
+    const parent = node.parent;
+
+    if (!parent) {
+      return;
+    }
+
+    const children = parent.data.children ?? ((parent.data as any) as FieldTreeData[]);
+
+    if (!children) {
+      return;
+    }
+
+    const index = children.findIndex(d => d.dockite.name === data.dockite.name);
+
+    const [field] = children.splice(index, 1);
+
+    this.groupFieldData[v].push(field);
+
+    this.currentTab = v;
+  }
+
   public handleAllowDrop(
     _draggingNode: TreeNode<string, FieldTreeData>,
     dropNode: TreeNode<string, FieldTreeData>,
@@ -450,6 +498,30 @@ export default class EditSchemaPage extends Vue {
 
       this.transformSchemaToFieldTreeData();
       this.schemaSettings = { ...this.schema.settings };
+
+      this.$nextTick(() => {
+        this.dirty = false;
+      });
+    }
+  }
+
+  @Watch('groupFieldData', { deep: true })
+  @Watch('schemaSettings', { deep: true })
+  public handleSchemaDataChange(): void {
+    this.dirty = true;
+  }
+
+  public beforeRouteLeave(_to, _from, next: () => any): void {
+    if (this.dirty) {
+      this.$confirm('You still have unsaved changes. Continue?', 'Warning', {
+        confirmButtonText: 'OK',
+        cancelButtonText: 'Cancel',
+        type: 'warning',
+      })
+        .then(() => {
+          next();
+        })
+        .catch(() => {});
     }
   }
 
@@ -478,9 +550,6 @@ export default class EditSchemaPage extends Vue {
 </script>
 
 <style lang="scss">
-.edit-schema-page {
-}
-
 .dockite-button--dashed {
   border-style: dashed;
 }
