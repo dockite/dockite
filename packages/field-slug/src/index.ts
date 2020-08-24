@@ -26,9 +26,17 @@ export class DockiteFieldSlug extends DockiteField {
 
   public static defaultOptions: SlugFieldSettings = {
     fieldToSlugify: null,
+    parent: null,
+    unique: true,
   };
 
-  private async getSlugCount(value: string, documentId: string | null): Promise<number> {
+  private async getSlugCount(
+    value: string,
+    documentId: string | null,
+    parent?: { id: string },
+  ): Promise<number> {
+    const settings = this.schemaField.settings as SlugFieldSettings;
+
     const qb = await this.orm
       .getRepository(Document)
       .createQueryBuilder('document')
@@ -40,6 +48,13 @@ export class DockiteFieldSlug extends DockiteField {
 
     if (documentId) {
       qb.andWhere('document.id != :documentId', { documentId });
+    }
+
+    if (settings.parent && parent) {
+      qb.andWhere(`data-> :field ->> 'id' = :documentId`, {
+        field: settings.parent,
+        documentId: parent.id,
+      });
     }
 
     return qb.getCount();
@@ -54,7 +69,21 @@ export class DockiteFieldSlug extends DockiteField {
   }
 
   public async validateInputGraphQL(ctx: HookContextWithOldData): Promise<void> {
-    const slugCount = await this.getSlugCount(ctx.fieldData, ctx.document?.id ?? null);
+    const settings = this.schemaField.settings as SlugFieldSettings;
+
+    let slugCount = 0;
+
+    if (settings.unique) {
+      if (settings.parent && ctx.data[settings.parent]) {
+        slugCount = await this.getSlugCount(
+          ctx.fieldData,
+          ctx.document?.id ?? null,
+          ctx.data[settings.parent],
+        );
+      } else {
+        slugCount = await this.getSlugCount(ctx.fieldData, ctx.document?.id ?? null);
+      }
+    }
 
     if (slugCount > 0) {
       throw new GraphQLError(`${this.schemaField.name}: slug provided has already been used`);

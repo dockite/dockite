@@ -16,6 +16,32 @@
         The field to slugify, the field selected should be string-like for best results.
       </div>
     </el-form-item>
+
+    <el-form-item label="Unique">
+      <el-switch v-model="settings.unique" />
+
+      <div class="el-form-item__description">
+        Enables uniqueness checking across across slugs.
+      </div>
+    </el-form-item>
+
+    <el-form-item label="Parent">
+      <el-select v-model="settings.parent" clearable>
+        <el-option
+          v-for="field in referenceFields"
+          :key="field.name"
+          :label="field.title"
+          :value="field.name"
+        >
+          {{ field.title }}
+        </el-option>
+      </el-select>
+
+      <div class="el-form-item__description">
+        The parent field for the slug, if selected it will be used to evaluate uniqueness based on
+        the parent.
+      </div>
+    </el-form-item>
   </fragment>
 </template>
 
@@ -41,7 +67,7 @@ export default class SlugFieldSettingsComponent extends Vue {
   readonly rules!: object;
 
   @Prop({ required: true })
-  readonly fields!: Omit<Field, 'id' | 'schemaId' | 'dockiteField' | 'schema' | 'setDockiteField'>;
+  readonly fields!: Field[];
 
   get settings(): SlugFieldSettings {
     return this.value;
@@ -49,6 +75,10 @@ export default class SlugFieldSettingsComponent extends Vue {
 
   set settings(value: SlugFieldSettings) {
     this.$emit('input', value);
+  }
+
+  get referenceFields(): Field[] {
+    return this.fields.filter(field => field.type === 'reference');
   }
 
   beforeMount() {
