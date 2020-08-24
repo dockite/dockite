@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.58](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.57...@dockite/admin@0.4.0-alpha.58) (2020-08-24)
+
+
+### Bug Fixes
+
+* **admin:** resolve forgotten route middleware ([17bc527](https://github.com/dockite/dockite/commit/17bc5272d3fd8a2118dbbd57f848833ba66f39e7))
+
+
+
+
+
 # [0.4.0-alpha.57](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.56...@dockite/admin@0.4.0-alpha.57) (2020-08-24)
 
 
