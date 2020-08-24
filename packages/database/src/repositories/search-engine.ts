@@ -8,8 +8,10 @@ export class SearchEngineRepository extends Repository<SearchEngine> {
     const qb = getRepository(SearchEngine).createQueryBuilder('searchEngine');
 
     if (term !== '') {
-      qb.where(`fts @@ to_tsquery('pg_catalog.simple', :term)`, { term });
-      qb.orWhere(`(searchEngine.id)::text LIKE :like`, { like: `%${term}%` });
+      qb.where(
+        `(fts @@ to_tsquery('pg_catalog.simple', :term) OR (searchEngine.id)::text LIKE :like)`,
+        { term, like: `%${term}%` },
+      );
     } else {
       qb.where(`1 = 1`);
     }
