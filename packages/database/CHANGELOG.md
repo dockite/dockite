@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.16](https://github.com/dockite/dockite/compare/@dockite/database@0.4.0-alpha.15...@dockite/database@0.4.0-alpha.16) (2020-08-24)
+
+
+### Bug Fixes
+
+* **database:** resolve fts short circuiting ([ede51f7](https://github.com/dockite/dockite/commit/ede51f7a502b69e66217eb691a84c9a915e903af))
+
+
+
+
+
 # [0.4.0-alpha.15](https://github.com/dockite/dockite/compare/@dockite/database@0.4.0-alpha.14...@dockite/database@0.4.0-alpha.15) (2020-08-21)
 
 **Note:** Version bump only for package @dockite/database
