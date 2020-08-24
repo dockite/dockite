@@ -43,6 +43,7 @@ export class FieldSubscriber implements EntitySubscriberInterface {
   }
 
   async afterInsert(event: InsertEvent<Field>): Promise<void> {
+    console.log('field update');
     await getRepository(Document)
       .createQueryBuilder()
       .update()
@@ -55,6 +56,7 @@ export class FieldSubscriber implements EntitySubscriberInterface {
       })
       .where('schemaId = :schemaId', { schemaId: event.entity.schemaId })
       .andWhere('data ->> :fieldName IS NULL', { fieldName: event.entity.name })
+      .callListeners(false)
       .execute();
   }
 
@@ -66,6 +68,7 @@ export class FieldSubscriber implements EntitySubscriberInterface {
         data: () => `data - '${event.entity?.name}'`,
         updatedAt: () => '"updatedAt"',
       })
+      .callListeners(false)
       .where('schemaId = :schemaId', { schemaId: event.entity?.schemaId })
       .execute();
   }
