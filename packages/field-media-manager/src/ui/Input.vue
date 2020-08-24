@@ -43,7 +43,7 @@
           <div slot="tip" class="el-upload__tip">
             Accepted files: {{ settings.acceptedExtensions.join(', ') }}
             <span v-if="settings.maxSizeKB > 0">
-              with a file size less than {{ settings.maxSizeKB }} KB
+              with a file size less than {{ settings.maxSizeKB / 1000 }} MB
             </span>
           </div>
         </el-upload>
@@ -280,9 +280,8 @@ export default class MediaManagerFieldInputComponent extends Vue {
 
     if (this.settings.maxSizeKB > 0 && sizeInKB > this.settings.maxSizeKB) {
       this.addError(
-        `The file uploaded is too large. Max size: ${
-          this.settings.maxSizeKB
-        } KB Provided size: ${Math.ceil(sizeInKB)} KB`,
+        `The file uploaded is too large. Max size: ${this.settings.maxSizeKB /
+          1000} MB Provided size: ${Math.ceil(sizeInKB / 1000)} MB`,
       );
 
       hasError = true;

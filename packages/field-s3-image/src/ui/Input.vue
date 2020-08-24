@@ -37,7 +37,7 @@
           </el-button>
           <div slot="tip" class="el-upload__tip">
             {{ settings.acceptedExtensions.join(', ') }} files with a size less than
-            {{ settings.maxSizeKB }} KB
+            {{ settings.maxSizeKB / 1000 }} MB
           </div>
         </el-upload>
         <ul class="el-upload-list el-upload-list--picture">
@@ -281,9 +281,8 @@ export default class S3ImageFieldInputComponent extends Vue {
 
     if (sizeInKB > this.settings.maxSizeKB) {
       this.addError(
-        `The image uploaded is too large. Max size: ${
-          this.settings.maxSizeKB
-        } KB Provided size: ${Math.ceil(sizeInKB)} KB`,
+        `The image uploaded is too large. Max size: ${this.settings.maxSizeKB /
+          1000} MB Provided size: ${Math.ceil(sizeInKB / 1000)} MB`,
       );
       hasError = true;
     }
