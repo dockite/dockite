@@ -249,6 +249,8 @@ export class SchemaResolver {
       throw new Error('Error importing schema');
     }
 
+    DockiteEvents.emit('reload');
+
     return schemaRepository.findOneOrFail(importedSchema.id, { relations: ['fields'] });
   }
 
