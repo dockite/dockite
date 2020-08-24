@@ -1,6 +1,6 @@
 {
   "name": "@dockite/admin",
-  "version": "0.4.0-alpha.56",
+  "version": "0.4.0-alpha.57",
   "description": "",
   "author": "Dockite",
   "main": "nuxt.config.ts",

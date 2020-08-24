@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.50](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.49...@dockite/core@0.4.0-alpha.50) (2020-08-24)
+
+
+### Bug Fixes
+
+* **admin:** use imports for schema update/create ([d4d93bd](https://github.com/dockite/dockite/commit/d4d93bd66c01956ca102b519725c46ac795530cb))
+
+
+
+
+
 # [0.4.0-alpha.49](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.48...@dockite/core@0.4.0-alpha.49) (2020-08-24)
 
 **Note:** Version bump only for package @dockite/core
