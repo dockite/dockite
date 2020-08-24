@@ -522,6 +522,8 @@ export default class EditSchemaPage extends Vue {
           next();
         })
         .catch(() => {});
+    } else {
+      next();
     }
   }
 
