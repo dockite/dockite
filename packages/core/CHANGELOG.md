@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.51](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.50...@dockite/core@0.4.0-alpha.51) (2020-08-25)
+
+
+### Features
+
+* **core:** reload schema after import ([c334aad](https://github.com/dockite/dockite/commit/c334aadebc9a24a272f3ac8ab945426e484f17cf))
+
+
+
+
+
 # [0.4.0-alpha.50](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.49...@dockite/core@0.4.0-alpha.50) (2020-08-24)
 
 
