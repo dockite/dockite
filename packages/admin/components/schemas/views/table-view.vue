@@ -338,19 +338,32 @@ export default class SchemaDocumentsPage extends Vue {
 
   @Watch('schemaId', { immediate: true })
   async handleSchemaIdChange(): Promise<void> {
-    await this.$store.dispatch(`${data.namespace}/fetchSchemaWithFieldsById`, {
-      id: this.$route.params.id,
-    });
+    try {
+      this.loading += 1;
 
-    this.schema.fields.forEach(field => {
-      if (!this.filters[field.name]) {
-        Vue.set(this.filters, field.name, null);
-      }
-    });
+      await this.$store.dispatch(`${data.namespace}/fetchSchemaWithFieldsById`, {
+        id: this.$route.params.id,
+      });
 
-    this.handleRouteQueryChange();
+      this.schema.fields.forEach(field => {
+        if (!this.filters[field.name]) {
+          Vue.set(this.filters, field.name, null);
+        }
+      });
 
-    this.fetchFindDocumentsBySchemaId(1);
+      this.handleRouteQueryChange();
+
+      this.fetchFindDocumentsBySchemaId(1);
+    } catch (err) {
+      console.log(err);
+
+      this.$message({
+        message: 'An error occurred whilst fetching the schema, please try again later.',
+        type: 'error',
+      });
+    } finally {
+      this.loading -= 1;
+    }
   }
 
   @Watch('$route.query', { deep: true })

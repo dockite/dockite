@@ -7,8 +7,11 @@
       :text-color="textColor"
       :active-text-color="activeTextColor"
     >
-      <div v-show="!isCollapse" style="height: 50px; padding: 1rem 1rem 0.5rem 1rem; ">
-        <logo fill-color="transparent" height="100%" />
+      <div
+        v-show="!isCollapse"
+        style="height: 50px; max-width: 275px; padding: 1rem 1rem 0.5rem 1rem; "
+      >
+        <logo fill-color="transparent" height="100%" width="100%" />
       </div>
       <el-menu-item index="/">
         <i class="el-icon-s-home"></i>

@@ -275,7 +275,11 @@ export default class EditSchemaPage extends Vue {
         type: 'success',
       });
 
-      this.$router.push(`/schemas/${this.$route.params.id}`);
+      this.dirty = false;
+
+      this.$nextTick(() => {
+        this.$router.push(`/schemas/${this.$route.params.id}`);
+      });
     } catch (_) {
       this.$message({
         message: 'An error occurred whilst udpating the schema, please try again later.',

@@ -165,6 +165,7 @@ export default class LoginPage extends Vue {
 
 .dockite-login-form--logo {
   max-height: 6rem;
+  max-width: 480px;
   margin-bottom: 1.5rem;
 }
 </style>

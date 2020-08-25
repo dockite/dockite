@@ -21,7 +21,11 @@
         @submit.native.prevent="submit"
       >
         <el-tabs v-model="currentTab" type="border-card">
-          <el-tab-pane v-for="tab in availableTabs" :key="tab" :label="tab" :name="tab">
+          <el-tab-pane v-for="tab in availableTabs" :key="tab" class="test" :name="tab">
+            <div slot="label" class="el-tab-pane__label" :class="{ 'is-warning': tabErrors[tab] }">
+              {{ tab }}
+            </div>
+
             <component
               :is="$dockiteFieldManager[field.type].input"
               v-for="field in getFieldsByGroupName(tab)"
@@ -72,6 +76,8 @@ export default class CreateSchemaDocumentPage extends Vue {
   public currentTab = 'Default';
 
   public form: Record<string, any> = {};
+
+  public tabErrors: Record<string, boolean> = {};
 
   public ready = false;
 
@@ -180,6 +186,8 @@ export default class CreateSchemaDocumentPage extends Vue {
 
   public async submit(): Promise<void> {
     try {
+      this.tabErrors = {};
+
       this.loading += 1;
 
       await this.formEl.validate();
@@ -197,10 +205,15 @@ export default class CreateSchemaDocumentPage extends Vue {
       this.$router.push(`/schemas/${this.schemaId}`);
     } catch (_) {
       // It's any's all the way down
-      // It's any's all the way down
       const errors = (this.formEl as any).fields.filter(
         (f: any): boolean => f.validateState === 'error',
       );
+
+      errors.forEach((f: any): void => {
+        const groupName = this.getGroupNameFromFieldName(f.prop.split('.').shift());
+
+        Vue.set(this.tabErrors, groupName, true);
+      });
 
       errors.slice(0, 4).forEach((f: any): void => {
         const groupName = this.getGroupNameFromFieldName(f.prop.split('.').shift());
@@ -249,5 +262,21 @@ export default class CreateSchemaDocumentPage extends Vue {
 <style lang="scss">
 .create-schema-document-page {
   width: 100%;
+
+  .el-tabs__item {
+    padding: 0 !important;
+  }
+
+  .el-tab-pane__label {
+    padding: 0 20px;
+
+    &.is-warning {
+      color: #f56c6c;
+
+      &::after {
+        content: '*';
+      }
+    }
+  }
 }
 </style>
