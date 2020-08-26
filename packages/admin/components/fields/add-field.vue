@@ -73,8 +73,10 @@
         </el-form>
 
         <el-row v-else type="flex" class="dockite-add-field--fields-container">
+          <el-input ref="input" v-model="filter" class="mb-3" placeholder="Filter" clearable />
+
           <el-button
-            v-for="field in availableFields"
+            v-for="field in filteredFields"
             :key="field.type"
             class="dockite-add-field--button"
             @click="handleSelectField(field.type)"
@@ -93,6 +95,7 @@
 import { Schema } from '@dockite/database';
 import { DockiteFieldStatic } from '@dockite/types';
 import { Input, Form } from 'element-ui';
+import { sortBy } from 'lodash';
 import { Component, Vue, Prop, Watch, Ref } from 'nuxt-property-decorator';
 
 import { UnpersistedField } from '../../common/types';
@@ -116,6 +119,9 @@ export default class AddFieldComponent extends Vue {
   @Ref()
   readonly form!: Form;
 
+  @Ref()
+  readonly input!: any;
+
   public fieldSelected = false;
 
   public fieldType: string | null = null;
@@ -125,6 +131,10 @@ export default class AddFieldComponent extends Vue {
   public field: UnpersistedField = {
     ...this.initialFieldState,
   };
+
+  public filter = '';
+
+  public sortBy = sortBy;
 
   get initialFieldState(): UnpersistedField {
     return {
@@ -217,6 +227,13 @@ export default class AddFieldComponent extends Vue {
     const state = this.$store.state[data.namespace] as data.DataState;
 
     return state.availableFields;
+  }
+
+  get filteredFields(): DockiteFieldStatic[] {
+    return sortBy(
+      this.availableFields.filter(x => x.title.toLowerCase().includes(this.filter.toLowerCase())),
+      'title',
+    );
   }
 
   get selectedField(): DockiteFieldStatic | null {

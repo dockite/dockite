@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 import { DockiteField } from '@dockite/field';
 import {
   GraphQLInputType,
@@ -109,6 +110,7 @@ export class DockiteFieldSlug extends DockiteField {
   public async processInputRaw<T>(ctx: HookContext): Promise<T> {
     let count;
     let increment = 0;
+    const settings = this.schemaField.settings as SlugFieldSettings;
 
     let slug = ctx.fieldData;
 
@@ -119,15 +121,20 @@ export class DockiteFieldSlug extends DockiteField {
 
       let shouldContinue = true;
 
-      while (shouldContinue === true) {
-        // eslint-disable-next-line no-await-in-loop
-        count = await this.getSlugCount(slug, documentId);
+      if (settings.unique) {
+        while (shouldContinue === true) {
+          if (settings.parent && ctx.data[settings.parent]) {
+            count = await this.getSlugCount(slug, documentId, ctx.data[settings.parent]);
+          } else {
+            count = await this.getSlugCount(slug, documentId);
+          }
 
-        if (count > 0) {
-          increment += 1;
-          slug = slugify(`${ctx.fieldData}-${increment}`, { lower: true, replacement: '-' });
-        } else {
-          shouldContinue = false;
+          if (count > 0) {
+            increment += 1;
+            slug = slugify(`${ctx.fieldData}-${increment}`, { lower: true, replacement: '-' });
+          } else {
+            shouldContinue = false;
+          }
         }
       }
     }
