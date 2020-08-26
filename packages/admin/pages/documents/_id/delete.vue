@@ -12,7 +12,10 @@
     <div v-loading="loading > 0" class="delete-document-page el-loading-parent__min-height">
       <el-card>
         <template slot="header">
-          <h3>Are you sure you want to delete {{ documentId }}?</h3>
+          <h3 v-if="document && document.deletedAt">
+            Are you sure you want to permanently delete {{ documentId }}?
+          </h3>
+          <h3 v-else>Are you sure you want to delete {{ documentId }}?</h3>
         </template>
         <div class="dockite-document--detail">
           <el-collapse>
@@ -21,13 +24,28 @@
             </el-collapse-item>
           </el-collapse>
         </div>
-        <el-row type="flex" justify="space-between">
+        <el-row v-if="document" type="flex" justify="space-between">
           <el-button @click.prevent="$router.go(-1)">
             Cancel
           </el-button>
           <el-button
             v-if="
-              schema && $can('internal:document:delete', `schema:${schema && schema.name}:delete`)
+              schema &&
+                $can('internal:document:delete', `schema:${schema && schema.name}:delete`) &&
+                document.deletedAt !== null
+            "
+            :disabled="loading > 0"
+            type="danger"
+            @click="handleDeleteDocument"
+          >
+            Permanently Delete
+          </el-button>
+
+          <el-button
+            v-if="
+              schema &&
+                $can('internal:document:delete', `schema:${schema && schema.name}:delete`) &&
+                document.deletedAt === null
             "
             :disabled="loading > 0"
             type="danger"
@@ -117,10 +135,17 @@ export default class EditDocumentPage extends Vue {
     try {
       this.loading += 1;
 
-      await this.$store.dispatch(`${document.namespace}/deleteDocument`, {
-        documentId: this.documentId,
-        schemaId: this.document?.schemaId,
-      });
+      if (this.document?.deletedAt !== null) {
+        await this.$store.dispatch(`${document.namespace}/permanentlyDeleteDocument`, {
+          documentId: this.documentId,
+          schemaId: this.document?.schemaId,
+        });
+      } else {
+        await this.$store.dispatch(`${document.namespace}/deleteDocument`, {
+          documentId: this.documentId,
+          schemaId: this.document?.schemaId,
+        });
+      }
 
       this.$message({
         message: 'Document deleted successfully',

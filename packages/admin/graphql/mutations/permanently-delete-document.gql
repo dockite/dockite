@@ -1,0 +1,3 @@
+mutation RemoveDocumentMutation($id: String!) {
+  permanentlyRemoveDocument(id: $id)
+}

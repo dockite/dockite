@@ -7,10 +7,12 @@ import {
   DeleteDocumentMutationResponse,
   UpdateDocumentMutationResponse,
   PartialUpdateDocumentsInSchemaIdMutationResponse,
+  PermanentlyDeleteDocumentMutationResponse,
 } from '~/common/types';
 import CreateDocumentMutation from '~/graphql/mutations/create-document.gql';
 import DeleteDocumentMutation from '~/graphql/mutations/delete-document.gql';
 import PartialUpdateDocumentsInSchemaIdMutation from '~/graphql/mutations/partial-update-documents-in-schema-id.gql';
+import PermanentlyDeleteDocumentMutation from '~/graphql/mutations/permanently-delete-document.gql';
 import UpdateDocumentMutation from '~/graphql/mutations/update-document.gql';
 import * as data from '~/store/data';
 
@@ -121,6 +123,23 @@ export const actions: ActionTree<DocumentState, RootState> = {
     });
 
     if (!data?.removeDocument) {
+      throw new Error('Unable to delete document');
+    }
+  },
+
+  async permanentlyDeleteDocument(_, payload: DeleteDocumentPayload): Promise<void> {
+    const { data } = await this.$apolloClient.mutate<PermanentlyDeleteDocumentMutationResponse>({
+      mutation: PermanentlyDeleteDocumentMutation,
+      variables: {
+        id: payload.documentId,
+      },
+      // TODO: Update to cache eviction with @apollo/client 3.0.0
+      update: () => {
+        this.$apolloClient.resetStore();
+      },
+    });
+
+    if (!data?.permanentlyRemoveDocument) {
       throw new Error('Unable to delete document');
     }
   },

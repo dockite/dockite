@@ -191,6 +191,10 @@ export interface DeleteDocumentMutationResponse {
   removeDocument: boolean;
 }
 
+export interface PermanentlyDeleteDocumentMutationResponse {
+  permanentlyRemoveDocument: boolean;
+}
+
 export type AllWebhooksResultItem = Webhook;
 
 export interface AllWebhooksQueryResponse {

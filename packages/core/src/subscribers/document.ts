@@ -10,6 +10,27 @@ import { WebhookAction } from '@dockite/types';
 
 import { fireWebhooks } from '../utils/fire-webhooks';
 
+export const afterInsert = async (entity: Document): Promise<void> => {
+  await Promise.all([
+    fireWebhooks(entity, WebhookAction.DocumentCreate),
+    fireWebhooks(entity, `document:${entity.schema?.name ?? 'unknown'}:create`),
+  ]);
+};
+
+export const afterUpdate = async (entity: Document): Promise<void> => {
+  await Promise.all([
+    fireWebhooks(entity, WebhookAction.DocumentUpdate),
+    fireWebhooks(entity, `document:${entity.schema?.name ?? 'unknown'}:update`),
+  ]);
+};
+
+export const afterRemove = async (entity: Document): Promise<void> => {
+  await Promise.all([
+    fireWebhooks(entity, WebhookAction.DocumentDelete),
+    fireWebhooks(entity, `document:${entity.schema?.name ?? 'unknown'}:delete`),
+  ]);
+};
+
 @EventSubscriber()
 export class DocumentSubscriber implements EntitySubscriberInterface {
   listenTo(): typeof Document {
@@ -17,20 +38,14 @@ export class DocumentSubscriber implements EntitySubscriberInterface {
   }
 
   afterInsert(event: InsertEvent<Document>): void {
-    fireWebhooks(event.entity, WebhookAction.DocumentCreate);
-    fireWebhooks(event.entity, `document:${event.entity.schema?.name ?? 'unknown'}:create`);
+    afterInsert(event.entity);
   }
 
   afterUpdate(event: UpdateEvent<Document>): void {
-    fireWebhooks(event.entity, WebhookAction.DocumentUpdate);
-    fireWebhooks(event.entity, `document:${event.entity.schema?.name ?? 'unknown'}:update`);
+    afterUpdate(event.entity);
   }
 
   afterRemove(event: RemoveEvent<Document>): void {
-    fireWebhooks(event.entity as Document, WebhookAction.DocumentDelete);
-    fireWebhooks(
-      event.entity,
-      `document:${(event.entity as Document).schema?.name ?? 'unknown'}:delete`,
-    );
+    afterRemove(event.entity as Document);
   }
 }

@@ -15,10 +15,11 @@ import {
   Query,
   Resolver,
 } from 'type-graphql';
-import { getCustomRepository, getManager, getRepository, IsNull, Not } from 'typeorm';
+import { getCustomRepository, getManager, getRepository } from 'typeorm';
 
 import { Authenticated, Authorized } from '../../../common/decorators';
 import { GlobalContext } from '../../../common/types';
+import { afterRemove } from '../../../subscribers';
 import { strToColumnPath } from '../../../utils';
 
 import { SortInputType } from './inputs/sort';
@@ -565,7 +566,8 @@ export class DocumentResolver {
         }),
       );
 
-      await repository.softRemove(document);
+      await repository.softRemove(document, { listeners: false });
+      await afterRemove(document);
 
       return true;
     } catch (err) {
@@ -576,6 +578,13 @@ export class DocumentResolver {
   }
 
   @Authenticated()
+  @Authorized('internal:document:delete', {
+    resourceType: 'schema',
+    lookAhead: true,
+    fieldsOrArgsToPeek: ['schemaId'],
+    entity: Document,
+    entityIdArg: 'id',
+  })
   @Mutation(_returns => Boolean)
   async permanentlyRemoveDocument(@Arg('id') id: string): Promise<boolean> {
     const documentRepository = getRepository(Document);
@@ -583,7 +592,7 @@ export class DocumentResolver {
 
     try {
       const document = await documentRepository.findOneOrFail({
-        where: { id, deletedAt: Not(IsNull()) },
+        where: { id },
         relations: ['schema', 'schema.fields'],
         withDeleted: true,
       });
