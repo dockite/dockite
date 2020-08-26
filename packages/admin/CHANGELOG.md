@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.60](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.59...@dockite/admin@0.4.0-alpha.60) (2020-08-26)
+
+
+### Features
+
+* **admin:** add field filter ([cbb891b](https://github.com/dockite/dockite/commit/cbb891b5518c2c7645e293af7da884eca3e630dd))
+* **core:** support showing deleted items in resolvers ([6396a89](https://github.com/dockite/dockite/commit/6396a8931a44a5785a0f7c1e49c4aeb83abb32dc))
+
+
+
+
+
 # [0.4.0-alpha.59](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.58...@dockite/admin@0.4.0-alpha.59) (2020-08-25)
 
 

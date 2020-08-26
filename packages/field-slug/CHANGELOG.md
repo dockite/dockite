@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.2.0-alpha.25](https://github.com/dockite/dockite/compare/@dockite/field-slug@0.2.0-alpha.24...@dockite/field-slug@0.2.0-alpha.25) (2020-08-26)
+
+
+### Features
+
+* **admin:** add field filter ([cbb891b](https://github.com/dockite/dockite/commit/cbb891b5518c2c7645e293af7da884eca3e630dd))
+
+
+
+
+
 # [0.2.0-alpha.24](https://github.com/dockite/dockite/compare/@dockite/field-slug@0.2.0-alpha.23...@dockite/field-slug@0.2.0-alpha.24) (2020-08-24)
 
 **Note:** Version bump only for package @dockite/field-slug

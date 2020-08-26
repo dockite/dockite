@@ -1,6 +1,6 @@
 {
   "name": "@dockite/field-json",
-  "version": "0.3.0-alpha.8",
+  "version": "0.3.0-alpha.9",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
@@ -12,7 +12,7 @@
     "*.css"
   ],
   "dependencies": {
-    "@dockite/database": "^0.4.0-alpha.16",
+    "@dockite/database": "^0.4.0-alpha.17",
     "@dockite/field": "^0.3.0-alpha.9",
     "@dockite/types": "^0.3.0-alpha.10",
     "codemirror": "^5.52.2",

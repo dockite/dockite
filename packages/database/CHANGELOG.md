@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.17](https://github.com/dockite/dockite/compare/@dockite/database@0.4.0-alpha.16...@dockite/database@0.4.0-alpha.17) (2020-08-26)
+
+
+### Features
+
+* **core:** support showing deleted items in resolvers ([6396a89](https://github.com/dockite/dockite/commit/6396a8931a44a5785a0f7c1e49c4aeb83abb32dc))
+
+
+
+
+
 # [0.4.0-alpha.16](https://github.com/dockite/dockite/compare/@dockite/database@0.4.0-alpha.15...@dockite/database@0.4.0-alpha.16) (2020-08-24)
 
 
