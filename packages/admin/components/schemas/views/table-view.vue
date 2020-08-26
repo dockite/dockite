@@ -1,6 +1,6 @@
 <template>
   <div class="table-view">
-    <portal to="header-extra">
+    <portal v-if="!deleted" to="header-extra">
       <el-input
         v-model="term"
         size="medium"
@@ -62,7 +62,7 @@
                   />
                 </template>
                 <template v-else>
-                  <span>Apply a filter..</span>
+                  <span>Fitler</span>
                   <i class="el-icon-arrow-down cursor-pointer text-lg p-1 rounded-full" />
                 </template>
               </div>
@@ -148,6 +148,7 @@ import { Schema, Field, Document } from '@dockite/database';
 import { DockiteGraphqlSortInput, DockiteSortDirection } from '@dockite/types';
 import { Operators, Constraint, ConstraintOperator } from '@dockite/where-builder';
 import { formatDistanceToNow } from 'date-fns';
+import { pickBy } from 'lodash';
 import { Component, Vue, Watch, Prop } from 'nuxt-property-decorator';
 import { Fragment } from 'vue-fragment';
 
@@ -172,8 +173,11 @@ export default class SchemaDocumentsPage extends Vue {
   @Prop({ default: () => false })
   readonly selectable!: boolean;
 
-  @Prop()
+  @Prop({ default: () => [] })
   readonly selectedItems!: Document[];
+
+  @Prop({ default: () => false })
+  readonly deleted!: boolean;
 
   public term = '';
 
@@ -248,6 +252,7 @@ export default class SchemaDocumentsPage extends Vue {
         page,
         filters: Object.values(this.filters).filter(filter => filter !== null),
         sort: this.sortConfig,
+        deleted: this.deleted,
       });
     } catch (_) {
       this.$message({
@@ -329,7 +334,12 @@ export default class SchemaDocumentsPage extends Vue {
       }, {});
 
       this.$router.push({
-        query: queryParams,
+        query: {
+          ...pickBy(this.$route.query as Record<string, string>, (key: string) =>
+            key.startsWith('x-'),
+          ),
+          ...queryParams,
+        },
       });
     }
 
@@ -371,15 +381,17 @@ export default class SchemaDocumentsPage extends Vue {
     if (Object.keys(this.$route.query).length > 0) {
       const filters: Record<string, Constraint> = {};
 
-      Object.keys(this.$route.query).forEach(param => {
-        const [operator, value] = greedySplit(this.$route.query[param] as string, '|', 1);
+      Object.keys(this.$route.query)
+        .filter(key => !key.startsWith('x-'))
+        .forEach(param => {
+          const [operator, value] = greedySplit(this.$route.query[param] as string, '|', 1);
 
-        filters[param] = {
-          name: param,
-          operator: operator as ConstraintOperator,
-          value,
-        };
-      });
+          filters[param] = {
+            name: param,
+            operator: operator as ConstraintOperator,
+            value,
+          };
+        });
 
       this.filters = {
         ...this.filters,

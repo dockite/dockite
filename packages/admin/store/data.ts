@@ -73,6 +73,10 @@ interface FilterablePayload {
   filters: Constraint[];
 }
 
+interface DeletablePayload {
+  deleted?: boolean;
+}
+
 export interface DataState {
   allSchemas: ManyResultSet<AllSchemasResultItem>;
   allSingletons: ManyResultSet<AllSingletonsResultItem>;
@@ -274,7 +278,7 @@ export const actions: ActionTree<DataState, RootState> = {
 
   async fetchAllDocumentsWithSchema(
     { commit },
-    payload: PaginationPayload & SortablePayload,
+    payload: PaginationPayload & SortablePayload & DeletablePayload,
   ): Promise<void> {
     const { data } = await this.$apolloClient.query<AllDocumentsWithSchemaQueryResponse>({
       query: AllDocumentsWithSchemaQuery,
@@ -425,7 +429,10 @@ export const actions: ActionTree<DataState, RootState> = {
 
   async fetchFindDocumentsBySchemaId(
     { commit },
-    payload: { schemaId: string } & SortablePayload & FilterablePayload & PaginationPayload,
+    payload: { schemaId: string } & SortablePayload &
+      FilterablePayload &
+      PaginationPayload &
+      DeletablePayload,
   ): Promise<void> {
     const variables: {
       id: string;
@@ -433,6 +440,7 @@ export const actions: ActionTree<DataState, RootState> = {
       perPage: number;
       sort?: DockiteGraphqlSortInput;
       where?: AndQuery;
+      deleted?: boolean;
     } = {
       id: payload.schemaId,
       page: payload.page ?? 1,
@@ -442,6 +450,10 @@ export const actions: ActionTree<DataState, RootState> = {
 
     if (payload.filters && payload.filters.length > 0) {
       variables.where = { AND: payload.filters };
+    }
+
+    if (payload.deleted) {
+      variables.deleted = payload.deleted;
     }
 
     const { data } = await this.$apolloClient.query<FindDocumentsQueryResponse>({
@@ -458,11 +470,18 @@ export const actions: ActionTree<DataState, RootState> = {
 
   async fetchFindDocumentsBySchemaIds(
     { commit },
-    payload: { schemaIds: string[] } & Partial<PaginationPayload> & SortablePayload,
+    payload: { schemaIds: string[] } & Partial<PaginationPayload> &
+      SortablePayload &
+      DeletablePayload,
   ): Promise<void> {
     const { data } = await this.$apolloClient.query<FindDocumentsQueryResponse>({
       query: FindDocumentsBySchemaIdsQuery,
-      variables: { ids: payload.schemaIds, page: payload.page ?? 1, sort: payload.sort },
+      variables: {
+        ids: payload.schemaIds,
+        page: payload.page ?? 1,
+        sort: payload.sort,
+        deleted: payload.deleted ?? false,
+      },
     });
 
     if (!data.findDocuments) {

@@ -15,14 +15,7 @@ import {
   Query,
   Resolver,
 } from 'type-graphql';
-import {
-  FindManyOptions,
-  getCustomRepository,
-  getRepository,
-  IsNull,
-  Not,
-  getManager,
-} from 'typeorm';
+import { getCustomRepository, getManager, getRepository, IsNull, Not } from 'typeorm';
 
 import { Authenticated, Authorized } from '../../../common/decorators';
 import { GlobalContext } from '../../../common/types';
@@ -65,6 +58,7 @@ export class DocumentResolver {
     const document = await repository.findOne({
       where: { id },
       relations: ['schema', 'schema.fields', 'user'],
+      withDeleted: true,
     });
 
     if (!document) {
@@ -104,12 +98,13 @@ export class DocumentResolver {
     perPage: number,
     @Arg('sort', _type => SortInputType, { nullable: true })
     sort: SortInputType | null,
+    @Arg('deleted', _type => Boolean, { nullable: true })
+    deleted: boolean | null,
   ): Promise<ManyDocuments> {
     const repository = getRepository(Document);
 
     const qb = repository
       .createQueryBuilder('document')
-      .where('document.deletedAt IS NULL')
       .leftJoinAndSelect('document.schema', 'schema')
       .leftJoinAndSelect('schema.fields', 'fields');
 
@@ -139,6 +134,12 @@ export class DocumentResolver {
       }
     } else {
       qb.orderBy('document.updatedAt', 'DESC');
+    }
+
+    if (deleted) {
+      qb.andWhere('document.deletedAt IS NOT NULL').withDeleted();
+    } else {
+      qb.andWhere('document.deletedAt IS NULL');
     }
 
     qb.take(perPage).skip(perPage * (page - 1));
@@ -182,21 +183,31 @@ export class DocumentResolver {
     perPage: number,
     @Arg('sort', _type => SortInputType, { nullable: true })
     sort: SortInputType | null,
+    @Arg('deleted', _type => Boolean, { nullable: true })
+    deleted: boolean | null,
   ): Promise<ManyDocuments> {
     const repository = getRepository(Document);
 
-    const findOptions: FindManyOptions = {
-      relations: ['schema', 'schema.fields'],
-      order: { updatedAt: 'DESC' },
-      take: perPage,
-      skip: perPage * (page - 1),
-    };
+    const qb = repository
+      .createQueryBuilder('document')
+      .leftJoinAndSelect('document.schema', 'schema')
+      .leftJoinAndSelect('schema.fields', 'fields')
+      .take(perPage)
+      .skip(perPage * (page - 1));
 
     if (sort) {
-      findOptions.order = { [sort.name]: sort.direction };
+      qb.orderBy(`document.${strToColumnPath(sort.name)}`, sort.direction);
+    } else {
+      qb.orderBy('document.updatedAt', 'DESC');
     }
 
-    const [results, totalItems] = await repository.findAndCount(findOptions);
+    if (deleted) {
+      qb.andWhere('document.deletedAt IS NOT NULL').withDeleted();
+    } else {
+      qb.andWhere('document.deletedAt IS NULL');
+    }
+
+    const [results, totalItems] = await qb.getManyAndCount();
 
     await Promise.all(
       results.map(async item => {
@@ -242,12 +253,13 @@ export class DocumentResolver {
     perPage: number,
     @Arg('sort', _type => SortInputType, { nullable: true })
     sort: SortInputType | null,
+    @Arg('deleted', _type => Boolean, { nullable: true })
+    deleted: boolean | null,
   ): Promise<ManyDocuments> {
     const repository = getCustomRepository(SearchEngineRepository);
 
     const qb = repository
       .search(term)
-      .andWhere('searchEngine.deletedAt IS NULL')
       .leftJoinAndSelect('searchEngine.schema', 'schema')
       .leftJoinAndSelect('schema.fields', 'fields')
       .take(perPage)
@@ -265,6 +277,12 @@ export class DocumentResolver {
 
     if (schemaIds && schemaIds.length > 0) {
       qb.andWhere('searchEngine.schemaId IN (:...schemaIds)', { schemaIds });
+    }
+
+    if (deleted) {
+      qb.andWhere('searchEngine.deletedAt IS NOT NULL').withDeleted();
+    } else {
+      qb.andWhere('searchEngine.deletedAt IS NULL');
     }
 
     const [results, totalItems] = await qb.getManyAndCount();

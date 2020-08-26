@@ -185,10 +185,6 @@ const createGraphQLInputObjectTypesForSchema = async (
 
       // Finally add the field to the map
       if (inputType !== null) {
-        console.log({
-          field: field.name,
-          default: field.settings.default,
-        });
         if (field.settings.required && field.settings.default === undefined) {
           createInputTypeFieldMap[field.name] = {
             type: GraphQLNonNull(inputType),
@@ -772,6 +768,7 @@ const createGraphQLMutationsForSchema = async (
 
             return { ...updatedDocument.data, id: updatedDocument.id };
           } catch (err) {
+            log(err);
             throw new Error(`The ${schema.title} with id: ${input.id} does not exist.`);
           }
         },

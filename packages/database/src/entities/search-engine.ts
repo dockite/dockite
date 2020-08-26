@@ -9,7 +9,7 @@ import { Release } from './release';
     conn
       .createQueryBuilder()
       .select('document.*')
-      .addSelect(`to_tsvector('pg_catalog.simple', document.data)`, 'fts')
+      .addSelect(`jsonb_to_tsvector('english', document.data, '["all"]')`, 'fts')
       .from(Document, 'document'),
 })
 export class SearchEngine {

@@ -62,19 +62,8 @@
       </el-row>
     </portal>
 
-    <portal to="opposite-breadcrumb">
-      <el-select v-if="availableViews.length > 1" v-model="currentView" size="medium">
-        <el-option
-          v-for="view in availableViews"
-          :key="view"
-          :label="startCase(view)"
-          :value="view"
-        />
-      </el-select>
-    </portal>
-
     <div class="all-schema-documents-page el-loading-parent__min-height">
-      <component :is="currentView" />
+      <table-view :deleted="true" />
     </div>
   </fragment>
 </template>
@@ -82,12 +71,11 @@
 <script lang="ts">
 import { Schema } from '@dockite/database';
 import { startCase } from 'lodash';
-import { Component, Vue, Watch } from 'nuxt-property-decorator';
+import { Component, Vue } from 'nuxt-property-decorator';
 import { Fragment } from 'vue-fragment';
 
 import FilterInput from '~/components/base/filter-input.vue';
 import TableView from '~/components/schemas/views/table-view.vue';
-import TreeView from '~/components/schemas/views/tree-view.vue';
 import * as data from '~/store/data';
 
 @Component({
@@ -95,12 +83,9 @@ import * as data from '~/store/data';
     Fragment,
     FilterInput,
     TableView,
-    TreeView,
   },
 })
 export default class SchemaDocumentsPage extends Vue {
-  public currentView = 'table-view';
-
   public startCase = startCase;
 
   get schemaId(): string {
@@ -113,39 +98,6 @@ export default class SchemaDocumentsPage extends Vue {
 
   get schema(): Schema {
     return this.$store.getters[`${data.namespace}/getSchemaWithFieldsById`](this.schemaId);
-  }
-
-  get availableViews(): string[] {
-    const views = ['table-view'];
-
-    if (this.schema && this.schema.settings.enableTreeView) {
-      views.push('tree-view');
-    }
-
-    return views;
-  }
-
-  @Watch('availableViews')
-  public handleAvailableViewsChange(): void {
-    if (!this.availableViews.includes(this.currentView)) {
-      this.currentView = this.availableViews[0];
-    }
-  }
-
-  @Watch('currentView')
-  public handleViewChange(): void {
-    this.$router.replace({
-      query: {
-        ...this.$route.query,
-        'x-view': this.currentView,
-      },
-    });
-  }
-
-  beforeMount(): void {
-    if (this.$route.query['x-view']) {
-      this.currentView = this.$route.query['x-view'] as string;
-    }
   }
 }
 </script>
