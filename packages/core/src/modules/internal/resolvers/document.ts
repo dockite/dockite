@@ -369,6 +369,10 @@ export class DocumentResolver {
   @Authenticated()
   @Authorized('internal:document:update', {
     resourceType: 'schema',
+    lookAhead: true,
+    fieldsOrArgsToPeek: ['schemaId'],
+    entity: Document,
+    entityIdArg: 'id',
   })
   @Mutation(_returns => Document, { nullable: true })
   async updateDocument(
@@ -432,6 +436,42 @@ export class DocumentResolver {
       documentRepository.save(document),
       revisionRepository.save(revision),
     ]);
+
+    return savedDocument;
+  }
+
+  @Authenticated()
+  @Authorized('internal:document:update', {
+    resourceType: 'schema',
+    lookAhead: true,
+    fieldsOrArgsToPeek: ['schemaId'],
+    entity: Document,
+    entityIdArg: 'id',
+  })
+  @Mutation(_returns => Document, { nullable: true })
+  async restoreDocument(
+    @Arg('id', _type => String)
+    id: string | null,
+    @Ctx() ctx: GlobalContext,
+  ): Promise<Document | null> {
+    const documentRepository = getRepository(Document);
+
+    const { id: userId } = ctx.user!; // eslint-disable-line
+
+    const document = await documentRepository.findOne({
+      where: { id },
+      relations: ['schema', 'schema.fields'],
+      withDeleted: true,
+    });
+
+    if (!document) {
+      return null;
+    }
+
+    document.deletedAt = null;
+    document.userId = userId;
+
+    const savedDocument = documentRepository.save(document);
 
     return savedDocument;
   }

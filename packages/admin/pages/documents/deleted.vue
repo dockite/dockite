@@ -2,7 +2,14 @@
   <fragment>
     <portal to="header">
       <el-row type="flex" align="middle" justify="space-between">
-        <h2>All Documents</h2>
+        <h2>All Deleted Documents</h2>
+
+        <router-link to="/documents">
+          <el-button size="medium">
+            <i class="el-icon-back" />
+            Go Back
+          </el-button>
+        </router-link>
       </el-row>
     </portal>
 
@@ -80,16 +87,24 @@
 
         <el-table-column label="Actions">
           <span slot-scope="scope" class="dockite-table--actions">
-            <router-link
-              v-if="$can(`schema:${scope.row.schema.name}:update`)"
-              title="Edit Document"
-              :to="`/documents/${scope.row.id}`"
+            <el-popconfirm
+              title="Are you sure? The document will be restored and visible again."
+              confirm-button-text="Restore"
+              cancel-button-text="Cancel"
+              @onConfirm="handleRestoreDocument(scope.row.id)"
             >
-              <i class="el-icon-edit-outline" />
-            </router-link>
+              <el-button
+                v-if="$can('internal:document:update', `schema:${scope.row.schema.name}:update`)"
+                slot="reference"
+                type="text"
+                title="Restore Document"
+              >
+                <i class="el-icon-refresh-left" />
+              </el-button>
+            </el-popconfirm>
 
             <router-link
-              v-if="$can(`schema:${scope.row.schema.name}:delete`)"
+              v-if="$can('internal:document:delete', `schema:${scope.row.schema.name}:delete`)"
               title="Delete Document"
               :to="`/documents/${scope.row.id}/delete`"
             >
@@ -140,6 +155,7 @@ import {
 
 import * as auth from '~/store/auth';
 import * as data from '~/store/data';
+import * as document from '~/store/document';
 
 @Component({
   components: {
@@ -248,6 +264,28 @@ export default class AllDocumentsPage extends Vue {
     } catch (_) {
       this.$message({
         message: 'An error occurred whilst fetching documents, please try again later.',
+        type: 'error',
+      });
+    } finally {
+      this.loading -= 1;
+    }
+  }
+
+  public async handleRestoreDocument(id: string): Promise<void> {
+    try {
+      this.loading += 1;
+
+      await this.$store.dispatch(`${document.namespace}/restoreDocument`, { documentId: id });
+
+      this.fetchDocuments();
+
+      this.$message({
+        message: 'Document successfully restored!',
+        type: 'success',
+      });
+    } catch (e) {
+      this.$message({
+        message: 'Unable to restore document, please try again later.',
         type: 'error',
       });
     } finally {

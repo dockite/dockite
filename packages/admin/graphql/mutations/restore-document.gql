@@ -1,0 +1,13 @@
+mutation RestoreDocumentMutation($id: String!) {
+  restoreDocument(id: $id) {
+    id
+    locale
+    data
+    publishedAt
+    createdAt
+    updatedAt
+    schemaId
+    releaseId
+    userId
+  }
+}

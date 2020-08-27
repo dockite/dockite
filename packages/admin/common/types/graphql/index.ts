@@ -187,6 +187,10 @@ export interface PartialUpdateDocumentsInSchemaIdMutationResponse {
   partialUpdateDocumentsInSchemaId: boolean;
 }
 
+export interface RestoreDocumentMutationResponse {
+  restoreDocument: Document;
+}
+
 export interface DeleteDocumentMutationResponse {
   removeDocument: boolean;
 }

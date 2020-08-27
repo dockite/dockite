@@ -3,61 +3,18 @@
     <portal to="header">
       <el-row style="width: 100%" type="flex" justify="space-between" align="middle">
         <h2>
-          Schema - <strong>{{ schemaName }}</strong>
+          Deleted - <strong>{{ schemaName }}</strong>
         </h2>
 
         <el-row type="flex" align="middle">
           <portal-target name="header-extra" style="margin-right: 1rem;" />
 
-          <el-dropdown>
+          <router-link :to="`/schemas/${schemaId}`">
             <el-button size="medium">
-              Actions
-              <i class="el-icon-arrow-down el-icon--right" />
+              <i class="el-icon-back" />
+              Go Back
             </el-button>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item
-                v-if="$can('internal:document:create', `schema:${schema && schema.name}:create`)"
-              >
-                <router-link :to="`/schemas/${schemaId}/create`">
-                  <i class="el-icon-document-add" />
-                  Create
-                </router-link>
-              </el-dropdown-item>
-              <el-dropdown-item v-if="$can('internal:schema:update')">
-                <router-link :to="`/schemas/${schemaId}/edit`">
-                  <i class="el-icon-edit" />
-                  Edit
-                </router-link>
-              </el-dropdown-item>
-              <el-dropdown-item>
-                <router-link :to="`/schemas/${schemaId}/bulk-edit`">
-                  <i class="el-icon-magic-stick" />
-                  Bulk Edit
-                </router-link>
-              </el-dropdown-item>
-              <el-dropdown-item v-if="$can('internal:schema:delete')">
-                <router-link :to="`/schemas/${schemaId}/delete`" style="color: rgb(245, 108, 108)">
-                  <i class="el-icon-delete" />
-                  Delete
-                </router-link>
-              </el-dropdown-item>
-              <el-dropdown-item
-                v-if="$can('internal:schema:read', 'internal:schema:update')"
-                divided
-              >
-                <router-link :to="`/schemas/${schemaId}/revisions`">
-                  <i class="el-icon-document-copy" />
-                  Revisions
-                </router-link>
-              </el-dropdown-item>
-              <el-dropdown-item v-if="$can('internal:schema:update')">
-                <router-link :to="`/schemas/${schemaId}/import`">
-                  <i class="el-icon-upload2" />
-                  Import Schema
-                </router-link>
-              </el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
+          </router-link>
         </el-row>
       </el-row>
     </portal>

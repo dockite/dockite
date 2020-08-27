@@ -4,14 +4,23 @@
       <el-row type="flex" align="middle" justify="space-between">
         <h2>All Documents</h2>
 
-        <el-input
-          v-if="canViewAllDocuments"
-          v-model="term"
-          size="medium"
-          style="max-width: 250px"
-          placeholder="Search"
-          suffix-icon="el-icon-search"
-        />
+        <div class="flex justify-between items-center">
+          <router-link to="/documents/deleted">
+            <el-button size="medium">
+              View Deleted
+            </el-button>
+          </router-link>
+
+          <el-input
+            v-if="canViewAllDocuments"
+            v-model="term"
+            class="ml-2"
+            size="medium"
+            style="max-width: 250px"
+            placeholder="Search"
+            suffix-icon="el-icon-search"
+          />
+        </div>
       </el-row>
     </portal>
 

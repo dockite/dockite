@@ -1,5 +1,5 @@
-query FindDocumentsBySchemaId($id: String!, $page: Int!, $where: WhereBuilderInputType, $sort: SortInputType, $deleted: Boolean = false) {
-  findDocuments(schemaId: $id, page: $page, where: $where, sort: $sort, deleted: $deleted) {
+query FindDocumentsBySchemaId($id: String!, $page: Int!, $where: WhereBuilderInputType, $sort: SortInputType, $perPage: Int = 20, $deleted: Boolean = false) {
+  findDocuments(schemaId: $id, page: $page, where: $where, sort: $sort, perPage: $perPage, deleted: $deleted) {
     results {
       id
       locale

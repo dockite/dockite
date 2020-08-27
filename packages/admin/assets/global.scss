@@ -48,7 +48,7 @@ pre.dockite-data--raw {
 }
 
 .dockite-table--actions {
-  a {
+  > * {
     padding-right: 0.75rem;
 
     &:last-child {

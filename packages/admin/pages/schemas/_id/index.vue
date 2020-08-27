@@ -56,6 +56,13 @@
                   Import Schema
                 </router-link>
               </el-dropdown-item>
+
+              <el-dropdown-item>
+                <router-link :to="`/schemas/${schemaId}/deleted`">
+                  <i class="el-icon-delete" />
+                  View Deleted
+                </router-link>
+              </el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </el-row>

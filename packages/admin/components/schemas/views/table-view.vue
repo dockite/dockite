@@ -62,7 +62,7 @@
                   />
                 </template>
                 <template v-else>
-                  <span>Fitler</span>
+                  <span>Filter</span>
                   <i class="el-icon-arrow-down cursor-pointer text-lg p-1 rounded-full" />
                 </template>
               </div>
@@ -80,6 +80,26 @@
         <template slot-scope="scope">
           <span v-if="field.type === 'reference' && scope.row.data[field.name]">
             {{ scope.row.data[field.name].identifier }}
+          </span>
+
+          <span v-else-if="field.type === 's3-image' && scope.row.data[field.name]">
+            <i
+              v-if="
+                Array.isArray(scope.row.data[field.name]) && scope.row.data[field.name].length === 0
+              "
+              class="el-icon-picture-outline font-xl"
+            />
+
+            <img
+              v-else-if="
+                Array.isArray(scope.row.data[field.name]) && scope.row.data[field.name].length > 0
+              "
+              class="w-full"
+              :src="scope.row.data[field.name][0].url"
+              alt=""
+            />
+
+            <img v-else class="w-full" :src="scope.row.data[field.name].url" alt="" />
           </span>
 
           <span v-else>
@@ -104,9 +124,27 @@
 
       <el-table-column label="Actions">
         <span slot-scope="scope" class="dockite-table--actions">
-          <router-link title="Edit Document" :to="`/documents/${scope.row.id}`">
+          <el-popconfirm
+            v-if="deleted"
+            title="Are you sure? The document will be restored and visible again."
+            confirm-button-text="Restore"
+            cancel-button-text="Cancel"
+            @onConfirm="handleRestoreDocument(scope.row.id)"
+          >
+            <el-button
+              v-if="$can('internal:document:update', `schema:${scope.row.schema.name}:update`)"
+              slot="reference"
+              type="text"
+              title="Restore Document"
+            >
+              <i class="el-icon-refresh-left" />
+            </el-button>
+          </el-popconfirm>
+
+          <router-link v-else title="Edit Document" :to="`/documents/${scope.row.id}`">
             <i class="el-icon-edit-outline" />
           </router-link>
+
           <router-link
             v-if="
               $can(
@@ -119,6 +157,7 @@
           >
             <i class="el-icon-delete" />
           </router-link>
+
           <router-link title="View Revisions" :to="`/documents/${scope.row.id}/revisions`">
             <i class="el-icon-document-copy" />
           </router-link>
@@ -162,6 +201,7 @@ import {
 import { greedySplit } from '~/common/utils';
 import FilterInput from '~/components/base/filter-input.vue';
 import * as data from '~/store/data';
+import * as document from '~/store/document';
 
 @Component({
   components: {
@@ -315,6 +355,28 @@ export default class SchemaDocumentsPage extends Vue {
       'update:selectedItems',
       items.map(i => i.id),
     );
+  }
+
+  public async handleRestoreDocument(id: string): Promise<void> {
+    try {
+      this.loading += 1;
+
+      await this.$store.dispatch(`${document.namespace}/restoreDocument`, { documentId: id });
+
+      this.handlePageChange(this.currentPage);
+
+      this.$message({
+        message: 'Document successfully restored!',
+        type: 'success',
+      });
+    } catch (e) {
+      this.$message({
+        message: 'Unable to restore document, please try again later.',
+        type: 'error',
+      });
+    } finally {
+      this.loading -= 1;
+    }
   }
 
   @Watch('filters', { deep: true })
