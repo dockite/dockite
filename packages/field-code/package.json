@@ -1,6 +1,6 @@
 {
   "name": "@dockite/field-code",
-  "version": "0.3.0-alpha.9",
+  "version": "0.3.0-alpha.10",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
@@ -12,9 +12,9 @@
     "*.css"
   ],
   "dependencies": {
-    "@dockite/database": "^0.4.0-alpha.17",
-    "@dockite/field": "^0.3.0-alpha.9",
-    "@dockite/types": "^0.3.0-alpha.10",
+    "@dockite/database": "^0.4.0-alpha.18",
+    "@dockite/field": "^0.3.0-alpha.10",
+    "@dockite/types": "^0.3.0-alpha.11",
     "codemirror": "^5.52.2",
     "codemirror-graphql": "^0.11.6",
     "diff-match-patch": "^1.0.4",

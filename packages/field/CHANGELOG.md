@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.10](https://github.com/dockite/dockite/compare/@dockite/field@0.3.0-alpha.9...@dockite/field@0.3.0-alpha.10) (2020-08-27)
+
+**Note:** Version bump only for package @dockite/field
+
+
+
+
+
 # [0.3.0-alpha.9](https://github.com/dockite/dockite/compare/@dockite/field@0.3.0-alpha.8...@dockite/field@0.3.0-alpha.9) (2020-08-21)
 
 **Note:** Version bump only for package @dockite/field

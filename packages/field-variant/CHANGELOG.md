@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.25](https://github.com/dockite/dockite/compare/@dockite/field-variant@0.3.0-alpha.24...@dockite/field-variant@0.3.0-alpha.25) (2020-08-27)
+
+
+### Features
+
+* support first class hidden fields ([5179570](https://github.com/dockite/dockite/commit/5179570148c1caa8973a732253598bed818428a2))
+
+
+
+
+
 # [0.3.0-alpha.24](https://github.com/dockite/dockite/compare/@dockite/field-variant@0.3.0-alpha.23...@dockite/field-variant@0.3.0-alpha.24) (2020-08-26)
 
 **Note:** Version bump only for package @dockite/field-variant

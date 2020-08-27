@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.2.0-alpha.23](https://github.com/dockite/dockite/compare/@dockite/where-builder@0.2.0-alpha.22...@dockite/where-builder@0.2.0-alpha.23) (2020-08-27)
+
+**Note:** Version bump only for package @dockite/where-builder
+
+
+
+
+
 # [0.2.0-alpha.22](https://github.com/dockite/dockite/compare/@dockite/where-builder@0.2.0-alpha.21...@dockite/where-builder@0.2.0-alpha.22) (2020-08-26)
 
 **Note:** Version bump only for package @dockite/where-builder

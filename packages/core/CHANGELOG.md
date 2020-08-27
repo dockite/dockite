@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.55](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.54...@dockite/core@0.4.0-alpha.55) (2020-08-27)
+
+
+### Features
+
+* support first class hidden fields ([5179570](https://github.com/dockite/dockite/commit/5179570148c1caa8973a732253598bed818428a2))
+
+
+
+
+
 # [0.4.0-alpha.54](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.53...@dockite/core@0.4.0-alpha.54) (2020-08-27)
 
 
