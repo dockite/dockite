@@ -94,12 +94,19 @@
               v-else-if="
                 Array.isArray(scope.row.data[field.name]) && scope.row.data[field.name].length > 0
               "
-              class="w-full"
+              class="w-full mx-auto"
+              style="max-width: 75px;"
               :src="scope.row.data[field.name][0].url"
               alt=""
             />
 
-            <img v-else class="w-full" :src="scope.row.data[field.name].url" alt="" />
+            <img
+              v-else
+              class="w-full mx-auto"
+              style="max-width: 75px;"
+              :src="scope.row.data[field.name].url"
+              alt=""
+            />
           </span>
 
           <span v-else>
