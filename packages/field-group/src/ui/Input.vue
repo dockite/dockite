@@ -41,16 +41,17 @@
                     </div>
 
                     <div class="flex-1 clearfix">
-                      <component
-                        :is="$dockiteFieldManager[field.type].input"
-                        v-for="(field, fieldIndex) in fields"
-                        :key="fieldIndex"
-                        v-model="fieldData[itemIndex][field.name]"
-                        :name="`${name}.${itemIndex}.${field.name}`"
-                        :field-config="field"
-                        :form-data="formData"
-                        :schema="schema"
-                      />
+                      <div v-for="(field, fieldIndex) in fields" :key="fieldIndex" class="w-full">
+                        <component
+                          :is="$dockiteFieldManager[field.type].input"
+                          v-if="$dockiteFieldManager[field.type].input && !field.settings.hidden"
+                          v-model="fieldData[itemIndex][field.name]"
+                          :name="`${name}.${itemIndex}.${field.name}`"
+                          :field-config="field"
+                          :form-data="formData"
+                          :schema="schema"
+                        />
+                      </div>
 
                       <div v-if="repeatable" class="float-right">
                         <el-button
@@ -86,16 +87,17 @@
             <template v-else>
               <div class="dockite-field-group--item items-center mb-3">
                 <div class="flex-1">
-                  <component
-                    :is="$dockiteFieldManager[field.type].input"
-                    v-for="(field, index) in fields"
-                    :key="index"
-                    v-model="fieldData[field.name]"
-                    :name="`${name}.${field.name}`"
-                    :field-config="field"
-                    :form-data="formData"
-                    :schema="schema"
-                  />
+                  <div v-for="(field, index) in fields" :key="index">
+                    <component
+                      :is="$dockiteFieldManager[field.type].input"
+                      v-if="$dockiteFieldManager[field.type].input && !field.settings.hidden"
+                      v-model="fieldData[field.name]"
+                      :name="`${name}.${field.name}`"
+                      :field-config="field"
+                      :form-data="formData"
+                      :schema="schema"
+                    />
+                  </div>
                 </div>
               </div>
             </template>

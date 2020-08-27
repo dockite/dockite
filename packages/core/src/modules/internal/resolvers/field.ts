@@ -1,4 +1,4 @@
-import { Field, Document } from '@dockite/database';
+import { Document, DocumentRevision, Field } from '@dockite/database';
 import GraphQLJSON from 'graphql-type-json';
 import { omitBy } from 'lodash';
 import {
@@ -10,7 +10,7 @@ import {
   Query,
   Resolver,
 } from 'type-graphql';
-import { getRepository } from 'typeorm';
+import { getManager, getRepository } from 'typeorm';
 
 import { Authenticated, Authorized } from '../../../common/decorators';
 import { DockiteEvents } from '../../../events';
@@ -105,6 +105,8 @@ export class FieldResolver {
       schemaId,
     });
 
+    await this.handleReviseAllDocuments(field.schemaId);
+
     const savedField = await repository.save(field);
 
     DockiteEvents.emit('reload');
@@ -142,6 +144,8 @@ export class FieldResolver {
       );
 
       if (name !== field.name) {
+        await this.handleReviseAllDocuments(field.schemaId);
+
         await documentRepository
           .createQueryBuilder('document')
           .update()
@@ -180,6 +184,8 @@ export class FieldResolver {
     try {
       const field = await repository.findOneOrFail(id);
 
+      await this.handleReviseAllDocuments(field.schemaId);
+
       await repository.delete(field.id);
 
       DockiteEvents.emit('reload');
@@ -188,5 +194,21 @@ export class FieldResolver {
     } catch {
       return false;
     }
+  }
+
+  private async handleReviseAllDocuments(schemaId: string): Promise<void> {
+    const documentRepository = getRepository(Document);
+    const revisionRepository = getRepository(DocumentRevision);
+
+    // Create the corresponding revisions
+    await getManager().query(
+      `
+        INSERT INTO ${revisionRepository.metadata.tableName} ("documentId", "data", "userId", "schemaId")
+        SELECT d."id", d."data", d."userId", d."schemaId"
+        FROM ${documentRepository.metadata.tableName} d
+        WHERE d."schemaId" = $1
+        `,
+      [schemaId],
+    );
   }
 }

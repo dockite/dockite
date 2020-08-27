@@ -38,7 +38,7 @@
           <el-tab-pane v-for="tab in availableTabs" :key="tab" :label="tab" :name="tab">
             <div v-for="field in getFieldsByGroupName(tab)" :key="field.id">
               <div
-                v-if="$dockiteFieldManager[field.type].input"
+                v-if="$dockiteFieldManager[field.type].input && !field.settings.hidden"
                 class="flex justify-between items-center -mx-3"
               >
                 <div class="w-full px-3">

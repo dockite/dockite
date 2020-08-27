@@ -4,6 +4,7 @@ import { Schema } from './schema';
 
 export interface FieldSettings {
   default?: any;
+  hidden?: boolean;
   [key: string]: any;
 }
 

@@ -33,7 +33,7 @@
         <div v-else class="dockite-field-variant--item p-3 clearfix">
           <component
             :is="$dockiteFieldManager[selectedField.type].input"
-            v-if="fieldData !== null"
+            v-if="fieldData !== null && !selectedField.settings.hidden"
             v-model="fieldData[selectedField.name]"
             :name="`${name}.${selectedField.name}`"
             :schema="schema"

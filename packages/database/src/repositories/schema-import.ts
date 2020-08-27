@@ -1,7 +1,7 @@
-import { EntityRepository, getRepository, Repository } from 'typeorm';
-import { omit, cloneDeep } from 'lodash';
+import { cloneDeep, differenceBy, omit } from 'lodash';
+import { EntityRepository, getManager, getRepository, Repository } from 'typeorm';
 
-import { Schema, Field, SchemaRevision } from '../entities';
+import { Document, DocumentRevision, Field, Schema, SchemaRevision } from '../entities';
 
 @EntityRepository(Schema)
 export class SchemaImportRepository extends Repository<Schema> {
@@ -30,11 +30,17 @@ export class SchemaImportRepository extends Repository<Schema> {
 
     const schemaFields = schema.fields ?? [];
 
+    const renameFieldPromises: Promise<any>[] = [];
+
     const fieldsToBeImported = payload.fields.map(field => {
       if (!field.id) {
         const fieldMatch = schemaFields.find(f => f.name === field.name);
 
         if (fieldMatch) {
+          if (fieldMatch.name !== field.name) {
+            this.handleRenameField(fieldMatch, field.name);
+          }
+
           return {
             ...field,
             id: fieldMatch.id,
@@ -44,6 +50,8 @@ export class SchemaImportRepository extends Repository<Schema> {
 
       return field;
     });
+
+    await Promise.all(renameFieldPromises);
 
     const fieldsToBeDeleted = schemaFields.filter(
       field => !fieldsToBeImported.some(fieldToImport => field.id === fieldToImport.id),
@@ -74,6 +82,10 @@ export class SchemaImportRepository extends Repository<Schema> {
 
     const savedSchema = await schemaRepository.save(newSchema);
 
+    if (differenceBy(schemaFields, fieldsToBeImported).length > 0) {
+      await this.handleReviseAllDocuments(savedSchema.id);
+    }
+
     await Promise.all([
       fieldRepository.remove(fieldsToBeDeleted),
       fieldRepository.save(
@@ -82,5 +94,34 @@ export class SchemaImportRepository extends Repository<Schema> {
     ]);
 
     return savedSchema;
+  }
+
+  private async handleRenameField(oldField: Field, newName: string): Promise<void> {
+    await getRepository(Document)
+      .createQueryBuilder('document')
+      .update()
+      .set({
+        data: () =>
+          `data - '${oldField.name}' || jsonb_build_object('${newName}', data->'${oldField.name}')`,
+      })
+      .where('schemaId = :schemaId', { schemaId: oldField.schemaId })
+      .andWhere('data ? :fieldName', { fieldName: oldField.name })
+      .execute();
+  }
+
+  private async handleReviseAllDocuments(schemaId: string): Promise<void> {
+    const documentRepository = getRepository(Document);
+    const revisionRepository = getRepository(DocumentRevision);
+
+    // Create the corresponding revisions
+    await getManager().query(
+      `
+        INSERT INTO ${revisionRepository.metadata.tableName} ("documentId", "data", "userId", "schemaId")
+        SELECT d."id", d."data", d."userId", d."schemaId"
+        FROM ${documentRepository.metadata.tableName} d
+        WHERE d."schemaId" = $1
+        `,
+      [schemaId],
+    );
   }
 }

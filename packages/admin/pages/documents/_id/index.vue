@@ -50,18 +50,18 @@
                 {{ tab }}
               </div>
 
-              <component
-                :is="$dockiteFieldManager[field.type].input"
-                v-for="field in getFieldsByGroupName(tab)"
-                :key="field.id"
-                v-model="form[field.name]"
-                :name="field.name"
-                :field-config="field"
-                :form-data="form"
-                :schema="schema"
-                :groups.sync="groups"
-              >
-              </component>
+              <div v-for="field in getFieldsByGroupName(tab)" :key="field.id">
+                <component
+                  :is="$dockiteFieldManager[field.type].input"
+                  v-if="$dockiteFieldManager[field.type].input && !field.settings.hidden"
+                  v-model="form[field.name]"
+                  :name="field.name"
+                  :field-config="field"
+                  :form-data="form"
+                  :schema="schema"
+                  :groups.sync="groups"
+                />
+              </div>
             </el-tab-pane>
           </el-tabs>
         </el-form>
