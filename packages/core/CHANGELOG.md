@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.53](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.52...@dockite/core@0.4.0-alpha.53) (2020-08-27)
+
+
+### Bug Fixes
+
+* **core:** allow pool size configuration ([38a13b5](https://github.com/dockite/dockite/commit/38a13b51a5f00f5cca9e51b7a2f24a6919f9fa36))
+
+
+### Features
+
+* **admin:** initial support for deleted documents ([b2e63ef](https://github.com/dockite/dockite/commit/b2e63ef7172c37532dc3d0d7e202416e5f6e3724))
+
+
+
+
+
 # [0.4.0-alpha.52](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.51...@dockite/core@0.4.0-alpha.52) (2020-08-26)
 
 
