@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.62](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.61...@dockite/admin@0.4.0-alpha.62) (2020-08-27)
+
+
+### Features
+
+* **admin:** initial deleted view and restoration ([1047014](https://github.com/dockite/dockite/commit/104701499f11a5f6e3ce6f0811c6a4954bdfa6f1))
+
+
+
+
+
 # [0.4.0-alpha.61](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.60...@dockite/admin@0.4.0-alpha.61) (2020-08-27)
 
 
