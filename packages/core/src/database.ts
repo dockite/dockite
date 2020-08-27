@@ -30,12 +30,16 @@ export const connect = async (): Promise<Connection> => {
       password: config.database.password,
       database: config.database.database,
       port: config.database.port,
-      subscribers: Object.values(subscribers),
       ssl: config.database.ssl ?? false,
+      subscribers: Object.values(subscribers),
       synchronize: true,
       entities: [...Object.values(entities), ...externalEntities],
       logging: ['query', 'error'],
       logger: 'debug',
+      extra: {
+        max: config.database.maxPoolSize ?? 10,
+        connectionTimeoutMillis: 1000,
+      },
     });
   }
 

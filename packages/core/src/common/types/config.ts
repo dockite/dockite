@@ -34,6 +34,7 @@ export interface CoreConfiguration {
     database: string;
     port: number;
     ssl?: boolean;
+    maxPoolSize?: number;
   };
 
   mail: {
