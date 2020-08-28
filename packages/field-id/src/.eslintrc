@@ -1,0 +1,66 @@
+{
+  "root": true,
+  "parserOptions": {
+    "parser": "@typescript-eslint/parser",
+    "ecmaVersion": 6,
+    "sourceType": "module"
+  },
+  "env": {
+    "es6": true
+  },
+  "plugins": ["@typescript-eslint", "import", "prettier"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "airbnb-base",
+    "plugin:vue/base",
+    "plugin:vue/essential",
+    "plugin:vue/recommended",
+    "plugin:vue/strongly-recommended",
+    "prettier/vue",
+    "plugin:prettier/recommended"
+  ],
+  "settings": {
+    "import/extensions": [".ts", ".tsx", ".vue", ".js", ".mjs"],
+    "import/parsers": {
+      "@typescript-eslint/parser": [".ts", ".tsx", ".vue", ".js", ".mjs"]
+    },
+    "import/resolver": {
+      "node": {
+        "extensions": [".ts", ".tsx", ".vue", ".js", ".mjs"]
+      }
+    },
+    "import/no-cycle": "warn"
+  },
+  "rules": {
+    "class-methods-use-this": "off",
+    "max-classes-per-file": "off",
+    "import/no-extraneous-dependencies": ["error", { "devDependencies": ["**/*.vue", "**/*.d.ts"] }],
+    "no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
+    "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+
+    "import/prefer-default-export": "off",
+    "import/order": [
+      "error",
+      {
+        "groups": ["builtin", "external", "internal", "parent", "sibling", "index"],
+        "newlines-between": "always"
+      }
+    ],
+    "import/extensions": [
+      "error",
+      "always",
+      {
+        "ts": "never",
+        "tsx": "never",
+        "js": "never",
+        "jsx": "never",
+        "vue": "never"
+      }
+    ],
+    "import/no-cycle": "off",
+    "vue/component-tags-order": ["error", {
+      "order": ["template", "script", "style"]
+    }]
+  }
+}
