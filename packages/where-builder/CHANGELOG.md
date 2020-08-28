@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.2.0-alpha.25](https://github.com/dockite/dockite/compare/@dockite/where-builder@0.2.0-alpha.24...@dockite/where-builder@0.2.0-alpha.25) (2020-08-28)
+
+
+### Features
+
+* **where-builder:** support top level columns ([1e0646d](https://github.com/dockite/dockite/commit/1e0646dbcb16f1e8eedb7667f79300cfe47b4a3c))
+
+
+
+
+
 # [0.2.0-alpha.24](https://github.com/dockite/dockite/compare/@dockite/where-builder@0.2.0-alpha.23...@dockite/where-builder@0.2.0-alpha.24) (2020-08-28)
 
 
