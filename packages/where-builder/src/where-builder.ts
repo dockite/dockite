@@ -2,6 +2,7 @@
 import { randomBytes } from 'crypto';
 
 import { Brackets, WhereExpression } from 'typeorm';
+import { Document } from '@dockite/database';
 
 import { ConstraintArray, ConstraintHandlerFn, ConstraintOperator, QueryBuilder } from './types';
 import {
@@ -12,52 +13,91 @@ import {
   unsafeStringToNativeType,
 } from './util';
 
+type DocumentKey = keyof Document;
+
+const reservedKeys: string[] = [
+  'id',
+  'createdAt',
+  'updatedAt',
+  'schemaId',
+  'publishedAt',
+  'deletedAt',
+] as DocumentKey[];
+
 const ConstraintHandlerMap: Record<ConstraintOperator, ConstraintHandlerFn> = {
   $eq: (qb, constraint) => {
     const param = randomBytes(6).toString('hex');
-    const name = columnPartsToColumn(['data', ...constraint.name.split('.')], 'text');
+    let name = columnPartsToColumn(['data', ...constraint.name.split('.')], 'text');
+
+    if (reservedKeys.includes(constraint.name)) {
+      name = constraint.name;
+    }
 
     qb.andWhere(`${name} = :${param}`, { [param]: constraint.value });
   },
 
   $ne: (qb, constraint) => {
     const param = randomBytes(6).toString('hex');
-    const name = columnPartsToColumn(['data', ...constraint.name.split('.')], 'text');
+    let name = columnPartsToColumn(['data', ...constraint.name.split('.')], 'text');
+
+    if (reservedKeys.includes(constraint.name)) {
+      name = constraint.name;
+    }
 
     qb.andWhere(`${name} != :${param}`, { [param]: constraint.value });
   },
 
   $gt: (qb, constraint) => {
     const param = randomBytes(6).toString('hex');
-    const name = columnPartsToColumn(['data', ...constraint.name.split('.')], 'native');
+    let name = columnPartsToColumn(['data', ...constraint.name.split('.')], 'native');
+
+    if (reservedKeys.includes(constraint.name)) {
+      name = constraint.name;
+    }
 
     qb.andWhere(`${name} > :${param}`, { [param]: unsafeStringToNativeType(constraint.value) });
   },
 
   $gte: (qb, constraint) => {
     const param = randomBytes(6).toString('hex');
-    const name = columnPartsToColumn(['data', ...constraint.name.split('.')], 'native');
+    let name = columnPartsToColumn(['data', ...constraint.name.split('.')], 'native');
+
+    if (reservedKeys.includes(constraint.name)) {
+      name = constraint.name;
+    }
 
     qb.andWhere(`${name} >= :${param}`, { [param]: unsafeStringToNativeType(constraint.value) });
   },
 
   $lt: (qb, constraint) => {
     const param = randomBytes(6).toString('hex');
-    const name = columnPartsToColumn(['data', ...constraint.name.split('.')], 'native');
+    let name = columnPartsToColumn(['data', ...constraint.name.split('.')], 'native');
+
+    if (reservedKeys.includes(constraint.name)) {
+      name = constraint.name;
+    }
 
     qb.andWhere(`${name} < :${param}`, { [param]: unsafeStringToNativeType(constraint.value) });
   },
 
   $lte: (qb, constraint) => {
     const param = randomBytes(6).toString('hex');
-    const name = columnPartsToColumn(['data', ...constraint.name.split('.')], 'native');
+    let name = columnPartsToColumn(['data', ...constraint.name.split('.')], 'native');
+
+    if (reservedKeys.includes(constraint.name)) {
+      name = constraint.name;
+    }
 
     qb.andWhere(`${name} <= :${param}`, { [param]: unsafeStringToNativeType(constraint.value) });
   },
 
   $gt_date: (qb, constraint) => {
     const param = randomBytes(6).toString('hex');
-    const name = columnPartsToColumn(['data', ...constraint.name.split('.')], 'text');
+    let name = columnPartsToColumn(['data', ...constraint.name.split('.')], 'text');
+
+    if (reservedKeys.includes(constraint.name)) {
+      name = constraint.name;
+    }
 
     qb.andWhere(`(${name})::timestamp > (:${param})::timestamp`, {
       [param]: unsafeStringToNativeType(constraint.value),
@@ -66,7 +106,11 @@ const ConstraintHandlerMap: Record<ConstraintOperator, ConstraintHandlerFn> = {
 
   $gte_date: (qb, constraint) => {
     const param = randomBytes(6).toString('hex');
-    const name = columnPartsToColumn(['data', ...constraint.name.split('.')], 'text');
+    let name = columnPartsToColumn(['data', ...constraint.name.split('.')], 'text');
+
+    if (reservedKeys.includes(constraint.name)) {
+      name = constraint.name;
+    }
 
     qb.andWhere(`(${name})::timestamp >= (:${param})::timestamp`, {
       [param]: unsafeStringToNativeType(constraint.value),
@@ -75,7 +119,11 @@ const ConstraintHandlerMap: Record<ConstraintOperator, ConstraintHandlerFn> = {
 
   $lt_date: (qb, constraint) => {
     const param = randomBytes(6).toString('hex');
-    const name = columnPartsToColumn(['data', ...constraint.name.split('.')], 'text');
+    let name = columnPartsToColumn(['data', ...constraint.name.split('.')], 'text');
+
+    if (reservedKeys.includes(constraint.name)) {
+      name = constraint.name;
+    }
 
     qb.andWhere(`(${name})::timestamp < (:${param})::timestamp`, {
       [param]: unsafeStringToNativeType(constraint.value),
@@ -84,7 +132,11 @@ const ConstraintHandlerMap: Record<ConstraintOperator, ConstraintHandlerFn> = {
 
   $lte_date: (qb, constraint) => {
     const param = randomBytes(6).toString('hex');
-    const name = columnPartsToColumn(['data', ...constraint.name.split('.')], 'text');
+    let name = columnPartsToColumn(['data', ...constraint.name.split('.')], 'text');
+
+    if (reservedKeys.includes(constraint.name)) {
+      name = constraint.name;
+    }
 
     qb.andWhere(`(${name})::timestamp <= (:${param})::timestamp`, {
       [param]: unsafeStringToNativeType(constraint.value),
@@ -93,21 +145,33 @@ const ConstraintHandlerMap: Record<ConstraintOperator, ConstraintHandlerFn> = {
 
   $like: (qb, constraint) => {
     const param = randomBytes(6).toString('hex');
-    const name = columnPartsToColumn(['data', ...constraint.name.split('.')], 'text');
+    let name = columnPartsToColumn(['data', ...constraint.name.split('.')], 'text');
+
+    if (reservedKeys.includes(constraint.name)) {
+      name = constraint.name;
+    }
 
     qb.andWhere(`${name} LIKE :${param}`, { [param]: `%${constraint.value}%` });
   },
 
   $ilike: (qb, constraint) => {
     const param = randomBytes(6).toString('hex');
-    const name = columnPartsToColumn(['data', ...constraint.name.split('.')], 'text');
+    let name = columnPartsToColumn(['data', ...constraint.name.split('.')], 'text');
+
+    if (reservedKeys.includes(constraint.name)) {
+      name = constraint.name;
+    }
 
     qb.andWhere(`${name} ILIKE :${param}`, { [param]: `%${constraint.value}%` });
   },
 
   $array_contains: (qb, constraint) => {
     const param = randomBytes(6).toString('hex');
-    const name = columnPartsToColumn(['data', ...constraint.name.split('.')], 'native');
+    let name = columnPartsToColumn(['data', ...constraint.name.split('.')], 'native');
+
+    if (reservedKeys.includes(constraint.name)) {
+      name = constraint.name;
+    }
 
     qb.andWhere(`${name} ? :${param}`, {
       [param]: unsafeStringToNativeType(constraint.value),
@@ -116,7 +180,11 @@ const ConstraintHandlerMap: Record<ConstraintOperator, ConstraintHandlerFn> = {
 
   $array_not_contains: (qb, constraint) => {
     const param = randomBytes(6).toString('hex');
-    const name = columnPartsToColumn(['data', ...constraint.name.split('.')], 'native');
+    let name = columnPartsToColumn(['data', ...constraint.name.split('.')], 'native');
+
+    if (reservedKeys.includes(constraint.name)) {
+      name = constraint.name;
+    }
 
     qb.andWhere(`NOT ${name} ? :${param}`, {
       [param]: unsafeStringToNativeType(constraint.value),
@@ -125,19 +193,31 @@ const ConstraintHandlerMap: Record<ConstraintOperator, ConstraintHandlerFn> = {
 
   $regex: (qb, constraint) => {
     const param = randomBytes(6).toString('hex');
-    const name = columnPartsToColumn(['data', ...constraint.name.split('.')], 'text');
+    let name = columnPartsToColumn(['data', ...constraint.name.split('.')], 'text');
+
+    if (reservedKeys.includes(constraint.name)) {
+      name = constraint.name;
+    }
 
     qb.andWhere(`${name} ~ :${param}`, { [param]: constraint.value });
   },
 
   $null: (qb, constraint) => {
-    const name = columnPartsToColumn(['data', ...constraint.name.split('.')], 'text');
+    let name = columnPartsToColumn(['data', ...constraint.name.split('.')], 'text');
+
+    if (reservedKeys.includes(constraint.name)) {
+      name = constraint.name;
+    }
 
     qb.andWhere(`COALESCE(${name}, '') = ''`);
   },
 
   $not_null: (qb, constraint) => {
-    const name = columnPartsToColumn(['data', ...constraint.name.split('.')], 'text');
+    let name = columnPartsToColumn(['data', ...constraint.name.split('.')], 'text');
+
+    if (reservedKeys.includes(constraint.name)) {
+      name = constraint.name;
+    }
 
     qb.andWhere(`COALESCE(${name}, '') != ''`);
   },

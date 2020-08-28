@@ -1,32 +1,32 @@
 import { can } from '@dockite/ability';
-import { Schema, Document, User, DocumentRevision, SchemaType, Field } from '@dockite/database';
+import { Document, DocumentRevision, Field, Schema, SchemaType, User } from '@dockite/database';
 import {
   DockiteFieldStatic,
-  GlobalContext,
-  FindManyResult,
   DockiteGraphqlSortInputType,
+  FindManyResult,
+  GlobalContext,
 } from '@dockite/types';
+import { WhereBuilder, WhereBuilderInputType } from '@dockite/where-builder';
+import debug from 'debug';
 import {
-  GraphQLFieldConfigMap,
-  GraphQLObjectType,
-  Source,
-  GraphQLString,
-  GraphQLSchema,
-  GraphQLList,
-  GraphQLInt,
   GraphQLBoolean,
-  GraphQLNonNull,
-  GraphQLInputObjectType,
+  GraphQLFieldConfigMap,
   GraphQLInputFieldConfigMap,
+  GraphQLInputObjectType,
+  GraphQLInt,
+  GraphQLList,
+  GraphQLNonNull,
+  GraphQLObjectType,
   GraphQLResolveInfo,
+  GraphQLSchema,
   GraphQLSchemaConfig,
+  GraphQLString,
+  Source,
 } from 'graphql';
 import { cloneDeep, omit } from 'lodash';
-import debug from 'debug';
 import typeorm from 'typeorm';
-import { Express } from 'express';
-import { WhereBuilderInputType, WhereBuilder } from '@dockite/where-builder';
 
+import { DocumentMetadata } from './types';
 import { strToColumnPath } from './util';
 
 type MaybePromise<T> = T | Promise<T>;
@@ -232,6 +232,11 @@ const makeFieldsForGraphQLObjectType = async (fieldConfig: ConfigBagItem): Promi
     type: GraphQLString,
   };
 
+  // eslint-disable-next-line no-underscore-dangle
+  fieldConfigMap._metadata = {
+    type: DocumentMetadata,
+  };
+
   // Next we attempt to assign each schema field to the object type
   await Promise.all(
     schema.fields.map(async field => {
@@ -337,7 +342,7 @@ const createGraphQLQueriesForSchema = async (
           },
         });
 
-        return { id: document.id, ...document.data };
+        return { id: document.id, ...document.data, _metadata: omit(document, 'data') };
       },
     },
 
@@ -411,7 +416,7 @@ const createGraphQLQueriesForSchema = async (
         const totalPages = Math.ceil(totalItems / perPage);
 
         return {
-          results: results.map(doc => ({ id: doc.id, ...doc.data })),
+          results: results.map(doc => ({ id: doc.id, ...doc.data, _metadata: omit(doc, 'data') })),
           totalItems,
           currentPage: page,
           hasNextPage: page < totalPages,
@@ -490,7 +495,7 @@ const createGraphQLQueriesForSchema = async (
         const totalPages = Math.ceil(totalItems / perPage);
 
         return {
-          results: results.map(doc => ({ id: doc.id, ...doc.data })),
+          results: results.map(doc => ({ id: doc.id, ...doc.data, _metadata: omit(doc, 'data') })),
           totalItems,
           currentPage: page,
           hasNextPage: page < totalPages,

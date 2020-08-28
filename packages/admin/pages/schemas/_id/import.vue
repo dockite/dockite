@@ -62,6 +62,8 @@ export default class ImportSchemaWithIdPage extends Vue {
         payload: this.payload,
       });
 
+      await this.fetchSchemaById(true);
+
       this.$message({
         message: 'Schema imported successfully!',
         type: 'success',
