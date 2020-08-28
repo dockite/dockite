@@ -1,6 +1,6 @@
 {
   "name": "@dockite/field-s3-image",
-  "version": "0.3.0-alpha.29",
+  "version": "0.3.0-alpha.30",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
@@ -41,9 +41,9 @@
     "style-loader": "^1.1.3",
     "ts-loader": "^7.0.0",
     "typescript": "^3.9.5",
-    "vuedraggable": "^2.24.0",
     "vue-loader": "^15.9.1",
     "vue-template-compiler": "^2.6.11",
+    "vuedraggable": "^2.24.0",
     "webpack": "^4.42.0",
     "webpack-bundle-analyzer": "^3.6.1",
     "webpack-cli": "^3.3.11"

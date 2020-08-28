@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.30](https://github.com/dockite/dockite/compare/@dockite/field-s3-image@0.3.0-alpha.29...@dockite/field-s3-image@0.3.0-alpha.30) (2020-08-28)
+
+
+### Bug Fixes
+
+* **field-s3-image:** add lightbox and reordering of images ([b027400](https://github.com/dockite/dockite/commit/b027400a2c8a49d02750706ddad1fd902041aee3))
+
+
+
+
+
 # [0.3.0-alpha.29](https://github.com/dockite/dockite/compare/@dockite/field-s3-image@0.3.0-alpha.28...@dockite/field-s3-image@0.3.0-alpha.29) (2020-08-27)
 
 **Note:** Version bump only for package @dockite/field-s3-image

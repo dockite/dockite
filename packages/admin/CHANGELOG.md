@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.67](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.66...@dockite/admin@0.4.0-alpha.67) (2020-08-28)
+
+
+### Bug Fixes
+
+* **field-s3-image:** add lightbox and reordering of images ([b027400](https://github.com/dockite/dockite/commit/b027400a2c8a49d02750706ddad1fd902041aee3))
+
+
+
+
+
 # [0.4.0-alpha.66](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.65...@dockite/admin@0.4.0-alpha.66) (2020-08-28)
 
 
