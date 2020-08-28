@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.65](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.64...@dockite/admin@0.4.0-alpha.65) (2020-08-28)
+
+
+### Bug Fixes
+
+* **where-builder:** array_contains doesn't work ([20399eb](https://github.com/dockite/dockite/commit/20399ebc88fc5c76802dec23096f925e3e115eb4))
+
+
+
+
+
 # [0.4.0-alpha.64](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.63...@dockite/admin@0.4.0-alpha.64) (2020-08-28)
 
 

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.1.0-alpha.18](https://github.com/dockite/dockite/compare/@dockite/field-conditional-select@0.1.0-alpha.17...@dockite/field-conditional-select@0.1.0-alpha.18) (2020-08-28)
+
+
+### Bug Fixes
+
+* **where-builder:** array_contains doesn't work ([20399eb](https://github.com/dockite/dockite/commit/20399ebc88fc5c76802dec23096f925e3e115eb4))
+
+
+
+
+
 # [0.1.0-alpha.17](https://github.com/dockite/dockite/compare/@dockite/field-conditional-select@0.1.0-alpha.16...@dockite/field-conditional-select@0.1.0-alpha.17) (2020-08-28)
 
 

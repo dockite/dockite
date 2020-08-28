@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.2.0-alpha.24](https://github.com/dockite/dockite/compare/@dockite/where-builder@0.2.0-alpha.23...@dockite/where-builder@0.2.0-alpha.24) (2020-08-28)
+
+
+### Bug Fixes
+
+* **where-builder:** array_contains doesn't work ([20399eb](https://github.com/dockite/dockite/commit/20399ebc88fc5c76802dec23096f925e3e115eb4))
+
+
+
+
+
 # [0.2.0-alpha.23](https://github.com/dockite/dockite/compare/@dockite/where-builder@0.2.0-alpha.22...@dockite/where-builder@0.2.0-alpha.23) (2020-08-27)
 
 **Note:** Version bump only for package @dockite/where-builder
