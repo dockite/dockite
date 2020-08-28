@@ -16,6 +16,7 @@ export const Operators = {
   $lte_date: 'Checks for a date that is less than the date provided',
   $regex: 'Checks for a value matching the regex provided',
   $array_contains: 'Checks if an array contains the input provided',
+  $array_not_contains: 'Checks if an array does not contain the input provided',
   $null: 'Checks for values which are null',
   $not_null: 'Checks for values which are not null',
 };

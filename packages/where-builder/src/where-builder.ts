@@ -109,7 +109,16 @@ const ConstraintHandlerMap: Record<ConstraintOperator, ConstraintHandlerFn> = {
     const param = randomBytes(6).toString('hex');
     const name = columnPartsToColumn(['data', ...constraint.name.split('.')], 'native');
 
-    qb.andWhere(`${name} @> :${param}::jsonb`, {
+    qb.andWhere(`${name} ? :${param}`, {
+      [param]: unsafeStringToNativeType(constraint.value),
+    });
+  },
+
+  $array_not_contains: (qb, constraint) => {
+    const param = randomBytes(6).toString('hex');
+    const name = columnPartsToColumn(['data', ...constraint.name.split('.')], 'native');
+
+    qb.andWhere(`NOT ${name} ? :${param}`, {
       [param]: unsafeStringToNativeType(constraint.value),
     });
   },

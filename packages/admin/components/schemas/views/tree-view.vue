@@ -40,7 +40,6 @@ import { cloneDeep, sortBy } from 'lodash';
 import { Component, Vue, Watch, Ref } from 'nuxt-property-decorator';
 import { Fragment } from 'vue-fragment';
 
-import { MAX_32_BIT_NUMBER } from '../../../common/constants';
 import { ManyResultSet, FindDocumentResultItem } from '../../../common/types';
 
 import * as data from '~/store/data';
@@ -97,7 +96,7 @@ export default class TreeViewComponent extends Vue {
       this.$store.dispatch(`${data.namespace}/fetchFindDocumentsBySchemaId`, {
         schemaId: this.schemaId,
         page,
-        perPage: MAX_32_BIT_NUMBER,
+        perPage: 1000,
       });
     } catch (_) {
       this.$message({
