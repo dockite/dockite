@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.1.0-alpha.17](https://github.com/dockite/dockite/compare/@dockite/field-conditional-select@0.1.0-alpha.16...@dockite/field-conditional-select@0.1.0-alpha.17) (2020-08-28)
+
+
+### Bug Fixes
+
+* **field-conditional-select:** allow no groups/fields to be selected ([7cca142](https://github.com/dockite/dockite/commit/7cca14220bede272cc335caa3d204df1b0155d09))
+
+
+
+
+
 # [0.1.0-alpha.16](https://github.com/dockite/dockite/compare/@dockite/field-conditional-select@0.1.0-alpha.15...@dockite/field-conditional-select@0.1.0-alpha.16) (2020-08-27)
 
 **Note:** Version bump only for package @dockite/field-conditional-select

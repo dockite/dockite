@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.64](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.63...@dockite/admin@0.4.0-alpha.64) (2020-08-28)
+
+
+### Bug Fixes
+
+* **admin:** set max-width on image columns ([95cd6ed](https://github.com/dockite/dockite/commit/95cd6ed488329690b1f054f1b582ba29fee6325a))
+
+
+
+
+
 # [0.4.0-alpha.63](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.62...@dockite/admin@0.4.0-alpha.63) (2020-08-27)
 
 
