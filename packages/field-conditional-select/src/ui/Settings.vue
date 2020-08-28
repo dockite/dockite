@@ -152,11 +152,7 @@ export default class SelectFieldSettingsComponent extends Vue {
       return;
     }
 
-    if (
-      this.optionLabel !== '' &&
-      this.optionValue.value &&
-      (this.optionValue.fieldsToHide.length > 0 || this.optionValue.groupsToHide.length > 0)
-    ) {
+    if (this.optionLabel !== '' && this.optionValue.value) {
       this.settings = {
         ...this.settings,
         options: {
