@@ -40,22 +40,44 @@
             {{ settings.maxSizeKB / 1000 }} MB
           </div>
         </el-upload>
-        <ul class="el-upload-list el-upload-list--picture">
+        <vue-draggable
+          v-model="fieldData"
+          v-bind="dragOptions"
+          handle=".item-handle"
+          tag="ul"
+          class="ul-upload-list el-upload-list--picture"
+          @start="drag = true"
+          @end="drag = false"
+        >
           <li
             v-for="(file, index) in fieldData"
             :key="file.checksum"
             tabindex="0"
             class="el-upload-list__item is-success"
           >
-            <img :src="file.url" :alt="file.alt" class="el-upload-list__item-thumbnail" />
+            <img
+              :src="file.url"
+              :alt="file.alt"
+              class="el-upload-list__item-thumbnail cursor-pointer"
+              @click="handleShowImage(file)"
+            />
 
-            <div class="dockite-field-s3-image--item">
-              <a class="el-upload-list__item-name dockite-field-s3-image--item-name">
-                <i class="el-icon-document" />
-                {{ file.name }} - {{ index }}
-              </a>
+            <div class="flex items-center h-full w-full">
+              <div class="pr-5 item-handle cursor-pointer">
+                <i class="el-icon-hamburger text-xl" />
+              </div>
 
-              <el-input v-model="file.alt" size="small" placeholder="Image alt text" />
+              <div class="dockite-field-s3-image--item">
+                <a
+                  class="el-upload-list__item-name dockite-field-s3-image--item-name"
+                  :href="file.url"
+                >
+                  <i class="el-icon-document" />
+                  {{ file.name }}
+                </a>
+
+                <el-input v-model="file.alt" size="small" placeholder="Image alt text" />
+              </div>
             </div>
 
             <label class="el-upload-list__item-status-label">
@@ -67,7 +89,7 @@
               press delete to remove
             </i>
           </li>
-        </ul>
+        </vue-draggable>
         <div v-for="(error, index) in errors" :key="index" class="dockite-field-s3-image--error">
           {{ error }}
         </div>
@@ -76,6 +98,22 @@
         </div>
       </div>
     </div>
+
+    <el-dialog
+      title="Revision Details"
+      custom-class="dockite-dialog--revision-detail"
+      :visible.sync="showLightbox"
+      :destroy-on-close="true"
+      @close="selectedImage = null"
+    >
+      <img
+        v-if="selectedImage"
+        :src="selectedImage.url"
+        :alt="selectedImage.alt"
+        class="w-full"
+        style="max-height: 60vh; object-fit: contain;"
+      />
+    </el-dialog>
   </el-form-item>
 </template>
 
@@ -84,6 +122,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 import { Schema } from '@dockite/database';
 import axios from 'axios';
 import gql from 'graphql-tag';
+import VueDraggable from 'vuedraggable';
 
 import {
   S3ImageType,
@@ -104,6 +143,9 @@ const presignURLMutation = gql`
 
 @Component({
   name: 'S3ImageFieldInputComponent',
+  components: {
+    VueDraggable,
+  },
 })
 export default class S3ImageFieldInputComponent extends Vue {
   @Prop({ required: true })
@@ -127,6 +169,18 @@ export default class S3ImageFieldInputComponent extends Vue {
   public rules: object[] = [];
 
   public errors: string[] = [];
+
+  public showLightbox = false;
+
+  public selectedImage: S3ImageType | null = null;
+
+  public drag = false;
+
+  public dragOptions = {
+    animation: 200,
+    disabled: false,
+    ghostClass: 'ghost',
+  };
 
   get settings(): S3ImageFieldSettings {
     return this.fieldConfig.settings;
@@ -381,6 +435,11 @@ export default class S3ImageFieldInputComponent extends Vue {
     }
   }
 
+  public handleShowImage(image: S3ImageType): void {
+    this.selectedImage = image;
+    this.showLightbox = true;
+  }
+
   public getMinRule(): object {
     return {
       type: 'array',
@@ -421,5 +480,11 @@ export default class S3ImageFieldInputComponent extends Vue {
   font-size: 12px;
   line-height: 1;
   padding-top: 4px;
+}
+
+.dockite-field-s3-image {
+  .el-upload-list__item-thumbnail {
+    object-fit: contain;
+  }
 }
 </style>

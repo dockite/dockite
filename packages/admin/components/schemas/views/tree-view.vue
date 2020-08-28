@@ -1,6 +1,7 @@
 <template>
   <div v-loading="loading > 0" class="tree-view">
     <el-tree
+      v-if="loading === 0"
       ref="tree"
       :data="documentTree"
       default-expand-all
@@ -213,11 +214,22 @@ export default class TreeViewComponent extends Vue {
 
   @Watch('schemaId', { immediate: true })
   async handleSchemaIdChange(): Promise<void> {
-    this.$store.dispatch(`${data.namespace}/fetchSchemaWithFieldsById`, {
-      id: this.$route.params.id,
-    });
+    try {
+      this.loading += 1;
 
-    await this.fetchFindDocumentsBySchemaId(1);
+      await this.$store.dispatch(`${data.namespace}/fetchSchemaWithFieldsById`, {
+        id: this.$route.params.id,
+      });
+
+      await this.fetchFindDocumentsBySchemaId(1);
+    } catch (_) {
+      this.$message({
+        message: 'An error occurred whilst retrieving the tree, please try again later.',
+        type: 'error',
+      });
+    } finally {
+      this.loading -= 1;
+    }
   }
 
   @Watch('documents', { immediate: true })
