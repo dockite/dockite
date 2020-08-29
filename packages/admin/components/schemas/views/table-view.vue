@@ -172,17 +172,20 @@
       </el-table-column>
     </el-table>
 
-    <el-row type="flex" justify="space-between">
-      <span />
+    <el-row type="flex" justify="space-between" align="middle">
+      <span class="px-3" style="font-size: 13px">
+        {{ paginationString }}
+      </span>
+
       <el-pagination
         :current-page="currentPage"
         class="dockite-element--pagination"
         :page-count="totalPages"
         :pager-count="5"
-        :page-size="20"
+        :page-size="perPage"
         :total="totalItems"
         hide-on-single-page
-        layout="total, prev, pager, next"
+        layout="jumper, prev, pager, next"
         @current-change="handlePageChange"
       />
     </el-row>
@@ -197,6 +200,8 @@ import { formatDistanceToNow } from 'date-fns';
 import { pickBy } from 'lodash';
 import { Component, Vue, Watch, Prop } from 'nuxt-property-decorator';
 import { Fragment } from 'vue-fragment';
+
+import { ITEMS_PER_PAGE } from '../../../common/constants';
 
 import {
   ManyResultSet,
@@ -256,6 +261,17 @@ export default class SchemaDocumentsPage extends Vue {
     return this.$store.getters[`${data.namespace}/getSchemaWithFieldsById`](this.schemaId);
   }
 
+  get perPage(): number {
+    return ITEMS_PER_PAGE;
+  }
+
+  get paginationString(): string {
+    const startingItem = (this.currentPage - 1) * this.perPage + 1;
+    const endingItem = startingItem + this.findDocumentsBySchemaId.results.length - 1;
+
+    return `Displaying documents ${startingItem} to ${endingItem} of ${this.findDocumentsBySchemaId.totalItems}`;
+  }
+
   get fieldsToDisplay(): Field[] {
     if (this.schema?.settings?.fieldsToDisplay) {
       return this.schema.settings.fieldsToDisplay
@@ -291,12 +307,19 @@ export default class SchemaDocumentsPage extends Vue {
   }
 
   public async fetchFindDocumentsBySchemaId(page = 1): Promise<void> {
+    window.scroll({
+      top: 0,
+      left: 0,
+      behavior: 'smooth',
+    });
+
     try {
       this.loading += 1;
 
       await this.$store.dispatch(`${data.namespace}/fetchFindDocumentsBySchemaId`, {
         schemaId: this.schemaId,
         page,
+        perPage: this.perPage,
         filters: Object.values(this.filters).filter(filter => filter !== null),
         sort: this.sortConfig,
         deleted: this.deleted,
@@ -312,12 +335,19 @@ export default class SchemaDocumentsPage extends Vue {
   }
 
   public async fetchSearchDocumentsWithSchema(term: string, page = 1): Promise<void> {
+    window.scroll({
+      top: 0,
+      left: 0,
+      behavior: 'smooth',
+    });
+
     try {
       this.loading += 1;
 
       await this.$store.dispatch(`${data.namespace}/fetchSearchDocumentsWithSchema`, {
         term,
         page,
+        perPage: this.perPage,
         schemaId: this.schemaId,
         sort: this.sortConfig,
       });
@@ -336,6 +366,13 @@ export default class SchemaDocumentsPage extends Vue {
   }
 
   public handlePageChange(newPage: number): void {
+    this.$router.replace({
+      query: {
+        ...this.$route.query,
+        'x-page': `${newPage}`,
+      },
+    });
+
     if (this.term === '') {
       this.fetchFindDocumentsBySchemaId(newPage);
     } else {
@@ -412,7 +449,7 @@ export default class SchemaDocumentsPage extends Vue {
       });
     }
 
-    this.fetchFindDocumentsBySchemaId(1);
+    this.fetchFindDocumentsBySchemaId(Number(this.$route.query['x-page'] as string) || 1);
   }
 
   @Watch('schemaId', { immediate: true })
@@ -432,7 +469,7 @@ export default class SchemaDocumentsPage extends Vue {
 
       this.handleRouteQueryChange();
 
-      this.fetchFindDocumentsBySchemaId(1);
+      this.fetchFindDocumentsBySchemaId(Number(this.$route.query['x-page'] as string) || 1);
     } catch (err) {
       console.log(err);
 

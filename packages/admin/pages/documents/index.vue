@@ -121,17 +121,19 @@
         </el-table-column>
       </el-table>
 
-      <el-row type="flex" justify="space-between">
-        <span />
+      <el-row type="flex" justify="space-between" align="middle">
+        <span class="px-3" style="font-size: 13px">
+          {{ paginationString }}
+        </span>
         <el-pagination
           :current-page="currentPage"
           class="dockite-element--pagination"
           :page-count="totalPages"
           :pager-count="5"
-          :page-size="20"
+          :page-size="perPage"
           :total="totalItems"
           hide-on-single-page
-          layout="total, prev, pager, next"
+          layout="jumper, prev, pager, next"
           @current-change="handlePageChange"
         />
       </el-row>
@@ -148,6 +150,7 @@ import { debounce } from 'lodash';
 import { Component, Vue, Watch } from 'nuxt-property-decorator';
 import { Fragment } from 'vue-fragment';
 
+import { ITEMS_PER_PAGE } from '../../common/constants';
 import {
   ManyResultSet,
   FindDocumentResultItem,
@@ -209,6 +212,10 @@ export default class AllDocumentsPage extends Vue {
     return this.documents.currentPage;
   }
 
+  get perPage(): number {
+    return ITEMS_PER_PAGE;
+  }
+
   get totalPages(): number {
     if (!this.documents.totalPages) {
       return 1;
@@ -237,27 +244,35 @@ export default class AllDocumentsPage extends Vue {
     };
   }
 
-  public fetchDocuments(page = 1): void {
+  get paginationString(): string {
+    const startingItem = (this.currentPage - 1) * this.perPage + 1;
+    const endingItem = startingItem + this.documents.results.length - 1;
+
+    return `Displaying documents ${startingItem} to ${endingItem} of ${this.documents.totalItems}`;
+  }
+
+  public async fetchDocuments(page = 1): Promise<void> {
     try {
       this.loading += 1;
 
       if (!this.canViewAllDocuments) {
-        this.$store.dispatch(`${data.namespace}/fetchFindDocumentsBySchemaIds`, {
+        await this.$store.dispatch(`${data.namespace}/fetchFindDocumentsBySchemaIds`, {
           schemaIds: this.schemaIds,
           page,
+          perPage: this.perPage,
           sort: this.sortConfig,
         });
       } else if (this.termDebounced !== '') {
-        this.$store.dispatch(`${data.namespace}/fetchSearchDocumentsWithSchema`, {
+        await this.$store.dispatch(`${data.namespace}/fetchSearchDocumentsWithSchema`, {
           term: this.termDebounced,
           page,
+          perPage: this.perPage,
           sort: this.sortConfig,
         });
-
-        return;
       } else {
-        this.$store.dispatch(`${data.namespace}/fetchAllDocumentsWithSchema`, {
+        await this.$store.dispatch(`${data.namespace}/fetchAllDocumentsWithSchema`, {
           page,
+          perPage: this.perPage,
           sort: this.sortConfig,
         });
       }
@@ -282,7 +297,14 @@ export default class AllDocumentsPage extends Vue {
   }
 
   public handlePageChange(newPage: number): void {
-    this.fetchDocuments(newPage);
+    this.$router.replace({ query: { ...this.$route.query, 'x-page': `${newPage}` } });
+    this.fetchDocuments(newPage).then(() =>
+      window.scroll({
+        top: 0,
+        left: 0,
+        behavior: 'smooth',
+      }),
+    );
   }
 
   public handleSortChange({ prop, order }: TableSortChangeEvent): void {
@@ -304,9 +326,19 @@ export default class AllDocumentsPage extends Vue {
     }
   }
 
-  @Watch('fetchTriggers', { immediate: true, deep: true })
+  @Watch('fetchTriggers', { deep: true })
   handleFetchTriggersChange(): void {
-    this.fetchDocuments();
+    if (this.loading === 0) {
+      this.fetchDocuments(this.currentPage);
+    }
+  }
+
+  beforeMount(): void {
+    this.loading += 1;
+
+    this.fetchDocuments(Number(this.$route.query['x-page']) || 1);
+
+    this.loading -= 1;
   }
 }
 </script>

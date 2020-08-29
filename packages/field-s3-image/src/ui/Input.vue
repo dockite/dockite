@@ -99,13 +99,7 @@
       </div>
     </div>
 
-    <el-dialog
-      title="Revision Details"
-      custom-class="dockite-dialog--revision-detail"
-      :visible.sync="showLightbox"
-      :destroy-on-close="true"
-      @close="selectedImage = null"
-    >
+    <el-dialog :visible.sync="showLightbox" :destroy-on-close="true" @close="selectedImage = null">
       <img
         v-if="selectedImage"
         :src="selectedImage.url"
@@ -113,6 +107,13 @@
         class="w-full"
         style="max-height: 60vh; object-fit: contain;"
       />
+      <div class="py-3">
+        <a :href="selectedImage.url" target="_blank">
+          <el-button>
+            View in New Tab
+          </el-button>
+        </a>
+      </div>
     </el-dialog>
   </el-form-item>
 </template>

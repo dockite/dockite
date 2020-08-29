@@ -1,5 +1,5 @@
-query allDocumentsWithSchema($page: Int!, $sort: SortInputType, $deleted: Boolean = false) {
-  allDocuments(page: $page, sort: $sort, deleted: $deleted) {
+query allDocumentsWithSchema($page: Int!, $perPage: Int! = 25, $sort: SortInputType, $deleted: Boolean = false) {
+  allDocuments(page: $page, perPage: $perPage, sort: $sort, deleted: $deleted) {
     results {
       id
       locale

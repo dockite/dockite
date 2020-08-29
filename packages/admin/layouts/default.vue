@@ -11,18 +11,20 @@
       </el-header>
       <el-main>
         <el-row type="flex" justify="space-between" align="middle" style="padding-bottom: 1rem;">
-          <el-breadcrumb class="">
-            <el-breadcrumb-item to="/">
-              <i class="el-icon-s-home" />
-            </el-breadcrumb-item>
-            <el-breadcrumb-item
-              v-for="crumb in breadcrumbs"
-              :key="crumb.location"
-              :to="crumb.location"
-            >
-              {{ crumb.title | startCaseUnlessUUID }}
-            </el-breadcrumb-item>
-          </el-breadcrumb>
+          <portal-target name="breadcrumb">
+            <el-breadcrumb>
+              <el-breadcrumb-item>
+                <router-link to="/" style="color: inherit">
+                  <i class="el-icon-s-home" />
+                </router-link>
+              </el-breadcrumb-item>
+              <el-breadcrumb-item v-for="crumb in breadcrumbs" :key="crumb.location">
+                <router-link style="color: inherit" :to="crumb.location">
+                  {{ crumb.title | startCaseUnlessUUID }}
+                </router-link>
+              </el-breadcrumb-item>
+            </el-breadcrumb>
+          </portal-target>
 
           <portal-target name="opposite-breadcrumb" />
         </el-row>
@@ -35,10 +37,11 @@
 </template>
 
 <script lang="ts">
-import { startCase } from 'lodash';
+import { Schema } from '@dockite/database';
 import { Component, Vue } from 'nuxt-property-decorator';
 
 import SideMenu from '~/components/base/side-menu.vue';
+import * as data from '~/store/data';
 
 interface BreadcrumbItem {
   title: string;
@@ -50,25 +53,57 @@ interface BreadcrumbItem {
   components: {
     SideMenu,
   },
-  filters: {
-    startCaseUnlessUUID(value: string) {
-      if (value.split('-').length >= 3) {
-        return value;
-      }
-
-      return startCase(value);
-    },
-  },
 })
 export default class DefaultLayout extends Vue {
   get breadcrumbs(): BreadcrumbItem[] {
     return this.$route.path
       .split('/')
       .filter(x => x !== '')
-      .map((title, index, array) => ({
-        title,
-        location: `/${array.slice(0, index + 1).join('/')}`,
-      }));
+      .map((title, index, array) => {
+        // This handles showing the schema in the breadcrumbs for documents without
+        // breaking for further items.
+        if (
+          title.toLowerCase() === 'documents' &&
+          array[index + 1] &&
+          this.schemaForDocumentRoute
+        ) {
+          const schema = this.schemaForDocumentRoute;
+
+          return {
+            title: schema.title,
+            location: `/${array
+              .slice(0, index + 1)
+              .join('/')
+              .replace('documents', `schemas/${schema.id}`)}`,
+          };
+        }
+
+        return {
+          title,
+          location: `/${array.slice(0, index + 1).join('/')}`,
+        };
+      });
+  }
+
+  get isCurrentlyDocumentRoute(): boolean {
+    return /.*documents\/.+/i.test(this.$route.path);
+  }
+
+  get schemaForDocumentRoute(): Schema | null {
+    if (this.isCurrentlyDocumentRoute) {
+      const document = this.$store.getters[`${data.namespace}/getDocumentById`](
+        this.$route.params.id,
+      );
+
+      if (document) {
+        return (
+          this.$store.getters[`${data.namespace}/getSchemaWithFieldsById`](document.schemaId) ||
+          null
+        );
+      }
+    }
+
+    return null;
   }
 }
 </script>

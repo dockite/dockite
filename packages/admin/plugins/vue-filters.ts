@@ -15,6 +15,14 @@ Vue.filter('shortDesc', (value: string) => {
   return value;
 });
 
+Vue.filter('startCaseUnlessUUID', (value: string) => {
+  if (value.split('-').length >= 3) {
+    return value;
+  }
+
+  return startCase(value);
+});
+
 Vue.filter('fromNow', (value: Date | string) =>
   formatDistanceToNow(new Date(value), { addSuffix: true }),
 );

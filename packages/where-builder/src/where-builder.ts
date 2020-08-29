@@ -29,7 +29,7 @@ const ConstraintHandlerMap: Record<ConstraintOperator, ConstraintHandlerFn> = {
     const param = randomBytes(6).toString('hex');
     let name = columnPartsToColumn(['data', ...constraint.name.split('.')], 'text');
 
-    if (reservedKeys.includes(constraint.name)) {
+    if (reservedKeys.includes(constraint.name) || constraint.name.startsWith('schema.')) {
       name = constraint.name;
     }
 
@@ -100,7 +100,7 @@ const ConstraintHandlerMap: Record<ConstraintOperator, ConstraintHandlerFn> = {
     }
 
     qb.andWhere(`(${name})::timestamp > (:${param})::timestamp`, {
-      [param]: unsafeStringToNativeType(constraint.value),
+      [param]: new Date(constraint.value),
     });
   },
 
@@ -113,7 +113,7 @@ const ConstraintHandlerMap: Record<ConstraintOperator, ConstraintHandlerFn> = {
     }
 
     qb.andWhere(`(${name})::timestamp >= (:${param})::timestamp`, {
-      [param]: unsafeStringToNativeType(constraint.value),
+      [param]: new Date(constraint.value),
     });
   },
 
@@ -126,7 +126,7 @@ const ConstraintHandlerMap: Record<ConstraintOperator, ConstraintHandlerFn> = {
     }
 
     qb.andWhere(`(${name})::timestamp < (:${param})::timestamp`, {
-      [param]: unsafeStringToNativeType(constraint.value),
+      [param]: new Date(constraint.value),
     });
   },
 
@@ -139,7 +139,7 @@ const ConstraintHandlerMap: Record<ConstraintOperator, ConstraintHandlerFn> = {
     }
 
     qb.andWhere(`(${name})::timestamp <= (:${param})::timestamp`, {
-      [param]: unsafeStringToNativeType(constraint.value),
+      [param]: new Date(constraint.value),
     });
   },
 
