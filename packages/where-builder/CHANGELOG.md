@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.2.0-alpha.26](https://github.com/dockite/dockite/compare/@dockite/where-builder@0.2.0-alpha.25...@dockite/where-builder@0.2.0-alpha.26) (2020-08-29)
+
+
+### Features
+
+* **admin:** add pagination to query params ([0d2c7c1](https://github.com/dockite/dockite/commit/0d2c7c1cc7802c18f4982719484d2b5777366c34))
+
+
+
+
+
 # [0.2.0-alpha.25](https://github.com/dockite/dockite/compare/@dockite/where-builder@0.2.0-alpha.24...@dockite/where-builder@0.2.0-alpha.25) (2020-08-28)
 
 
