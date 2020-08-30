@@ -55,7 +55,7 @@
               <i class="el-icon-delete" />
             </router-link>
             <router-link title="View Revisions" :to="`/schemas/${scope.row.id}/revisions`">
-              <i class="el-icon-document-copy" />
+              <i class="el-icon-folder-opened" />
             </router-link>
           </span>
         </el-table-column>

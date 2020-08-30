@@ -112,7 +112,7 @@
             </router-link>
 
             <router-link title="View Revisions" :to="`/documents/${scope.row.id}/revisions`">
-              <i class="el-icon-document-copy" />
+              <i class="el-icon-folder-opened" />
             </router-link>
           </span>
         </el-table-column>

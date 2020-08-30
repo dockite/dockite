@@ -46,7 +46,7 @@
                 divided
               >
                 <router-link :to="`/schemas/${schemaId}/revisions`">
-                  <i class="el-icon-document-copy" />
+                  <i class="el-icon-folder-opened" />
                   Revisions
                 </router-link>
               </el-dropdown-item>
