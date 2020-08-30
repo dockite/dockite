@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.1.0-alpha.7](https://github.com/dockite/dockite/compare/@dockite/field-media-manager@0.1.0-alpha.6...@dockite/field-media-manager@0.1.0-alpha.7) (2020-08-30)
+
+
+### Bug Fixes
+
+* **admin:** wrap loading in nextTick to avoid flashing ([36b7a2a](https://github.com/dockite/dockite/commit/36b7a2a5f078042215dde357e8115e1b057ee8a8))
+
+
+
+
+
 # [0.1.0-alpha.6](https://github.com/dockite/dockite/compare/@dockite/field-media-manager@0.1.0-alpha.5...@dockite/field-media-manager@0.1.0-alpha.6) (2020-08-27)
 
 **Note:** Version bump only for package @dockite/field-media-manager

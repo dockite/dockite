@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.69](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.68...@dockite/admin@0.4.0-alpha.69) (2020-08-30)
+
+
+### Bug Fixes
+
+* **admin:** display notice when revisions are equal ([bdc6b59](https://github.com/dockite/dockite/commit/bdc6b590bf4f13eba9449294cf756dc8cef870db))
+* **admin:** resolve default outline in chrome ([acb27da](https://github.com/dockite/dockite/commit/acb27da20b32885d750abcb3a459a489fe1c291a))
+* **admin:** update filter input design ([a9d42a8](https://github.com/dockite/dockite/commit/a9d42a87edafed3c81b9fb54d1f56561a3e6250d))
+* **admin:** update revisions icon to cause less confusion ([8313d5d](https://github.com/dockite/dockite/commit/8313d5d1df45cb32ff3b3670ba1c43b92494b371))
+* **admin:** wrap loading in nextTick to avoid flashing ([36b7a2a](https://github.com/dockite/dockite/commit/36b7a2a5f078042215dde357e8115e1b057ee8a8))
+
+
+
+
+
 # [0.4.0-alpha.68](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.67...@dockite/admin@0.4.0-alpha.68) (2020-08-29)
 
 
