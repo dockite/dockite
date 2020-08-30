@@ -1,9 +1,26 @@
 <template>
   <div class="dockite-filter-input">
+    <el-row type="flex" justify="space-between" align="middle">
+      <span class="text-xs">
+        Apply a Filter
+      </span>
+
+      <el-tooltip placement="top">
+        <i class="el-icon-question" style="padding-right: 0.25rem;"></i>
+
+        <div slot="content">
+          <div v-for="(description, option) in options" :key="option">
+            <strong> {{ option }}: </strong>
+            {{ description }}
+          </div>
+        </div>
+      </el-tooltip>
+    </el-row>
+
     <el-input
       v-model="filter"
       size="small"
-      placeholder="Filter"
+      placeholder="Value"
       class="input-with-select"
       style="padding-top: 10px"
     >
@@ -28,20 +45,9 @@
         Reset
       </el-button>
 
-      <el-row align="middle" type="flex">
-        <el-tooltip placement="bottom">
-          <i class="el-icon-question" style="padding-right: 0.25rem;"></i>
-          <div slot="content">
-            <div v-for="(description, option) in options" :key="option">
-              <strong> {{ option }}: </strong>
-              {{ description }}
-            </div>
-          </div>
-        </el-tooltip>
-        <el-button type="primary" size="mini" :disabled="!canSubmit" @click="handleApplyFilter">
-          Apply Filter
-        </el-button>
-      </el-row>
+      <el-button type="primary" size="mini" :disabled="!canSubmit" @click="handleApplyFilter">
+        Apply Filter
+      </el-button>
     </el-row>
   </div>
 </template>
