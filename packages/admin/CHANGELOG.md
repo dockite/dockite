@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.70](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.69...@dockite/admin@0.4.0-alpha.70) (2020-08-30)
+
+
+### Features
+
+* **admin:** allow tab renaming and always show pagination ([ada5176](https://github.com/dockite/dockite/commit/ada5176113ffb8d1e50e75751b658b947f36a245))
+
+
+
+
+
 # [0.4.0-alpha.69](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.68...@dockite/admin@0.4.0-alpha.69) (2020-08-30)
 
 

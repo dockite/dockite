@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.13](https://github.com/dockite/dockite/compare/@dockite/field-reference-of@0.3.0-alpha.12...@dockite/field-reference-of@0.3.0-alpha.13) (2020-08-30)
+
+
+### Features
+
+* **admin:** allow tab renaming and always show pagination ([ada5176](https://github.com/dockite/dockite/commit/ada5176113ffb8d1e50e75751b658b947f36a245))
+
+
+
+
+
 # [0.3.0-alpha.12](https://github.com/dockite/dockite/compare/@dockite/field-reference-of@0.3.0-alpha.11...@dockite/field-reference-of@0.3.0-alpha.12) (2020-08-27)
 
 **Note:** Version bump only for package @dockite/field-reference-of
