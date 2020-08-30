@@ -202,7 +202,9 @@ export default class CreateSingletonDocumentPage extends Vue {
       id: this.$route.params.id,
     });
 
-    this.loading -= 1;
+    this.$nextTick(() => {
+      this.loading -= 1;
+    });
   }
 
   public async submit(): Promise<void> {
@@ -263,7 +265,9 @@ export default class CreateSingletonDocumentPage extends Vue {
         });
       }
     } finally {
-      this.loading -= 1;
+      this.$nextTick(() => {
+        this.loading -= 1;
+      });
     }
   }
 
@@ -276,7 +280,9 @@ export default class CreateSingletonDocumentPage extends Vue {
     this.initialiseForm();
     this.currentTab = this.availableTabs[0];
 
-    this.loading -= 1;
+    this.$nextTick(() => {
+      this.loading -= 1;
+    });
     this.ready = true;
   }
 }

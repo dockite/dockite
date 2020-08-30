@@ -247,7 +247,9 @@ export default class CreateWebhookPage extends Vue {
         type: 'warning',
       });
     } finally {
-      this.loading -= 1;
+      this.$nextTick(() => {
+        this.loading -= 1;
+      });
     }
   }
 

@@ -215,7 +215,9 @@ export default class CreateUserPage extends Vue {
         type: 'warning',
       });
     } finally {
-      this.loading -= 1;
+      this.$nextTick(() => {
+        this.loading -= 1;
+      });
     }
   }
 
@@ -229,7 +231,9 @@ export default class CreateUserPage extends Vue {
         message: 'An error occurred whilst fetching the user, please try again later.',
       });
     } finally {
-      this.loading -= 1;
+      this.$nextTick(() => {
+        this.loading -= 1;
+      });
     }
   }
 
@@ -243,7 +247,9 @@ export default class CreateUserPage extends Vue {
         message: 'An error occurred whilst fetching roles, please try again later.',
       });
     } finally {
-      this.loading -= 1;
+      this.$nextTick(() => {
+        this.loading -= 1;
+      });
     }
   }
 
@@ -257,7 +263,9 @@ export default class CreateUserPage extends Vue {
         message: 'An error occurred whilst fetching scopes, please try again later.',
       });
     } finally {
-      this.loading -= 1;
+      this.$nextTick(() => {
+        this.loading -= 1;
+      });
     }
   }
 

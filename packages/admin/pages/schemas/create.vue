@@ -115,7 +115,9 @@ export default class CreateSchemaPage extends Vue {
 
         console.log(err);
       } finally {
-        this.loading -= 1;
+        this.$nextTick(() => {
+          this.loading -= 1;
+        });
       }
     } else {
       try {
@@ -127,7 +129,9 @@ export default class CreateSchemaPage extends Vue {
       } catch (err) {
         console.log(err);
       } finally {
-        this.loading -= 1;
+        this.$nextTick(() => {
+          this.loading -= 1;
+        });
       }
     }
   }

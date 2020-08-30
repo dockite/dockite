@@ -299,7 +299,9 @@ export default class UpdateDocumentPage extends Vue {
         type: 'error',
       });
     } finally {
-      this.loading -= 1;
+      this.$nextTick(() => {
+        this.loading -= 1;
+      });
     }
   }
 
@@ -317,7 +319,9 @@ export default class UpdateDocumentPage extends Vue {
         type: 'error',
       });
     } finally {
-      this.loading -= 1;
+      this.$nextTick(() => {
+        this.loading -= 1;
+      });
     }
   }
 
@@ -335,7 +339,9 @@ export default class UpdateDocumentPage extends Vue {
         type: 'error',
       });
     } finally {
-      this.loading -= 1;
+      this.$nextTick(() => {
+        this.loading -= 1;
+      });
     }
   }
 
@@ -391,7 +397,9 @@ export default class UpdateDocumentPage extends Vue {
         });
       }
     } finally {
-      this.loading -= 1;
+      this.$nextTick(() => {
+        this.loading -= 1;
+      });
     }
   }
 

@@ -147,7 +147,9 @@ export default class DocumentRevisionsPage extends Vue {
       documentId: this.documentId,
     });
 
-    this.loading -= 1;
+    this.$nextTick(() => {
+      this.loading -= 1;
+    });
   }
 
   public fetchDocumentById(force = false): Promise<void> {
@@ -178,7 +180,9 @@ export default class DocumentRevisionsPage extends Vue {
         type: 'error',
       });
     } finally {
-      this.loading -= 1;
+      this.$nextTick(() => {
+        this.loading -= 1;
+      });
     }
   }
 

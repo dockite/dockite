@@ -150,7 +150,9 @@ export default class CreateRolePage extends Vue {
         type: 'warning',
       });
     } finally {
-      this.loading -= 1;
+      this.$nextTick(() => {
+        this.loading -= 1;
+      });
     }
   }
 
@@ -165,7 +167,9 @@ export default class CreateRolePage extends Vue {
         type: 'error',
       });
     } finally {
-      this.loading -= 1;
+      this.$nextTick(() => {
+        this.loading -= 1;
+      });
     }
   }
 
@@ -180,7 +184,9 @@ export default class CreateRolePage extends Vue {
         type: 'error',
       });
     } finally {
-      this.loading -= 1;
+      this.$nextTick(() => {
+        this.loading -= 1;
+      });
     }
   }
 
@@ -195,7 +201,9 @@ export default class CreateRolePage extends Vue {
         type: 'error',
       });
     } finally {
-      this.loading -= 1;
+      this.$nextTick(() => {
+        this.loading -= 1;
+      });
     }
   }
 

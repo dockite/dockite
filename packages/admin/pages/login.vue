@@ -133,7 +133,9 @@ export default class LoginPage extends Vue {
     } catch (_) {
       this.error = 'The username or password provided is incorrect.';
     } finally {
-      this.loading -= 1;
+      this.$nextTick(() => {
+        this.loading -= 1;
+      });
     }
   }
 

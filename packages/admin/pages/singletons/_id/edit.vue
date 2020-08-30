@@ -259,7 +259,9 @@ export default class EditSingletonPage extends Vue {
         type: 'error',
       });
     } finally {
-      this.loading -= 1;
+      this.$nextTick(() => {
+        this.loading -= 1;
+      });
     }
   }
 
@@ -461,7 +463,9 @@ export default class EditSingletonPage extends Vue {
       id: this.$route.params.id,
     });
 
-    this.loading -= 1;
+    this.$nextTick(() => {
+      this.loading -= 1;
+    });
   }
 }
 </script>

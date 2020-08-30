@@ -282,7 +282,9 @@ export default class AllDocumentsPage extends Vue {
         type: 'error',
       });
     } finally {
-      this.loading -= 1;
+      this.$nextTick(() => {
+        this.loading -= 1;
+      });
     }
   }
 
@@ -338,7 +340,9 @@ export default class AllDocumentsPage extends Vue {
 
     this.fetchDocuments(Number(this.$route.query['x-page']) || 1);
 
-    this.loading -= 1;
+    this.$nextTick(() => {
+      this.loading -= 1;
+    });
   }
 }
 </script>

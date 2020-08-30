@@ -224,7 +224,9 @@ export default class DocumentRevisionsPage extends Vue {
       documentId: this.documentId,
     });
 
-    this.loading -= 1;
+    this.$nextTick(() => {
+      this.loading -= 1;
+    });
   }
 
   public async fetchDocumentById(force = false): Promise<void> {
@@ -235,7 +237,9 @@ export default class DocumentRevisionsPage extends Vue {
       force,
     });
 
-    this.loading -= 1;
+    this.$nextTick(() => {
+      this.loading -= 1;
+    });
   }
 
   public async restoreToRevision(revisionId: string): Promise<void> {
@@ -259,7 +263,9 @@ export default class DocumentRevisionsPage extends Vue {
         type: 'error',
       });
     } finally {
-      this.loading -= 1;
+      this.$nextTick(() => {
+        this.loading -= 1;
+      });
     }
   }
 

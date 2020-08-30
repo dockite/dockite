@@ -227,7 +227,9 @@ export default class CreateSchemaDocumentPage extends Vue {
         type: 'error',
       });
     } finally {
-      this.loading -= 1;
+      this.$nextTick(() => {
+        this.loading -= 1;
+      });
     }
   }
 
@@ -285,7 +287,9 @@ export default class CreateSchemaDocumentPage extends Vue {
         });
       }
     } finally {
-      this.loading -= 1;
+      this.$nextTick(() => {
+        this.loading -= 1;
+      });
     }
   }
 
@@ -298,7 +302,9 @@ export default class CreateSchemaDocumentPage extends Vue {
     this.initialiseForm();
     this.currentTab = this.availableTabs[0];
 
-    this.loading -= 1;
+    this.$nextTick(() => {
+      this.loading -= 1;
+    });
     this.ready = true;
   }
 }

@@ -193,7 +193,9 @@ export default class LoginPage extends Vue {
     } catch (_) {
       this.error = 'An unknown error occured, please try again shortly.';
     } finally {
-      this.loading -= 1;
+      this.$nextTick(() => {
+        this.loading -= 1;
+      });
     }
   }
 
@@ -223,7 +225,9 @@ export default class LoginPage extends Vue {
     } catch (_) {
       this.error = 'An unknown error occured, please try again shortly.';
     } finally {
-      this.loading -= 1;
+      this.$nextTick(() => {
+        this.loading -= 1;
+      });
     }
   }
 

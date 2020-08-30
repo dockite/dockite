@@ -68,7 +68,9 @@ export default class DeleteSingletonPage extends Vue {
       id: this.singletonId,
     });
 
-    this.loading -= 1;
+    this.$nextTick(() => {
+      this.loading -= 1;
+    });
   }
 
   public async handleDeleteSingleton(): Promise<void> {
@@ -87,7 +89,9 @@ export default class DeleteSingletonPage extends Vue {
         type: 'error',
       });
     } finally {
-      this.loading -= 1;
+      this.$nextTick(() => {
+        this.loading -= 1;
+      });
     }
   }
 
