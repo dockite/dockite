@@ -30,6 +30,11 @@ interface UpdateSchemaAndFieldsPayload {
   deletedFields: string[];
 }
 
+interface ImportPayload {
+  schemaId?: string;
+  payload: string;
+}
+
 export const namespace = 'schema';
 
 export const state = (): SchemaState => ({
@@ -49,8 +54,8 @@ export const actions: ActionTree<SchemaState, RootState> = {
           groups: Object.keys(payload.groups).map(key => ({ [key]: payload.groups[key] })),
         }),
       },
-      update: () => {
-        this.$apolloClient.resetStore();
+      update: async () => {
+        await this.$apolloClient.resetStore();
       },
     });
 
@@ -83,7 +88,13 @@ export const actions: ActionTree<SchemaState, RootState> = {
       throw new Error('Unable to delete schema');
     }
 
-    await this.dispatch(`${data.namespace}/fetchAllSchemas`, true);
+    await Promise.all([
+      this.dispatch(`${data.namespace}/fetchAllSchemas`, true),
+      this.dispatch(`${data.namespace}/fetchSchemaWithFieldsById`, {
+        id: payload.schema.id,
+        force: true,
+      }),
+    ]);
   },
 
   async deleteSchema(_, payload: string) {
@@ -101,11 +112,12 @@ export const actions: ActionTree<SchemaState, RootState> = {
       throw new Error('Unable to delete schema');
     }
 
-    await this.dispatch(`${data.namespace}/fetchAllSchemas`, true);
     this.commit(`${data.namespace}/removeSchemaWithFields`, payload);
+
+    await this.dispatch(`${data.namespace}/fetchAllSchemas`, true);
   },
 
-  async importSchema(_, payload: { schemaId?: string; payload: string }) {
+  async importSchema(_, payload: ImportPayload) {
     const { data: schemaData } = await this.$apolloClient.mutate<ImportSchemaMutationResponse>({
       mutation: ImportSchemaMutation,
       variables: {
@@ -121,7 +133,18 @@ export const actions: ActionTree<SchemaState, RootState> = {
       throw new Error('Unable to delete schema');
     }
 
-    await this.dispatch(`${data.namespace}/fetchAllSchemas`, true);
+    const promises = [this.dispatch(`${data.namespace}/fetchAllSchemas`, true)];
+
+    if (payload.schemaId) {
+      promises.push(
+        this.dispatch(`${data.namespace}/fetchSchemaWithFieldsById`, {
+          id: payload.schemaId,
+          force: true,
+        }),
+      );
+    }
+
+    await Promise.all(promises);
   },
 };
 

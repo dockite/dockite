@@ -40,7 +40,6 @@
         :pager-count="5"
         :page-size="20"
         :total="totalItems"
-        hide-on-single-page
         layout="total, prev, pager, next"
         @current-change="newPage => (page = newPage)"
       />

@@ -25,7 +25,11 @@
 
     <div v-loading="loading > 0" class="edit-singleton-page el-loading-parent__min-height">
       <el-tabs v-model="currentTab" type="border-card" editable @edit="handleEditTabs">
-        <el-tab-pane v-for="tab in availableTabs" :key="tab" :label="tab" :name="tab">
+        <el-tab-pane v-for="tab in availableTabs" :key="tab" :name="tab">
+          <span slot="label" @dblclick="handleRenameTab(tab)">
+            {{ tab }}
+          </span>
+
           <el-tree
             :data="fieldData"
             empty-text="There's currently no fields"
@@ -51,6 +55,24 @@
                     Remove
                   </el-button>
                 </el-popconfirm>
+
+                <el-popover placement="top" width="160" trigger="hover">
+                  <label for="" class="el-form-item__label">
+                    Move to
+                  </label>
+                  <el-select @change="v => handleMoveTab(node, data, v)">
+                    <el-option
+                      v-for="moveableTab in availableTabs"
+                      :key="moveableTab"
+                      :value="moveableTab"
+                      :label="moveableTab"
+                    />
+                  </el-select>
+
+                  <el-button slot="reference" size="mini" type="text">
+                    Move <strong>🡒</strong>
+                  </el-button>
+                </el-popover>
               </span>
             </span>
           </el-tree>
@@ -355,6 +377,74 @@ export default class EditSingletonPage extends Vue {
     } else {
       return true;
     }
+  }
+
+  public handleMoveTab(
+    node: TreeNode<string, FieldTreeData>,
+    data: FieldTreeData,
+    v: string,
+  ): void {
+    const parent = node.parent;
+
+    if (!parent) {
+      return;
+    }
+
+    const children = parent.data.children ?? ((parent.data as any) as FieldTreeData[]);
+
+    if (!children) {
+      return;
+    }
+
+    const index = children.findIndex(d => d.dockite.name === data.dockite.name);
+
+    const [field] = children.splice(index, 1);
+
+    this.groupFieldData[v].push(field);
+
+    this.currentTab = v;
+  }
+
+  public handleRenameTab(tab: string): void {
+    this.$prompt('Enter the new tab name', 'Tab Name', {
+      confirmButtonText: 'OK',
+      cancelButtonText: 'Cancel',
+      inputPattern: /^[\w\s]+$/,
+      inputValue: tab,
+      inputValidator: (input: string) => {
+        if (
+          Object.keys(this.groupFieldData)
+            .map(x => x.toLowerCase())
+            .filter(x => x !== tab.toLowerCase())
+            .includes(input.toLowerCase())
+        ) {
+          return 'Group name has already been used';
+        }
+
+        if (!/^[\w\s]+$/.test(input)) {
+          return 'Group name must only contain words and spaces, no special characters are allowed.';
+        }
+
+        if (input.length === 0) {
+          return 'A group name is required';
+        }
+
+        return true;
+      },
+    })
+      .then(({ value }: any) => {
+        this.groupFieldData = Object.keys(this.groupFieldData).reduce((acc, curr) => {
+          return {
+            ...acc,
+            [curr === tab ? value : curr]: this.groupFieldData[curr],
+          };
+        }, {});
+
+        if (this.currentTab === tab) {
+          this.currentTab = value;
+        }
+      })
+      .catch(() => {});
   }
 
   public handleNextStep(): void {

@@ -20,7 +20,11 @@
 
     <div v-loading="loading > 0" class="edit-schema-page el-loading-parent__min-height">
       <el-tabs v-model="currentTab" type="border-card" editable @edit="handleEditTabs">
-        <el-tab-pane v-for="tab in availableTabs" :key="tab" :label="tab" :name="tab">
+        <el-tab-pane v-for="tab in availableTabs" :key="tab" :name="tab">
+          <span slot="label" @dblclick="handleRenameTab(tab)">
+            {{ tab }}
+          </span>
+
           <el-tree
             :data="fieldData"
             empty-text="There's currently no fields"
@@ -394,6 +398,48 @@ export default class EditSchemaPage extends Vue {
     this.groupFieldData[v].push(field);
 
     this.currentTab = v;
+  }
+
+  public handleRenameTab(tab: string): void {
+    this.$prompt('Enter the new tab name', 'Tab Name', {
+      confirmButtonText: 'OK',
+      cancelButtonText: 'Cancel',
+      inputPattern: /^[\w\s]+$/,
+      inputValue: tab,
+      inputValidator: (input: string) => {
+        if (
+          Object.keys(this.groupFieldData)
+            .map(x => x.toLowerCase())
+            .filter(x => x !== tab.toLowerCase())
+            .includes(input.toLowerCase())
+        ) {
+          return 'Group name has already been used';
+        }
+
+        if (!/^[\w\s]+$/.test(input)) {
+          return 'Group name must only contain words and spaces, no special characters are allowed.';
+        }
+
+        if (input.length === 0) {
+          return 'A group name is required';
+        }
+
+        return true;
+      },
+    })
+      .then(({ value }: any) => {
+        this.groupFieldData = Object.keys(this.groupFieldData).reduce((acc, curr) => {
+          return {
+            ...acc,
+            [curr === tab ? value : curr]: this.groupFieldData[curr],
+          };
+        }, {});
+
+        if (this.currentTab === tab) {
+          this.currentTab = value;
+        }
+      })
+      .catch(() => {});
   }
 
   public handleAllowDrop(

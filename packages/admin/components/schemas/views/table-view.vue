@@ -184,7 +184,6 @@
         :pager-count="5"
         :page-size="perPage"
         :total="totalItems"
-        hide-on-single-page
         layout="jumper, prev, pager, next"
         @current-change="handlePageChange"
       />

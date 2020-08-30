@@ -48,7 +48,6 @@
         :current-page="currentPage"
         :page-count="totalPages"
         :pager-count="5"
-        hide-on-single-page
         layout="prev, pager, next"
       />
     </div>
