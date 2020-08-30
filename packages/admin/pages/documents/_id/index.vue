@@ -80,9 +80,15 @@
         :visible.sync="showHistoryDrawer"
       >
         <div class="dockite-document--actions-drawer-revisions p-3">
-          <el-alert v-if="document" type="info" show-icon :closable="false" class="mb-2">
+          <el-alert
+            v-if="document"
+            type="info"
+            show-icon
+            :closable="false"
+            style="margin-bottom: 0.5rem"
+          >
             <template slot="title">
-              Updated by {{ document.user.firstName }} {{ document.user.lastName }}
+              Current version by {{ document.user.firstName }} {{ document.user.lastName }}
             </template>
 
             Update occurred {{ document.updatedAt | fromNow }}
@@ -91,7 +97,7 @@
           <el-alert
             v-for="revision in revisions"
             :key="revision.id"
-            class="mb-2"
+            style="margin-bottom: 0.5rem"
             type="info"
             :closable="false"
             show-icon

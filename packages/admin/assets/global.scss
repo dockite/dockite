@@ -102,3 +102,7 @@ li.el-dropdown-menu__item a::before {
   transition: all 300ms;
   min-height: 60vh;
 }
+
+:focus {
+  outline: none;
+}
