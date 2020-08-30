@@ -15,17 +15,28 @@
       class="document-revision-compare-page el-loading-parent__min-height"
     >
       <div
+        v-if="diffHTML"
         :class="{ 'dockite-diff--highlight': highlight }"
         style="background: #ffffff; margin-bottom: 1rem;"
         v-html="diffHTML"
       />
+      <el-alert
+        v-else
+        type="warning"
+        title="No changes made between revisions"
+        show-icon
+        style="margin-bottom: 1rem;"
+        :closable="false"
+      >
+        There are no differences between {{ primary }} and {{ secondary }}.
+      </el-alert>
 
       <el-button
-        v-if="$can('internal:document:update')"
+        v-if="$can('internal:document:update', `schema:${schemaName.toLowerCase()}:update`)"
         style="width: auto"
         class="dockite-button--restore"
         type="primary"
-        :disabled="loading > 0"
+        :disabled="loading > 0 || !diffHTML"
         @click="restoreToRevision(primary)"
         @mouseover.native="highlight = true"
         @mouseleave.native="highlight = false"
@@ -109,7 +120,15 @@ export default class DocumentRevisionsPage extends Vue {
   }
 
   get document(): Document {
-    return this.$store.getters[`${data.namespace}/getDocumentWithFieldsById`](this.documentId);
+    return this.$store.getters[`${data.namespace}/getDocumentById`](this.documentId);
+  }
+
+  get schemaName(): string {
+    if (this.document) {
+      return this.$store.getters[`${data.namespace}/getSchemaNameById`](this.document.schemaId);
+    }
+
+    return '';
   }
 
   get documentId(): string {
@@ -199,18 +218,22 @@ export default class DocumentRevisionsPage extends Vue {
   @Watch('allDocumentRevisions', { immediate: true })
   handleDocumentRevisionsChange(): void {
     if (this.allDocumentRevisions.results.length > 0) {
-      this.diffHTML = html(
-        unidiff.formatLines(unidiff.diffLines(this.primaryRevision, this.secondaryRevision), {
+      const diff = unidiff.formatLines(
+        unidiff.diffLines(this.primaryRevision, this.secondaryRevision),
+        {
           context: Infinity,
           aname: this.primary,
           bname: this.secondary,
-        }),
-        {
-          drawFileList: false,
-          outputFormat: 'side-by-side',
-          renderNothingWhenEmpty: false,
         },
       );
+
+      if (diff) {
+        this.diffHTML = html(diff, {
+          drawFileList: false,
+          outputFormat: 'side-by-side',
+          renderNothingWhenEmpty: true,
+        });
+      }
     }
   }
 }

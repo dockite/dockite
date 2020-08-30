@@ -12,15 +12,27 @@
 
     <div v-loading="loading > 0" class="schema-revision-compare-page el-loading-parent__min-height">
       <div
+        v-if="diffHTML"
         :class="{ 'dockite-diff--highlight': highlight }"
         style="background: #ffffff; margin-bottom: 1rem;"
         v-html="diffHTML"
       />
+      <el-alert
+        v-else
+        type="warning"
+        title="No changes made between revisions"
+        show-icon
+        style="margin-bottom: 1rem;"
+        :closable="false"
+      >
+        There are no differences between {{ primary }} and {{ secondary }}.
+      </el-alert>
+
       <el-button
         style="width: auto"
         class="dockite-button--restore"
         type="primary"
-        :disabled="loading > 0"
+        :disabled="loading > 0 || !$can('internal:schema:update')"
         @click="restoreToRevision(primary)"
         @mouseover.native="highlight = true"
         @mouseleave.native="highlight = false"
@@ -205,18 +217,22 @@ export default class SchemaRevisionsPage extends Vue {
   @Watch('allSchemaRevisions', { immediate: true })
   handleSchemaRevisionsChange(): void {
     if (this.allSchemaRevisions.results.length > 0) {
-      this.diffHTML = html(
-        unidiff.formatLines(unidiff.diffLines(this.primaryRevision, this.secondaryRevision), {
+      const diff = unidiff.formatLines(
+        unidiff.diffLines(this.primaryRevision, this.secondaryRevision),
+        {
           context: Infinity,
           aname: this.primary,
           bname: this.secondary,
-        }),
-        {
-          drawFileList: false,
-          outputFormat: 'side-by-side',
-          renderNothingWhenEmpty: false,
         },
       );
+
+      if (diff) {
+        this.diffHTML = html(diff, {
+          drawFileList: false,
+          outputFormat: 'side-by-side',
+          renderNothingWhenEmpty: true,
+        });
+      }
     }
   }
 }
