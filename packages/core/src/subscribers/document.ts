@@ -38,18 +38,24 @@ export class DocumentSubscriber implements EntitySubscriberInterface {
     return Document;
   }
 
-  afterInsert(event: InsertEvent<Document>): void {
+  async afterInsert(event: InsertEvent<Document>): Promise<void> {
     console.log('listener:document:afterInsert', event.entity);
-    afterInsert(event.entity);
+    await afterInsert(event.entity).catch(e =>
+      console.log('listener:document:afterInsert:fatal', e),
+    );
   }
 
-  afterUpdate(event: UpdateEvent<Document>): void {
+  async afterUpdate(event: UpdateEvent<Document>): Promise<void> {
     console.log('listener:document:afterUpdate', event.entity);
-    afterUpdate(event.entity);
+    await afterUpdate(event.entity).catch(e =>
+      console.log('listener:document:afterUpdate:fatal', e),
+    );
   }
 
-  afterRemove(event: RemoveEvent<Document>): void {
+  async afterRemove(event: RemoveEvent<Document>): Promise<void> {
     console.log('listener:document:afterRemove', event.entity);
-    afterRemove(event.entity as Document);
+    await afterRemove(event.entity as Document).catch(e =>
+      console.log('listener:document:afterRemove:fatal', e),
+    );
   }
 }
