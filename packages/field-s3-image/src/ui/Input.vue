@@ -108,7 +108,7 @@
         style="max-height: 60vh; object-fit: contain;"
       />
       <div class="py-3">
-        <a :href="selectedImage.url" target="_blank">
+        <a v-if="selectedImage" :href="selectedImage.url" target="_blank">
           <el-button>
             View in New Tab
           </el-button>
