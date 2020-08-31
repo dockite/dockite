@@ -21,6 +21,7 @@ const DockiteFieldReferenceInputType = new GraphQLInputObjectType({
   fields: {
     id: { type: GraphQLString },
     schemaId: { type: GraphQLString },
+    identifier: { type: GraphQLString },
   },
 });
 
@@ -49,6 +50,38 @@ export class DockiteFieldReference extends DockiteField {
 
   public async inputType(): Promise<GraphQLInputType> {
     return DockiteFieldReferenceInputType;
+  }
+
+  public async processInputGraphQL<T>({ fieldData }: FieldContext): Promise<T> {
+    if (!fieldData) {
+      return (null as any) as T;
+    }
+
+    const criteria: { id: string; schemaId: string } = fieldData;
+
+    const document: Document | undefined = await this.orm
+      .getRepository(Document)
+      .createQueryBuilder('document')
+      .leftJoinAndSelect('document.schema', 'schema')
+      .where('document.id = :id', { id: criteria.id })
+      .andWhere('schema.id = :schemaId', { schemaId: criteria.schemaId })
+      .getOne();
+
+    if (!document) {
+      return (null as any) as T;
+    }
+
+    let identifier = document.id;
+
+    if (document.data.name) {
+      identifier = document.data.name;
+    } else if (document.data.title) {
+      identifier = document.data.title;
+    } else if (document.data.identifier) {
+      identifier = document.data.identifier;
+    }
+
+    return ({ ...fieldData, identifier } as any) as T;
   }
 
   public async onFieldCreate(): Promise<void> {
