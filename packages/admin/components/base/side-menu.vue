@@ -59,8 +59,17 @@
           v-if="allSchemas && allSchemas.results && allSchemas.results.length > 0"
           title="Schema Documents"
         >
+          <el-menu-item v-if="!hasFetchedSchemas">
+            Loading available Schemas..
+          </el-menu-item>
+
+          <el-menu-item v-else-if="hasFetchedSchemas && allSchemas.results.length === 0">
+            No available Schemas
+          </el-menu-item>
+
           <el-menu-item
             v-for="schema in sortBy(allSchemas.results, 'title')"
+            v-else
             :key="schema.id"
             :index="`/schemas/${schema.id}`"
           >
@@ -112,8 +121,17 @@
           </el-menu-item>
         </el-menu-item-group>
         <el-menu-item-group v-if="allSchemas" :title="$t('sideMenu.schemas') + 's'">
+          <el-menu-item v-if="!hasFetchedSchemas">
+            Loading available Schemas..
+          </el-menu-item>
+
+          <el-menu-item v-else-if="hasFetchedSchemas && allSchemas.results.length === 0">
+            No available Schemas
+          </el-menu-item>
+
           <el-menu-item
             v-for="schema in sortBy(allSchemas.results, 'title')"
+            v-else
             :key="schema.id"
             :index="`/schemas/${schema.id}`"
           >
@@ -172,6 +190,14 @@
           v-if="allSingletons && allSingletons.results && allSingletons.results.length > 0"
           :title="$t('sideMenu.singletons') + 's'"
         >
+          <el-menu-item v-if="!hasFetchedSingletons">
+            Loading available Singletons..
+          </el-menu-item>
+
+          <el-menu-item v-else-if="hasFetchedSingletons && allSingletons.results.length === 0">
+            No available Singletons
+          </el-menu-item>
+
           <el-menu-item
             v-for="schema in allSingletons.results"
             :key="schema.id"
@@ -326,6 +352,10 @@ export default class SideMenuComponent extends Vue {
 
   public sortBy = sortBy;
 
+  public hasFetchedSchemas = false;
+
+  public hasFetchedSingletons = false;
+
   get allSchemas(): ManyResultSet<AllSchemasResultItem> {
     const state: data.DataState = this.$store.state[data.namespace];
 
@@ -339,14 +369,28 @@ export default class SideMenuComponent extends Vue {
   }
 
   async fetchAllSchemas(): Promise<void> {
-    if (this.allSchemas.results.length === 0) {
+    try {
       await this.$store.dispatch(`${data.namespace}/fetchAllSchemas`);
+    } catch (_) {
+      this.$message({
+        message: 'An error occured whilst fetching Schemas, please try again later.',
+        type: 'error',
+      });
+    } finally {
+      this.hasFetchedSchemas = true;
     }
   }
 
   async fetchAllSingletons(): Promise<void> {
-    if (this.allSingletons.results.length === 0) {
+    try {
       await this.$store.dispatch(`${data.namespace}/fetchAllSingletons`);
+    } catch (_) {
+      this.$message({
+        message: 'An error occured whilst fetching Singletons, please try again later.',
+        type: 'error',
+      });
+    } finally {
+      this.hasFetchedSingletons = true;
     }
   }
 

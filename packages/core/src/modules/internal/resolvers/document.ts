@@ -19,7 +19,7 @@ import { getCustomRepository, getManager, getRepository } from 'typeorm';
 
 import { Authenticated, Authorized } from '../../../common/decorators';
 import { GlobalContext } from '../../../common/types';
-import { afterRemove } from '../../../subscribers';
+import { afterRemove, afterUpdate } from '../../../subscribers';
 import { strToColumnPath } from '../../../utils';
 
 import { SortInputType } from './inputs/sort';
@@ -554,10 +554,12 @@ export class DocumentResolver {
       const qb = documentRepository
         .createQueryBuilder('document')
         .update()
+        .returning('*')
         .set({
           data: () => `data || '${encodedData}'`,
           userId,
         })
+        .callListeners(false)
         .where('document."schemaId" = :schemaId', { schemaId });
 
       // If we were given specific document ids to update filter
@@ -566,7 +568,13 @@ export class DocumentResolver {
         qb.andWhereInIds(documentIds);
       }
 
-      await qb.execute();
+      const { raw: documents } = await qb.execute();
+
+      await Promise.all(
+        documents.map(async (document: Document) => {
+          afterUpdate(document);
+        }),
+      );
 
       return true;
     } catch (err) {

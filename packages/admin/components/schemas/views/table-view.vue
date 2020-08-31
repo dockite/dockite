@@ -62,7 +62,7 @@
                   />
                 </template>
                 <template v-else>
-                  <span>Filter</span>
+                  <span class="text-gray-500">Filter</span>
                   <i class="el-icon-arrow-down cursor-pointer text-lg p-1 rounded-full" />
                 </template>
               </div>
@@ -173,7 +173,7 @@
     </el-table>
 
     <el-row type="flex" justify="space-between" align="middle">
-      <span class="px-3" style="font-size: 13px">
+      <span class="text-gray-700 px-3" style="font-size: 13px">
         {{ paginationString }}
       </span>
 
@@ -265,8 +265,12 @@ export default class SchemaDocumentsPage extends Vue {
   }
 
   get paginationString(): string {
-    const startingItem = (this.currentPage - 1) * this.perPage + 1;
+    let startingItem = (this.currentPage - 1) * this.perPage + 1;
     const endingItem = startingItem + this.findDocumentsBySchemaId.results.length - 1;
+
+    if (startingItem === 1 && endingItem === 0) {
+      startingItem = 0;
+    }
 
     return `Displaying documents ${startingItem} to ${endingItem} of ${this.findDocumentsBySchemaId.totalItems}`;
   }

@@ -20,7 +20,7 @@
       </el-row>
     </portal>
 
-    <div v-loading="loading > 0" class="all-schemas-page el-loading-parent__min-height">
+    <div v-loading="loading > 0" class="all-schemas-page bg-white el-loading-parent__min-height">
       <el-table :data="allSchemas.results" style="width: 100%">
         <el-table-column prop="id" label="ID" sortable>
           <template slot-scope="scope">

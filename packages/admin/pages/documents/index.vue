@@ -122,7 +122,7 @@
       </el-table>
 
       <el-row type="flex" justify="space-between" align="middle">
-        <span class="px-3" style="font-size: 13px">
+        <span class="px-3 text-gray-700" style="font-size: 13px">
           {{ paginationString }}
         </span>
         <el-pagination
@@ -244,8 +244,12 @@ export default class AllDocumentsPage extends Vue {
   }
 
   get paginationString(): string {
-    const startingItem = (this.currentPage - 1) * this.perPage + 1;
+    let startingItem = (this.currentPage - 1) * this.perPage + 1;
     const endingItem = startingItem + this.documents.results.length - 1;
+
+    if (startingItem === 1 && endingItem === 0) {
+      startingItem = 0;
+    }
 
     return `Displaying documents ${startingItem} to ${endingItem} of ${this.documents.totalItems}`;
   }
