@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.12](https://github.com/dockite/dockite/compare/@dockite/field-reference@0.3.0-alpha.11...@dockite/field-reference@0.3.0-alpha.12) (2020-08-31)
+
+
+### Bug Fixes
+
+* **field-reference:** set reference identifer on graphql input ([b84a955](https://github.com/dockite/dockite/commit/b84a955a990a752044ee3841996559d4dd95d83c))
+
+
+
+
+
 # [0.3.0-alpha.11](https://github.com/dockite/dockite/compare/@dockite/field-reference@0.3.0-alpha.10...@dockite/field-reference@0.3.0-alpha.11) (2020-08-27)
 
 **Note:** Version bump only for package @dockite/field-reference

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.71](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.70...@dockite/admin@0.4.0-alpha.71) (2020-08-31)
+
+
+### Bug Fixes
+
+* **core:** subscribers throwing during bulk edit ([c9a810e](https://github.com/dockite/dockite/commit/c9a810eb4c50ff8391c45b45fb70dc88d0d8e5db))
+
+
+
+
+
 # [0.4.0-alpha.70](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.69...@dockite/admin@0.4.0-alpha.70) (2020-08-30)
 
 
