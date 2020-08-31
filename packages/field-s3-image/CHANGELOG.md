@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.32](https://github.com/dockite/dockite/compare/@dockite/field-s3-image@0.3.0-alpha.31...@dockite/field-s3-image@0.3.0-alpha.32) (2020-08-31)
+
+
+### Bug Fixes
+
+* **field-s3-image:** resolve null property access ([97271b7](https://github.com/dockite/dockite/commit/97271b7db91245ede437077b2f2df520813b64fd))
+
+
+
+
+
 # [0.3.0-alpha.31](https://github.com/dockite/dockite/compare/@dockite/field-s3-image@0.3.0-alpha.30...@dockite/field-s3-image@0.3.0-alpha.31) (2020-08-29)
 
 
