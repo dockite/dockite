@@ -38,7 +38,7 @@ export const connect = async (): Promise<Connection> => {
       logger: 'debug',
       extra: {
         max: config.database.maxPoolSize ?? 10,
-        connectionTimeoutMillis: 1000,
+        idleTimeoutMillis: 0,
       },
     });
   }

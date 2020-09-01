@@ -98,7 +98,7 @@ export class DockiteFieldSlug extends DockiteField {
 
     if (slug) {
       slug = slugify(ctx.fieldData, { lower: true, replacement: '-' });
-    } else if (settings.fieldToSlugify) {
+    } else if (settings.fieldToSlugify && ctx.data[settings.fieldToSlugify]) {
       slug = slugify(ctx.data[settings.fieldToSlugify], { lower: true, replacement: '-' });
     } else {
       slug = null;

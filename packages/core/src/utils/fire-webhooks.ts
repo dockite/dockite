@@ -89,17 +89,23 @@ export const fireWebhooks = async (entity: any, action: WebhookAction | string):
 
         if (SchemaManager.internalSchema) {
           log('firing graphql webhooks');
-          return graphql(SchemaManager.internalSchema, webhook.options.query, undefined, {
-            user: {
-              id: '00000000-0000-0000-0000-000000000000',
-              email: 'webhooks@dockite',
-              createdAt: new Date(1970, 1, 1),
-              updatedAt: new Date(1970, 1, 1),
-              firstName: 'webhook',
-              lastName: 'dockite',
-              verified: true,
-            } as UserContext,
-          }).then(
+          return graphql(
+            SchemaManager.internalSchema,
+            webhook.options.query,
+            undefined,
+            {
+              user: {
+                id: '00000000-0000-0000-0000-000000000000',
+                email: 'webhooks@dockite',
+                createdAt: new Date(1970, 1, 1),
+                updatedAt: new Date(1970, 1, 1),
+                firstName: 'webhook',
+                lastName: 'dockite',
+                verified: true,
+              } as UserContext,
+            },
+            { ...entity },
+          ).then(
             result => {
               return Axios({
                 url: webhook.url,

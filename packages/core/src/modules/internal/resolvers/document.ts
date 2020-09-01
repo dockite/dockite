@@ -9,6 +9,7 @@ import {
   Arg,
   Ctx,
   Field as GraphQLField,
+  InputType,
   Int,
   Mutation,
   ObjectType,
@@ -40,6 +41,15 @@ class ManyDocuments {
 
   @GraphQLField(_type => Boolean)
   hasNextPage!: boolean;
+}
+
+@InputType()
+class UpdateManyDocumentInputItem {
+  @GraphQLField(_type => String)
+  id!: string;
+
+  @GraphQLField(_type => GraphQLJSON)
+  data!: Record<string, any>;
 }
 
 @Resolver(_of => Document)
@@ -438,6 +448,96 @@ export class DocumentResolver {
     ]);
 
     return savedDocument;
+  }
+
+  @Authenticated()
+  @Authorized('internal:document:update', {
+    resourceType: 'schema',
+    fieldsOrArgsToPeek: ['schemaId'],
+  })
+  @Mutation(_returns => [Document], { nullable: true })
+  async updateManyDocuments(
+    @Arg('schemaId', _type => String)
+    schemaId: string,
+    @Arg('documents', _type => [UpdateManyDocumentInputItem])
+    documents: UpdateManyDocumentInputItem[],
+    @Ctx() ctx: GlobalContext,
+  ): Promise<Document[] | null> {
+    const documentRepository = getRepository(Document);
+    const revisionRepository = getRepository(DocumentRevision);
+
+    const { id: userId } = ctx.user!; // eslint-disable-line
+
+    const retrievedDocuments = await documentRepository
+      .createQueryBuilder('document')
+      .select()
+      .leftJoinAndSelect('document.schema', 'schema')
+      .leftJoinAndSelect('schema.fields', 'fields')
+      .whereInIds(documents.map(x => x.id))
+      .andWhere('document.schemaId = :schemaId', { schemaId })
+      .getMany();
+
+    if (!retrievedDocuments || retrievedDocuments.length === 0) {
+      return null;
+    }
+
+    const documentsToSave: Document[] = [];
+    const revisionsToSave: DocumentRevision[] = [];
+
+    await Promise.all(
+      retrievedDocuments.map(async document => {
+        const data = documents.find(x => x.id === document.id)?.data;
+
+        if (!data) {
+          throw new Error(`updateManyDocuments: unable to map ${document.id} to data`);
+        }
+
+        const { schema } = document;
+
+        const oldData = cloneDeep(document.data);
+
+        const revision = revisionRepository.create({
+          documentId: document.id,
+          data: cloneDeep(document.data),
+          schemaId: document.schemaId,
+          userId: document.userId ?? '',
+        });
+
+        await Promise.all(
+          schema.fields.map(async field => {
+            const fieldData = data[field.name] ?? null;
+
+            const hookContext: HookContextWithOldData = {
+              field,
+              fieldData,
+              data,
+              oldData,
+              document,
+            };
+
+            data[field.name] = await field.dockiteField!.processInputRaw(hookContext);
+
+            await field.dockiteField!.validateInputRaw(hookContext);
+
+            await field.dockiteField!.onUpdate(hookContext);
+          }),
+        );
+
+        document.data = { ...document.data, ...data };
+
+        document.userId = userId;
+
+        revisionsToSave.push(revision);
+        documentsToSave.push(document);
+      }),
+    );
+
+    const [savedDocuments] = await Promise.all([
+      documentRepository.save(documentsToSave),
+      revisionRepository.save(revisionsToSave),
+    ]);
+
+    return savedDocuments;
   }
 
   @Authenticated()

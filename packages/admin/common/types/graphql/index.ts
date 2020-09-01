@@ -183,6 +183,12 @@ export interface UpdateDocumentMutationResponse {
   };
 }
 
+export interface UpdateManyDocumentsMutationResponse {
+  updateManyDocuments: {
+    id: string;
+  };
+}
+
 export interface PartialUpdateDocumentsInSchemaIdMutationResponse {
   partialUpdateDocumentsInSchemaId: boolean;
 }

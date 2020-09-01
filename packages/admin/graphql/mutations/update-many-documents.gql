@@ -1,0 +1,13 @@
+mutation UpdateManyDocumentMutation($schemaId: String!, $documents: [UpdateManyDocumentInputItem!]!) {
+  updateManyDocuments(schemaId: $schemaId, documents: $documents) {
+    id
+    locale
+    data
+    publishedAt
+    createdAt
+    updatedAt
+    schemaId
+    releaseId
+    userId
+  }
+}

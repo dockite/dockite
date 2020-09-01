@@ -5,10 +5,11 @@ import { RootState } from '.';
 import {
   CreateDocumentMutationResponse,
   DeleteDocumentMutationResponse,
-  UpdateDocumentMutationResponse,
   PartialUpdateDocumentsInSchemaIdMutationResponse,
   PermanentlyDeleteDocumentMutationResponse,
   RestoreDocumentMutationResponse,
+  UpdateDocumentMutationResponse,
+  UpdateManyDocumentsMutationResponse,
 } from '~/common/types';
 import CreateDocumentMutation from '~/graphql/mutations/create-document.gql';
 import DeleteDocumentMutation from '~/graphql/mutations/delete-document.gql';
@@ -16,6 +17,7 @@ import PartialUpdateDocumentsInSchemaIdMutation from '~/graphql/mutations/partia
 import PermanentlyDeleteDocumentMutation from '~/graphql/mutations/permanently-delete-document.gql';
 import RestoreDocumentMutation from '~/graphql/mutations/restore-document.gql';
 import UpdateDocumentMutation from '~/graphql/mutations/update-document.gql';
+import UpdateManyDocumentsMutation from '~/graphql/mutations/update-many-documents.gql';
 import * as data from '~/store/data';
 
 export interface DocumentState {
@@ -29,6 +31,14 @@ interface CreateDocumentPayload {
 
 interface UpdateDocumentPayload extends CreateDocumentPayload {
   documentId: string;
+}
+
+interface UpdateManyDocumentPayload {
+  schemaId: string;
+  documents: {
+    id: string;
+    data: Record<string, any>;
+  }[];
 }
 
 interface PartialUpdateDocumentsInSchemaIdPayload extends CreateDocumentPayload {
@@ -85,6 +95,26 @@ export const actions: ActionTree<DocumentState, RootState> = {
     }
 
     this.commit(`${data.namespace}/removeDocument`, payload.documentId);
+  },
+
+  async updateManyDocuments(_, payload: UpdateManyDocumentPayload): Promise<void> {
+    const { data: documentData } = await this.$apolloClient.mutate<
+      UpdateManyDocumentsMutationResponse
+    >({
+      mutation: UpdateManyDocumentsMutation,
+      variables: {
+        schemaId: payload.schemaId,
+        documents: payload.documents,
+      },
+    });
+
+    if (!documentData?.updateManyDocuments) {
+      throw new Error('Unable to update many documents');
+    }
+
+    payload.documents.forEach(document =>
+      this.commit(`${data.namespace}/removeDocument`, document.id),
+    );
   },
 
   async partialUpdateDocumentsInSchemaId(

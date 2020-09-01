@@ -178,15 +178,15 @@ export default class TreeViewComponent extends Vue {
 
       const documents = this.flattenDocumentTree(this.documentTree);
 
-      await Promise.all(
-        documents.map(doc => {
-          this.$store.dispatch(`${document.namespace}/updateDocument`, {
+      await this.$store.dispatch(`${document.namespace}/updateManyDocuments`, {
+        schemaId: this.schemaId,
+        documents: documents.map(doc => {
+          return {
             data: doc.data,
-            documentId: doc.id,
-            schemaId: this.schemaId,
-          });
+            id: doc.id,
+          };
         }),
-      );
+      });
 
       this.$message({
         message: 'Tree saved successfully!',
