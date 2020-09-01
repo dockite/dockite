@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.72](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.71...@dockite/admin@0.4.0-alpha.72) (2020-09-01)
+
+
+### Bug Fixes
+
+* treeview to use updateMany resolver ([008051e](https://github.com/dockite/dockite/commit/008051ec969ff3a247b15b906044bdda8a6e1f59))
+
+
+
+
+
 # [0.4.0-alpha.71](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.70...@dockite/admin@0.4.0-alpha.71) (2020-08-31)
 
 

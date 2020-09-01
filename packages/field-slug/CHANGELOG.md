@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.2.0-alpha.27](https://github.com/dockite/dockite/compare/@dockite/field-slug@0.2.0-alpha.26...@dockite/field-slug@0.2.0-alpha.27) (2020-09-01)
+
+
+### Bug Fixes
+
+* treeview to use updateMany resolver ([008051e](https://github.com/dockite/dockite/commit/008051ec969ff3a247b15b906044bdda8a6e1f59))
+
+
+
+
+
 # [0.2.0-alpha.26](https://github.com/dockite/dockite/compare/@dockite/field-slug@0.2.0-alpha.25...@dockite/field-slug@0.2.0-alpha.26) (2020-08-27)
 
 **Note:** Version bump only for package @dockite/field-slug
