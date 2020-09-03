@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.61](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.60...@dockite/core@0.4.0-alpha.61) (2020-09-03)
+
+
+### Bug Fixes
+
+* **admin:** resolve browser crashes with tree-view ([1cbbc10](https://github.com/dockite/dockite/commit/1cbbc10a04a9c666e7213561ea8417762978d4d7))
+
+
+
+
+
 # [0.4.0-alpha.60](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.59...@dockite/core@0.4.0-alpha.60) (2020-09-01)
 
 

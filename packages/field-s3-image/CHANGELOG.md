@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.33](https://github.com/dockite/dockite/compare/@dockite/field-s3-image@0.3.0-alpha.32...@dockite/field-s3-image@0.3.0-alpha.33) (2020-09-03)
+
+
+### Bug Fixes
+
+* **field-s3-image:** move draggable handle to left side ([d4cc6e2](https://github.com/dockite/dockite/commit/d4cc6e21021294a95edd287b51da0ce18aa8ca16))
+
+
+
+
+
 # [0.3.0-alpha.32](https://github.com/dockite/dockite/compare/@dockite/field-s3-image@0.3.0-alpha.31...@dockite/field-s3-image@0.3.0-alpha.32) (2020-08-31)
 
 

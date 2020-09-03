@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.73](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.72...@dockite/admin@0.4.0-alpha.73) (2020-09-03)
+
+
+### Bug Fixes
+
+* **admin:** add max width to forgotten password page ([f6a9397](https://github.com/dockite/dockite/commit/f6a93979d240a68eced38ea2cebff2ed9e1b7e34))
+* **admin:** resolve browser crashes with tree-view ([1cbbc10](https://github.com/dockite/dockite/commit/1cbbc10a04a9c666e7213561ea8417762978d4d7))
+
+
+
+
+
 # [0.4.0-alpha.72](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.71...@dockite/admin@0.4.0-alpha.72) (2020-09-01)
 
 

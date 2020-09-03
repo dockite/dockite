@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.22](https://github.com/dockite/dockite/compare/@dockite/field-wysiwyg@0.3.0-alpha.21...@dockite/field-wysiwyg@0.3.0-alpha.22) (2020-09-03)
+
+
+### Bug Fixes
+
+* **field-wysiwyg:** allow field to grow with content ([a52830a](https://github.com/dockite/dockite/commit/a52830ad5663850686e5982f4ba19ab3ae295837))
+
+
+
+
+
 # [0.3.0-alpha.21](https://github.com/dockite/dockite/compare/@dockite/field-wysiwyg@0.3.0-alpha.20...@dockite/field-wysiwyg@0.3.0-alpha.21) (2020-08-27)
 
 **Note:** Version bump only for package @dockite/field-wysiwyg
