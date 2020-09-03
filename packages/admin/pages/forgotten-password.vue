@@ -264,6 +264,7 @@ export default class LoginPage extends Vue {
 
 .dockite-forgotten-password--logo {
   max-height: 6rem;
+  max-width: 480px;
   margin-bottom: 1.5rem;
 }
 </style>
