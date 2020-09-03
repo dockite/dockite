@@ -5,7 +5,7 @@
     :rules="rules"
     class="dockite-field-wysiwyg"
   >
-    <el-editor v-model="fieldData" :height="400" :extensions="extensions" lang="en" />
+    <el-editor v-model="fieldData" :extensions="extensions" lang="en" />
     <div class="el-form-item__description">
       {{ fieldConfig.description }}
     </div>
@@ -133,7 +133,14 @@ export default class WysiwygFieldInputComponent extends Vue {
     padding: 7px 10px;
   }
 
+  .el-tiptap-editor {
+    height: 100%;
+    min-height: 400px;
+    max-height: 800px;
+  }
+
   .el-tiptap-editor .ProseMirror {
+    min-height: 400px;
     height: 100%;
   }
 }
