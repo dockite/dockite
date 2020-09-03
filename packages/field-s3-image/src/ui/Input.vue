@@ -55,39 +55,41 @@
             tabindex="0"
             class="el-upload-list__item is-success"
           >
-            <img
-              :src="file.url"
-              :alt="file.alt"
-              class="el-upload-list__item-thumbnail cursor-pointer"
-              @click="handleShowImage(file)"
-            />
-
-            <div class="flex items-center h-full w-full">
-              <div class="pr-5 item-handle cursor-pointer">
+            <div class="flex items-center">
+              <div class="px-3 item-handle cursor-pointer">
                 <i class="el-icon-hamburger text-xl" />
               </div>
 
-              <div class="dockite-field-s3-image--item">
-                <a
-                  class="el-upload-list__item-name dockite-field-s3-image--item-name"
-                  :href="file.url"
-                >
-                  <i class="el-icon-document" />
-                  {{ file.name }}
-                </a>
+              <img
+                :src="file.url"
+                :alt="file.alt"
+                class="el-upload-list__item-thumbnail cursor-pointer"
+                @click="handleShowImage(file)"
+              />
 
-                <el-input v-model="file.alt" size="small" placeholder="Image alt text" />
+              <div class="flex items-center h-full w-full">
+                <div class="dockite-field-s3-image--item">
+                  <a
+                    class="el-upload-list__item-name dockite-field-s3-image--item-name"
+                    :href="file.url"
+                  >
+                    <i class="el-icon-document" />
+                    {{ file.name }}
+                  </a>
+
+                  <el-input v-model="file.alt" size="small" placeholder="Image alt text" />
+                </div>
               </div>
+
+              <label class="el-upload-list__item-status-label">
+                <i class="el-icon-upload-success el-icon-check" />
+              </label>
+
+              <i class="el-icon-close" @click="handleRemoveUpload(index)" />
+              <i class="el-icon-close-tip">
+                press delete to remove
+              </i>
             </div>
-
-            <label class="el-upload-list__item-status-label">
-              <i class="el-icon-upload-success el-icon-check" />
-            </label>
-
-            <i class="el-icon-close" @click="handleRemoveUpload(index)" />
-            <i class="el-icon-close-tip">
-              press delete to remove
-            </i>
           </li>
         </vue-draggable>
         <div v-for="(error, index) in errors" :key="index" class="dockite-field-s3-image--error">
@@ -484,8 +486,16 @@ export default class S3ImageFieldInputComponent extends Vue {
 }
 
 .dockite-field-s3-image {
+  .el-upload-list__item {
+    padding: 10px;
+  }
+
   .el-upload-list__item-thumbnail {
     object-fit: contain;
+  }
+
+  .el-upload-list--picture .el-upload-list__item-thumbnail {
+    margin: 0;
   }
 }
 </style>
