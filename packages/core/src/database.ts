@@ -45,3 +45,11 @@ export const connect = async (): Promise<Connection> => {
 
   return connection;
 };
+
+export const close = async (): Promise<void> => {
+  if (connection) {
+    await connection.close();
+  }
+
+  connection = null;
+};

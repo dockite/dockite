@@ -1,7 +1,7 @@
 <template>
   <fragment>
     <portal to="header">
-      <el-row style="width: 100%" type="flex" justify="space-between" align="middle">
+      <el-row style="width: 100%;" type="flex" justify="space-between" align="middle">
         <h2>
           Schema - <strong>{{ schemaName }}</strong>
         </h2>
@@ -36,7 +36,7 @@
                 </router-link>
               </el-dropdown-item>
               <el-dropdown-item v-if="$can('internal:schema:delete')">
-                <router-link :to="`/schemas/${schemaId}/delete`" style="color: rgb(245, 108, 108)">
+                <router-link :to="`/schemas/${schemaId}/delete`" style="color: rgb(245, 108, 108);">
                   <i class="el-icon-delete" />
                   Delete
                 </router-link>
@@ -80,8 +80,8 @@
       </el-select>
     </portal>
 
-    <div class="all-schema-documents-page el-loading-parent__min-height">
-      <component :is="currentView" />
+    <div v-loading="!schema" class="all-schema-documents-page el-loading-parent__min-height">
+      <component :is="currentView" v-if="schema" />
     </div>
   </fragment>
 </template>
@@ -132,6 +132,19 @@ export default class SchemaDocumentsPage extends Vue {
     return views;
   }
 
+  public async fetchSchema(): Promise<void> {
+    try {
+      await this.$store.dispatch(`${data.namespace}/fetchSchemaWithFieldsById`, {
+        id: this.$route.params.id,
+      });
+    } catch (_) {
+      this.$message({
+        message: 'An error occurred whilst retrieving the schema, please try again later.',
+        type: 'error',
+      });
+    }
+  }
+
   @Watch('availableViews')
   public handleAvailableViewsChange(): void {
     if (!this.availableViews.includes(this.currentView)) {
@@ -141,18 +154,22 @@ export default class SchemaDocumentsPage extends Vue {
 
   @Watch('currentView')
   public handleViewChange(): void {
-    this.$router.replace({
-      query: {
-        ...this.$route.query,
-        'x-view': this.currentView,
-      },
-    });
+    if (this.$route.query['x-view'] !== this.currentView) {
+      this.$router.replace({
+        query: {
+          ...this.$route.query,
+          'x-view': this.currentView,
+        },
+      });
+    }
   }
 
   beforeMount(): void {
     if (this.$route.query['x-view']) {
       this.currentView = this.$route.query['x-view'] as string;
     }
+
+    this.fetchSchema();
   }
 }
 </script>

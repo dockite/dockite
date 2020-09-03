@@ -59,7 +59,7 @@ interface DocumentTreeData extends TreeData {
 export default class TreeViewComponent extends Vue {
   public documentTree: DocumentTreeData[] = [];
 
-  public loading = 0;
+  public loading = 1;
 
   @Ref()
   public tree!: Tree<any, TreeData>;
@@ -90,11 +90,11 @@ export default class TreeViewComponent extends Vue {
     return 0;
   }
 
-  public fetchFindDocumentsBySchemaId(page = 1): void {
+  public async fetchFindDocumentsBySchemaId(page = 1): Promise<void> {
     try {
       this.loading += 1;
 
-      this.$store.dispatch(`${data.namespace}/fetchFindDocumentsBySchemaId`, {
+      await this.$store.dispatch(`${data.namespace}/fetchFindDocumentsBySchemaId`, {
         schemaId: this.schemaId,
         page,
         perPage: 1000,
@@ -112,7 +112,9 @@ export default class TreeViewComponent extends Vue {
   }
 
   public makeDocumentTree(parentId: string | null = null): DocumentTreeData[] {
-    return sortBy(
+    this.loading += 1;
+
+    const tree = sortBy(
       this.documents.results.filter(doc => {
         const referenceId = doc.data[this.schema.settings.treeViewField]?.id ?? null;
 
@@ -133,6 +135,12 @@ export default class TreeViewComponent extends Vue {
         children: this.makeDocumentTree(doc.id),
       };
     });
+
+    setImmediate(() => {
+      this.loading -= 1;
+    });
+
+    return tree;
   }
 
   public flattenDocumentTree(tree: DocumentTreeData[]): FindDocumentResultItem[] {
@@ -216,7 +224,7 @@ export default class TreeViewComponent extends Vue {
     });
   }
 
-  @Watch('schemaId', { immediate: true })
+  @Watch('schemaId')
   async handleSchemaIdChange(): Promise<void> {
     try {
       this.loading += 1;
@@ -243,8 +251,11 @@ export default class TreeViewComponent extends Vue {
     this.documentTree = this.makeDocumentTree();
   }
 
-  mounted(): void {
+  beforeMount(): void {
     this.handleSchemaIdChange().then(() => this.handleDocumentsChange());
+    this.$nextTick(() => {
+      this.loading -= 1;
+    });
   }
 }
 </script>
