@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.74](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.73...@dockite/admin@0.4.0-alpha.74) (2020-09-04)
+
+
+### Bug Fixes
+
+* **admin:** apply mask to non active bulk edit items ([13eb13c](https://github.com/dockite/dockite/commit/13eb13cd33a076d38f7eceb93e1348625e2d3fc3))
+* **admin:** collapse tree-view when dealing with many items ([1cd9fcd](https://github.com/dockite/dockite/commit/1cd9fcd9c5205e2ffb738c2c338b891afb59304d))
+* **admin:** missing link for all documents ([af49326](https://github.com/dockite/dockite/commit/af49326a707675d4ce738464221ba55c171a67bb))
+
+
+
+
+
 # [0.4.0-alpha.73](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.72...@dockite/admin@0.4.0-alpha.73) (2020-09-03)
 
 
