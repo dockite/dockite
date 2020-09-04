@@ -39,9 +39,9 @@
             <div v-for="field in getFieldsByGroupName(tab)" :key="field.id">
               <div
                 v-if="$dockiteFieldManager[field.type].input && !field.settings.hidden"
-                class="flex justify-between items-center -mx-3"
+                class="flex justify-between items-center -mx-3 my-3"
               >
-                <div class="w-full px-3">
+                <div class="w-full px-3 relative">
                   <component
                     :is="$dockiteFieldManager[field.type].input"
                     v-model="form[field.name]"
@@ -51,10 +51,21 @@
                     :form-data="form"
                     :schema="schema"
                     :groups.sync="groups"
-                  >
-                  </component>
+                  />
+
+                  <transition name="el-fade-in-linear">
+                    <div
+                      v-if="!enabledFields[field.name]"
+                      class="absolute w-full h-full top-0 left-0 bg-gray-200 rounded flex flex-col items-center justify-center"
+                      style="opacity: 0.8"
+                    >
+                      <i class="el-icon-lock" style="font-size: 2.5rem;" />
+                      <span class="py-1 ">{{ field.title }}</span>
+                    </div>
+                  </transition>
                 </div>
-                <div class="px-2">
+
+                <div class="px-3">
                   <el-switch
                     v-model="enabledFields[field.name]"
                     class="flex-1"
