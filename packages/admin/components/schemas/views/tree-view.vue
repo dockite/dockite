@@ -4,7 +4,7 @@
       v-if="loading === 0"
       ref="tree"
       :data="documentTree"
-      default-expand-all
+      :default-expand-all="documents.results.length <= 40"
       :render-after-expand="false"
       :expand-on-click-node="false"
       empty-text="There's currently no documents"
