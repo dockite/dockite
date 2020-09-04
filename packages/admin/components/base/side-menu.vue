@@ -49,7 +49,12 @@
 
         <el-menu-item index="/documents">
           <span slot="title">
-            <a :class="[isCollapse ? '' : 'inline-block w-full']" style="color: inherit">
+            <a
+              href="/documents"
+              :class="[isCollapse ? '' : 'inline-block w-full']"
+              style="color: inherit"
+              @click.prevent="$router.push($event.target.getAttribute('href'))"
+            >
               All {{ $t('sideMenu.documents') }}s
             </a>
           </span>

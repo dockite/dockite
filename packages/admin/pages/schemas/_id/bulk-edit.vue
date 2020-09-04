@@ -53,9 +53,9 @@
                     :groups.sync="groups"
                   />
 
-                  <transition name="el-fade-in-linear">
+                  <transition name="el-fade-in">
                     <div
-                      v-if="!enabledFields[field.name]"
+                      v-show="!enabledFields[field.name]"
                       class="absolute w-full h-full top-0 left-0 bg-gray-200 rounded flex flex-col items-center justify-center"
                       style="opacity: 0.8"
                     >
