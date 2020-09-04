@@ -193,11 +193,11 @@ const createGraphQLInputObjectTypesForSchema = async (
           createInputTypeFieldMap[field.name] = {
             type: inputType,
           };
-
-          updateInputTypeFieldMap[field.name] = {
-            type: inputType,
-          };
         }
+
+        updateInputTypeFieldMap[field.name] = {
+          type: inputType,
+        };
       }
     }),
   );
