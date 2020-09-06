@@ -1,5 +1,5 @@
+import { BaseField } from '@dockite/database';
 import { FieldSettings } from '@dockite/types';
-import { Field } from '@dockite/database';
 
 export const AvailableTypes = ['string', 'number'] as const;
 
@@ -10,6 +10,7 @@ export interface IDFieldSettings extends FieldSettings {
   type: IDFieldType;
 }
 
-export interface DockiteFieldIDEntity extends Field {
-  settings: IDFieldSettings & Field['settings'];
+export interface DockiteFieldIDEntity extends BaseField {
+  type: 'id';
+  settings: IDFieldSettings & BaseField['settings'];
 }

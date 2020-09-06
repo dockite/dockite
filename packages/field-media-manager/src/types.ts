@@ -1,4 +1,4 @@
-import { Field } from '@dockite/database';
+import { BaseField } from '@dockite/database';
 
 export const DEFAULT_OPTIONS: MediaManagerFieldSettings = {
   acceptedExtensions: [],
@@ -45,6 +45,7 @@ export interface MediaManagerFieldSettings extends S3Settings {
   public: boolean;
 }
 
-export interface DockiteFieldMediaManagerEntity extends Field {
-  settings: MediaManagerFieldSettings & Field['settings'];
+export interface DockiteFieldMediaManagerEntity extends BaseField {
+  type: 'media-manager';
+  settings: MediaManagerFieldSettings & BaseField['settings'];
 }

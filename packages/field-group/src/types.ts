@@ -1,8 +1,9 @@
+import { BaseField, Field } from '@dockite/database';
 import { FieldSettings } from '@dockite/types';
-import { Field } from '@dockite/database';
 
-export interface DockiteFieldGroupEntity extends Field {
-  settings: GroupFieldSettings & Field['settings'];
+export interface DockiteFieldGroupEntity extends BaseField {
+  type: 'group';
+  settings: GroupFieldSettings & BaseField['settings'];
 }
 
 export interface GroupFieldSettings extends FieldSettings {

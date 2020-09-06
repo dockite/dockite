@@ -1,8 +1,9 @@
+import { BaseField } from '@dockite/database';
 import { FieldSettings } from '@dockite/types';
-import { Field } from '@dockite/database';
 
-export interface DockiteFieldDateTimeEntity extends Field {
-  settings: DateFieldSettings & Field['settings'];
+export interface DockiteFieldDateTimeEntity extends BaseField {
+  type: 'datetime';
+  settings: DateFieldSettings & BaseField['settings'];
 }
 
 export interface DateFieldSettings extends FieldSettings {

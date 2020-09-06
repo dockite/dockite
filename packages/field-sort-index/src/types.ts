@@ -1,10 +1,11 @@
+import { BaseField } from '@dockite/database';
 import { FieldSettings } from '@dockite/types';
-import { Field } from '@dockite/database';
 
 export interface SortIndexFieldSettings extends FieldSettings {
   parentField: string | null;
 }
 
-export interface DockiteFieldSortIndexEntity extends Field {
-  settings: SortIndexFieldSettings & Field['settings'];
+export interface DockiteFieldSortIndexEntity extends BaseField {
+  type: 'sort-index';
+  settings: SortIndexFieldSettings & BaseField['settings'];
 }

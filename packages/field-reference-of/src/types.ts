@@ -1,4 +1,4 @@
-import { Field } from '@dockite/database';
+import { BaseField } from '@dockite/database';
 
 export interface ReferenceOfFieldSettings {
   required: boolean;
@@ -6,6 +6,7 @@ export interface ReferenceOfFieldSettings {
   fieldName: string | null;
 }
 
-export interface DockiteFieldReferenceOfEntity extends Field {
-  settings: ReferenceOfFieldSettings & Field['settings'];
+export interface DockiteFieldReferenceOfEntity extends BaseField {
+  type: 'reference_of';
+  settings: ReferenceOfFieldSettings & BaseField['settings'];
 }

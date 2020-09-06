@@ -1,5 +1,5 @@
+import { BaseField } from '@dockite/database';
 import { FieldSettings } from '@dockite/types';
-import { Field } from '@dockite/database';
 
 export interface StringFieldSettings extends FieldSettings {
   required: boolean;
@@ -9,6 +9,7 @@ export interface StringFieldSettings extends FieldSettings {
   maxLen: number;
 }
 
-export interface DockiteFieldStringEntity extends Field {
-  settings: StringFieldSettings & Field['settings'];
+export interface DockiteFieldStringEntity extends BaseField {
+  type: 'string';
+  settings: StringFieldSettings & BaseField['settings'];
 }

@@ -58,3 +58,9 @@ export class Field {
     }
   }
 }
+
+const OmittedFields = ['schema', 'dockiteField', 'setDockiteField'] as const;
+
+export type BaseField = Omit<Field, typeof OmittedFields[number]> & {
+  id?: string;
+};

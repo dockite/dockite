@@ -1,4 +1,4 @@
-import { Field } from '@dockite/database';
+import { BaseField } from '@dockite/database';
 
 export interface S3ImageType {
   name: string;
@@ -41,6 +41,7 @@ export interface S3ImageFieldSettings extends S3Settings {
   public: boolean;
 }
 
-export interface DockiteFieldS3ImageEntity extends Field {
-  settings: S3ImageFieldSettings & Field['settings'];
+export interface DockiteFieldS3ImageEntity extends BaseField {
+  type: 's3-image';
+  settings: S3ImageFieldSettings & BaseField['settings'];
 }

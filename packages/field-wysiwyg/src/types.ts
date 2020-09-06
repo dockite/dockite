@@ -1,5 +1,5 @@
+import { BaseField } from '@dockite/database';
 import { FieldSettings } from '@dockite/types';
-import { Field } from '@dockite/database';
 
 export const AvailableExtensions = [
   'Doc',
@@ -50,6 +50,7 @@ export interface WysiwygFieldSettings extends FieldSettings {
   maxLen: number;
 }
 
-export interface DockiteFieldWysiwygEntity extends Field {
-  settings: WysiwygFieldSettings & Field['settings'];
+export interface DockiteFieldWysiwygEntity extends BaseField {
+  type: 'wysiwyg';
+  settings: WysiwygFieldSettings & BaseField['settings'];
 }

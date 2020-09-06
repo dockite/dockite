@@ -1,4 +1,4 @@
-import { Field } from '@dockite/database';
+import { BaseField } from '@dockite/database';
 
 export interface SelectFieldSettings {
   required: boolean;
@@ -6,6 +6,7 @@ export interface SelectFieldSettings {
   options: Record<string, string>;
 }
 
-export interface DockiteFieldSelectEntity extends Field {
-  settings: SelectFieldSettings & Field['settings'];
+export interface DockiteFieldSelectEntity extends BaseField {
+  type: 'select';
+  settings: SelectFieldSettings & BaseField['settings'];
 }

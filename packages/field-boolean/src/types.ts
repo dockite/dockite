@@ -1,10 +1,11 @@
 import { FieldSettings } from '@dockite/types';
-import { Field } from '@dockite/database';
+import { BaseField } from '@dockite/database';
 
 export interface BooleanFieldSettings extends FieldSettings {
   required: boolean;
 }
 
-export interface DockiteFieldBooleanEntity extends Field {
-  settings: BooleanFieldSettings & Field['settings'];
+export interface DockiteFieldBooleanEntity extends BaseField {
+  type: 'boolean';
+  settings: BooleanFieldSettings & BaseField['settings'];
 }

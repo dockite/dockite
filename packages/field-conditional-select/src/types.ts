@@ -1,4 +1,4 @@
-import { Field } from '@dockite/database';
+import { BaseField } from '@dockite/database';
 
 export interface ConditionalSelectFieldOptionValue {
   value: string | null;
@@ -12,6 +12,7 @@ export interface ConditionalSelectFieldSettings {
   options: Record<string, ConditionalSelectFieldOptionValue>;
 }
 
-export interface DockiteFieldConditionalSelectEntity extends Field {
-  settings: ConditionalSelectFieldSettings & Field['settings'];
+export interface DockiteFieldConditionalSelectEntity extends BaseField {
+  type: 'conditional_select';
+  settings: ConditionalSelectFieldSettings & BaseField['settings'];
 }

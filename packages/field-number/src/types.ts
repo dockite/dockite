@@ -1,5 +1,5 @@
+import { BaseField } from '@dockite/database';
 import { FieldSettings } from '@dockite/types';
-import { Field } from '@dockite/database';
 
 export interface NumberFieldSettings extends FieldSettings {
   required: boolean;
@@ -8,6 +8,7 @@ export interface NumberFieldSettings extends FieldSettings {
   max: number;
 }
 
-export interface DockiteFieldNumberEntity extends Field {
-  settings: NumberFieldSettings & Field['settings'];
+export interface DockiteFieldNumberEntity extends BaseField {
+  type: 'number';
+  settings: NumberFieldSettings & BaseField['settings'];
 }

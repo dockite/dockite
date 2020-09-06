@@ -1,10 +1,11 @@
-import { Field } from '@dockite/database';
+import { BaseField } from '@dockite/database';
 
 export interface ReferenceFieldSettings {
   required: boolean;
   schemaIds: string[];
 }
 
-export interface DockiteFieldReferenceEntity extends Field {
-  settings: ReferenceFieldSettings & Field['settings'];
+export interface DockiteFieldReferenceEntity extends BaseField {
+  type: 'reference';
+  settings: ReferenceFieldSettings & BaseField['settings'];
 }
