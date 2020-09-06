@@ -25,12 +25,7 @@
     </portal>
 
     <div v-loading="loading > 0" class="all-documents-page el-loading-parent__min-height">
-      <el-table
-        :loading="documents.results.length === 0"
-        :data="documents.results"
-        style="width: 100%"
-        @sort-change="handleSortChange"
-      >
+      <el-table :data="documents.results" style="width: 100%" @sort-change="handleSortChange">
         <el-table-column prop="id" label="ID" sortable="custom">
           <template slot-scope="scope">
             <router-link

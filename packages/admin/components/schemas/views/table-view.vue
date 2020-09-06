@@ -10,184 +10,188 @@
       />
     </portal>
 
-    <el-table
-      v-loading="loading > 0"
-      :data="findDocumentsBySchemaId.results"
-      style="width: 100%;"
-      class="dockite-table--document el-table--scrollable-x"
-      @sort-change="handleSortChange"
-      @selection-change="handleSelectionChange"
-    >
-      <el-table-column v-if="selectable" fixed type="selection" width="55" />
-
-      <el-table-column sortable="custom" prop="id" label="ID">
-        <template slot-scope="scope">
-          <router-link :to="`/documents/${scope.row.id}`">
-            {{ scope.row.id | shortDesc }}
-          </router-link>
-        </template>
-      </el-table-column>
-
-      <el-table-column
-        v-for="field in fieldsToDisplay"
-        :key="field.name"
-        sortable="custom"
-        :label="field.title"
-        :prop="`data.${field.name}`"
+    <div v-loading="loading > 0">
+      <el-table
+        :data="findDocumentsBySchemaId.results"
+        style="width: 100%;"
+        class="dockite-table--document el-table--scrollable-x"
+        @sort-change="handleSortChange"
+        @selection-change="handleSelectionChange"
       >
-        <template slot="header" slot-scope="{ column }">
-          {{ column.label }}
+        <el-table-column v-if="selectable" fixed type="selection" width="55" />
 
-          <!-- You gotta stop it from propogating twice for "reasons" -->
-          <el-popover
-            v-if="term === ''"
-            width="250"
-            trigger="click"
-            class="dockite-table-filter--popover"
-            @click.native.stop
-          >
-            <div slot="reference" class="el-table__column-filter-trigger w-full pb-1" @click.stop>
-              <div
-                class="w-full border rounded h-6 px-2 text-xs font-normal flex justify-between items-center"
-                :class="{
-                  'bg-gray-200': filters[field.name],
-                  'font-semibold': filters[field.name],
-                }"
-              >
-                <template v-if="filters[field.name]">
-                  <span>{{ filters[field.name].operator }} "{{ filters[field.name].value }}"</span>
-                  <i
-                    class="el-icon-close cursor-pointer hover:bg-gray-400 text-lg p-1 rounded-full"
-                    @click.stop="filters[field.name] = null"
-                  />
-                </template>
-                <template v-else>
-                  <span class="text-gray-500">Filter</span>
-                  <i class="el-icon-arrow-down cursor-pointer text-lg p-1 rounded-full" />
-                </template>
-              </div>
-            </div>
+        <el-table-column sortable="custom" prop="id" label="ID">
+          <template slot-scope="scope">
+            <router-link :to="`/documents/${scope.row.id}`">
+              {{ scope.row.id | shortDesc }}
+            </router-link>
+          </template>
+        </el-table-column>
 
-            <filter-input
-              v-if="filters[field.name] !== undefined"
-              v-model="filters[field.name]"
-              :options="supportedOperators"
-              :prop="field.name"
-            />
-          </el-popover>
-        </template>
+        <el-table-column
+          v-for="field in fieldsToDisplay"
+          :key="field.name"
+          sortable="custom"
+          :label="field.title"
+          :prop="`data.${field.name}`"
+        >
+          <template slot="header" slot-scope="{ column }">
+            {{ column.label }}
 
-        <template slot-scope="scope">
-          <span v-if="field.type === 'reference' && scope.row.data[field.name]">
-            {{ scope.row.data[field.name].identifier }}
-          </span>
-
-          <span v-else-if="field.type === 's3-image' && scope.row.data[field.name]">
-            <i
-              v-if="
-                Array.isArray(scope.row.data[field.name]) && scope.row.data[field.name].length === 0
-              "
-              class="el-icon-picture-outline font-xl"
-            />
-
-            <img
-              v-else-if="
-                Array.isArray(scope.row.data[field.name]) && scope.row.data[field.name].length > 0
-              "
-              class="w-full mx-auto"
-              style="max-width: 75px;"
-              :src="scope.row.data[field.name][0].url"
-              alt=""
-            />
-
-            <img
-              v-else
-              class="w-full mx-auto"
-              style="max-width: 75px;"
-              :src="scope.row.data[field.name].url"
-              alt=""
-            />
-          </span>
-
-          <span v-else>
-            {{ scope.row.data[field.name] }}
-          </span>
-        </template>
-      </el-table-column>
-
-      <el-table-column
-        sortable="custom"
-        prop="createdAt"
-        label="Created"
-        :formatter="cellValueFromNow"
-      />
-
-      <el-table-column
-        sortable="custom"
-        prop="updatedAt"
-        label="Updated"
-        :formatter="cellValueFromNow"
-      />
-
-      <el-table-column label="Actions">
-        <span slot-scope="scope" class="dockite-table--actions">
-          <el-popconfirm
-            v-if="deleted"
-            title="Are you sure? The document will be restored and visible again."
-            confirm-button-text="Restore"
-            cancel-button-text="Cancel"
-            @onConfirm="handleRestoreDocument(scope.row.id)"
-          >
-            <el-button
-              v-if="$can('internal:document:update', `schema:${scope.row.schema.name}:update`)"
-              slot="reference"
-              type="text"
-              title="Restore Document"
+            <!-- You gotta stop it from propogating twice for "reasons" -->
+            <el-popover
+              v-if="term === ''"
+              width="250"
+              trigger="click"
+              class="dockite-table-filter--popover"
+              @click.native.stop
             >
-              <i class="el-icon-refresh-left" />
-            </el-button>
-          </el-popconfirm>
+              <div slot="reference" class="el-table__column-filter-trigger w-full pb-1" @click.stop>
+                <div
+                  class="w-full border rounded h-6 px-2 text-xs font-normal flex justify-between items-center"
+                  :class="{
+                    'bg-gray-200': filters[field.name],
+                    'font-semibold': filters[field.name],
+                  }"
+                >
+                  <template v-if="filters[field.name]">
+                    <span
+                      >{{ filters[field.name].operator }} "{{ filters[field.name].value }}"</span
+                    >
+                    <i
+                      class="el-icon-close cursor-pointer hover:bg-gray-400 text-lg p-1 rounded-full"
+                      @click.stop="filters[field.name] = null"
+                    />
+                  </template>
+                  <template v-else>
+                    <span class="text-gray-500">Filter</span>
+                    <i class="el-icon-arrow-down cursor-pointer text-lg p-1 rounded-full" />
+                  </template>
+                </div>
+              </div>
 
-          <router-link v-else title="Edit Document" :to="`/documents/${scope.row.id}`">
-            <i class="el-icon-edit-outline" />
-          </router-link>
+              <filter-input
+                v-if="filters[field.name] !== undefined"
+                v-model="filters[field.name]"
+                :options="supportedOperators"
+                :prop="field.name"
+              />
+            </el-popover>
+          </template>
 
-          <router-link
-            v-if="
-              $can(
-                'internal:document:delete',
-                `schema:${scope.row.schema && scope.row.schema.name}:delete`,
-              )
-            "
-            title="Delete Document"
-            :to="`/documents/${scope.row.id}/delete`"
-          >
-            <i class="el-icon-delete" />
-          </router-link>
+          <template slot-scope="scope">
+            <span v-if="field.type === 'reference' && scope.row.data[field.name]">
+              {{ scope.row.data[field.name].identifier }}
+            </span>
 
-          <router-link title="View Revisions" :to="`/documents/${scope.row.id}/revisions`">
-            <i class="el-icon-folder-opened" />
-          </router-link>
+            <span v-else-if="field.type === 's3-image' && scope.row.data[field.name]">
+              <i
+                v-if="
+                  Array.isArray(scope.row.data[field.name]) &&
+                    scope.row.data[field.name].length === 0
+                "
+                class="el-icon-picture-outline font-xl"
+              />
+
+              <img
+                v-else-if="
+                  Array.isArray(scope.row.data[field.name]) && scope.row.data[field.name].length > 0
+                "
+                class="w-full mx-auto"
+                style="max-width: 75px;"
+                :src="scope.row.data[field.name][0].url"
+                alt=""
+              />
+
+              <img
+                v-else
+                class="w-full mx-auto"
+                style="max-width: 75px;"
+                :src="scope.row.data[field.name].url"
+                alt=""
+              />
+            </span>
+
+            <span v-else>
+              {{ scope.row.data[field.name] }}
+            </span>
+          </template>
+        </el-table-column>
+
+        <el-table-column
+          sortable="custom"
+          prop="createdAt"
+          label="Created"
+          :formatter="cellValueFromNow"
+        />
+
+        <el-table-column
+          sortable="custom"
+          prop="updatedAt"
+          label="Updated"
+          :formatter="cellValueFromNow"
+        />
+
+        <el-table-column label="Actions">
+          <span slot-scope="scope" class="dockite-table--actions">
+            <el-popconfirm
+              v-if="deleted"
+              title="Are you sure? The document will be restored and visible again."
+              confirm-button-text="Restore"
+              cancel-button-text="Cancel"
+              @onConfirm="handleRestoreDocument(scope.row.id)"
+            >
+              <el-button
+                v-if="$can('internal:document:update', `schema:${scope.row.schema.name}:update`)"
+                slot="reference"
+                type="text"
+                title="Restore Document"
+              >
+                <i class="el-icon-refresh-left" />
+              </el-button>
+            </el-popconfirm>
+
+            <router-link v-else title="Edit Document" :to="`/documents/${scope.row.id}`">
+              <i class="el-icon-edit-outline" />
+            </router-link>
+
+            <router-link
+              v-if="
+                $can(
+                  'internal:document:delete',
+                  `schema:${scope.row.schema && scope.row.schema.name}:delete`,
+                )
+              "
+              title="Delete Document"
+              :to="`/documents/${scope.row.id}/delete`"
+            >
+              <i class="el-icon-delete" />
+            </router-link>
+
+            <router-link title="View Revisions" :to="`/documents/${scope.row.id}/revisions`">
+              <i class="el-icon-folder-opened" />
+            </router-link>
+          </span>
+        </el-table-column>
+      </el-table>
+
+      <el-row type="flex" justify="space-between" align="middle">
+        <span class="text-gray-700 px-3" style="font-size: 13px">
+          {{ paginationString }}
         </span>
-      </el-table-column>
-    </el-table>
 
-    <el-row type="flex" justify="space-between" align="middle">
-      <span class="text-gray-700 px-3" style="font-size: 13px">
-        {{ paginationString }}
-      </span>
-
-      <el-pagination
-        :current-page="currentPage"
-        class="dockite-element--pagination"
-        :page-count="totalPages"
-        :pager-count="5"
-        :page-size="perPage"
-        :total="totalItems"
-        layout="jumper, prev, pager, next"
-        @current-change="handlePageChange"
-      />
-    </el-row>
+        <el-pagination
+          :current-page="currentPage"
+          class="dockite-element--pagination"
+          :page-count="totalPages"
+          :pager-count="5"
+          :page-size="perPage"
+          :total="totalItems"
+          layout="jumper, prev, pager, next"
+          @current-change="handlePageChange"
+        />
+      </el-row>
+    </div>
   </div>
 </template>
 
