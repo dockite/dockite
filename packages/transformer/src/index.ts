@@ -106,7 +106,10 @@ const makeInitialFieldDataForDocument = (fields: Field[]): Record<string, any> =
   return fields.reduce((acc, curr) => {
     return {
       ...acc,
-      [curr.name]: curr.settings.default ?? null,
+      [curr.name]:
+        curr.settings.default !== undefined
+          ? curr.settings.default
+          : curr.dockiteField?.defaultValue(),
     };
   }, {});
 };

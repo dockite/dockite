@@ -47,6 +47,8 @@ export interface DockiteFieldStatic {
 }
 
 export interface DockiteField {
+  defaultValue(): any;
+
   inputType(ctx: FieldIOContext): Promise<GraphQLInputType>;
 
   processInput<T>(ctx: HookContextWithOldData): Promise<T>;

@@ -772,7 +772,13 @@ export class DocumentResolver {
 
   private makeInitialData(schema: Schema): Record<string, any> {
     return schema.fields.reduce(
-      (acc, curr) => ({ ...acc, [curr.name]: curr.settings.default ?? null }),
+      (acc, curr) => ({
+        ...acc,
+        [curr.name]:
+          curr.settings.default !== undefined
+            ? curr.settings.default
+            : curr.dockiteField?.defaultValue(),
+      }),
       {},
     );
   }

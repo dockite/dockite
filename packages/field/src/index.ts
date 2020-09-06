@@ -29,6 +29,10 @@ export abstract class DockiteField {
     this.fieldManager = fieldManager;
   }
 
+  public defaultValue(): any {
+    return null;
+  }
+
   public abstract inputType(ctx: FieldIOContext): Promise<GraphQLInputType>;
 
   public async processInput<T>(ctx: HookContextWithOldData): Promise<T> {

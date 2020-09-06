@@ -618,13 +618,15 @@ export class DockiteFieldGroup extends DockiteField {
     );
   }
 
-  private makeInitialFieldData(fields: Pick<Field, 'name' | 'settings'>[]): Record<string, any> {
-    return fields.reduce(
-      (curr, acc) => ({
-        ...curr,
-        [acc.name]: acc.settings.default ?? null,
-      }),
-      {},
-    );
+  private makeInitialFieldData(fields: Omit<Field, 'id'>[]): Record<string, any> {
+    return fields.reduce((acc, curr) => {
+      return {
+        ...acc,
+        [curr.name]:
+          curr.settings.default !== undefined
+            ? curr.settings.default
+            : curr.dockiteField?.defaultValue(),
+      };
+    }, {});
   }
 }

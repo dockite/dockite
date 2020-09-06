@@ -50,7 +50,9 @@ export class FieldSubscriber implements EntitySubscriberInterface {
       .set({
         data: () =>
           `data || '{ "${event.entity.name}": ${this.dataToJSONBValue(
-            event.entity.settings.default,
+            event.entity.settings.default !== undefined
+              ? event.entity.settings.default
+              : event.entity.dockiteField?.defaultValue(),
           )} }'`,
         updatedAt: () => '"updatedAt"',
       })
