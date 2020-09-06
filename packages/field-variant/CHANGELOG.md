@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.27](https://github.com/dockite/dockite/compare/@dockite/field-variant@0.3.0-alpha.26...@dockite/field-variant@0.3.0-alpha.27) (2020-09-06)
+
+
+### Bug Fixes
+
+* simplify exported field types ([9cd2c64](https://github.com/dockite/dockite/commit/9cd2c64a8bdce7ab78cd6653e03547950df15d42))
+
+
+
+
+
 # [0.3.0-alpha.26](https://github.com/dockite/dockite/compare/@dockite/field-variant@0.3.0-alpha.25...@dockite/field-variant@0.3.0-alpha.26) (2020-09-06)
 
 **Note:** Version bump only for package @dockite/field-variant

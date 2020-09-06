@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.35](https://github.com/dockite/dockite/compare/@dockite/field-group@0.4.0-alpha.34...@dockite/field-group@0.4.0-alpha.35) (2020-09-06)
+
+
+### Bug Fixes
+
+* simplify exported field types ([9cd2c64](https://github.com/dockite/dockite/commit/9cd2c64a8bdce7ab78cd6653e03547950df15d42))
+
+
+
+
+
 # [0.4.0-alpha.34](https://github.com/dockite/dockite/compare/@dockite/field-group@0.4.0-alpha.33...@dockite/field-group@0.4.0-alpha.34) (2020-09-06)
 
 
