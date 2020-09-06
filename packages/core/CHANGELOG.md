@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.63](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.62...@dockite/core@0.4.0-alpha.63) (2020-09-06)
+
+
+### Features
+
+* add field level defaults ([fc6b303](https://github.com/dockite/dockite/commit/fc6b3037a7ee0b8fb5ded2b02b0516c6ce555de4))
+
+
+
+
+
 # [0.4.0-alpha.62](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.61...@dockite/core@0.4.0-alpha.62) (2020-09-04)
 
 **Note:** Version bump only for package @dockite/core

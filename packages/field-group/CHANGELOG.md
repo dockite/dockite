@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.34](https://github.com/dockite/dockite/compare/@dockite/field-group@0.4.0-alpha.33...@dockite/field-group@0.4.0-alpha.34) (2020-09-06)
+
+
+### Features
+
+* add field level defaults ([fc6b303](https://github.com/dockite/dockite/commit/fc6b3037a7ee0b8fb5ded2b02b0516c6ce555de4))
+
+
+
+
+
 # [0.4.0-alpha.33](https://github.com/dockite/dockite/compare/@dockite/field-group@0.4.0-alpha.32...@dockite/field-group@0.4.0-alpha.33) (2020-08-27)
 
 
