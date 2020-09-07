@@ -64,7 +64,7 @@
                     />
                   </template>
                   <template v-else>
-                    <span class="text-gray-500">Filter</span>
+                    <span style="color: #D3D3D3">Filter</span>
                     <i class="el-icon-arrow-down cursor-pointer text-lg p-1 rounded-full" />
                   </template>
                 </div>
