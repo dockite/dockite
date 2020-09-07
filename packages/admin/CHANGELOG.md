@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.77](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.76...@dockite/admin@0.4.0-alpha.77) (2020-09-07)
+
+
+### Bug Fixes
+
+* **admin:** pagination not covered by loading mask ([c2345e3](https://github.com/dockite/dockite/commit/c2345e31e31f4cf2421253ca9bf369a6dc44f5dd))
+* **admin:** remove opacity from loading mask ([391cb66](https://github.com/dockite/dockite/commit/391cb664b9bc727ca49f83a6c437a1da99602bdb))
+* **admin:** resolve bad graphql query ([7b81fb5](https://github.com/dockite/dockite/commit/7b81fb521fe6317dc7cf189af65b5802d5837ba8))
+
+
+
+
+
 # [0.4.0-alpha.76](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.75...@dockite/admin@0.4.0-alpha.76) (2020-09-06)
 
 **Note:** Version bump only for package @dockite/admin
