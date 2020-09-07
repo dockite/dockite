@@ -1,7 +1,7 @@
 <template>
   <div v-loading="loading > 0" class="tree-view">
     <el-tree
-      v-if="loading === 0"
+      v-if="loading === 0 && documentTree.length > 0"
       ref="tree"
       :data="documentTree"
       :default-expand-all="documents.results.length <= 40"
