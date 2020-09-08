@@ -1,5 +1,5 @@
 <template>
-  <fragment>
+  <div>
     <portal to="header">
       <el-row type="flex" justify="space-between" align="middle">
         <h2>{{ schemaName }} - Bulk Edit</h2>
@@ -97,7 +97,7 @@
       :selected-documents.sync="selectedDocuments"
       @select-all="selectAll = true"
     />
-  </fragment>
+  </div>
 </template>
 
 <script lang="ts">
@@ -112,6 +112,7 @@ import DocumentSelectModal from '~/components/schema/document-select-modal.vue';
 import * as auth from '~/store/auth';
 import * as data from '~/store/data';
 import * as document from '~/store/document';
+import * as ui from '~/store/ui';
 
 @Component({
   components: {
@@ -254,7 +255,7 @@ export default class CreateSchemaDocumentPage extends Vue {
       };
 
       if (!this.selectAll) {
-        payload.documentIds = this.selectedDocuments;
+        payload.documentIds = this.selectedDocuments.map(x => x.id);
       }
 
       await this.$store.dispatch(`${document.namespace}/partialUpdateDocumentsInSchemaId`, payload);
@@ -317,6 +318,14 @@ export default class CreateSchemaDocumentPage extends Vue {
       this.loading -= 1;
     });
     this.ready = true;
+  }
+
+  beforeMount(): void {
+    if ((this.$store.state.ui as ui.UiState).itemsForBulkEdit.length > 0) {
+      this.selectedDocuments = (this.$store.state.ui as ui.UiState).itemsForBulkEdit;
+    }
+
+    this.$store.commit(`${ui.namespace}/clearItemsForBulkEdit`);
   }
 }
 </script>

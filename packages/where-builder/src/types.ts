@@ -6,6 +6,7 @@ export const Operators = {
   $ilike: 'Checks for a value containing the input provided (case-insensitive)',
   $eq: 'Checks for a value is the same as the input provided',
   $ne: 'Checks for a value that is not the same as the input provided',
+  $in: 'Checks for a value that is within the input provided',
   $gt: 'Checks for a value that is greater than the input provided',
   $gt_date: 'Checks for a date that is greater than the date provided',
   $gte: 'Checks for a value that is greater than or equal to the input provided',

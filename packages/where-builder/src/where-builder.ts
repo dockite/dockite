@@ -33,7 +33,7 @@ const ConstraintHandlerMap: Record<ConstraintOperator, ConstraintHandlerFn> = {
       name = constraint.name;
     }
 
-    qb.andWhere(`${name} = :${param}`, { [param]: constraint.value });
+    qb.andWhere(`document.${name} = :${param}`, { [param]: constraint.value });
   },
 
   $ne: (qb, constraint) => {
@@ -44,7 +44,22 @@ const ConstraintHandlerMap: Record<ConstraintOperator, ConstraintHandlerFn> = {
       name = constraint.name;
     }
 
-    qb.andWhere(`${name} != :${param}`, { [param]: constraint.value });
+    qb.andWhere(`document.${name} != :${param}`, { [param]: constraint.value });
+  },
+
+  $in: (qb, constraint) => {
+    const param = randomBytes(6).toString('hex');
+    let name = columnPartsToColumn(['data', ...constraint.name.split('.')], 'text');
+
+    if (reservedKeys.includes(constraint.name)) {
+      name = constraint.name;
+    }
+
+    const value = unsafeStringToNativeType(constraint.value);
+
+    qb.andWhere(`document.${name} IN (:...${param})`, {
+      [param]: (Array.isArray(value) && value) || [],
+    });
   },
 
   $gt: (qb, constraint) => {
@@ -55,7 +70,9 @@ const ConstraintHandlerMap: Record<ConstraintOperator, ConstraintHandlerFn> = {
       name = constraint.name;
     }
 
-    qb.andWhere(`${name} > :${param}`, { [param]: unsafeStringToNativeType(constraint.value) });
+    qb.andWhere(`document.${name} > :${param}`, {
+      [param]: unsafeStringToNativeType(constraint.value),
+    });
   },
 
   $gte: (qb, constraint) => {
@@ -66,7 +83,9 @@ const ConstraintHandlerMap: Record<ConstraintOperator, ConstraintHandlerFn> = {
       name = constraint.name;
     }
 
-    qb.andWhere(`${name} >= :${param}`, { [param]: unsafeStringToNativeType(constraint.value) });
+    qb.andWhere(`document.${name} >= :${param}`, {
+      [param]: unsafeStringToNativeType(constraint.value),
+    });
   },
 
   $lt: (qb, constraint) => {
@@ -77,7 +96,9 @@ const ConstraintHandlerMap: Record<ConstraintOperator, ConstraintHandlerFn> = {
       name = constraint.name;
     }
 
-    qb.andWhere(`${name} < :${param}`, { [param]: unsafeStringToNativeType(constraint.value) });
+    qb.andWhere(`document.${name} < :${param}`, {
+      [param]: unsafeStringToNativeType(constraint.value),
+    });
   },
 
   $lte: (qb, constraint) => {
@@ -88,7 +109,9 @@ const ConstraintHandlerMap: Record<ConstraintOperator, ConstraintHandlerFn> = {
       name = constraint.name;
     }
 
-    qb.andWhere(`${name} <= :${param}`, { [param]: unsafeStringToNativeType(constraint.value) });
+    qb.andWhere(`document.${name} <= :${param}`, {
+      [param]: unsafeStringToNativeType(constraint.value),
+    });
   },
 
   $gt_date: (qb, constraint) => {
@@ -99,7 +122,7 @@ const ConstraintHandlerMap: Record<ConstraintOperator, ConstraintHandlerFn> = {
       name = constraint.name;
     }
 
-    qb.andWhere(`(${name})::timestamp > (:${param})::timestamp`, {
+    qb.andWhere(`document.(${name})::timestamp > (:${param})::timestamp`, {
       [param]: new Date(constraint.value),
     });
   },
@@ -112,7 +135,7 @@ const ConstraintHandlerMap: Record<ConstraintOperator, ConstraintHandlerFn> = {
       name = constraint.name;
     }
 
-    qb.andWhere(`(${name})::timestamp >= (:${param})::timestamp`, {
+    qb.andWhere(`document.(${name})::timestamp >= (:${param})::timestamp`, {
       [param]: new Date(constraint.value),
     });
   },
@@ -125,7 +148,7 @@ const ConstraintHandlerMap: Record<ConstraintOperator, ConstraintHandlerFn> = {
       name = constraint.name;
     }
 
-    qb.andWhere(`(${name})::timestamp < (:${param})::timestamp`, {
+    qb.andWhere(`document.(${name})::timestamp < (:${param})::timestamp`, {
       [param]: new Date(constraint.value),
     });
   },
@@ -138,7 +161,7 @@ const ConstraintHandlerMap: Record<ConstraintOperator, ConstraintHandlerFn> = {
       name = constraint.name;
     }
 
-    qb.andWhere(`(${name})::timestamp <= (:${param})::timestamp`, {
+    qb.andWhere(`document.(${name})::timestamp <= (:${param})::timestamp`, {
       [param]: new Date(constraint.value),
     });
   },
@@ -151,7 +174,7 @@ const ConstraintHandlerMap: Record<ConstraintOperator, ConstraintHandlerFn> = {
       name = constraint.name;
     }
 
-    qb.andWhere(`${name} LIKE :${param}`, { [param]: `%${constraint.value}%` });
+    qb.andWhere(`document.${name} LIKE :${param}`, { [param]: `%${constraint.value}%` });
   },
 
   $ilike: (qb, constraint) => {
@@ -162,7 +185,7 @@ const ConstraintHandlerMap: Record<ConstraintOperator, ConstraintHandlerFn> = {
       name = constraint.name;
     }
 
-    qb.andWhere(`${name} ILIKE :${param}`, { [param]: `%${constraint.value}%` });
+    qb.andWhere(`document.${name} ILIKE :${param}`, { [param]: `%${constraint.value}%` });
   },
 
   $array_contains: (qb, constraint) => {
@@ -173,7 +196,7 @@ const ConstraintHandlerMap: Record<ConstraintOperator, ConstraintHandlerFn> = {
       name = constraint.name;
     }
 
-    qb.andWhere(`${name} ? :${param}`, {
+    qb.andWhere(`document.${name} ? :${param}`, {
       [param]: unsafeStringToNativeType(constraint.value),
     });
   },
@@ -186,7 +209,7 @@ const ConstraintHandlerMap: Record<ConstraintOperator, ConstraintHandlerFn> = {
       name = constraint.name;
     }
 
-    qb.andWhere(`NOT ${name} ? :${param}`, {
+    qb.andWhere(`document.NOT ${name} ? :${param}`, {
       [param]: unsafeStringToNativeType(constraint.value),
     });
   },
@@ -199,7 +222,7 @@ const ConstraintHandlerMap: Record<ConstraintOperator, ConstraintHandlerFn> = {
       name = constraint.name;
     }
 
-    qb.andWhere(`${name} ~ :${param}`, { [param]: constraint.value });
+    qb.andWhere(`document.${name} ~ :${param}`, { [param]: constraint.value });
   },
 
   $null: (qb, constraint) => {
@@ -209,7 +232,7 @@ const ConstraintHandlerMap: Record<ConstraintOperator, ConstraintHandlerFn> = {
       name = constraint.name;
     }
 
-    qb.andWhere(`COALESCE(${name}, '') = ''`);
+    qb.andWhere(`document.COALESCE(${name}, '') = ''`);
   },
 
   $not_null: (qb, constraint) => {
@@ -219,7 +242,7 @@ const ConstraintHandlerMap: Record<ConstraintOperator, ConstraintHandlerFn> = {
       name = constraint.name;
     }
 
-    qb.andWhere(`COALESCE(${name}, '') != ''`);
+    qb.andWhere(`document.COALESCE(${name}, '') != ''`);
   },
 };
 

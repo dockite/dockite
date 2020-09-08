@@ -81,7 +81,27 @@
     </portal>
 
     <div v-loading="!schema" class="all-schema-documents-page el-loading-parent__min-height">
-      <component :is="currentView" v-if="schema" />
+      <template v-if="schema">
+        <el-tabs v-if="currentView === 'table-view'" type="border-card">
+          <el-tab-pane lazy class="bg-white border border-t-0 pt-3" label="Results">
+            <component
+              :is="currentView"
+              :selected-items.sync="selectedItems"
+              :show-selected-items="true"
+              :selectable="true"
+            />
+          </el-tab-pane>
+          <el-tab-pane
+            lazy
+            class="bg-white border border-t-0 pt-3"
+            :label="`Selected (${selectedItems.length})`"
+          >
+            <selected-view :selected-items.sync="selectedItems" />
+          </el-tab-pane>
+        </el-tabs>
+
+        <component :is="currentView" v-else />
+      </template>
     </div>
   </fragment>
 </template>
@@ -93,9 +113,11 @@ import { Component, Vue, Watch } from 'nuxt-property-decorator';
 import { Fragment } from 'vue-fragment';
 
 import FilterInput from '~/components/base/filter-input.vue';
+import SelectedView from '~/components/schemas/views/selected-view.vue';
 import TableView from '~/components/schemas/views/table-view.vue';
 import TreeView from '~/components/schemas/views/tree-view.vue';
 import * as data from '~/store/data';
+import * as ui from '~/store/ui';
 
 @Component({
   components: {
@@ -103,12 +125,15 @@ import * as data from '~/store/data';
     FilterInput,
     TableView,
     TreeView,
+    SelectedView,
   },
 })
 export default class SchemaDocumentsPage extends Vue {
   public currentView = 'table-view';
 
   public startCase = startCase;
+
+  public selectedItems: Document[] = [];
 
   get schemaId(): string {
     return this.$route.params.id;
@@ -164,11 +189,17 @@ export default class SchemaDocumentsPage extends Vue {
     }
   }
 
+  @Watch('selectedItems')
+  public handleSelectedItemsChange(newItems: Document[]): void {
+    this.$store.commit(`${ui.namespace}/setItemsForBulkEdit`, newItems);
+  }
+
   beforeMount(): void {
     if (this.$route.query['x-view']) {
       this.currentView = this.$route.query['x-view'] as string;
     }
 
+    this.$store.commit(`${ui.namespace}/clearItemsForBulkEdit`);
     this.fetchSchema();
   }
 }
@@ -177,5 +208,15 @@ export default class SchemaDocumentsPage extends Vue {
 <style lang="scss">
 .dockite-element--pagination {
   padding: 1rem;
+}
+
+.all-schema-documents-page {
+  .el-tabs__header {
+    margin: 0;
+  }
+
+  .el-tabs--border-card > .el-tabs__content {
+    padding: 0;
+  }
 }
 </style>

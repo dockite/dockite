@@ -95,6 +95,7 @@ export interface DataState {
   getSchemaWithFields: Record<string, Schema>;
   getSingletonWithFields: Record<string, Singleton>;
   findDocumentsBySchemaId: ManyResultSet<FindDocumentResultItem>;
+  findSelectedDocumentsBySchemaId: ManyResultSet<FindDocumentResultItem>;
   findDocumentsBySchemaIds: ManyResultSet<FindDocumentResultItem>;
   availableFields: DockiteFieldStatic[];
   findWebhookCallsByWebhookId: ManyResultSet<FindWebhookCallsResultItem>;
@@ -184,6 +185,13 @@ export const state = (): DataState => ({
   getSchemaWithFields: {},
   getSingletonWithFields: {},
   findDocumentsBySchemaId: {
+    results: [],
+    totalItems: null,
+    totalPages: null,
+    currentPage: null,
+    hasNextPage: null,
+  },
+  findSelectedDocumentsBySchemaId: {
     results: [],
     totalItems: null,
     totalPages: null,
@@ -468,6 +476,51 @@ export const actions: ActionTree<DataState, RootState> = {
     commit('setFindDocumentsBySchemaId', data);
   },
 
+  async fetchFindSelectedDocumentsBySchemaId(
+    { commit },
+    payload: { schemaId: string; selectedDocuments: string[] } & SortablePayload &
+      PaginationPayload,
+  ): Promise<void> {
+    if (Array.isArray(payload.selectedDocuments) && payload.selectedDocuments.length > 0) {
+      const variables: {
+        id: string;
+        page: number;
+        perPage: number;
+        sort?: DockiteGraphqlSortInput;
+        where: AndQuery;
+      } = {
+        id: payload.schemaId,
+        page: payload.page ?? 1,
+        perPage: payload.perPage ?? 20,
+        sort: payload.sort,
+        where: {
+          AND: [{ name: 'id', operator: '$in', value: JSON.stringify(payload.selectedDocuments) }],
+        },
+      };
+
+      const { data } = await this.$apolloClient.query<FindDocumentsQueryResponse>({
+        query: FindDocumentsBySchemaIdQuery,
+        variables,
+      });
+
+      if (!data.findDocuments) {
+        throw new Error('graphql: allDocumentsWithSchema could not be fetched');
+      }
+
+      commit('setFindSelectedDocumentsBySchemaId', data);
+    } else {
+      commit('setFindSelectedDocumentsBySchemaId', {
+        findDocuments: {
+          results: [],
+          totalItems: null,
+          totalPages: null,
+          currentPage: null,
+          hasNextPage: null,
+        },
+      });
+    }
+  },
+
   async fetchFindDocumentsBySchemaIds(
     { commit },
     payload: { schemaIds: string[] } & Partial<PaginationPayload> &
@@ -707,6 +760,10 @@ export const mutations: MutationTree<DataState> = {
 
   setFindDocumentsBySchemaId(state, payload: FindDocumentsQueryResponse): void {
     state.findDocumentsBySchemaId = { ...payload.findDocuments };
+  },
+
+  setFindSelectedDocumentsBySchemaId(state, payload: FindDocumentsQueryResponse): void {
+    state.findSelectedDocumentsBySchemaId = { ...payload.findDocuments };
   },
 
   setFindDocumentsBySchemaIds(state, payload: FindDocumentsQueryResponse): void {

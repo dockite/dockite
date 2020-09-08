@@ -12,13 +12,21 @@
 
     <div v-loading="loading > 0">
       <el-table
+        ref="table"
         :data="findDocumentsBySchemaId.results"
         style="width: 100%;"
         class="dockite-table--document el-table--scrollable-x"
+        :row-key="getRowKeys"
         @sort-change="handleSortChange"
         @selection-change="handleSelectionChange"
       >
-        <el-table-column v-if="selectable" fixed type="selection" width="55" />
+        <el-table-column
+          v-if="selectable"
+          fixed
+          :reserve-selection="true"
+          type="selection"
+          width="55"
+        />
 
         <el-table-column sortable="custom" prop="id" label="ID">
           <template slot-scope="scope">
@@ -313,6 +321,10 @@ export default class SchemaDocumentsPage extends Vue {
     return this.findDocumentsBySchemaId.totalItems;
   }
 
+  public getRowKeys(row: any): string {
+    return row.id;
+  }
+
   public async fetchFindDocumentsBySchemaId(page = 1): Promise<void> {
     window.scroll({
       top: 0,
@@ -406,10 +418,7 @@ export default class SchemaDocumentsPage extends Vue {
   }
 
   public handleSelectionChange(items: Document[]): void {
-    this.$emit(
-      'update:selectedItems',
-      items.map(i => i.id),
-    );
+    this.$emit('update:selectedItems', items);
   }
 
   public async handleRestoreDocument(id: string): Promise<void> {
@@ -526,6 +535,15 @@ export default class SchemaDocumentsPage extends Vue {
     if (newTerm !== '') {
       this.fetchSearchDocumentsWithSchema(newTerm);
     }
+  }
+
+  @Watch('selectedItems')
+  public handleSelectedItemsChange(newItems: Document[]): void {
+    (this.$refs.table as any).store.states.selection = newItems;
+  }
+
+  mounted(): void {
+    this.handleSelectedItemsChange(this.selectedItems);
   }
 }
 </script>
