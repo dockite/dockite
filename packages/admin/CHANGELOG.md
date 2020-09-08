@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.80](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.79...@dockite/admin@0.4.0-alpha.80) (2020-09-08)
+
+
+### Features
+
+* **admin:** allow page return during bulk-edit ([59b10e1](https://github.com/dockite/dockite/commit/59b10e13e4575404f3cdebeb25192990dfdcdf0f))
+* **admin:** allow page return during bulk-edit ([63efcf9](https://github.com/dockite/dockite/commit/63efcf9e167d80bd625661db397c46642e1f302e))
+
+
+
+
+
 # [0.4.0-alpha.79](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.78...@dockite/admin@0.4.0-alpha.79) (2020-09-08)
 
 **Note:** Version bump only for package @dockite/admin

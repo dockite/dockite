@@ -1,6 +1,6 @@
 {
   "name": "@dockite/field-slug",
-  "version": "0.2.0-alpha.29",
+  "version": "0.2.0-alpha.30",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
@@ -9,9 +9,9 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@dockite/database": "^0.4.0-alpha.20",
-    "@dockite/field": "^0.3.0-alpha.11",
-    "@dockite/types": "^0.3.0-alpha.12",
+    "@dockite/database": "^0.4.0-alpha.21",
+    "@dockite/field": "^0.3.0-alpha.12",
+    "@dockite/types": "^0.3.0-alpha.13",
     "graphql": "^15.1.0",
     "reflect-metadata": "^0.1.13",
     "slugify": "^1.4.4",

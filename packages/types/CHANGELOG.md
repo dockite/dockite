@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.13](https://github.com/dockite/dockite/compare/@dockite/types@0.3.0-alpha.12...@dockite/types@0.3.0-alpha.13) (2020-09-08)
+
+
+### Features
+
+* **admin:** allow page return during bulk-edit ([63efcf9](https://github.com/dockite/dockite/commit/63efcf9e167d80bd625661db397c46642e1f302e))
+
+
+
+
+
 # [0.3.0-alpha.12](https://github.com/dockite/dockite/compare/@dockite/types@0.3.0-alpha.11...@dockite/types@0.3.0-alpha.12) (2020-09-06)
 
 

@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.13](https://github.com/dockite/dockite/compare/@dockite/field-boolean@0.3.0-alpha.12...@dockite/field-boolean@0.3.0-alpha.13) (2020-09-08)
+
+**Note:** Version bump only for package @dockite/field-boolean
+
+
+
+
+
 # [0.3.0-alpha.12](https://github.com/dockite/dockite/compare/@dockite/field-boolean@0.3.0-alpha.11...@dockite/field-boolean@0.3.0-alpha.12) (2020-09-06)
 
 
