@@ -209,7 +209,7 @@ const ConstraintHandlerMap: Record<ConstraintOperator, ConstraintHandlerFn> = {
       name = constraint.name;
     }
 
-    qb.andWhere(`document.NOT ${name} ? :${param}`, {
+    qb.andWhere(`NOT document.${name} ? :${param}`, {
       [param]: unsafeStringToNativeType(constraint.value),
     });
   },
@@ -232,7 +232,7 @@ const ConstraintHandlerMap: Record<ConstraintOperator, ConstraintHandlerFn> = {
       name = constraint.name;
     }
 
-    qb.andWhere(`document.COALESCE(${name}, '') = ''`);
+    qb.andWhere(`COALESCE(document.${name}, '') = ''`);
   },
 
   $not_null: (qb, constraint) => {
@@ -242,7 +242,7 @@ const ConstraintHandlerMap: Record<ConstraintOperator, ConstraintHandlerFn> = {
       name = constraint.name;
     }
 
-    qb.andWhere(`document.COALESCE(${name}, '') != ''`);
+    qb.andWhere(`COALESCE(document.${name}, '') != ''`);
   },
 };
 
