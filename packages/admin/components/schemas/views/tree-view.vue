@@ -113,34 +113,39 @@ export default class TreeViewComponent extends Vue {
 
   public makeDocumentTree(parentId: string | null = null): DocumentTreeData[] {
     this.loading += 1;
+    const settings = this.schema.settings;
 
-    const tree = sortBy(
-      this.documents.results.filter(doc => {
-        const referenceId = doc.data[this.schema.settings.treeViewField]?.id ?? null;
+    if (settings.treeViewField && settings.treeViewLabelField) {
+      const tree = sortBy(
+        this.documents.results.filter(doc => {
+          const referenceId = doc.data[settings.treeViewField!]?.id ?? null;
 
-        return referenceId === parentId;
-      }),
-      doc => {
-        if (this.schema.settings.treeViewSortField) {
-          return doc.data[this.schema.settings.treeViewSortField] ?? null;
-        }
+          return referenceId === parentId;
+        }),
+        doc => {
+          if (settings.treeViewSortField) {
+            return doc.data[settings.treeViewSortField!] ?? null;
+          }
 
-        return doc.id;
-      },
-    ).map(doc => {
-      return {
-        id: doc.id,
-        __document: cloneDeep(doc),
-        label: doc.data[this.schema.settings.treeViewLabelField],
-        children: this.makeDocumentTree(doc.id),
-      };
-    });
+          return doc.id;
+        },
+      ).map(doc => {
+        return {
+          id: doc.id,
+          __document: cloneDeep(doc),
+          label: doc.data[settings.treeViewLabelField!],
+          children: this.makeDocumentTree(doc.id),
+        };
+      });
 
-    setImmediate(() => {
-      this.loading -= 1;
-    });
+      setImmediate(() => {
+        this.loading -= 1;
+      });
 
-    return tree;
+      return tree;
+    }
+
+    return [];
   }
 
   public flattenDocumentTree(tree: DocumentTreeData[]): FindDocumentResultItem[] {
@@ -158,29 +163,33 @@ export default class TreeViewComponent extends Vue {
   }
 
   public handleNodeDrop(dragNode: TreeNode<string, DocumentTreeData>): void {
+    const settings = this.schema.settings;
+
     const node = this.tree.getNode(dragNode.data.id) as TreeNode<any, DocumentTreeData>;
 
     const parent = node.parent;
 
     if (parent && parent.data.id) {
-      node.data.__document.data[this.schema.settings.treeViewField] = {
+      node.data.__document.data[settings.treeViewField!] = {
         id: parent.data.id ?? '',
         schemaId: this.schemaId,
       };
     } else {
-      node.data.__document.data[this.schema.settings.treeViewField] = null;
+      node.data.__document.data[settings.treeViewField!] = null;
     }
 
-    if (this.schema.settings.treeViewSortField) {
+    if (settings.treeViewSortField) {
       this.assignOrderToTree(this.documentTree);
     }
   }
 
   public async handleSaveTree(): Promise<void> {
+    const settings = this.schema.settings;
+
     try {
       this.loading += 1;
 
-      if (this.schema.settings.treeViewSortField) {
+      if (settings.treeViewSortField) {
         this.assignOrderToTree(this.documentTree);
       }
 
@@ -215,13 +224,16 @@ export default class TreeViewComponent extends Vue {
   }
 
   public assignOrderToTree(tree: DocumentTreeData[]): void {
-    tree.forEach((node, i) => {
-      node.__document.data[this.schema.settings.treeViewSortField] = i;
+    const settings = this.schema.settings;
+    if (settings.treeViewSortField) {
+      tree.forEach((node, i) => {
+        node.__document.data[settings.treeViewSortField!] = i;
 
-      if (node.children) {
-        this.assignOrderToTree(node.children);
-      }
-    });
+        if (node.children) {
+          this.assignOrderToTree(node.children);
+        }
+      });
+    }
   }
 
   @Watch('schemaId')
