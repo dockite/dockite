@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.78](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.77...@dockite/admin@0.4.0-alpha.78) (2020-09-08)
+
+
+### Bug Fixes
+
+* **admin:** resolve tree view expansion on length ([597d090](https://github.com/dockite/dockite/commit/597d0905342e0ba089c1229ba415002063c5954a))
+
+
+### Features
+
+* **admin:** add bulk edit selector to schema view ([61dbc2c](https://github.com/dockite/dockite/commit/61dbc2c6ec697cf3b072704bbaefd3a51db66038))
+
+
+
+
+
 # [0.4.0-alpha.77](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.76...@dockite/admin@0.4.0-alpha.77) (2020-09-07)
 
 
