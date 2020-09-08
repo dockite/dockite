@@ -107,7 +107,7 @@
 </template>
 
 <script lang="ts">
-import { Schema } from '@dockite/database';
+import { Schema, Document } from '@dockite/database';
 import { startCase } from 'lodash';
 import { Component, Vue, Watch } from 'nuxt-property-decorator';
 import { Fragment } from 'vue-fragment';
@@ -191,15 +191,25 @@ export default class SchemaDocumentsPage extends Vue {
 
   @Watch('selectedItems')
   public handleSelectedItemsChange(newItems: Document[]): void {
-    this.$store.commit(`${ui.namespace}/setItemsForBulkEdit`, newItems);
+    this.$store.commit(`${ui.namespace}/setItemsForBulkEdit`, {
+      schemaId: this.schemaId,
+      items: [...newItems],
+    });
   }
 
   beforeMount(): void {
+    const uiState = this.$store.state.ui as ui.UiState;
+
     if (this.$route.query['x-view']) {
       this.currentView = this.$route.query['x-view'] as string;
     }
 
-    this.$store.commit(`${ui.namespace}/clearItemsForBulkEdit`);
+    if (uiState.itemsForBulkEditSchemaId === this.schemaId && uiState.itemsForBulkEdit.length > 0) {
+      this.selectedItems = (this.$store.state.ui as ui.UiState).itemsForBulkEdit;
+    } else {
+      this.$store.commit(`${ui.namespace}/clearItemsForBulkEdit`);
+    }
+
     this.fetchSchema();
   }
 }

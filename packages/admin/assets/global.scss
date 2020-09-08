@@ -103,6 +103,6 @@ li.el-dropdown-menu__item a::before {
   min-height: 60vh;
 }
 
-:focus {
+button:focus, :focus {
   outline: none;
 }

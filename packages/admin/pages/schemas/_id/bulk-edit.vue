@@ -5,7 +5,14 @@
         <h2>{{ schemaName }} - Bulk Edit</h2>
 
         <div>
-          <el-button @click="showDocumentSelectModal = true">Select Documents</el-button>
+          <el-button @click="showDocumentSelectModal = true">
+            {{ selectedDocuments.length === 0 ? 'Select Documents' : 'Update Selection' }}
+          </el-button>
+
+          <el-button @click="selectAll = !selectAll">
+            {{ selectAll ? 'Deselect All' : 'Select All' }}
+          </el-button>
+
           <el-button
             :disabled="loading > 0 || (selectedDocuments.length === 0 && !selectAll)"
             type="primary"
@@ -38,7 +45,10 @@
           <el-tab-pane v-for="tab in availableTabs" :key="tab" :label="tab" :name="tab">
             <div v-for="field in getFieldsByGroupName(tab)" :key="field.id">
               <div
-                v-if="$dockiteFieldManager[field.type].input && !field.settings.hidden"
+                v-if="
+                  $dockiteFieldManager[field.type].input &&
+                    !(field.settings.hidden || field.settings.hideInBulkEdit)
+                "
                 class="flex justify-between items-center -mx-3 my-3"
               >
                 <div class="w-full px-3 relative">
@@ -265,6 +275,8 @@ export default class CreateSchemaDocumentPage extends Vue {
         type: 'success',
       });
 
+      this.$store.commit(`${ui.namespace}/clearItemsForBulkEdit`);
+
       this.$router.push(`/schemas/${this.schemaId}`);
     } catch (_) {
       // It's any's all the way down
@@ -324,8 +336,6 @@ export default class CreateSchemaDocumentPage extends Vue {
     if ((this.$store.state.ui as ui.UiState).itemsForBulkEdit.length > 0) {
       this.selectedDocuments = (this.$store.state.ui as ui.UiState).itemsForBulkEdit;
     }
-
-    this.$store.commit(`${ui.namespace}/clearItemsForBulkEdit`);
   }
 }
 </script>

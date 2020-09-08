@@ -7,20 +7,24 @@ export const namespace = 'ui';
 
 export interface UiState {
   itemsForBulkEdit: Document[];
+  itemsForBulkEditSchemaId: string | null;
 }
 
 export const state = (): UiState => ({
   itemsForBulkEdit: [],
+  itemsForBulkEditSchemaId: null,
 });
 
 export const actions: ActionTree<RootState, UiState> = {};
 
 export const mutations: MutationTree<UiState> = {
-  setItemsForBulkEdit(state, payload: Document[]): void {
-    state.itemsForBulkEdit = payload;
+  setItemsForBulkEdit(state, payload: { schemaId: string; items: Document[] }): void {
+    state.itemsForBulkEdit = payload.items;
+    state.itemsForBulkEditSchemaId = payload.schemaId;
   },
 
   clearItemsForBulkEdit(state): void {
+    state.itemsForBulkEditSchemaId = null;
     state.itemsForBulkEdit = [];
   },
 };
