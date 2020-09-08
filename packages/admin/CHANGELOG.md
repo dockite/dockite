@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.81](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.80...@dockite/admin@0.4.0-alpha.81) (2020-09-08)
+
+
+### Bug Fixes
+
+* **admin:** avoid potential bulk editing of invalid schema ([eb99922](https://github.com/dockite/dockite/commit/eb99922b32fd0da2358f763bd324b9bc1f1c59c7))
+
+
+
+
+
 # [0.4.0-alpha.80](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.79...@dockite/admin@0.4.0-alpha.80) (2020-09-08)
 
 
