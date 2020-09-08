@@ -110,7 +110,7 @@
           {{ paginationString }}
         </span>
 
-        <router-link :to="`/schemas/${schemaId}/bulk-edit`">
+        <router-link v-if="showBulkEditButton" :to="`/schemas/${schemaId}/bulk-edit`">
           <el-button>Update Selected Items</el-button>
         </router-link>
       </el-row>
@@ -139,6 +139,9 @@ import * as data from '~/store/data';
 export default class SchemaDocumentsPage extends Vue {
   @Prop({ default: () => [] })
   readonly selectedItems!: Document[];
+
+  @Prop({ default: () => true })
+  readonly showBulkEditButton!: boolean;
 
   public supportedOperators = Operators;
 

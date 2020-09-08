@@ -140,7 +140,7 @@
           :formatter="cellValueFromNow"
         />
 
-        <el-table-column label="Actions">
+        <el-table-column v-if="showActions" label="Actions">
           <span slot-scope="scope" class="dockite-table--actions">
             <el-popconfirm
               v-if="deleted"
@@ -241,6 +241,9 @@ export default class SchemaDocumentsPage extends Vue {
 
   @Prop({ default: () => false })
   readonly deleted!: boolean;
+
+  @Prop({ default: () => true })
+  readonly showActions!: boolean;
 
   public term = '';
 

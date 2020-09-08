@@ -329,11 +329,12 @@ export default class CreateSchemaDocumentPage extends Vue {
     this.$nextTick(() => {
       this.loading -= 1;
     });
+
     this.ready = true;
   }
 
   beforeMount(): void {
-    const state = this.$store.state.ui as ui.UiState;
+    const state = this.$store.state[ui.namespace] as ui.UiState;
 
     if (state.itemsForBulkEdit.length > 0 && state.itemsForBulkEditSchemaId === this.schemaId) {
       this.selectedDocuments = state.itemsForBulkEdit;

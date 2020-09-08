@@ -6,20 +6,34 @@
     append-to-body
     :visible.sync="visibleSync"
   >
-    <div>
-      <div class="sticky bg-white top-0 flex z-10 flex-row justify-between items-center py-3">
-        <el-button size="medium" @click="handleSelectAll">
-          Select All
-        </el-button>
+    <el-tabs type="border-card" class="overflow-hidden overflow-y-auto">
+      <el-tab-pane label="Selected" class="overflow-y-auto">
+        <selected-view
+          :selected-items.sync="selectedDocumentsSync"
+          :show-bulk-edit-button="false"
+        />
+      </el-tab-pane>
+      <el-tab-pane label="Results" class="overflow-y-auto">
+        <div>
+          <div class="sticky bg-white top-0 flex z-10 flex-row justify-between items-center py-3">
+            <el-button size="medium" @click="handleSelectAll">
+              Select All
+            </el-button>
 
-        <portal-target name="header-extra" />
-      </div>
+            <portal-target name="header-extra" />
+          </div>
 
-      <table-view :selected-items.sync="selectedDocumentsSync" :selectable="true" />
-    </div>
+          <table-view
+            :selected-items.sync="selectedDocumentsSync"
+            :selectable="true"
+            :show-actions="false"
+          />
+        </div>
+      </el-tab-pane>
+    </el-tabs>
 
     <template slot="footer">
-      <div class="pt-3">
+      <div class="">
         <el-button type="primary" @click="visibleSync = false">
           Confirm
         </el-button>
@@ -35,8 +49,8 @@ import { Component, Vue, PropSync } from 'nuxt-property-decorator';
 import { Fragment } from 'vue-fragment';
 
 import FilterInput from '~/components/base/filter-input.vue';
+import SelectedView from '~/components/schemas/views/selected-view.vue';
 import TableView from '~/components/schemas/views/table-view.vue';
-import TreeView from '~/components/schemas/views/tree-view.vue';
 import * as data from '~/store/data';
 
 @Component({
@@ -44,12 +58,10 @@ import * as data from '~/store/data';
     Fragment,
     FilterInput,
     TableView,
-    TreeView,
+    SelectedView,
   },
 })
 export default class SchemaDocumentsPage extends Vue {
-  public currentView = 'table-view';
-
   public startCase = startCase;
 
   @PropSync('visible')
@@ -68,16 +80,6 @@ export default class SchemaDocumentsPage extends Vue {
 
   get schema(): Schema {
     return this.$store.getters[`${data.namespace}/getSchemaWithFieldsById`](this.schemaId);
-  }
-
-  get availableViews(): string[] {
-    const views = ['table-view'];
-
-    if (this.schema && this.schema.settings.enableTreeView) {
-      views.push('tree-view');
-    }
-
-    return views;
   }
 
   public handleSelectAll(): void {
@@ -102,8 +104,11 @@ export default class SchemaDocumentsPage extends Vue {
   flex-direction: column;
 
   .el-dialog__body {
+    display: flex;
+    flex-direction: column;
+
     overflow: hidden;
-    overflow-y: auto;
+    // overflow-y: auto;
 
     padding: 1rem;
     padding-top: 0;
