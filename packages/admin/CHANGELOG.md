@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.82](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.81...@dockite/admin@0.4.0-alpha.82) (2020-09-08)
+
+
+### Bug Fixes
+
+* **admin:** bulk edit ui tweaks ([f8e503a](https://github.com/dockite/dockite/commit/f8e503aa9407c27057179bd501a1c3139eee0215))
+
+
+
+
+
 # [0.4.0-alpha.81](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.80...@dockite/admin@0.4.0-alpha.81) (2020-09-08)
 
 
