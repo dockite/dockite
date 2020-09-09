@@ -155,7 +155,11 @@
       </el-submenu>
 
       <el-submenu
-        v-if="$can('internal:singleton:read') || $can('internal:singleton:create')"
+        v-if="
+          $can('internal:singleton:read') ||
+            $can('internal:singleton:create') ||
+            allSingletons.results.length > 0
+        "
         index="/singletons"
       >
         <template slot="title">
