@@ -112,6 +112,10 @@ export default class ConditionalSelectFieldInputComponent extends Vue {
     }
 
     this.groupsBackup = cloneDeep(this.groups);
+
+    if (this.fieldData) {
+      this.handleFieldDataChange(this.fieldData);
+    }
   }
 
   getRequiredRule(): object {
@@ -123,7 +127,7 @@ export default class ConditionalSelectFieldInputComponent extends Vue {
   }
 
   @Watch('fieldData', { immediate: true })
-  public handleFieldDataChange(newValue: boolean) {
+  public handleFieldDataChange(newValue: string | null) {
     if (newValue) {
       this.$emit('update:groups', cloneDeep(this.groupsBackup));
       this.$emit('update:groups', cloneDeep(this.hidden));
