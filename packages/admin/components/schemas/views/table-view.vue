@@ -452,27 +452,25 @@ export default class SchemaDocumentsPage extends Vue {
   handleFilterChange(newValue: Record<string, Constraint | null>): void {
     const filters = Object.values(newValue).filter(x => x !== null);
 
-    if (filters.length > 0) {
-      const queryParams = filters.reduce((acc, curr) => {
-        if (!curr) {
-          return acc;
-        }
+    const queryParams = filters.reduce((acc, curr) => {
+      if (!curr) {
+        return acc;
+      }
 
-        return {
-          ...acc,
-          [curr.name]: curr.operator + '|' + curr.value,
-        };
-      }, {});
+      return {
+        ...acc,
+        [curr.name]: curr.operator + '|' + curr.value,
+      };
+    }, {});
 
-      this.$router.push({
-        query: {
-          ...pickBy(this.$route.query as Record<string, string>, (key: string) =>
-            key.startsWith('x-'),
-          ),
-          ...queryParams,
-        },
-      });
-    }
+    this.$router.push({
+      query: {
+        ...pickBy(this.$route.query as Record<string, string>, (key: string) =>
+          key.startsWith('x-'),
+        ),
+        ...queryParams,
+      },
+    });
 
     this.fetchFindDocumentsBySchemaId(Number(this.$route.query['x-page'] as string) || 1);
   }
