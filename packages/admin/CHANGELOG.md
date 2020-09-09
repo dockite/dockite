@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.83](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.82...@dockite/admin@0.4.0-alpha.83) (2020-09-09)
+
+
+### Bug Fixes
+
+* **admin:** singletons not displaying in side menu ([49dc790](https://github.com/dockite/dockite/commit/49dc7907cc01e72846cb5ad693884da045b38927))
+
+
+
+
+
 # [0.4.0-alpha.82](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.81...@dockite/admin@0.4.0-alpha.82) (2020-09-08)
 
 
