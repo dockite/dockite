@@ -79,6 +79,10 @@ export default class ConditionalBooleanFieldInputComponent extends Vue {
     }
 
     this.groupsBackup = cloneDeep(this.groups);
+
+    if (this.fieldData) {
+      this.handleFieldDataChange(this.fieldData);
+    }
   }
 
   getRequiredRule(): object {
