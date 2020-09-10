@@ -308,8 +308,6 @@ export class DocumentResolver {
       qb.andWhere('document.deletedAt IS NULL');
     }
 
-    console.log(qb.getSql());
-
     const [results, totalItems] = await qb.getManyAndCount();
 
     await Promise.all(
