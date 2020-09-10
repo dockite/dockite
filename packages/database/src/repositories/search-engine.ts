@@ -5,11 +5,11 @@ import { SearchEngine } from '../entities/search-engine';
 @EntityRepository(SearchEngine)
 export class SearchEngineRepository extends Repository<SearchEngine> {
   public search(term: string): SelectQueryBuilder<SearchEngine> {
-    const qb = getRepository(SearchEngine).createQueryBuilder('searchEngine');
+    const qb = getRepository(SearchEngine).createQueryBuilder('document');
 
     if (term !== '') {
       qb.where(
-        `(fts @@ plainto_tsquery('pg_catalog.simple', :term) OR (searchEngine.id)::text LIKE :like)`,
+        `(fts @@ plainto_tsquery('pg_catalog.simple', :term) OR (document.id)::text LIKE :like)`,
         { term, like: `%${term}%` },
       );
     } else {

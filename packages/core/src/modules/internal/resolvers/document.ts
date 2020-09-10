@@ -192,6 +192,8 @@ export class DocumentResolver {
     page: number,
     @Arg('perPage', _type => Int, { defaultValue: 20 })
     perPage: number,
+    @Arg('where', _type => WhereBuilderInputType, { nullable: true })
+    where: QueryBuilder | null,
     @Arg('sort', _type => SortInputType, { nullable: true })
     sort: SortInputType | null,
     @Arg('deleted', _type => Boolean, { nullable: true })
@@ -210,6 +212,10 @@ export class DocumentResolver {
       qb.orderBy(`document.${strToColumnPath(sort.name)}`, sort.direction);
     } else {
       qb.orderBy('document.updatedAt', 'DESC');
+    }
+
+    if (where) {
+      WhereBuilder.Build(qb, where);
     }
 
     if (deleted) {
@@ -262,6 +268,8 @@ export class DocumentResolver {
     page: number,
     @Arg('perPage', _type => Int, { defaultValue: 20 })
     perPage: number,
+    @Arg('where', _type => WhereBuilderInputType, { nullable: true })
+    where: QueryBuilder | null,
     @Arg('sort', _type => SortInputType, { nullable: true })
     sort: SortInputType | null,
     @Arg('deleted', _type => Boolean, { nullable: true })
@@ -271,30 +279,36 @@ export class DocumentResolver {
 
     const qb = repository
       .search(term)
-      .leftJoinAndSelect('searchEngine.schema', 'schema')
+      .leftJoinAndSelect('document.schema', 'schema')
       .leftJoinAndSelect('schema.fields', 'fields')
       .take(perPage)
       .skip(perPage * (page - 1));
 
     if (sort) {
-      qb.orderBy(`searchEngine.${strToColumnPath(sort.name)}`, sort.direction);
+      qb.orderBy(`document.${strToColumnPath(sort.name)}`, sort.direction);
     } else {
-      qb.orderBy('searchEngine.updatedAt', 'DESC');
+      qb.orderBy('document.updatedAt', 'DESC');
     }
 
     if (schemaId && schemaId !== '') {
-      qb.andWhere('searchEngine.schemaId = :schemaId', { schemaId });
+      qb.andWhere('document.schemaId = :schemaId', { schemaId });
     }
 
     if (schemaIds && schemaIds.length > 0) {
-      qb.andWhere('searchEngine.schemaId IN (:...schemaIds)', { schemaIds });
+      qb.andWhere('document.schemaId IN (:...schemaIds)', { schemaIds });
+    }
+
+    if (where) {
+      WhereBuilder.Build(qb, where);
     }
 
     if (deleted) {
-      qb.andWhere('searchEngine.deletedAt IS NOT NULL').withDeleted();
+      qb.andWhere('document.deletedAt IS NOT NULL').withDeleted();
     } else {
-      qb.andWhere('searchEngine.deletedAt IS NULL');
+      qb.andWhere('document.deletedAt IS NULL');
     }
+
+    console.log(qb.getSql());
 
     const [results, totalItems] = await qb.getManyAndCount();
 

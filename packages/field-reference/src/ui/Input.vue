@@ -28,6 +28,7 @@
     </div>
 
     <el-dialog
+      top="5vh"
       custom-class="dockite-dialog--reference-selection"
       :visible="dialogVisible"
       :destroy-on-close="true"
@@ -38,8 +39,13 @@
         <span />
         <el-input v-model="term" style="max-width: 400px;" placeholder="Search term" />
       </el-row>
-      <div class="border rounded">
-        <el-table :data="documents" :row-key="record => record.id" max-height="60vh">
+      <div class="border rounded px-1 pt-1">
+        <el-table
+          class="flex flex-col"
+          :data="documents"
+          :row-key="record => record.id"
+          max-height="60vh"
+        >
           <el-table-column label="" width="25">
             <template slot-scope="scope">
               <input v-model="document" type="radio" :value="scope.row" />
@@ -51,7 +57,58 @@
               {{ scope.row.id | shortDesc }}
             </template>
           </el-table-column>
+
           <el-table-column label="Identifier">
+            <template slot="header" slot-scope="{ column }">
+              {{ column.label }}
+
+              <!-- You gotta stop it from propogating twice for "reasons" -->
+              <el-popover
+                v-if="term === ''"
+                width="250"
+                trigger="click"
+                class="dockite-table-filter--popover"
+                @click.native.stop
+              >
+                <div
+                  slot="reference"
+                  class="el-table__column-filter-trigger w-full pb-1"
+                  @click.stop
+                >
+                  <div
+                    class="w-full border rounded h-6 px-2 text-xs font-normal flex justify-between items-center"
+                    :class="{
+                      'bg-gray-200': filters['identifier'],
+                      'font-semibold': filters['identifier'],
+                    }"
+                  >
+                    <template v-if="filters['identifier']">
+                      <span
+                        >{{ filters['identifier'].operator }} "{{
+                          filters['identifier'].value
+                        }}"</span
+                      >
+                      <i
+                        class="el-icon-close cursor-pointer hover:bg-gray-400 text-lg p-1 rounded-full"
+                        @click.stop="filters['identifier'] = null"
+                      />
+                    </template>
+                    <template v-else>
+                      <span style="color: #D3D3D3">Filter</span>
+                      <i class="el-icon-arrow-down cursor-pointer text-lg p-1 rounded-full" />
+                    </template>
+                  </div>
+                </div>
+
+                <filter-input
+                  v-if="filters['identifier'] !== undefined"
+                  v-model="filters['identifier']"
+                  :options="supportedOperators"
+                  prop="identifier"
+                />
+              </el-popover>
+            </template>
+
             <template slot-scope="scope">
               <span v-if="scope.row.data.name">
                 {{ scope.row.data.name }}
@@ -67,8 +124,77 @@
               </span>
             </template>
           </el-table-column>
-          <el-table-column prop="schema.name" label="Schema" />
+
+          <el-table-column prop="schema.name" label="Schema">
+            <template slot="header" slot-scope="{ column }">
+              {{ column.label }}
+
+              <!-- You gotta stop it from propogating twice for "reasons" -->
+              <el-popover
+                v-if="term === ''"
+                width="250"
+                trigger="click"
+                class="dockite-table-filter--popover"
+                @click.native.stop
+              >
+                <div
+                  slot="reference"
+                  class="el-table__column-filter-trigger w-full pb-1"
+                  @click.stop
+                >
+                  <div
+                    class="w-full border rounded h-6 px-2 text-xs font-normal flex justify-between items-center"
+                    :class="{
+                      'bg-gray-200': filters['schema.name'],
+                      'font-semibold': filters['schema.name'],
+                    }"
+                  >
+                    <template v-if="filters['schema.name']">
+                      <span
+                        >{{ filters['schema.name'].operator }} "{{
+                          filters['schema.name'].value
+                        }}"</span
+                      >
+                      <i
+                        class="el-icon-close cursor-pointer hover:bg-gray-400 text-lg p-1 rounded-full"
+                        @click.stop="filters['schema.name'] = null"
+                      />
+                    </template>
+                    <template v-else>
+                      <span style="color: #D3D3D3">Filter</span>
+                      <i class="el-icon-arrow-down cursor-pointer text-lg p-1 rounded-full" />
+                    </template>
+                  </div>
+                </div>
+
+                <filter-input
+                  v-if="filters['schema.name'] !== undefined"
+                  v-model="filters['schema.name']"
+                  :options="supportedOperators"
+                  prop="schema.name"
+                />
+              </el-popover>
+            </template>
+          </el-table-column>
         </el-table>
+
+        <div class="flex justify-between items-center py-3">
+          <span class="text-gray-700 px-3" style="font-size: 13px">
+            {{ paginationString }}
+          </span>
+
+          <el-pagination
+            :current-page="page"
+            class="dockite-element--pagination"
+            style="line-height: 1;"
+            :page-count="totalPages"
+            :pager-count="5"
+            :page-size="perPage"
+            :total="totalItems"
+            layout="jumper, prev, pager, next"
+            @current-change="handlePageChange"
+          />
+        </div>
       </div>
     </el-dialog>
 
@@ -82,6 +208,15 @@
 import gql from 'graphql-tag';
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import { Field, Document, Schema } from '@dockite/types';
+import {
+  Operators,
+  ConstraintArray,
+  AndQuery,
+  Constraint,
+  PossibleConstraints,
+} from '@dockite/where-builder';
+
+import FilterInput from './components/filter-input.vue';
 
 interface SchemaResults {
   results: Schema[];
@@ -95,6 +230,9 @@ interface Reference {
 
 @Component({
   name: 'ReferenceFieldInputComponent',
+  components: {
+    FilterInput,
+  },
 })
 export default class ReferenceFieldInputComponent extends Vue {
   @Prop({ required: true })
@@ -121,7 +259,18 @@ export default class ReferenceFieldInputComponent extends Vue {
 
   public page = 1;
 
-  public perPage = 20;
+  public perPage = 25;
+
+  public totalPages = 0;
+
+  public totalItems = 0;
+
+  public filters: Record<string, Constraint | null> = {
+    'schema.name': null,
+    identifier: null,
+  };
+
+  public supportedOperators = Operators;
 
   get fieldData(): Reference | null {
     return this.value;
@@ -161,6 +310,48 @@ export default class ReferenceFieldInputComponent extends Vue {
     return this.document.id;
   }
 
+  get paginationString(): string {
+    let startingItem = (this.page - 1) * this.perPage + 1;
+    const endingItem = startingItem + this.documents.length - 1;
+
+    if (startingItem === 1 && endingItem === 0) {
+      startingItem = 0;
+    }
+
+    return `Displaying documents ${startingItem} to ${endingItem} of ${this.totalItems}`;
+  }
+
+  get whereConstraints(): AndQuery | undefined {
+    const filters: ConstraintArray = Object.values(this.filters)
+      .filter(x => x !== null)
+      .map(
+        (filter): PossibleConstraints => {
+          const f = filter as Constraint;
+
+          if (f.name !== 'identifier') {
+            return f;
+          }
+
+          return {
+            AND: ['name', 'title', 'identifier'].map(name => ({
+              OR: [
+                {
+                  ...f,
+                  name,
+                },
+              ],
+            })),
+          };
+        },
+      );
+
+    if (filters.length > 0) {
+      return { AND: filters };
+    }
+
+    return undefined;
+  }
+
   @Watch('fieldData', { immediate: true })
   handleFieldDataChange(): void {
     if (this.fieldData !== null) {
@@ -188,6 +379,13 @@ export default class ReferenceFieldInputComponent extends Vue {
     this.findDocuments();
   }
 
+  @Watch('whereConstraints')
+  handleWhereConstraintsChange(): void {
+    this.page = 1;
+
+    this.findDocuments();
+  }
+
   beforeMount(): void {
     if (!this.fieldData) {
       this.findDocuments();
@@ -208,7 +406,7 @@ export default class ReferenceFieldInputComponent extends Vue {
 
   public async findDocuments(): Promise<void> {
     const { schemaIds } = this.fieldConfig.settings;
-    const { page, term } = this;
+    const { page, term, perPage } = this;
 
     const { data } = await this.$apolloClient.query({
       query: gql`
@@ -217,8 +415,15 @@ export default class ReferenceFieldInputComponent extends Vue {
           $page: Int = 1
           $perPage: Int = 20
           $term: String!
+          $where: WhereBuilderInputType
         ) {
-          searchDocuments(schemaIds: $schemaIds, page: $page, perPage: $perPage, term: $term) {
+          searchDocuments(
+            schemaIds: $schemaIds
+            page: $page
+            perPage: $perPage
+            term: $term
+            where: $where
+          ) {
             results {
               id
               data
@@ -228,17 +433,30 @@ export default class ReferenceFieldInputComponent extends Vue {
                 name
               }
             }
+            totalItems
+            totalPages
+            currentPage
           }
         }
       `,
       variables: {
         schemaIds,
         page,
+        perPage,
         term,
+        where: this.whereConstraints,
       },
     });
 
     this.documents = data.searchDocuments.results;
+    this.totalPages = data.searchDocuments.totalPages;
+    this.totalItems = data.searchDocuments.totalItems;
+    this.page = data.searchDocuments.currentPage;
+  }
+
+  public handlePageChange(newPage: number): void {
+    this.page = newPage;
+    this.findDocuments();
   }
 
   public async getDocumentById(): Promise<void> {
@@ -363,6 +581,10 @@ export default class ReferenceFieldInputComponent extends Vue {
 
   .el-dialog__body {
     padding-top: 0;
+  }
+
+  .el-table__header-wrapper {
+    overflow: initial;
   }
 }
 </style>
