@@ -35,15 +35,16 @@
           <el-button type="primary">
             Click to upload
           </el-button>
-          <div slot="tip" class="el-upload__tip">
-            {{ settings.acceptedExtensions.join(', ') }} files with a size less than
-            {{ settings.maxSizeKB / 1000 }} MB
-
-            <div v-if="constraints.length > 0" class="block pt-3">
+          <div slot="tip" class="el-upload__tip" style="line-height: 1.2">
+            <div v-if="constraints.length > 0" class="block pt-1">
               The uploaded image must satify the following constraints:
 
-              <ul>
-                <li v-for="(constraint, index) in constraints" :key="index">
+              <ul class="list-disc" style="list-style-position: inside;">
+                <li class="pt-1">
+                  must only be one of the following file types:
+                  <strong>{{ settings.acceptedExtensions.join(', ') }}</strong>
+                </li>
+                <li v-for="(constraint, index) in constraints" :key="index" class="pt-1">
                   {{ constraint }}
                 </li>
               </ul>
@@ -265,6 +266,10 @@ export default class S3ImageFieldInputComponent extends Vue {
   get constraints(): string[] {
     const constraints: string[] = [];
 
+    if (this.settings.maxSizeKB) {
+      constraints.push(`must be a file smaller than ${this.settings.maxSizeKB / 1000} MB`);
+    }
+
     if (this.settings.minHeight) {
       constraints.push(`must be at least ${this.settings.minHeight} px tall`);
     }
@@ -274,15 +279,15 @@ export default class S3ImageFieldInputComponent extends Vue {
     }
 
     if (this.settings.minWidth) {
-      constraints.push(`must be at least ${this.settings.minHeight} px wide`);
+      constraints.push(`must be at least ${this.settings.minWidth} px wide`);
     }
 
     if (this.settings.maxWidth) {
-      constraints.push(`must be at most ${this.settings.minHeight} px wide`);
+      constraints.push(`must be at most ${this.settings.maxWidth} px wide`);
     }
 
     if (this.settings.ratio) {
-      constraints.push(`must maintain a ${this.settings.ratio} aspect ration`);
+      constraints.push(`must maintain a ${this.settings.ratio} aspect ratio (width ÷ height)`);
     }
 
     return constraints;
@@ -422,11 +427,12 @@ export default class S3ImageFieldInputComponent extends Vue {
         hasError = true;
       }
 
-      if (
-        this.settings.ratio &&
-        (image.width / image.height).toFixed(4) !== Number(this.settings.ratio).toFixed(4)
-      ) {
-        this.addError(`The image uploaded must have an aspect ratio of ${this.settings.ratio}`);
+      const ratio = (image.width / image.height).toFixed(4);
+
+      if (this.settings.ratio && ratio !== Number(this.settings.ratio).toFixed(4)) {
+        this.addError(
+          `The image uploaded must have an aspect ratio of ${this.settings.ratio} (width ÷ height) ratio provided: ${ratio}`,
+        );
         hasError = true;
       }
     }
