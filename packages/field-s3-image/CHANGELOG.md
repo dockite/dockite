@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.38](https://github.com/dockite/dockite/compare/@dockite/field-s3-image@0.3.0-alpha.37...@dockite/field-s3-image@0.3.0-alpha.38) (2020-09-10)
+
+
+### Features
+
+* **field-s3-image:** resolve precision validation issues ([7ec3162](https://github.com/dockite/dockite/commit/7ec316218699cf7d92df7abb61bbd8b591251c5d))
+
+
+
+
+
 # [0.3.0-alpha.37](https://github.com/dockite/dockite/compare/@dockite/field-s3-image@0.3.0-alpha.36...@dockite/field-s3-image@0.3.0-alpha.37) (2020-09-10)
 
 **Note:** Version bump only for package @dockite/field-s3-image
