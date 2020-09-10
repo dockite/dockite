@@ -2,8 +2,8 @@
 import { WhereExpression } from 'typeorm';
 
 export const Operators = {
-  $like: 'Checks for a value containing the input provided (case-sensitive)',
   $ilike: 'Checks for a value containing the input provided (case-insensitive)',
+  $like: 'Checks for a value containing the input provided (case-sensitive)',
   $eq: 'Checks for a value is the same as the input provided',
   $ne: 'Checks for a value that is not the same as the input provided',
   $in: 'Checks for a value that is within the input provided',
