@@ -38,6 +38,16 @@
           <div slot="tip" class="el-upload__tip">
             {{ settings.acceptedExtensions.join(', ') }} files with a size less than
             {{ settings.maxSizeKB / 1000 }} MB
+
+            <div v-if="constraints.length > 0" class="block pt-3">
+              The uploaded image must satify the following constraints:
+
+              <ul>
+                <li v-for="(constraint, index) in constraints" :key="index">
+                  {{ constraint }}
+                </li>
+              </ul>
+            </div>
           </div>
         </el-upload>
         <vue-draggable
@@ -252,6 +262,32 @@ export default class S3ImageFieldInputComponent extends Vue {
     return 1;
   }
 
+  get constraints(): string[] {
+    const constraints: string[] = [];
+
+    if (this.settings.minHeight) {
+      constraints.push(`must be at least ${this.settings.minHeight} px tall`);
+    }
+
+    if (this.settings.maxHeight) {
+      constraints.push(`must be at most ${this.settings.minHeight} px tall`);
+    }
+
+    if (this.settings.minWidth) {
+      constraints.push(`must be at least ${this.settings.minHeight} px wide`);
+    }
+
+    if (this.settings.maxWidth) {
+      constraints.push(`must be at most ${this.settings.minHeight} px wide`);
+    }
+
+    if (this.settings.ratio) {
+      constraints.push(`must maintain a ${this.settings.ratio} aspect ration`);
+    }
+
+    return constraints;
+  }
+
   async handleUpload({ file }: { file: File }) {
     try {
       const checksum = await this.getSHA256ChecksumFromFile(file);
@@ -386,7 +422,10 @@ export default class S3ImageFieldInputComponent extends Vue {
         hasError = true;
       }
 
-      if (this.settings.ratio && image.width / image.height !== this.settings.ratio) {
+      if (
+        this.settings.ratio &&
+        (image.width / image.height).toFixed(4) !== Number(this.settings.ratio).toFixed(4)
+      ) {
         this.addError(`The image uploaded must have an aspect ratio of ${this.settings.ratio}`);
         hasError = true;
       }
