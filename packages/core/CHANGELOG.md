@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.69](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.68...@dockite/core@0.4.0-alpha.69) (2020-09-10)
+
+
+### Bug Fixes
+
+* **core:** remove debugging console.log ([bdadbe6](https://github.com/dockite/dockite/commit/bdadbe6e0cfe1ab8e3f417db4e19b1a737b45d0a))
+
+
+
+
+
 # [0.4.0-alpha.68](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.67...@dockite/core@0.4.0-alpha.68) (2020-09-10)
 
 
