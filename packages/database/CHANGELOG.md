@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.22](https://github.com/dockite/dockite/compare/@dockite/database@0.4.0-alpha.21...@dockite/database@0.4.0-alpha.22) (2020-09-10)
+
+
+### Features
+
+* **field-reference:** improve filtering for reference selection ([f74ce54](https://github.com/dockite/dockite/commit/f74ce54191432906e9c1d92a72385e0646b5449d))
+
+
+
+
+
 # [0.4.0-alpha.21](https://github.com/dockite/dockite/compare/@dockite/database@0.4.0-alpha.20...@dockite/database@0.4.0-alpha.21) (2020-09-08)
 
 

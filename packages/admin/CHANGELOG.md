@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.84](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.83...@dockite/admin@0.4.0-alpha.84) (2020-09-10)
+
+
+### Bug Fixes
+
+* **admin:** query filters not being removed ([627af8a](https://github.com/dockite/dockite/commit/627af8a7fff0b17a13b8ed4ce1760459178d7919))
+
+
+
+
+
 # [0.4.0-alpha.83](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.82...@dockite/admin@0.4.0-alpha.83) (2020-09-09)
 
 

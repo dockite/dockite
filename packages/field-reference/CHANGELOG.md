@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.16](https://github.com/dockite/dockite/compare/@dockite/field-reference@0.3.0-alpha.15...@dockite/field-reference@0.3.0-alpha.16) (2020-09-10)
+
+
+### Features
+
+* **field-reference:** improve filtering for reference selection ([f74ce54](https://github.com/dockite/dockite/commit/f74ce54191432906e9c1d92a72385e0646b5449d))
+
+
+
+
+
 # [0.3.0-alpha.15](https://github.com/dockite/dockite/compare/@dockite/field-reference@0.3.0-alpha.14...@dockite/field-reference@0.3.0-alpha.15) (2020-09-08)
 
 **Note:** Version bump only for package @dockite/field-reference

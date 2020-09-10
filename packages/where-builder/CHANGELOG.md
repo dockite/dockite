@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.2.0-alpha.32](https://github.com/dockite/dockite/compare/@dockite/where-builder@0.2.0-alpha.31...@dockite/where-builder@0.2.0-alpha.32) (2020-09-10)
+
+
+### Features
+
+* **field-reference:** improve filtering for reference selection ([f74ce54](https://github.com/dockite/dockite/commit/f74ce54191432906e9c1d92a72385e0646b5449d))
+
+
+
+
+
 # [0.2.0-alpha.31](https://github.com/dockite/dockite/compare/@dockite/where-builder@0.2.0-alpha.30...@dockite/where-builder@0.2.0-alpha.31) (2020-09-08)
 
 **Note:** Version bump only for package @dockite/where-builder
