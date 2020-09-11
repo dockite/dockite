@@ -104,7 +104,7 @@ export class DockiteFieldVariant extends DockiteField {
 
         const oldData = (ctx.oldData ?? {})[this.schemaField.name];
 
-        if (ctx.data[this.schemaField.name][child.name]) {
+        if (ctx.data[this.schemaField.name] && ctx.data[this.schemaField.name][child.name]) {
           const childCtx: HookContextWithOldData = {
             ...ctx,
             data: ctx.data[this.schemaField.name],
@@ -227,7 +227,7 @@ export class DockiteFieldVariant extends DockiteField {
         }
 
         const oldData = (ctx.oldData ?? {})[this.schemaField.name];
-        if (ctx.data[this.schemaField.name][child.name]) {
+        if (ctx.data[this.schemaField.name] && ctx.data[this.schemaField.name][child.name]) {
           const childCtx: HookContextWithOldData = {
             ...ctx,
             data: ctx.data[this.schemaField.name],
@@ -251,7 +251,7 @@ export class DockiteFieldVariant extends DockiteField {
           throw new Error(`dockiteFiled failed to map for ${this.schemaField.name}.${child.name}`);
         }
 
-        if (ctx.data[this.schemaField.name][child.name]) {
+        if (ctx.data[this.schemaField.name] && ctx.data[this.schemaField.name][child.name]) {
           const childCtx: HookContextWithOldData = {
             ...ctx,
             data: ctx.data[this.schemaField.name],
@@ -276,7 +276,7 @@ export class DockiteFieldVariant extends DockiteField {
 
         const oldData = (ctx.oldData ?? {})[this.schemaField.name];
 
-        if (ctx.data[this.schemaField.name][child.name]) {
+        if (ctx.data[this.schemaField.name] && ctx.data[this.schemaField.name][child.name]) {
           const childCtx: HookContextWithOldData = {
             ...ctx,
             data: ctx.data[this.schemaField.name],
@@ -300,7 +300,7 @@ export class DockiteFieldVariant extends DockiteField {
           throw new Error(`dockiteFiled failed to map for ${this.schemaField.name}.${child.name}`);
         }
 
-        if (ctx.data[this.schemaField.name][child.name]) {
+        if (ctx.data[this.schemaField.name] && ctx.data[this.schemaField.name][child.name]) {
           const childCtx: HookContextWithOldData = {
             ...ctx,
             data: ctx.data[this.schemaField.name],
@@ -323,7 +323,7 @@ export class DockiteFieldVariant extends DockiteField {
           throw new Error(`dockiteFiled failed to map for ${this.schemaField.name}.${child.name}`);
         }
 
-        if (ctx.data[this.schemaField.name][child.name]) {
+        if (ctx.data[this.schemaField.name] && ctx.data[this.schemaField.name][child.name]) {
           const childCtx: HookContextWithOldData = {
             ...ctx,
             data: ctx.data[this.schemaField.name],
