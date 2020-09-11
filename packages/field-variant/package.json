@@ -1,6 +1,6 @@
 {
   "name": "@dockite/field-variant",
-  "version": "0.3.0-alpha.29",
+  "version": "0.3.0-alpha.30",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
