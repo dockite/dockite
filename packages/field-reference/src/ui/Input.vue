@@ -41,7 +41,7 @@
       </el-row>
       <div class="border rounded px-1 pt-1">
         <el-table
-          class="flex flex-col"
+          class="flex flex-col dockite-table--reference-selection"
           :data="documents"
           :row-key="record => record.id"
           max-height="60vh"
@@ -585,6 +585,20 @@ export default class ReferenceFieldInputComponent extends Vue {
 
   .el-table__header-wrapper {
     overflow: initial;
+  }
+}
+
+.dockite-table--reference-selection {
+  th {
+    padding: 0;
+  }
+
+  th .cell {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    padding: 0.5rem 12px 1.8rem 12px;
+    display: flex;
+    align-items: center;
   }
 }
 </style>

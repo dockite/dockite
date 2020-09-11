@@ -111,7 +111,7 @@
         </span>
 
         <router-link v-if="showBulkEditButton" :to="`/schemas/${schemaId}/bulk-edit`">
-          <el-button>Update Selected Items</el-button>
+          <el-button>Bulk Edit Items</el-button>
         </router-link>
       </el-row>
     </div>
