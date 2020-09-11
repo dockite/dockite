@@ -1,6 +1,6 @@
 {
   "name": "@dockite/field-reference",
-  "version": "0.3.0-alpha.16",
+  "version": "0.3.0-alpha.17",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
@@ -30,7 +30,7 @@
     "@babel/plugin-proposal-class-properties": "^7.10.1",
     "@babel/plugin-proposal-decorators": "^7.10.1",
     "@babel/preset-env": "^7.9.0",
-    "@dockite/where-builder": "^0.2.0-alpha.32",
+    "@dockite/where-builder": "^0.2.0-alpha.33",
     "@types/graphql-type-json": "^0.3.2",
     "@typescript-eslint/eslint-plugin": "^2.20.0",
     "@typescript-eslint/parser": "^2.20.0",

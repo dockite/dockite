@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.2.0-alpha.33](https://github.com/dockite/dockite/compare/@dockite/where-builder@0.2.0-alpha.32...@dockite/where-builder@0.2.0-alpha.33) (2020-09-11)
+
+
+### Bug Fixes
+
+* **where-builder:** change ordering of operators ([4f33780](https://github.com/dockite/dockite/commit/4f33780a8850d2a09bafaef03c76fd690cebbfd5))
+
+
+
+
+
 # [0.2.0-alpha.32](https://github.com/dockite/dockite/compare/@dockite/where-builder@0.2.0-alpha.31...@dockite/where-builder@0.2.0-alpha.32) (2020-09-10)
 
 

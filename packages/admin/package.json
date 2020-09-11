@@ -1,6 +1,6 @@
 {
   "name": "@dockite/admin",
-  "version": "0.4.0-alpha.84",
+  "version": "0.4.0-alpha.85",
   "description": "",
   "author": "Dockite",
   "main": "nuxt.config.ts",
@@ -16,7 +16,7 @@
     "@dockite/ability": "^0.2.1-alpha.14",
     "@dockite/database": "^0.4.0-alpha.22",
     "@dockite/types": "^0.3.0-alpha.13",
-    "@dockite/where-builder": "^0.2.0-alpha.32",
+    "@dockite/where-builder": "^0.2.0-alpha.33",
     "@nuxt/types": "2.13.3",
     "@nuxt/typescript-build": "^2.0.0",
     "@nuxt/typescript-runtime": "^1.0.0",

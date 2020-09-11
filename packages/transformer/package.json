@@ -1,6 +1,6 @@
 {
   "name": "@dockite/transformer",
-  "version": "0.3.0-alpha.40",
+  "version": "0.3.0-alpha.41",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
@@ -12,7 +12,7 @@
     "@dockite/database": "^0.4.0-alpha.22",
     "@dockite/field": "^0.3.0-alpha.12",
     "@dockite/types": "^0.3.0-alpha.13",
-    "@dockite/where-builder": "^0.2.0-alpha.32",
+    "@dockite/where-builder": "^0.2.0-alpha.33",
     "debug": "^4.1.1",
     "express": "^4.17.1",
     "graphql": "^15.1.0",
