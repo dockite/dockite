@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.18](https://github.com/dockite/dockite/compare/@dockite/field-reference@0.3.0-alpha.17...@dockite/field-reference@0.3.0-alpha.18) (2020-09-11)
+
+
+### Bug Fixes
+
+* **field-reference:** resolve styling errors ([16eb55b](https://github.com/dockite/dockite/commit/16eb55b9037c5831376b4fadc29db17c8a0be309))
+
+
+
+
+
 # [0.3.0-alpha.17](https://github.com/dockite/dockite/compare/@dockite/field-reference@0.3.0-alpha.16...@dockite/field-reference@0.3.0-alpha.17) (2020-09-11)
 
 **Note:** Version bump only for package @dockite/field-reference
