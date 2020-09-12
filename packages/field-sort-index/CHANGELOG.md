@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.1.0-alpha.9](https://github.com/dockite/dockite/compare/@dockite/field-sort-index@0.1.0-alpha.8...@dockite/field-sort-index@0.1.0-alpha.9) (2020-09-12)
+
+
+### Bug Fixes
+
+* **field-sort-index:** handle null values ([35694d5](https://github.com/dockite/dockite/commit/35694d5e0b349ac5bced4dc5af5f736bd42de6b0))
+
+
+
+
+
 # [0.1.0-alpha.8](https://github.com/dockite/dockite/compare/@dockite/field-sort-index@0.1.0-alpha.7...@dockite/field-sort-index@0.1.0-alpha.8) (2020-09-10)
 
 **Note:** Version bump only for package @dockite/field-sort-index

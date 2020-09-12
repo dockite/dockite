@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.71](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.70...@dockite/core@0.4.0-alpha.71) (2020-09-12)
+
+
+### Bug Fixes
+
+* **core:** allow db sync to be disabled ([a3117ac](https://github.com/dockite/dockite/commit/a3117aca07e03f5007adb9b2e9a65cab6dc3bdaf))
+
+
+
+
+
 # [0.4.0-alpha.70](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.69...@dockite/core@0.4.0-alpha.70) (2020-09-11)
 
 **Note:** Version bump only for package @dockite/core
