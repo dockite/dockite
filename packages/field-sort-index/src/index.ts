@@ -35,7 +35,7 @@ export class DockiteFieldSortIndex extends DockiteField {
     const qb = this.orm
       .getRepository(Document)
       .createQueryBuilder('document')
-      .select(`COALESCE(MAX((data->'${this.schemaField.name}')::int), 0)`, 'max')
+      .select(`COALESCE(MAX(COALESCE((data->'${this.schemaField.name}'), 0)::int), 0)`, 'max')
       .where('document."schemaId" = :schemaId', { schemaId: this.schemaField.schemaId });
 
     if (settings.parentField && ctx.data[settings.parentField]) {
@@ -57,7 +57,7 @@ export class DockiteFieldSortIndex extends DockiteField {
       const qb = this.orm
         .getRepository(Document)
         .createQueryBuilder('document')
-        .select(`COALESCE(MAX((data->'${this.schemaField.name}')::int), 0)`, 'max')
+        .select(`COALESCE(MAX(COALESCE((data->'${this.schemaField.name}'), 0)::int), 0)`, 'max')
         .where('document."schemaId" = :schemaId', { schemaId: this.schemaField.schemaId });
 
       if (settings.parentField && ctx.data[settings.parentField]) {
@@ -85,7 +85,10 @@ export class DockiteFieldSortIndex extends DockiteField {
         data: () => `data || jsonb_build_object('${fieldName}', (data->'${fieldName}')::int - 1)`,
       })
       .where('document."schemaId" = :schemaId', { schemaId: this.schemaField.schemaId })
-      .andWhere('(data -> :fieldName)::int > :value', { fieldName, value: ctx.fieldData });
+      .andWhere('COALESCE((data -> :fieldName), 0)::int > :value', {
+        fieldName,
+        value: ctx.fieldData,
+      });
 
     if (settings.parentField && ctx.data[settings.parentField]) {
       qb.andWhere(`data-> :field ->> 'id' = :documentId`, {
