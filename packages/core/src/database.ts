@@ -32,7 +32,7 @@ export const connect = async (): Promise<Connection> => {
       port: config.database.port,
       ssl: config.database.ssl ?? false,
       subscribers: Object.values(subscribers),
-      synchronize: true,
+      synchronize: config.database.synchronize ?? true,
       entities: [...Object.values(entities), ...externalEntities],
       logging: ['query', 'error'],
       logger: 'debug',

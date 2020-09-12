@@ -35,6 +35,7 @@ export interface CoreConfiguration {
     port: number;
     ssl?: boolean;
     maxPoolSize?: number;
+    synchronize?: boolean;
   };
 
   mail: {
