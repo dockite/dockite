@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.72](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.71...@dockite/core@0.4.0-alpha.72) (2020-09-13)
+
+
+### Bug Fixes
+
+* **admin:** boolean values overriden by defaults ([1e9c3c6](https://github.com/dockite/dockite/commit/1e9c3c6ac46b017f0aa3f5ed22c38015e83c04d5))
+
+
+
+
+
 # [0.4.0-alpha.71](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.70...@dockite/core@0.4.0-alpha.71) (2020-09-12)
 
 

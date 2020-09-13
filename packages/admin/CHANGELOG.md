@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.87](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.86...@dockite/admin@0.4.0-alpha.87) (2020-09-13)
+
+
+### Bug Fixes
+
+* **admin:** boolean values overriden by defaults ([1e9c3c6](https://github.com/dockite/dockite/commit/1e9c3c6ac46b017f0aa3f5ed22c38015e83c04d5))
+* **admin:** display singleton webhooks ([a79b9af](https://github.com/dockite/dockite/commit/a79b9afd2944e367ef4038d3c388b04cd8aaf80f))
+
+
+
+
+
 # [0.4.0-alpha.86](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.85...@dockite/admin@0.4.0-alpha.86) (2020-09-11)
 
 

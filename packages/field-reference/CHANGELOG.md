@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.19](https://github.com/dockite/dockite/compare/@dockite/field-reference@0.3.0-alpha.18...@dockite/field-reference@0.3.0-alpha.19) (2020-09-13)
+
+
+### Bug Fixes
+
+* **field-reference:** always update identifier on save ([d132d70](https://github.com/dockite/dockite/commit/d132d703f713d4a2baea64c5474301950922bbb9))
+
+
+
+
+
 # [0.3.0-alpha.18](https://github.com/dockite/dockite/compare/@dockite/field-reference@0.3.0-alpha.17...@dockite/field-reference@0.3.0-alpha.18) (2020-09-11)
 
 
