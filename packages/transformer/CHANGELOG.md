@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.42](https://github.com/dockite/dockite/compare/@dockite/transformer@0.3.0-alpha.41...@dockite/transformer@0.3.0-alpha.42) (2020-09-13)
+
+
+### Bug Fixes
+
+* **transformer:** get correct document for singleton ([587bcdc](https://github.com/dockite/dockite/commit/587bcdc7e954e38d268fa310976195330e9db587))
+
+
+
+
+
 # [0.3.0-alpha.41](https://github.com/dockite/dockite/compare/@dockite/transformer@0.3.0-alpha.40...@dockite/transformer@0.3.0-alpha.41) (2020-09-11)
 
 **Note:** Version bump only for package @dockite/transformer
