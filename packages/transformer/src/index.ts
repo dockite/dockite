@@ -550,6 +550,9 @@ const createGraphQLQueriesForSingleton = async (
         }
 
         const [document] = await repository.find({
+          where: {
+            schemaId: schema.id,
+          },
           take: 1,
         });
 
