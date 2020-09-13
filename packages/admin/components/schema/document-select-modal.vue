@@ -91,10 +91,6 @@ export default class SchemaDocumentsPage extends Vue {
 </script>
 
 <style lang="scss">
-.dockite-element--pagination {
-  padding: 1rem;
-}
-
 .dockite-document-select--modal {
   width: 80%;
   max-height: 60vh;

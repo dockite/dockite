@@ -85,7 +85,12 @@ import 'codemirror-graphql/lint';
 import 'codemirror-graphql/mode';
 import 'codemirror/theme/nord.css';
 
-import { RequestMethod, ManyResultSet, AllSchemasResultItem } from '../../../common/types';
+import {
+  RequestMethod,
+  ManyResultSet,
+  AllSchemasResultItem,
+  AllSingletonsResultItem,
+} from '../../../common/types';
 
 import Logo from '~/components/base/logo.vue';
 import * as auth from '~/store/auth';
@@ -128,12 +133,31 @@ export default class CreateWebhookPage extends Vue {
     return state.allSchemas;
   }
 
+  get allSingletons(): ManyResultSet<AllSingletonsResultItem> {
+    const state: data.DataState = this.$store.state[data.namespace];
+
+    return state.allSingletons;
+  }
+
   get webhookActions(): string[] {
     const actions: string[] = [];
 
     actions.push(...Object.values(WebhookAction));
 
     this.allSchemas.results.forEach(schema => {
+      const schemaName = schema.name.toLowerCase();
+
+      actions.push(
+        `schema:${schemaName}:create`,
+        `schema:${schemaName}:update`,
+        `schema:${schemaName}:delete`,
+        `document:${schemaName}:create`,
+        `document:${schemaName}:update`,
+        `document:${schemaName}:delete`,
+      );
+    });
+
+    this.allSingletons.results.forEach(schema => {
       const schemaName = schema.name.toLowerCase();
 
       actions.push(

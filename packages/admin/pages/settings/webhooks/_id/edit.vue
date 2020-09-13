@@ -1,7 +1,7 @@
 <template>
   <fragment>
     <portal to="header">
-      <h2>Create Webhook</h2>
+      <h2>Update Webhook</h2>
     </portal>
 
     <div v-loading="loading > 0" class="dockite-create-webhook-page el-loading-parent__min-height">
@@ -60,7 +60,7 @@
               native-type="submit"
               @click.prevent="submit"
             >
-              Create
+              Update
             </el-button>
           </el-row>
         </el-form-item>
@@ -85,7 +85,11 @@ import 'codemirror-graphql/lint';
 import 'codemirror-graphql/mode';
 import 'codemirror/theme/nord.css';
 
-import { ManyResultSet, AllSchemasResultItem } from '../../../../common/types';
+import {
+  ManyResultSet,
+  AllSchemasResultItem,
+  AllSingletonsResultItem,
+} from '../../../../common/types';
 
 import { RequestMethod } from '~/common/types';
 import Logo from '~/components/base/logo.vue';
@@ -129,6 +133,12 @@ export default class CreateWebhookPage extends Vue {
     return state.allSchemas;
   }
 
+  get allSingletons(): ManyResultSet<AllSingletonsResultItem> {
+    const state: data.DataState = this.$store.state[data.namespace];
+
+    return state.allSingletons;
+  }
+
   get webhookId(): string {
     return this.$route.params.id;
   }
@@ -143,6 +153,19 @@ export default class CreateWebhookPage extends Vue {
     actions.push(...Object.values(WebhookAction));
 
     this.allSchemas.results.forEach(schema => {
+      const schemaName = schema.name.toLowerCase();
+
+      actions.push(
+        `schema:${schemaName}:create`,
+        `schema:${schemaName}:update`,
+        `schema:${schemaName}:delete`,
+        `document:${schemaName}:create`,
+        `document:${schemaName}:update`,
+        `document:${schemaName}:delete`,
+      );
+    });
+
+    this.allSingletons.results.forEach(schema => {
       const schemaName = schema.name.toLowerCase();
 
       actions.push(

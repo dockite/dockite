@@ -1,5 +1,4 @@
-$--color-primary: #2b6cb0;
-$--font-path: '~element-ui/lib/theme-chalk/fonts';
+@import '_theme.scss';
 
 @import '~element-ui/packages/theme-chalk/src/reset';
 @import '~element-ui/packages/theme-chalk/src/index';
@@ -103,6 +102,16 @@ li.el-dropdown-menu__item a::before {
   min-height: 60vh;
 }
 
-button:focus, :focus {
+button:focus,
+:focus {
   outline: none;
+}
+
+.dockite-element--pagination {
+  padding: 1rem;
+}
+
+.dockite-aside--sidemenu .el-menu-item-group__title {
+  font-size: 0.7rem;
+  // text-decoration: underline;
 }
