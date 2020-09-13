@@ -229,8 +229,8 @@ export default class CreateSchemaDocumentPage extends Vue {
     this.fields.forEach(field => {
       Vue.set(this.enabledFields, field.name, false);
 
-      if (!this.form[field.name]) {
-        Vue.set(this.form, field.name, null);
+      if (this.form[field.name] === undefined) {
+        Vue.set(this.form, field.name, field.settings.default ?? null);
       }
     });
   }

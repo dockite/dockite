@@ -275,7 +275,7 @@ export default class UpdateDocumentPage extends Vue {
     }
 
     this.fields.forEach(field => {
-      if (!this.form[field.name]) {
+      if (this.form[field.name] === undefined) {
         Vue.set(this.form, field.name, field.settings.default ?? null);
       }
     });
