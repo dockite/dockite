@@ -23,6 +23,48 @@ import { createGlobalContext } from './utils';
 
 const log = debug('dockite:core');
 
+export const registerEventHandlers = (
+  internalServer: ApolloServer,
+  externalServer: ApolloServer,
+): void => {
+  DockiteEvents.on('reload', async () => {
+    log('reloading schema');
+    // Load the RootModule again which
+    // will load and compile all sub-modules.
+    const [updatedInternalSchema, updatedExternalSchema] = await Promise.all([
+      RootModule(),
+      ExternalGraphQLModule(),
+    ]);
+
+    SchemaManager.internalSchema = updatedInternalSchema.schema;
+    SchemaManager.externalSchema = updatedExternalSchema.schema;
+
+    // We cast these two method calls to any since they're protected in their
+    // corresponding type declarations. Without doing so we are unable to hot-patch
+    // our schemas during runtime.
+    const [internalDerrivedData, externalDerrivedData] = await Promise.all([
+      (internalServer as any).generateSchemaDerivedData(updatedInternalSchema.schema),
+      (externalServer as any).generateSchemaDerivedData(updatedExternalSchema.schema),
+    ]);
+
+    // Update the schema and derrived data.
+    set(internalServer, 'schema', updatedInternalSchema.schema);
+    set(internalServer, 'schemaDerivedData', internalDerrivedData);
+    set(externalServer, 'schema', updatedExternalSchema.schema);
+    set(externalServer, 'schemaDerivedData', externalDerrivedData);
+  });
+};
+
+export const loadFields = async (fields: string[]): Promise<void> => {
+  const importedFields = await Promise.all(fields.map(entry => import(entry)));
+
+  importedFields.forEach(field => {
+    Object.entries<DockiteFieldStatic>(field).forEach(([key, val]) => {
+      registerField(key, val);
+    });
+  });
+};
+
 export const createServer = async (): Promise<Express> => {
   log('creating server');
 
@@ -36,13 +78,7 @@ export const createServer = async (): Promise<Express> => {
   const config = getConfig();
 
   if (config.fields) {
-    const importedFields = await Promise.all(config.fields.map(entry => import(entry)));
-
-    importedFields.forEach(field => {
-      Object.entries<DockiteFieldStatic>(field).forEach(([key, val]) => {
-        registerField(key, val);
-      });
-    });
+    loadFields(config.fields);
   }
 
   log('assigning scopes');
@@ -52,9 +88,6 @@ export const createServer = async (): Promise<Express> => {
 
   app.use(express.json());
   app.use(cookieParser());
-
-  // app.use('/admin', express.static(path.dirname(require.resolve('@dockite/ui'))));
-  // app.all('/admin*', (_req, res) => res.sendFile(require.resolve('@dockite/ui')));
 
   log('collecting modules');
   const [root, external] = await Promise.all([RootModule(), ExternalGraphQLModule()]);
@@ -85,45 +118,16 @@ export const createServer = async (): Promise<Express> => {
     path: `/${INTERNAL_GRAPHQL_PATH}`,
     cors: { origin: true, credentials: true, exposedHeaders: 'authorization' },
   });
+
   externalServer.applyMiddleware({
     app,
     path: `/${EXTERNAL_GRAPHQL_PATH}`,
     cors: { origin: true, credentials: true, exposedHeaders: 'authorization' },
   });
 
-  /**
-   * As bad as this is, it's the only way to hot-reload a
-   * graphql schema without a full server restart.
-   *
-   * Once JS allows for native private methods this may break
-   * however.
-   */
-  DockiteEvents.on('reload', async () => {
-    log('reloading schema');
-    // Load the RootModule again which
-    // will load and compile all sub-modules.
-    const [updatedInternalSchema, updatedExternalSchema] = await Promise.all([
-      RootModule(),
-      ExternalGraphQLModule(),
-    ]);
-
-    SchemaManager.internalSchema = updatedInternalSchema.schema;
-    SchemaManager.externalSchema = updatedExternalSchema.schema;
-
-    // We cast these two method calls to any since they're protected in their
-    // corresponding type declarations. Without doing so we are unable to hot-patch
-    // our schemas during runtime.
-    const [internalDerrivedData, externalDerrivedData] = await Promise.all([
-      (internalServer as any).generateSchemaDerivedData(updatedInternalSchema.schema),
-      (externalServer as any).generateSchemaDerivedData(updatedExternalSchema.schema),
-    ]);
-
-    // Update the schema and derrived data.
-    set(internalServer, 'schema', updatedInternalSchema.schema);
-    set(internalServer, 'schemaDerivedData', internalDerrivedData);
-    set(externalServer, 'schema', updatedExternalSchema.schema);
-    set(externalServer, 'schemaDerivedData', externalDerrivedData);
-  });
+  if (!process.env.DOCKITE_DISABLE_EVENT_HANDLERS) {
+    registerEventHandlers(internalServer, externalServer);
+  }
 
   return app;
 };
@@ -132,7 +136,7 @@ export const start = async (port = process.env.PORT || 3000): Promise<Server> =>
   const app = await createServer();
 
   log(
-    `access your graphql server from either http://localhost:${port}/${INTERNAL_GRAPHQL_PATH} or http://localhost:${port}/${INTERNAL_GRAPHQL_PATH}`,
+    `access your graphql server from either http://localhost:${port}/${INTERNAL_GRAPHQL_PATH} or http://localhost:${port}/${EXTERNAL_GRAPHQL_PATH}`,
   );
 
   return app.listen(port, () => log(`server now listening on ${port}`));

@@ -9,7 +9,6 @@ import { GlobalContext } from '../../common/types';
 import * as resolvers from './resolvers';
 
 const log = debug('dockite:core:internal');
-const tlog = debug('dockite:core:internal:timer');
 
 export const getRegisteredInternalModules = (): Promise<any>[] => {
   return getModules('internal');
@@ -21,7 +20,6 @@ export const InternalGraphQLModule = async (): Promise<GraphQLModule<
   GlobalContext,
   any
 >> => {
-  tlog('starting');
   log('building type-definitions and resolvers');
 
   const resolverPromises = ((await Promise.all(
@@ -37,7 +35,6 @@ export const InternalGraphQLModule = async (): Promise<GraphQLModule<
   const modules = await Promise.all(getRegisteredInternalModules());
 
   log('creating graphql module');
-  tlog('ending');
   return new GraphQLModule({
     typeDefs: typeDefsAndResolvers.typeDefs,
     resolvers: typeDefsAndResolvers.resolvers,

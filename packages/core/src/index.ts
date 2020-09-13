@@ -7,18 +7,23 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import { getConfig } from './config';
-import { connect } from './database';
+import * as database from './database';
 import { Express } from 'express';
 import { start, createServer } from './server';
 
 getConfig();
 
-const startTime = Date.now();
+export { database };
 
-export const serve = (): Promise<void> =>
-  connect().then(() =>
-    start().then(() => console.log('Time taken', (Date.now() - startTime) / 1000, 'seconds')),
-  );
+export const serve = (): Promise<void> => {
+  const startTime = Date.now();
+
+  return database
+    .connect()
+    .then(() =>
+      start().then(() => console.log('Time taken', (Date.now() - startTime) / 1000, 'seconds')),
+    );
+};
 
 export default ((): void => {
   if (typeof module !== 'undefined' && !module.parent) {
@@ -27,7 +32,7 @@ export default ((): void => {
 })();
 
 export const create = async (): Promise<Express> => {
-  await connect();
+  await database.connect();
   const app = await createServer();
 
   return app;
