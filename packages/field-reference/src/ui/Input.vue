@@ -361,7 +361,7 @@ export default class ReferenceFieldInputComponent extends Vue {
 
   @Watch('document', { immediate: true })
   handleDocumentChange(): void {
-    if (this.document !== null && this.document.id !== this.fieldData?.id) {
+    if (this.document !== null && this.document.id) {
       this.fieldData = {
         id: this.document.id,
         schemaId: this.document.schema.id,
