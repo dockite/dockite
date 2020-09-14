@@ -23,7 +23,7 @@ export class DockiteFieldDatetime extends DockiteField {
   public static description = 'A datetime field.';
 
   public static defaultOptions: DateFieldSettings = {
-    dateOnly: false,
+    date: false,
     required: false,
   };
 

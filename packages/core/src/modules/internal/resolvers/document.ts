@@ -590,7 +590,9 @@ export class DocumentResolver {
 
   @Authenticated()
   @Authorized('internal:document:update', {
-    derriveAlternativeScopes: false,
+    derriveAlternativeScopes: true,
+    resourceType: 'schema',
+    fieldsOrArgsToPeek: 'schemaId',
   })
   @Mutation(_returns => Boolean)
   async partialUpdateDocumentsInSchemaId(

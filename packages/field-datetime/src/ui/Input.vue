@@ -5,7 +5,7 @@
     :rules="rules"
     class="dockite-field-datetime"
   >
-    <el-date-picker v-model="fieldData" :type="settings.dateOnly ? 'date' : 'datetime'" />
+    <el-date-picker v-model="fieldData" :type="settings.date ? 'date' : 'datetime'" />
 
     <div class="el-form-item__description">
       {{ fieldConfig.description }}
@@ -53,11 +53,11 @@ export default class DateTimeFieldInputComponent extends Vue {
       this.rules.push(this.getRequiredRule());
     }
 
-    if (this.fieldConfig.settings.dateOnly) {
+    if (this.fieldConfig.settings.date) {
       this.rules.push(this.getDateRule());
     }
 
-    if (!this.fieldConfig.settings.dateOnly) {
+    if (!this.fieldConfig.settings.date) {
       this.rules.push(this.getDateTimeRule());
     }
   }
