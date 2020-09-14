@@ -37,7 +37,7 @@
 import { Schema } from '@dockite/database';
 import { Tree } from 'element-ui';
 import { TreeData, TreeNode } from 'element-ui/types/tree';
-import { cloneDeep, sortBy } from 'lodash';
+import { cloneDeep, sortBy, chunk } from 'lodash';
 import { Component, Vue, Watch, Ref } from 'nuxt-property-decorator';
 import { Fragment } from 'vue-fragment';
 
@@ -195,15 +195,19 @@ export default class TreeViewComponent extends Vue {
 
       const documents = this.flattenDocumentTree(this.documentTree);
 
-      await this.$store.dispatch(`${document.namespace}/updateManyDocuments`, {
-        schemaId: this.schemaId,
-        documents: documents.map(doc => {
-          return {
-            data: doc.data,
-            id: doc.id,
-          };
-        }),
-      });
+      await Promise.all(
+        chunk(documents, 15).map(chunk =>
+          this.$store.dispatch(`${document.namespace}/updateManyDocuments`, {
+            schemaId: this.schemaId,
+            documents: chunk.map(c => {
+              return {
+                data: c.data,
+                id: c.id,
+              };
+            }),
+          }),
+        ),
+      );
 
       this.$message({
         message: 'Tree saved successfully!',
