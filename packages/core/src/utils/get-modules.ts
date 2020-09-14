@@ -17,7 +17,7 @@ export const getModules = (type: 'internal' | 'external' = 'internal'): Promise<
           })
           .then(res => {
             if (typeof res === 'function') {
-              return res();
+              return res(config);
             }
 
             return res;
