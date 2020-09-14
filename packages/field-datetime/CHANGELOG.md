@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.15](https://github.com/dockite/dockite/compare/@dockite/field-datetime@0.3.0-alpha.14...@dockite/field-datetime@0.3.0-alpha.15) (2020-09-14)
+
+
+### Bug Fixes
+
+* **field-datetime:** resolve date rendering ([9d8f25b](https://github.com/dockite/dockite/commit/9d8f25b1aad687a088712d63eecc6cd55e13edba))
+
+
+
+
+
 # [0.3.0-alpha.14](https://github.com/dockite/dockite/compare/@dockite/field-datetime@0.3.0-alpha.13...@dockite/field-datetime@0.3.0-alpha.14) (2020-09-10)
 
 **Note:** Version bump only for package @dockite/field-datetime

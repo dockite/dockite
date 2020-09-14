@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.76](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.75...@dockite/core@0.4.0-alpha.76) (2020-09-14)
+
+
+### Bug Fixes
+
+* **field-datetime:** resolve date rendering ([9d8f25b](https://github.com/dockite/dockite/commit/9d8f25b1aad687a088712d63eecc6cd55e13edba))
+
+
+
+
+
 # [0.4.0-alpha.75](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.74...@dockite/core@0.4.0-alpha.75) (2020-09-14)
 
 
