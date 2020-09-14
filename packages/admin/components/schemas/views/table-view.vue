@@ -3,6 +3,7 @@
     <portal v-if="!deleted" to="header-extra">
       <el-input
         v-model="term"
+        clearable
         size="medium"
         style="max-width: 250px;"
         placeholder="Search"
