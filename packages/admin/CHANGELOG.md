@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.89](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.88...@dockite/admin@0.4.0-alpha.89) (2020-09-14)
+
+
+### Bug Fixes
+
+* **admin:** chunk tree view changes to avoid large requests ([af38f27](https://github.com/dockite/dockite/commit/af38f271ba3bee6a185e185f5c7151dba784d109))
+* **admin:** handle non-existant groups ([5ed4445](https://github.com/dockite/dockite/commit/5ed4445515134d9a27ac98298b0dd51f15158219))
+
+
+
+
+
 # [0.4.0-alpha.88](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.87...@dockite/admin@0.4.0-alpha.88) (2020-09-14)
 
 

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.75](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.74...@dockite/core@0.4.0-alpha.75) (2020-09-14)
+
+
+### Bug Fixes
+
+* **core:** pass config to modules ([e35bf86](https://github.com/dockite/dockite/commit/e35bf866188898ecb96b036142c34a48d835627e))
+
+
+
+
+
 # [0.4.0-alpha.74](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.73...@dockite/core@0.4.0-alpha.74) (2020-09-14)
 
 
