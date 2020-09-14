@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.25](https://github.com/dockite/dockite/compare/@dockite/field-string@0.3.0-alpha.24...@dockite/field-string@0.3.0-alpha.25) (2020-09-14)
+
+
+### Bug Fixes
+
+* **field-string:** textarea autosize ([1d823c4](https://github.com/dockite/dockite/commit/1d823c46de6a62afe19378631dfe2eae6eda6d02))
+
+
+
+
+
 # [0.3.0-alpha.24](https://github.com/dockite/dockite/compare/@dockite/field-string@0.3.0-alpha.23...@dockite/field-string@0.3.0-alpha.24) (2020-09-10)
 
 **Note:** Version bump only for package @dockite/field-string

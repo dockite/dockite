@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.88](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.87...@dockite/admin@0.4.0-alpha.88) (2020-09-14)
+
+
+### Bug Fixes
+
+* **admin:** make search term clearable ([2b0008b](https://github.com/dockite/dockite/commit/2b0008bfd4f5a7aaaec5f56af30c4aaa0930f451))
+
+
+
+
+
 # [0.4.0-alpha.87](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.86...@dockite/admin@0.4.0-alpha.87) (2020-09-13)
 
 
