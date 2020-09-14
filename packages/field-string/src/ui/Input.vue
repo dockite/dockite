@@ -4,7 +4,7 @@
       v-if="settings.textarea"
       v-model="fieldData"
       type="textarea"
-      :auto-size="{ minRows: 3, maxRows: 5 }"
+      :autosize="{ minRows: 3, maxRows: 8 }"
       :allow-clear="true"
     />
     <el-input v-else v-model="fieldData" />
