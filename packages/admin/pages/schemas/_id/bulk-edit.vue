@@ -210,7 +210,9 @@ export default class CreateSchemaDocumentPage extends Vue {
   }
 
   public getFieldsByGroupName(name: string): Field[] {
-    const filteredFields = this.fields.filter(field => this.groups[name].includes(field.name));
+    const filteredFields = this.fields.filter(field =>
+      (this.groups[name] ?? []).includes(field.name),
+    );
 
     return sortBy(filteredFields, [i => this.groups[name].indexOf(i.name)]);
   }
