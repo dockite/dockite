@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.38](https://github.com/dockite/dockite/compare/@dockite/field-group@0.4.0-alpha.37...@dockite/field-group@0.4.0-alpha.38) (2020-09-15)
+
+
+### Bug Fixes
+
+* **field-group:** update ui to reduce space ([8257fb1](https://github.com/dockite/dockite/commit/8257fb17beb0c322d16d5c394844983f21d3e54e))
+
+
+
+
+
 # [0.4.0-alpha.37](https://github.com/dockite/dockite/compare/@dockite/field-group@0.4.0-alpha.36...@dockite/field-group@0.4.0-alpha.37) (2020-09-10)
 
 **Note:** Version bump only for package @dockite/field-group
