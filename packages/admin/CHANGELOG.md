@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.90](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.89...@dockite/admin@0.4.0-alpha.90) (2020-09-15)
+
+
+### Bug Fixes
+
+* **admin:** don't update singleont fields on save ([1698c6d](https://github.com/dockite/dockite/commit/1698c6d9c0899edc1995ac52ba474b1299bfb70e))
+
+
+
+
+
 # [0.4.0-alpha.89](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.88...@dockite/admin@0.4.0-alpha.89) (2020-09-14)
 
 
