@@ -205,7 +205,9 @@ export default class GroupFieldInputComponent extends Vue {
 
     this.initialiseFormData();
 
-    this.ready = true;
+    this.$nextTick(() => {
+      this.ready = true;
+    });
 
     if (this.settings.required) {
       this.rules.push(this.getRequiredRule());
@@ -253,40 +255,27 @@ export default class GroupFieldInputComponent extends Vue {
   }
 
   public initialiseFormData(): void {
-    if (this.value !== null) {
-      if (this.repeatable && !Array.isArray(this.value)) {
-        this.fieldData = [this.value];
-        return;
-      }
-
-      if (
-        this.repeatable &&
-        Array.isArray(this.value) &&
-        this.value.length === 0 &&
-        (this.settings.minRows ?? 0) > 0
-      ) {
-        this.fieldData = new Array(this.settings.minRows)
+    if (this.value === null) {
+      if (!this.repeatable) {
+        this.fieldData = cloneDeep(this.initialFieldData);
+      } else {
+        this.fieldData = new Array(this.settings.minRows ?? 0)
           .fill(0)
           .map(_ => cloneDeep(this.initialFieldData));
-        return;
       }
 
       return;
     }
 
-    if (this.repeatable && this.value === null) {
-      if ((this.settings.minRows ?? 0) > 0) {
-        this.fieldData = new Array(this.settings.minRows)
-          .fill(0)
-          .map(_ => cloneDeep(this.initialFieldData));
-        return;
+    if (this.repeatable) {
+      if (!Array.isArray(this.value)) {
+        this.fieldData = [{ ...cloneDeep(this.initialFieldData), ...this.value }];
       }
 
-      this.fieldData = [];
-      return;
+      if (Array.isArray(this.value)) {
+        this.value.map(v => ({ ...cloneDeep(this.initialFieldData), ...v }));
+      }
     }
-
-    this.fieldData = cloneDeep(this.initialFieldData);
   }
 
   public handleAddFieldBefore(): void {
