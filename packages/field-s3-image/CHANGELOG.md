@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.40](https://github.com/dockite/dockite/compare/@dockite/field-s3-image@0.3.0-alpha.39...@dockite/field-s3-image@0.3.0-alpha.40) (2020-09-15)
+
+
+### Bug Fixes
+
+* **field-s3-image:** resolve invalid typings ([8ad4f80](https://github.com/dockite/dockite/commit/8ad4f805abc9c5add7a744cc3e41ec5fac0a0614))
+
+
+
+
+
 # [0.3.0-alpha.39](https://github.com/dockite/dockite/compare/@dockite/field-s3-image@0.3.0-alpha.38...@dockite/field-s3-image@0.3.0-alpha.39) (2020-09-10)
 
 
