@@ -15,9 +15,9 @@
               "
               type="flex"
               justify="center"
-              class="py-3"
+              class="pb-3"
             >
-              <el-button @click.prevent="handleAddFieldBefore">
+              <el-button circle size="small" @click.prevent="handleAddFieldBefore">
                 <i class="el-icon-plus" />
               </el-button>
             </el-row>
@@ -36,8 +36,36 @@
                     :key="itemIndex"
                     class="dockite-field-group--item items-center border border-gray-500 border-dashed p-3 mb-3"
                   >
-                    <div class="pr-5 item-handle cursor-pointer">
-                      <i class="el-icon-hamburger text-xl" />
+                    <div class="flex flex-col justify-center items-center px-3 text-xl">
+                      <el-button
+                        v-if="repeatable"
+                        :disabled="itemIndex === 0"
+                        class="dockite-group--movement-button"
+                        type="text"
+                        icon="el-icon-top"
+                        @click.prevent="handleShiftFieldUp(itemIndex)"
+                      />
+
+                      <div class="item-handle cursor-pointer dockite-group--movement-button">
+                        <i class="el-icon-hamburger" />
+                      </div>
+
+                      <el-button
+                        v-if="repeatable"
+                        :disabled="itemIndex === fieldData.length - 1"
+                        class="dockite-group--movement-button"
+                        type="text"
+                        icon="el-icon-bottom"
+                        @click.prevent="handleShiftFieldDown(itemIndex)"
+                      />
+
+                      <el-button
+                        class="dockite-group--movement-button"
+                        type="text"
+                        title="Remove the current group item"
+                        icon="el-icon-delete"
+                        @click.prevent="handleRemoveField(itemIndex)"
+                      />
                     </div>
 
                     <div class="flex-1 clearfix">
@@ -51,32 +79,6 @@
                           :form-data="formData"
                           :schema="schema"
                         />
-                      </div>
-
-                      <div v-if="repeatable" class="float-right">
-                        <el-button
-                          v-if="repeatable && itemIndex !== 0"
-                          type="text"
-                          @click.prevent="handleShiftFieldUp(itemIndex)"
-                        >
-                          Move Up
-                        </el-button>
-
-                        <el-button
-                          v-if="itemIndex < fieldData.length - 1"
-                          type="text"
-                          @click.prevent="handleShiftFieldDown(itemIndex)"
-                        >
-                          Move Down
-                        </el-button>
-
-                        <el-button
-                          type="text"
-                          title="Remove the current group item"
-                          @click.prevent="handleRemoveField(itemIndex)"
-                        >
-                          Remove Item
-                        </el-button>
                       </div>
                     </div>
                   </div>
@@ -112,9 +114,8 @@
             "
             type="flex"
             justify="center"
-            class="py-3"
           >
-            <el-button @click.prevent="handleAddFieldAfter">
+            <el-button circle size="small" @click.prevent="handleAddFieldAfter">
               <i class="el-icon-plus" />
             </el-button>
           </el-row>
@@ -308,6 +309,10 @@ export default class GroupFieldInputComponent extends Vue {
 
   public handleShiftFieldUp(index: number): void {
     if (Array.isArray(this.fieldData)) {
+      if (index === 0) {
+        return;
+      }
+
       const [fieldItem] = this.fieldData.splice(index, 1);
 
       this.fieldData.splice(index - 1, 0, fieldItem);
@@ -377,6 +382,15 @@ export default class GroupFieldInputComponent extends Vue {
 
   .el-collapse-item__content {
     padding-bottom: 0;
+  }
+
+  .dockite-group--movement-button {
+    display: block;
+
+    margin: 0;
+    padding: 3px;
+
+    font-size: 1rem;
   }
 }
 </style>

@@ -6,9 +6,11 @@ export interface DockiteFieldGroupEntity extends BaseField {
   settings: GroupFieldSettings & BaseField['settings'];
 }
 
+export type ChildField = Omit<Field, 'id' | 'schema' | 'schemaId' | 'dockiteField'>;
+
 export interface GroupFieldSettings extends FieldSettings {
   required: boolean;
-  children: Field[];
+  children: ChildField[];
   repeatable: boolean;
   minRows: number;
   maxRows: number;
