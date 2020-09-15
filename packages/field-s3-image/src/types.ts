@@ -27,7 +27,7 @@ export interface S3ImageFieldSettings extends S3Settings {
   required: boolean;
   acceptedExtensions: ImageExtension[];
   maxSizeKB: number;
-  imageValidation: false;
+  imageValidation: boolean;
   minWidth: number | null;
   maxWidth: number | null;
   minHeight: number | null;
