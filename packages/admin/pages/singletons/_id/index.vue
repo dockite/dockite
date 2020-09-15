@@ -222,7 +222,7 @@ export default class CreateSingletonDocumentPage extends Vue {
           ...omit(this.singleton, 'fields'),
           data: this.form,
         },
-        fields: this.singleton.fields,
+        fields: [],
         deletedFields: [],
       });
 
