@@ -177,7 +177,11 @@ export class SingletonResolver {
    * TODO: Perform light validation on fields, settings, groups
    */
   @Authenticated()
-  @Authorized('internal:schema:update', { derriveAlternativeScopes: false })
+  @Authorized('internal:schema:update', {
+    derriveAlternativeScopes: true,
+    checkArgs: true,
+    fieldsOrArgsToPeek: ['id'],
+  })
   @Mutation(_returns => Singleton)
   async updateSingleton(
     @Arg('id')
