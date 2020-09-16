@@ -24,7 +24,7 @@ import {
   Source,
 } from 'graphql';
 import { cloneDeep, omit } from 'lodash';
-import typeorm from 'typeorm';
+import typeorm, { getRepository } from 'typeorm';
 
 import { DocumentMetadata } from './types';
 import { strToColumnPath } from './util';
@@ -288,13 +288,13 @@ const makeFieldsForGraphQLObjectType = async (fieldConfig: ConfigBagItem): Promi
 const createGraphQLQueriesForSchema = async (
   config: ConfigBagItem,
 ): Promise<GraphQLFieldConfigMap<Source, GlobalContext>> => {
-  const { schema, orm, graphqlObjectType } = config;
+  const { schema, graphqlObjectType } = config;
 
   const allQuery = `all${schema.name}`;
   const findQuery = `find${schema.name}`;
   const getQuery = `get${schema.name}`;
 
-  const repository = orm.getRepository(Document);
+  const repository = getRepository(Document);
 
   const findManyObjectType = new GraphQLObjectType({
     name: `Many${schema.name}`,
@@ -318,7 +318,7 @@ const createGraphQLQueriesForSchema = async (
 
         if (schema.settings.enableQueryAuthentication) {
           if (ctx.user) {
-            const user = await orm.getRepository(User).findOneOrFail(ctx.user.id);
+            const user = await getRepository(User).findOneOrFail(ctx.user.id);
 
             if (
               !can(
@@ -363,7 +363,7 @@ const createGraphQLQueriesForSchema = async (
 
         if (schema.settings.enableQueryAuthentication) {
           if (ctx.user) {
-            const user = await orm.getRepository(User).findOneOrFail(ctx.user.id);
+            const user = await getRepository(User).findOneOrFail(ctx.user.id);
 
             if (
               !can(
@@ -442,7 +442,7 @@ const createGraphQLQueriesForSchema = async (
 
         if (schema.settings.enableQueryAuthentication) {
           if (ctx.user) {
-            const user = await orm.getRepository(User).findOneOrFail(ctx.user.id);
+            const user = await getRepository(User).findOneOrFail(ctx.user.id);
 
             if (
               !can(
@@ -514,9 +514,9 @@ const createGraphQLQueriesForSchema = async (
 const createGraphQLQueriesForSingleton = async (
   config: ConfigBagItem,
 ): Promise<GraphQLFieldConfigMap<Source, GlobalContext>> => {
-  const { schema, orm, graphqlObjectType } = config;
+  const { schema, graphqlObjectType } = config;
 
-  const repository = orm.getRepository(Document);
+  const repository = getRepository(Document);
 
   const queries: GraphQLFieldConfigMap<Source, GlobalContext> = {
     [schema.name]: {
@@ -524,7 +524,7 @@ const createGraphQLQueriesForSingleton = async (
       async resolve(_source, _args, ctx, info): Promise<object> {
         if (schema.settings.enableQueryAuthentication) {
           if (ctx.user) {
-            const user = await orm.getRepository(User).findOneOrFail(ctx.user.id);
+            const user = await getRepository(User).findOneOrFail(ctx.user.id);
 
             if (
               !can(
@@ -567,17 +567,17 @@ const createGraphQLQueriesForSingleton = async (
 const createGraphQLMutationsForSchema = async (
   config: ConfigBagItem,
 ): Promise<GraphQLFieldConfigMap<Source, GlobalContext>> => {
-  const { schema, graphqlObjectType, orm } = config;
+  const { schema, graphqlObjectType } = config;
 
   const createMutation = `create${schema.name}`;
   const updateMutation = `update${schema.name}`;
   const deleteMutation = `delete${schema.name}`;
 
-  const documentRepository = orm.getRepository(Document);
-  const documentRevisionRepository = orm.getRepository(DocumentRevision);
+  const documentRepository = getRepository(Document);
+  const documentRevisionRepository = getRepository(DocumentRevision);
 
   if (!anonymousUser) {
-    anonymousUser = await orm.getRepository(User).findOneOrFail({
+    anonymousUser = await getRepository(User).findOneOrFail({
       where: { email: 'anonymous@dockite.app' },
     });
   }
@@ -609,7 +609,7 @@ const createGraphQLMutationsForSchema = async (
           if (ctx.user) {
             internalUserId = ctx.user.id;
 
-            const user = await orm.getRepository(User).findOneOrFail(ctx.user.id);
+            const user = await getRepository(User).findOneOrFail(ctx.user.id);
 
             if (
               !can(
@@ -695,7 +695,7 @@ const createGraphQLMutationsForSchema = async (
             if (ctx.user) {
               internalUserId = ctx.user.id;
 
-              const user = await orm.getRepository(User).findOneOrFail(ctx.user.id);
+              const user = await getRepository(User).findOneOrFail(ctx.user.id);
 
               if (
                 !can(
@@ -798,7 +798,7 @@ const createGraphQLMutationsForSchema = async (
 
           try {
             if (ctx.user) {
-              const user = await orm.getRepository(User).findOneOrFail(ctx.user.id);
+              const user = await getRepository(User).findOneOrFail(ctx.user.id);
 
               if (
                 !can(
