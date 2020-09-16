@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.40](https://github.com/dockite/dockite/compare/@dockite/field-group@0.4.0-alpha.39...@dockite/field-group@0.4.0-alpha.40) (2020-09-16)
+
+
+### Bug Fixes
+
+* **field-group:** handle non-repeatable groups ([c69e26b](https://github.com/dockite/dockite/commit/c69e26b815df3c68e5070085ed86e97764046536))
+
+
+
+
+
 # [0.4.0-alpha.39](https://github.com/dockite/dockite/compare/@dockite/field-group@0.4.0-alpha.38...@dockite/field-group@0.4.0-alpha.39) (2020-09-15)
 
 **Note:** Version bump only for package @dockite/field-group

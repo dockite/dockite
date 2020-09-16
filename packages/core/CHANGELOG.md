@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.77](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.76...@dockite/core@0.4.0-alpha.77) (2020-09-16)
+
+
+### Bug Fixes
+
+* **field-group:** handle non-repeatable groups ([c69e26b](https://github.com/dockite/dockite/commit/c69e26b815df3c68e5070085ed86e97764046536))
+
+
+
+
+
 # [0.4.0-alpha.76](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.75...@dockite/core@0.4.0-alpha.76) (2020-09-14)
 
 

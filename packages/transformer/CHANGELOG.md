@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.43](https://github.com/dockite/dockite/compare/@dockite/transformer@0.3.0-alpha.42...@dockite/transformer@0.3.0-alpha.43) (2020-09-16)
+
+
+### Bug Fixes
+
+* **transformer:** remove dependency on typeorm instance ([64f11d4](https://github.com/dockite/dockite/commit/64f11d46cf90cad17a592b263192307681ede977))
+
+
+
+
+
 # [0.3.0-alpha.42](https://github.com/dockite/dockite/compare/@dockite/transformer@0.3.0-alpha.41...@dockite/transformer@0.3.0-alpha.42) (2020-09-13)
 
 
