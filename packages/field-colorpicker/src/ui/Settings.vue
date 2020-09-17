@@ -30,11 +30,11 @@ export default {
   },
 
   mounted() {
-    if (Object.keys(this.settings).length === 0) {
-      this.settings = {
-        required: false,
-      };
-    }
+    this.settings = {
+      required: false,
+      predefinedColors: [],
+      ...this.value,
+    };
   },
 };
 </script>

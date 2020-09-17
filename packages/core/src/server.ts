@@ -86,7 +86,7 @@ export const createServer = async (): Promise<Express> => {
 
   const app = express();
 
-  app.use(express.json());
+  app.use(express.json({ limit: '10mb' }));
   app.use(cookieParser());
 
   log('collecting modules');

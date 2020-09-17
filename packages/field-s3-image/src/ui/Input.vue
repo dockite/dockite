@@ -270,20 +270,36 @@ export default class S3ImageFieldInputComponent extends Vue {
       constraints.push(`must be a file smaller than ${this.settings.maxSizeKB / 1000} MB`);
     }
 
-    if (this.settings.minHeight) {
-      constraints.push(`must be at least ${this.settings.minHeight} px tall`);
+    if (
+      this.settings.minWidth &&
+      this.settings.maxWidth &&
+      this.settings.minWidth === this.settings.maxWidth
+    ) {
+      constraints.push(`must be ${this.settings.minWidth} px wide`);
+    } else {
+      if (this.settings.minWidth) {
+        constraints.push(`must be at least ${this.settings.minWidth} px wide`);
+      }
+
+      if (this.settings.maxWidth) {
+        constraints.push(`must be at most ${this.settings.maxWidth} px wide`);
+      }
     }
 
-    if (this.settings.maxHeight) {
-      constraints.push(`must be at most ${this.settings.minHeight} px tall`);
-    }
+    if (
+      this.settings.minHeight &&
+      this.settings.maxHeight &&
+      this.settings.minHeight === this.settings.maxHeight
+    ) {
+      constraints.push(`must be ${this.settings.minHeight} px tall`);
+    } else {
+      if (this.settings.minHeight) {
+        constraints.push(`must be at least ${this.settings.minHeight} px tall`);
+      }
 
-    if (this.settings.minWidth) {
-      constraints.push(`must be at least ${this.settings.minWidth} px wide`);
-    }
-
-    if (this.settings.maxWidth) {
-      constraints.push(`must be at most ${this.settings.maxWidth} px wide`);
+      if (this.settings.maxHeight) {
+        constraints.push(`must be at most ${this.settings.minHeight} px tall`);
+      }
     }
 
     if (this.settings.ratio) {

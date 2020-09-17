@@ -6,14 +6,12 @@
     :rules="rules"
     class="dockite-field-colorpicker"
   >
-    <el-row
-      type="flex"
-      align="middle"
-    >
+    <el-row type="flex" align="middle">
       <el-color-picker
         v-model="fieldData"
         style="width: 100%;"
         color-format="hex"
+        :predefine="fieldConfig.settings.predefinedColors"
       />
     </el-row>
     <div class="el-form-item__description">
@@ -24,7 +22,8 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import { Field } from '@dockite/types';
+
+import { DockiteFieldColorPickerEntity } from '../types';
 
 @Component({
   name: 'ColorpickerFieldInputComponent',
@@ -40,7 +39,7 @@ export default class ColorpickerFieldInputComponent extends Vue {
   readonly formData!: object;
 
   @Prop({ required: true })
-  readonly fieldConfig!: Field;
+  readonly fieldConfig!: DockiteFieldColorPickerEntity;
 
   public rules: object[] = [];
 

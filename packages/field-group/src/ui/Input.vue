@@ -24,11 +24,18 @@
 
             <template v-if="repeatable && Array.isArray(fieldData)">
               <vue-draggable
+                :key="draggableKey"
                 v-model="fieldData"
                 v-bind="dragOptions"
                 handle=".item-handle"
                 @start="drag = true"
-                @end="drag = false"
+                @end="
+                  () => {
+                    drag = false;
+
+                    draggableKey += 1;
+                  }
+                "
               >
                 <transition-group type="transition" :name="!drag ? 'flip-list' : null">
                   <div
@@ -73,6 +80,7 @@
                         <component
                           :is="$dockiteFieldManager[field.type].input"
                           v-if="$dockiteFieldManager[field.type].input && !field.settings.hidden"
+                          :key="fieldIndex"
                           v-model="fieldData[itemIndex][field.name]"
                           :name="`${name}.${itemIndex}.${field.name}`"
                           :field-config="field"
@@ -167,6 +175,8 @@ export default class GroupFieldInputComponent extends Vue {
   public groupRules: Record<string, any> = {};
 
   public drag = false;
+
+  public draggableKey = 1;
 
   public dragOptions = {
     animation: 200,
