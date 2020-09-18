@@ -63,6 +63,7 @@
         :page-count="totalPages"
         :pager-count="5"
         layout="prev, pager, next"
+        @current-change="handlePageChange"
       />
     </div>
   </fragment>
@@ -107,11 +108,11 @@ export default class AllWebhooksPage extends Vue {
     return this.allWebhooks.totalPages;
   }
 
-  public async fetchAllWebhooks(): Promise<void> {
+  public async fetchAllWebhooks(page: number = 1): Promise<void> {
     try {
       this.loading += 1;
 
-      await this.$store.dispatch(`${data.namespace}/fetchAllWebhooks`);
+      await this.$store.dispatch(`${data.namespace}/fetchAllWebhooks`, { page });
     } catch (_) {
       this.$message({
         message: 'An error occurred whilst fetching webhooks, please try again later.',
@@ -126,6 +127,10 @@ export default class AllWebhooksPage extends Vue {
 
   public cellValueFromNow(_row: never, _column: never, cellValue: string, _index: never): string {
     return formatDistanceToNow(new Date(cellValue)) + ' ago';
+  }
+
+  public handlePageChange(newPage: number): void {
+    this.fetchAllWebhooks(newPage);
   }
 
   public async handleRemoveWebhook(id: string): Promise<void> {

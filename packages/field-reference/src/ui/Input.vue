@@ -58,7 +58,7 @@
             </template>
           </el-table-column>
 
-          <el-table-column label="Identifier">
+          <el-table-column v-if="fieldsToDisplay.length === 0" label="Identifier">
             <template slot="header" slot-scope="{ column }">
               {{ column.label }}
 
@@ -103,7 +103,7 @@
                   v-model="filters['identifier']"
                   :options="supportedOperators"
                   prop="identifier"
-                  @filter-change="() => $refs[`filter-${column.label}`].doClose()"
+                  @filter-change="handleFilterInputChange(column.label)"
                 />
               </el-popover>
             </template>
@@ -121,6 +121,61 @@
               <span v-else :title="scope.row.data">
                 {{ JSON.stringify(scope.row.data).substr(0, 15) }}
               </span>
+            </template>
+          </el-table-column>
+
+          <el-table-column v-for="field in fieldsToDisplay" :key="field.name" :label="field.label">
+            <template slot="header" slot-scope="{ column }">
+              {{ column.label }}
+
+              <!-- You gotta stop it from propogating twice for "reasons" -->
+              <el-popover
+                :ref="`filter-${field.name}`"
+                width="250"
+                trigger="click"
+                class="dockite-table-filter--popover"
+                @click.native.stop
+              >
+                <div
+                  slot="reference"
+                  class="el-table__column-filter-trigger w-full pb-1"
+                  @click.stop
+                >
+                  <div
+                    class="w-full border rounded h-6 px-2 text-xs font-normal flex justify-between items-center"
+                    :class="{
+                      'bg-gray-200': filters[field.name],
+                      'font-semibold': filters[field.name],
+                    }"
+                  >
+                    <template v-if="filters[field.name]">
+                      <span>
+                        {{ filters[field.name].operator }} "{{ filters[field.name].value }}"
+                      </span>
+                      <i
+                        class="el-icon-close cursor-pointer hover:bg-gray-400 text-lg p-1 rounded-full"
+                        @click.stop="filters[field.name] = null"
+                      />
+                    </template>
+                    <template v-else>
+                      <span style="color: #D3D3D3">Filter</span>
+                      <i class="el-icon-arrow-down cursor-pointer text-lg p-1 rounded-full" />
+                    </template>
+                  </div>
+                </div>
+
+                <filter-input
+                  v-if="filters[field.name] !== undefined"
+                  v-model="filters[field.name]"
+                  :options="supportedOperators"
+                  :prop="field.name"
+                  @filter-change="handleFilterInputChange(field.name)"
+                />
+              </el-popover>
+            </template>
+
+            <template slot-scope="scope">
+              <span>{{ scope.row.data[field.name] || 'N/A' }}</span>
             </template>
           </el-table-column>
 
@@ -171,7 +226,7 @@
                   v-model="filters['schema.name']"
                   :options="supportedOperators"
                   prop="schema.name"
-                  @filter-change="() => $refs[`filter-${column.label}`].doClose()"
+                  @filter-change="handleFilterInputChange(column.label)"
                 />
               </el-popover>
             </template>
@@ -207,7 +262,7 @@
 <script lang="ts">
 import gql from 'graphql-tag';
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
-import { Field, Document, Schema } from '@dockite/types';
+import { Document, Schema } from '@dockite/types';
 import {
   Operators,
   ConstraintArray,
@@ -217,6 +272,9 @@ import {
 } from '@dockite/where-builder';
 import { debounce } from 'lodash';
 
+import { DockiteFieldReferenceEntity, FieldToDisplayItem } from '../types';
+
+import { SEARCH_DOCUMENTS_QUERY } from './graphql-queries';
 import FilterInput from './components/filter-input.vue';
 
 interface SchemaResults {
@@ -246,7 +304,10 @@ export default class ReferenceFieldInputComponent extends Vue {
   readonly formData!: object;
 
   @Prop({ required: true })
-  readonly fieldConfig!: Field;
+  readonly fieldConfig!: DockiteFieldReferenceEntity;
+
+  @Prop({ required: true, type: Object })
+  readonly schema!: Schema;
 
   public rules: object[] = [];
 
@@ -324,6 +385,14 @@ export default class ReferenceFieldInputComponent extends Vue {
     return `Displaying documents ${startingItem} to ${endingItem} of ${this.totalItems}`;
   }
 
+  get fieldsToDisplay(): FieldToDisplayItem[] {
+    if (this.fieldConfig.settings.fieldsToDisplay) {
+      return this.fieldConfig.settings.fieldsToDisplay;
+    }
+
+    return [];
+  }
+
   get whereConstraints(): AndQuery | undefined {
     const filters: ConstraintArray = Object.values(this.filters)
       .filter(x => x !== null)
@@ -384,7 +453,7 @@ export default class ReferenceFieldInputComponent extends Vue {
     this.page = 1;
 
     this.findDocuments();
-  });
+  }, 300);
 
   @Watch('whereConstraints')
   handleWhereConstraintsChange(): void {
@@ -396,6 +465,15 @@ export default class ReferenceFieldInputComponent extends Vue {
   beforeMount(): void {
     if (!this.fieldData) {
       this.findDocuments();
+    }
+
+    if (
+      this.fieldConfig.settings.fieldsToDisplay &&
+      this.fieldConfig.settings.fieldsToDisplay.length > 0
+    ) {
+      this.fieldConfig.settings.fieldsToDisplay.forEach(f => {
+        Vue.set(this.filters, f.name, null);
+      });
     }
 
     if (this.fieldConfig.settings.required) {
@@ -421,36 +499,7 @@ export default class ReferenceFieldInputComponent extends Vue {
       const { page, term, perPage } = this;
 
       const { data } = await this.$apolloClient.query({
-        query: gql`
-          query SearchDocumentsBySchemaIds(
-            $schemaIds: [String!]
-            $page: Int = 1
-            $perPage: Int = 20
-            $term: String!
-            $where: WhereBuilderInputType
-          ) {
-            searchDocuments(
-              schemaIds: $schemaIds
-              page: $page
-              perPage: $perPage
-              term: $term
-              where: $where
-            ) {
-              results {
-                id
-                data
-                updatedAt
-                schema {
-                  id
-                  name
-                }
-              }
-              totalItems
-              totalPages
-              currentPage
-            }
-          }
-        `,
+        query: SEARCH_DOCUMENTS_QUERY,
         variables: {
           schemaIds,
           page,
@@ -519,6 +568,16 @@ export default class ReferenceFieldInputComponent extends Vue {
     this.page = 1;
 
     this.findDocuments();
+  }
+
+  public handleFilterInputChange(fieldName: string): void {
+    const ref = this.$refs[`filter-${fieldName}`] as any;
+
+    if (Array.isArray(ref)) {
+      ref.forEach(x => x.doClose());
+    } else {
+      ref.doClose();
+    }
   }
 }
 </script>

@@ -98,60 +98,63 @@
           <span slot="title">{{ $t('sideMenu.schemas') }}s</span>
         </template>
 
-        <el-menu-item-group title="Management">
-          <el-menu-item index="/schemas">
-            <span slot="title">
-              <a
-                style="color: inherit"
-                :class="[isCollapse ? '' : 'inline-block w-full']"
-                href="/schemas"
-                @click.prevent="$router.push($event.target.getAttribute('href'))"
-              >
-                All {{ $t('sideMenu.schemas') }}s
-              </a>
-            </span>
-          </el-menu-item>
+        <el-menu-item
+          v-if="
+            $can('internal:schema:create') && hasFetchedSchemas && allSchemas.results.length === 0
+          "
+          index="/schemas/create"
+        >
+          <span slot="title">
+            <a
+              style="color: inherit"
+              :class="[isCollapse ? '' : 'inline-block w-full']"
+              href="/schemas/create"
+              @click.prevent="$router.push($event.target.getAttribute('href'))"
+            >
+              Create {{ $t('sideMenu.schemas') }}
+            </a>
+          </span>
+        </el-menu-item>
 
-          <el-menu-item index="/schemas/create">
-            <span slot="title">
-              <a
-                style="color: inherit"
-                :class="[isCollapse ? '' : 'inline-block w-full']"
-                href="/schemas/create"
-                @click.prevent="$router.push($event.target.getAttribute('href'))"
-              >
-                Create {{ $t('sideMenu.schemas') }}
-              </a>
-            </span>
-          </el-menu-item>
-        </el-menu-item-group>
-        <el-menu-item-group v-if="allSchemas" :title="$t('sideMenu.schemas') + 's'">
-          <el-menu-item v-if="!hasFetchedSchemas">
-            Loading available Schemas..
-          </el-menu-item>
+        <el-menu-item v-if="!hasFetchedSchemas">
+          Loading available Schemas..
+        </el-menu-item>
 
-          <el-menu-item v-else-if="hasFetchedSchemas && allSchemas.results.length === 0">
-            No available Schemas
-          </el-menu-item>
+        <el-menu-item v-else-if="hasFetchedSchemas && allSchemas.results.length === 0">
+          No available Schemas
+        </el-menu-item>
 
-          <el-menu-item
-            v-for="schema in sortBy(allSchemas.results, 'title')"
-            v-else
-            :key="schema.id"
-            :index="`/schemas/${schema.id}`"
-          >
-            <span slot="title">
-              <a
-                style="color: inherit"
-                :class="[isCollapse ? '' : 'inline-block w-full']"
-                :href="`/schemas/${schema.id}`"
-                @click.prevent="$router.push($event.target.getAttribute('href'))"
-              >
-                {{ schema.title }}
-              </a>
-            </span>
-          </el-menu-item>
-        </el-menu-item-group>
+        <el-menu-item
+          v-for="schema in sortBy(allSchemas.results, 'title')"
+          :key="schema.id"
+          :index="`/schemas/${schema.id}`"
+        >
+          <span slot="title">
+            <a
+              style="color: inherit"
+              :class="[isCollapse ? '' : 'inline-block w-full']"
+              :href="`/schemas/${schema.id}`"
+              @click.prevent="$router.push($event.target.getAttribute('href'))"
+            >
+              <i class="el-icon-invalid"></i>
+              {{ schema.title }}
+            </a>
+          </span>
+        </el-menu-item>
+
+        <el-menu-item v-if="$can('internal:schema:read')" index="/schemas">
+          <span slot="title">
+            <a
+              style="color: inherit"
+              :class="[isCollapse ? '' : 'inline-block w-full']"
+              href="/schemas"
+              @click.prevent="$router.push($event.target.getAttribute('href'))"
+            >
+              <i class="el-icon-setting"></i>
+              Manage {{ $t('sideMenu.schemas') }}s
+            </a>
+          </span>
+        </el-menu-item>
       </el-submenu>
 
       <el-submenu
@@ -167,70 +170,66 @@
           <span slot="title">{{ $t('sideMenu.singletons') }}s</span>
         </template>
 
-        <el-menu-item-group v-if="$can('internal:singleton:read')" title="Management">
-          <el-menu-item index="/singletons">
-            <span slot="title">
-              <a
-                style="color: inherit"
-                :class="[isCollapse ? '' : 'inline-block w-full']"
-                href="/singletons"
-                @click.prevent="$router.push($event.target.getAttribute('href'))"
-              >
-                All {{ $t('sideMenu.singletons') }}s
-              </a>
-            </span>
-          </el-menu-item>
-
-          <el-menu-item v-if="$can('internal:singleton:create')" index="/singletons/create">
-            <span slot="title">
-              <a
-                style="color: inherit"
-                :class="[isCollapse ? '' : 'inline-block w-full']"
-                href="/singletons/create"
-                @click.prevent="$router.push($event.target.getAttribute('href'))"
-              >
-                Create {{ $t('sideMenu.singletons') }}
-              </a>
-            </span>
-          </el-menu-item>
-        </el-menu-item-group>
-
-        <el-menu-item-group
-          v-if="allSingletons && allSingletons.results && allSingletons.results.length > 0"
-          :title="$t('sideMenu.singletons') + 's'"
+        <el-menu-item
+          v-if="
+            $can('internal:singleton:create') &&
+              hasFetchedSingletons &&
+              allSingletons.results.length === 0
+          "
+          index="/singletons/create"
         >
-          <el-menu-item v-if="!hasFetchedSingletons">
-            Loading available Singletons..
-          </el-menu-item>
+          <span slot="title">
+            <a
+              style="color: inherit"
+              :class="[isCollapse ? '' : 'inline-block w-full']"
+              href="/singletons/create"
+              @click.prevent="$router.push($event.target.getAttribute('href'))"
+            >
+              <i class="el-icon-invalid"></i>
+              Create {{ $t('sideMenu.singletons') }}
+            </a>
+          </span>
+        </el-menu-item>
 
-          <el-menu-item v-else-if="hasFetchedSingletons && allSingletons.results.length === 0">
-            No available Singletons
-          </el-menu-item>
+        <el-menu-item v-if="!hasFetchedSingletons">
+          Loading available Singletons..
+        </el-menu-item>
 
-          <el-menu-item
-            v-for="schema in allSingletons.results"
-            :key="schema.id"
-            :index="`/singletons/${schema.id}`"
-          >
-            <span slot="title">
-              <a
-                style="color: inherit"
-                :class="[isCollapse ? '' : 'inline-block w-full']"
-                :href="`/singletons/${schema.id}`"
-                @click.prevent="$router.push($event.target.getAttribute('href'))"
-              >
-                {{ schema.title }}
-              </a>
-            </span>
-          </el-menu-item>
-        </el-menu-item-group>
+        <el-menu-item v-else-if="hasFetchedSingletons && allSingletons.results.length === 0">
+          No available Singletons
+        </el-menu-item>
 
-        <span v-else>
-          <el-menu-item>
-            <i class="el-icon-warning"></i>
-            No {{ $t('sideMenu.singletons') }}s
-          </el-menu-item>
-        </span>
+        <el-menu-item
+          v-for="schema in allSingletons.results"
+          :key="schema.id"
+          :index="`/singletons/${schema.id}`"
+        >
+          <span slot="title">
+            <a
+              style="color: inherit"
+              :class="[isCollapse ? '' : 'inline-block w-full']"
+              :href="`/singletons/${schema.id}`"
+              @click.prevent="$router.push($event.target.getAttribute('href'))"
+            >
+              <i class="el-icon-invalid"></i>
+              {{ schema.title }}
+            </a>
+          </span>
+        </el-menu-item>
+
+        <el-menu-item v-if="$can('internal:schema:read')" index="/singletons">
+          <span slot="title">
+            <a
+              style="color: inherit"
+              :class="[isCollapse ? '' : 'inline-block w-full']"
+              href="/singletons"
+              @click.prevent="$router.push($event.target.getAttribute('href'))"
+            >
+              <i class="el-icon-setting"></i>
+              Manage {{ $t('sideMenu.singletons') }}s
+            </a>
+          </span>
+        </el-menu-item>
       </el-submenu>
 
       <!-- <el-submenu index="/releases">

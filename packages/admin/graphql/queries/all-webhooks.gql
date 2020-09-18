@@ -1,5 +1,5 @@
-query AllWebhooks {
-  allWebhooks {
+query AllWebhooks($page: Int!, $perPage: Int! = 25) {
+  allWebhooks(page: $page, perPage: $perPage) {
     results {
       id
       name

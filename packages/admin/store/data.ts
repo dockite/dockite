@@ -556,9 +556,13 @@ export const actions: ActionTree<DataState, RootState> = {
     commit('setAvailableFields', data);
   },
 
-  async fetchAllWebhooks({ commit }): Promise<void> {
+  async fetchAllWebhooks({ commit }, payload: Partial<PaginationPayload>): Promise<void> {
     const { data } = await this.$apolloClient.query<AllWebhooksQueryResponse>({
       query: AllWebhooksQuery,
+      variables: {
+        perPage: payload.perPage,
+        page: payload.page,
+      },
     });
 
     if (!data.allWebhooks) {

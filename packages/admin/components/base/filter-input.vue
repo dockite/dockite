@@ -23,7 +23,7 @@
       placeholder="Value"
       class="input-with-select"
       style="padding-top: 10px"
-      @keyup.enter.native="handleApplyFilter"
+      @keyup.enter.native.stop="handleApplyFilter"
     >
       <el-select
         slot="append"
