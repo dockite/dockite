@@ -115,3 +115,10 @@ button:focus,
   font-size: 0.7rem;
   // text-decoration: underline;
 }
+
+.dockite-table-filter--popover {
+  position: absolute;
+  width: 90%;
+  bottom: 0;
+  left: 12px;
+}

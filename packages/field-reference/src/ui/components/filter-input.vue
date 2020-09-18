@@ -1,5 +1,5 @@
 <template>
-  <div class="dockite-filter-input">
+  <div ref="filterInput" class="dockite-filter-input">
     <el-row type="flex" justify="space-between" align="middle">
       <span class="text-xs">
         Apply a Filter
@@ -18,11 +18,13 @@
     </el-row>
 
     <el-input
+      ref="valueInput"
       v-model="filter"
       size="small"
       placeholder="Value"
       class="input-with-select"
       style="padding-top: 10px"
+      @keyup.enter.native="handleApplyFilter"
     >
       <el-select
         slot="append"
@@ -54,7 +56,7 @@
 
 <script lang="ts">
 import { Constraint, ConstraintOperator, Operators } from '@dockite/where-builder';
-import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
+import { Component, Prop, Vue, Watch, Ref } from 'vue-property-decorator';
 
 @Component
 export default class FilterInputComponent extends Vue {
@@ -66,6 +68,12 @@ export default class FilterInputComponent extends Vue {
 
   @Prop()
   readonly value!: Constraint | null;
+
+  @Ref()
+  readonly filterInput!: any;
+
+  @Ref()
+  readonly valueInput!: any;
 
   public filter = '';
 
@@ -83,8 +91,16 @@ export default class FilterInputComponent extends Vue {
     return this.prop !== '' && this.prop !== '';
   }
 
+  public mounted() {
+    this.$nextTick(() => {
+      this.valueInput.focus();
+    });
+  }
+
   public handleApplyFilter(): void {
     this.$emit('input', this.constraint);
+
+    this.$emit('filter-change');
   }
 
   @Watch('value', { immediate: true })

@@ -39,7 +39,7 @@
         <span />
         <el-input v-model="term" style="max-width: 400px;" placeholder="Search term" />
       </el-row>
-      <div class="border rounded px-1 pt-1">
+      <div v-loading="loading > 0 && dialogVisible" class="border rounded px-1 pt-1">
         <el-table
           class="flex flex-col dockite-table--reference-selection"
           :data="documents"
@@ -64,7 +64,7 @@
 
               <!-- You gotta stop it from propogating twice for "reasons" -->
               <el-popover
-                v-if="term === ''"
+                :ref="`filter-${column.label}`"
                 width="250"
                 trigger="click"
                 class="dockite-table-filter--popover"
@@ -83,11 +83,9 @@
                     }"
                   >
                     <template v-if="filters['identifier']">
-                      <span
-                        >{{ filters['identifier'].operator }} "{{
-                          filters['identifier'].value
-                        }}"</span
-                      >
+                      <span>
+                        {{ filters['identifier'].operator }} "{{ filters['identifier'].value }}"
+                      </span>
                       <i
                         class="el-icon-close cursor-pointer hover:bg-gray-400 text-lg p-1 rounded-full"
                         @click.stop="filters['identifier'] = null"
@@ -105,6 +103,7 @@
                   v-model="filters['identifier']"
                   :options="supportedOperators"
                   prop="identifier"
+                  @filter-change="() => $refs[`filter-${column.label}`].doClose()"
                 />
               </el-popover>
             </template>
@@ -131,7 +130,7 @@
 
               <!-- You gotta stop it from propogating twice for "reasons" -->
               <el-popover
-                v-if="term === ''"
+                :ref="`filter-${column.label}`"
                 width="250"
                 trigger="click"
                 class="dockite-table-filter--popover"
@@ -172,6 +171,7 @@
                   v-model="filters['schema.name']"
                   :options="supportedOperators"
                   prop="schema.name"
+                  @filter-change="() => $refs[`filter-${column.label}`].doClose()"
                 />
               </el-popover>
             </template>
@@ -215,6 +215,7 @@ import {
   Constraint,
   PossibleConstraints,
 } from '@dockite/where-builder';
+import { debounce } from 'lodash';
 
 import FilterInput from './components/filter-input.vue';
 
@@ -264,6 +265,8 @@ export default class ReferenceFieldInputComponent extends Vue {
   public totalPages = 0;
 
   public totalItems = 0;
+
+  public loading = 1;
 
   public filters: Record<string, Constraint | null> = {
     'schema.name': null,
@@ -374,10 +377,14 @@ export default class ReferenceFieldInputComponent extends Vue {
 
   @Watch('term')
   handleTermChange(): void {
+    this.handleTermChangeDebounced();
+  }
+
+  public handleTermChangeDebounced = debounce(() => {
     this.page = 1;
 
     this.findDocuments();
-  }
+  });
 
   @Watch('whereConstraints')
   handleWhereConstraintsChange(): void {
@@ -394,6 +401,8 @@ export default class ReferenceFieldInputComponent extends Vue {
     if (this.fieldConfig.settings.required) {
       this.rules.push(this.getRequiredRule());
     }
+
+    this.loading -= 1;
   }
 
   public getRequiredRule(): object {
@@ -405,53 +414,67 @@ export default class ReferenceFieldInputComponent extends Vue {
   }
 
   public async findDocuments(): Promise<void> {
-    const { schemaIds } = this.fieldConfig.settings;
-    const { page, term, perPage } = this;
+    try {
+      this.loading += 1;
 
-    const { data } = await this.$apolloClient.query({
-      query: gql`
-        query SearchDocumentsBySchemaIds(
-          $schemaIds: [String!]
-          $page: Int = 1
-          $perPage: Int = 20
-          $term: String!
-          $where: WhereBuilderInputType
-        ) {
-          searchDocuments(
-            schemaIds: $schemaIds
-            page: $page
-            perPage: $perPage
-            term: $term
-            where: $where
+      const { schemaIds } = this.fieldConfig.settings;
+      const { page, term, perPage } = this;
+
+      const { data } = await this.$apolloClient.query({
+        query: gql`
+          query SearchDocumentsBySchemaIds(
+            $schemaIds: [String!]
+            $page: Int = 1
+            $perPage: Int = 20
+            $term: String!
+            $where: WhereBuilderInputType
           ) {
-            results {
-              id
-              data
-              updatedAt
-              schema {
+            searchDocuments(
+              schemaIds: $schemaIds
+              page: $page
+              perPage: $perPage
+              term: $term
+              where: $where
+            ) {
+              results {
                 id
-                name
+                data
+                updatedAt
+                schema {
+                  id
+                  name
+                }
               }
+              totalItems
+              totalPages
+              currentPage
             }
-            totalItems
-            totalPages
-            currentPage
           }
-        }
-      `,
-      variables: {
-        schemaIds,
-        page,
-        perPage,
-        term,
-        where: this.whereConstraints,
-      },
-    });
+        `,
+        variables: {
+          schemaIds,
+          page,
+          perPage,
+          term,
+          where: this.whereConstraints,
+        },
+      });
 
-    this.documents = data.searchDocuments.results;
-    this.totalPages = data.searchDocuments.totalPages;
-    this.totalItems = data.searchDocuments.totalItems;
-    this.page = data.searchDocuments.currentPage;
+      this.documents = data.searchDocuments.results;
+      this.totalPages = data.searchDocuments.totalPages;
+      this.totalItems = data.searchDocuments.totalItems;
+      this.page = data.searchDocuments.currentPage;
+    } catch (e) {
+      console.log(e);
+
+      this.$message({
+        message:
+          'An error occurred whilst fetching documents for reference selection, please try again later.',
+        type: 'error',
+      });
+    } finally {
+      this.loading -= 1;
+    }
   }
 
   public handlePageChange(newPage: number): void {

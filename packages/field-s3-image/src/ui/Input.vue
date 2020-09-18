@@ -74,11 +74,11 @@
               <img
                 :src="file.url"
                 :alt="file.alt"
-                class="el-upload-list__item-thumbnail cursor-pointer"
+                class="el-upload-list__item-thumbnail cursor-pointer mr-"
                 @click="handleShowImage(file)"
               />
 
-              <div class="flex items-center h-full w-full">
+              <div class="flex items-center h-full w-full pl-3">
                 <div class="dockite-field-s3-image--item">
                   <a
                     class="el-upload-list__item-name dockite-field-s3-image--item-name"
@@ -328,6 +328,7 @@ export default class S3ImageFieldInputComponent extends Vue {
             public: this.settings.public,
           },
         },
+        fetchPolicy: 'no-cache',
       });
 
       const { presignedUrl } = presignUrlData.presignS3Object;

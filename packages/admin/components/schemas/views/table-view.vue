@@ -49,7 +49,7 @@
 
             <!-- You gotta stop it from propogating twice for "reasons" -->
             <el-popover
-              v-if="term === ''"
+              :ref="`filter-${field.name}`"
               width="250"
               trigger="click"
               class="dockite-table-filter--popover"
@@ -84,6 +84,7 @@
                 v-model="filters[field.name]"
                 :options="supportedOperators"
                 :prop="field.name"
+                @filter-change="handleFilterInputChange(field.name)"
               />
             </el-popover>
           </template>
@@ -233,7 +234,7 @@ import * as document from '~/store/document';
     FilterInput,
   },
 })
-export default class SchemaDocumentsPage extends Vue {
+export default class TableViewComponent extends Vue {
   @Prop({ default: () => false })
   readonly selectable!: boolean;
 
@@ -323,6 +324,16 @@ export default class SchemaDocumentsPage extends Vue {
     }
 
     return this.findDocumentsBySchemaId.totalItems;
+  }
+
+  public handleFilterInputChange(fieldName: string): void {
+    const ref = this.$refs[`filter-${fieldName}`] as any;
+
+    if (Array.isArray(ref)) {
+      ref.forEach(x => x.doClose());
+    } else {
+      ref.doClose();
+    }
   }
 
   public getRowKeys(row: any): string {
@@ -571,12 +582,5 @@ export default class SchemaDocumentsPage extends Vue {
 
 .dockite-element--pagination {
   padding: 1rem;
-}
-
-.dockite-table-filter--popover {
-  position: absolute;
-  width: 90%;
-  bottom: 0;
-  left: 12px;
 }
 </style>

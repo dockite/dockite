@@ -23,6 +23,7 @@
       placeholder="Value"
       class="input-with-select"
       style="padding-top: 10px"
+      @keyup.enter.native="handleApplyFilter"
     >
       <el-select
         slot="append"
@@ -85,6 +86,8 @@ export default class FilterInputComponent extends Vue {
 
   public handleApplyFilter(): void {
     this.$emit('input', this.constraint);
+
+    this.$emit('filter-change');
   }
 
   @Watch('value', { immediate: true })

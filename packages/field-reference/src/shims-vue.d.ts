@@ -7,6 +7,7 @@ declare module '*.vue' {
 
 declare module 'vue/types/vue' {
   interface Vue {
-    $apolloClient: ApolloClient<any>
+    $apolloClient: ApolloClient<any>;
+    $message: (input: { message: string; type: string }) => void;
   }
 }

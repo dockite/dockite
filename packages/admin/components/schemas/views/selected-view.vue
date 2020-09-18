@@ -136,7 +136,7 @@ import * as data from '~/store/data';
     FilterInput,
   },
 })
-export default class SchemaDocumentsPage extends Vue {
+export default class SelectViewComponent extends Vue {
   @Prop({ default: () => [] })
   readonly selectedItems!: Document[];
 
