@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.43](https://github.com/dockite/dockite/compare/@dockite/field-s3-image@0.3.0-alpha.42...@dockite/field-s3-image@0.3.0-alpha.43) (2020-09-18)
+
+
+### Bug Fixes
+
+* **field-s3-image:** upload not working after clearing item ([df3aa6d](https://github.com/dockite/dockite/commit/df3aa6d7c15caf6c133165bab565d46ecf30b3d9))
+
+
+
+
+
 # [0.3.0-alpha.42](https://github.com/dockite/dockite/compare/@dockite/field-s3-image@0.3.0-alpha.41...@dockite/field-s3-image@0.3.0-alpha.42) (2020-09-18)
 
 
