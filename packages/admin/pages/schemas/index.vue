@@ -8,7 +8,15 @@
             Actions
             <i class="el-icon-arrow-down el-icon--right" />
           </el-button>
+
           <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item v-if="$can('internal:schema:create')">
+              <router-link :to="`/schemas/create`">
+                <i class="el-icon-folder-add" />
+                Create Schema
+              </router-link>
+            </el-dropdown-item>
+
             <el-dropdown-item v-if="$can('internal:schema:create')">
               <router-link :to="`/schemas/import`">
                 <i class="el-icon-upload2" />

@@ -8,7 +8,15 @@
             Actions
             <i class="el-icon-arrow-down el-icon--right" />
           </el-button>
+
           <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item v-if="$can('internal:schema:create')">
+              <router-link :to="`/singletons/create`">
+                <i class="el-icon-document-add" />
+                Create Singleton
+              </router-link>
+            </el-dropdown-item>
+
             <el-dropdown-item v-if="$can('internal:schema:create')">
               <router-link :to="`/singletons/import`">
                 <i class="el-icon-upload2" />

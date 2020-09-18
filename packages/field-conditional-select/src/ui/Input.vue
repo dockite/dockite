@@ -49,6 +49,9 @@ export default class ConditionalSelectFieldInputComponent extends Vue {
   @Prop({ required: true })
   readonly groups!: Record<string, string[]>;
 
+  @Prop({ default: () => false })
+  readonly bulkEditMode!: boolean;
+
   public groupsBackup: Record<string, string[]> = {};
 
   public rules: object[] = [];
@@ -128,11 +131,13 @@ export default class ConditionalSelectFieldInputComponent extends Vue {
 
   @Watch('fieldData', { immediate: true })
   public handleFieldDataChange(newValue: string | null) {
-    if (newValue) {
-      this.$emit('update:groups', cloneDeep(this.groupsBackup));
-      this.$emit('update:groups', cloneDeep(this.hidden));
-    } else {
-      this.$emit('update:groups', cloneDeep(this.groupsBackup));
+    if (!this.bulkEditMode) {
+      if (newValue) {
+        this.$emit('update:groups', cloneDeep(this.groupsBackup));
+        this.$emit('update:groups', cloneDeep(this.hidden));
+      } else {
+        this.$emit('update:groups', cloneDeep(this.groupsBackup));
+      }
     }
   }
 }
