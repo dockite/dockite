@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.92](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.91...@dockite/admin@0.4.0-alpha.92) (2020-09-18)
+
+
+### Bug Fixes
+
+* **field-conditional*:** disable field hiding in bulk edit mode ([1d1c93b](https://github.com/dockite/dockite/commit/1d1c93b5c9f4e7be78fad1c5dc5a86d72f022438))
+
+
+
+
+
 # [0.4.0-alpha.91](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.90...@dockite/admin@0.4.0-alpha.91) (2020-09-18)
 
 

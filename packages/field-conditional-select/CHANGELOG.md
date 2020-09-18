@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.1.0-alpha.24](https://github.com/dockite/dockite/compare/@dockite/field-conditional-select@0.1.0-alpha.23...@dockite/field-conditional-select@0.1.0-alpha.24) (2020-09-18)
+
+
+### Bug Fixes
+
+* **field-conditional*:** disable field hiding in bulk edit mode ([1d1c93b](https://github.com/dockite/dockite/commit/1d1c93b5c9f4e7be78fad1c5dc5a86d72f022438))
+
+
+
+
+
 # [0.1.0-alpha.23](https://github.com/dockite/dockite/compare/@dockite/field-conditional-select@0.1.0-alpha.22...@dockite/field-conditional-select@0.1.0-alpha.23) (2020-09-10)
 
 **Note:** Version bump only for package @dockite/field-conditional-select

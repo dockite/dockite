@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.1.0-alpha.19](https://github.com/dockite/dockite/compare/@dockite/field-conditional-boolean@0.1.0-alpha.18...@dockite/field-conditional-boolean@0.1.0-alpha.19) (2020-09-18)
+
+
+### Bug Fixes
+
+* **field-conditional*:** disable field hiding in bulk edit mode ([1d1c93b](https://github.com/dockite/dockite/commit/1d1c93b5c9f4e7be78fad1c5dc5a86d72f022438))
+
+
+
+
+
 # [0.1.0-alpha.18](https://github.com/dockite/dockite/compare/@dockite/field-conditional-boolean@0.1.0-alpha.17...@dockite/field-conditional-boolean@0.1.0-alpha.18) (2020-09-10)
 
 **Note:** Version bump only for package @dockite/field-conditional-boolean
