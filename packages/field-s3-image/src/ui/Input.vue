@@ -188,6 +188,8 @@ export default class S3ImageFieldInputComponent extends Vue {
 
   public selectedImage: S3ImageType | null = null;
 
+  public key = 0;
+
   public drag = false;
 
   public dragOptions = {
@@ -221,10 +223,6 @@ export default class S3ImageFieldInputComponent extends Vue {
 
     console.log('settings not found', JSON.stringify(this.settings));
     return null;
-  }
-
-  get key(): string {
-    return 'no-upload';
   }
 
   get fieldData(): S3ImageType[] {
@@ -311,6 +309,8 @@ export default class S3ImageFieldInputComponent extends Vue {
 
   async handleUpload({ file }: { file: File }) {
     try {
+      this.key += 1;
+
       const checksum = await this.getSHA256ChecksumFromFile(file);
 
       const path = [
@@ -373,6 +373,8 @@ export default class S3ImageFieldInputComponent extends Vue {
   }
 
   async handleBeforeUpload(file: File): Promise<void> {
+    console.log('handling before upload');
+
     const sizeInKB = file.size / 1000;
 
     let hasError = false;
