@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.42](https://github.com/dockite/dockite/compare/@dockite/field-s3-image@0.3.0-alpha.41...@dockite/field-s3-image@0.3.0-alpha.42) (2020-09-18)
+
+
+### Features
+
+* **admin:** close filters on input ([9571242](https://github.com/dockite/dockite/commit/95712422a8cb5d0769edfd340d4b1cef405f1265))
+
+
+
+
+
 # [0.3.0-alpha.41](https://github.com/dockite/dockite/compare/@dockite/field-s3-image@0.3.0-alpha.40...@dockite/field-s3-image@0.3.0-alpha.41) (2020-09-17)
 
 

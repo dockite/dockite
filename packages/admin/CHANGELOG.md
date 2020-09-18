@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.91](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.90...@dockite/admin@0.4.0-alpha.91) (2020-09-18)
+
+
+### Features
+
+* **admin:** close filters on input ([9571242](https://github.com/dockite/dockite/commit/95712422a8cb5d0769edfd340d4b1cef405f1265))
+
+
+
+
+
 # [0.4.0-alpha.90](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.89...@dockite/admin@0.4.0-alpha.90) (2020-09-15)
 
 
