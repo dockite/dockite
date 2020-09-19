@@ -72,12 +72,16 @@ export class RevisionResolver {
     const schemaRepository = getRepository(Schema);
 
     const [schema, revisions] = await Promise.all([
-      schemaRepository.findOneOrFail(schemaId, { relations: ['user', 'fields'] }),
+      schemaRepository.findOneOrFail(schemaId, {
+        relations: ['user', 'fields'],
+        withDeleted: true,
+      }),
       revisionRepository.findAndCount({
         where: { schemaId },
         relations: ['user'],
         take: perPage,
         order: { updatedAt: 'DESC' },
+        withDeleted: true,
       }),
     ]);
 
@@ -120,12 +124,13 @@ export class RevisionResolver {
     const documentRepository = getRepository(Document);
 
     const [document, revisions] = await Promise.all([
-      documentRepository.findOneOrFail(documentId, { relations: ['user'] }),
+      documentRepository.findOneOrFail(documentId, { relations: ['user'], withDeleted: true }),
       revisionRepository.findAndCount({
         where: { documentId },
         relations: ['user'],
         take: perPage,
         order: { updatedAt: 'DESC' },
+        withDeleted: true,
       }),
     ]);
 
@@ -200,8 +205,8 @@ export class RevisionResolver {
 
     try {
       const [document, revision] = await Promise.all([
-        documentRepository.findOneOrFail({ where: { id: documentId } }),
-        revisionRepository.findOneOrFail({ where: { id: revisionId } }),
+        documentRepository.findOneOrFail({ where: { id: documentId }, withDeleted: true }),
+        revisionRepository.findOneOrFail({ where: { id: revisionId }, withDeleted: true }),
       ]);
 
       const newRevision = revisionRepository.create({
