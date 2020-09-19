@@ -36,10 +36,18 @@
             Click to upload
           </el-button>
           <div slot="tip" class="el-upload__tip" style="line-height: 1.2">
-            <div v-if="constraints.length > 0" class="block pt-1">
-              The uploaded image must satify the following constraints:
+            <div
+              v-if="constraints.length > 0"
+              class="block pt-1 cursor-pointer dockite-s3-image--constraints"
+            >
+              <span class="underline">
+                The uploaded image must satisfy the following constraints:
+              </span>
 
-              <ul class="list-disc" style="list-style-position: inside;">
+              <ul
+                class="list-disc dockite-s3-image--constraints-list"
+                style="list-style-position: inside;"
+              >
                 <li class="pt-1">
                   must only be one of the following file types:
                   <strong>{{ settings.acceptedExtensions.join(', ') }}</strong>
@@ -560,6 +568,21 @@ export default class S3ImageFieldInputComponent extends Vue {
 
   .el-upload-list--picture .el-upload-list__item-thumbnail {
     margin: 0;
+  }
+
+  .dockite-s3-image--constraints {
+    transition: all 300ms;
+  }
+
+  .dockite-s3-image--constraints-list {
+    max-height: 0;
+    transition: all 300ms;
+    overflow: hidden;
+  }
+
+  .dockite-s3-image--constraints:hover .dockite-s3-image--constraints-list {
+    max-height: 400px;
+    transition: all 300ms;
   }
 }
 </style>
