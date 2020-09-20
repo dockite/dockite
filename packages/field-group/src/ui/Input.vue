@@ -43,7 +43,9 @@
                     :key="itemIndex"
                     class="dockite-field-group--item items-center border border-gray-500 border-dashed p-3 mb-3"
                   >
-                    <div class="flex flex-col justify-center items-center px-3 text-xl">
+                    <div
+                      class="flex flex-col justify-center items-center px-3 text-xl dockite--group-movement-actions relative"
+                    >
                       <el-button
                         v-if="repeatable"
                         :disabled="itemIndex === 0"
@@ -67,7 +69,8 @@
                       />
 
                       <el-button
-                        class="dockite-group--movement-button"
+                        class="dockite-group--movement-button dockite--group-movement-button__delete absolute"
+                        style="bottom: -50px"
                         type="text"
                         title="Remove the current group item"
                         icon="el-icon-delete"
@@ -392,6 +395,17 @@ export default class GroupFieldInputComponent extends Vue {
     padding: 3px;
 
     font-size: 1rem;
+  }
+
+  .dockite--group-movement-button__delete {
+    opacity: 0;
+    transition: all 300ms;
+  }
+
+  .dockite-field-group--item:hover {
+    .dockite--group-movement-button__delete {
+      opacity: 1;
+    }
   }
 }
 </style>
