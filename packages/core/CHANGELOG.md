@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.79](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.78...@dockite/core@0.4.0-alpha.79) (2020-09-20)
+
+
+### Bug Fixes
+
+* **core:** allow revisions to be displayed for deleted documents ([5bc3af4](https://github.com/dockite/dockite/commit/5bc3af4b7c75e8531380c47286e7b960d85dd8da))
+
+
+
+
+
 # [0.4.0-alpha.78](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.77...@dockite/core@0.4.0-alpha.78) (2020-09-17)
 
 

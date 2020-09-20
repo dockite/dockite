@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.44](https://github.com/dockite/dockite/compare/@dockite/field-s3-image@0.3.0-alpha.43...@dockite/field-s3-image@0.3.0-alpha.44) (2020-09-20)
+
+
+### Bug Fixes
+
+* **field-s3-image:** remove typo, transition constraints into view ([c6bfd2c](https://github.com/dockite/dockite/commit/c6bfd2c4407426b4e13c653b1046a5b2145a9506))
+
+
+
+
+
 # [0.3.0-alpha.43](https://github.com/dockite/dockite/compare/@dockite/field-s3-image@0.3.0-alpha.42...@dockite/field-s3-image@0.3.0-alpha.43) (2020-09-18)
 
 
