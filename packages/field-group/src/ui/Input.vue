@@ -296,18 +296,30 @@ export default class GroupFieldInputComponent extends Vue {
   public handleAddFieldBefore(): void {
     if (Array.isArray(this.fieldData)) {
       this.fieldData = [{ ...this.initialFieldData }, ...this.fieldData];
+
+      this.$nextTick(() => {
+        this.draggableKey += 1;
+      });
     }
   }
 
   public handleAddFieldAfter(): void {
     if (Array.isArray(this.fieldData)) {
       this.fieldData = [...this.fieldData, { ...this.initialFieldData }];
+
+      this.$nextTick(() => {
+        this.draggableKey += 1;
+      });
     }
   }
 
   public handleRemoveField(index: number): void {
     if (Array.isArray(this.fieldData)) {
       this.fieldData.splice(index, 1);
+
+      this.$nextTick(() => {
+        this.draggableKey += 1;
+      });
     }
   }
 
@@ -320,6 +332,10 @@ export default class GroupFieldInputComponent extends Vue {
       const [fieldItem] = this.fieldData.splice(index, 1);
 
       this.fieldData.splice(index - 1, 0, fieldItem);
+
+      this.$nextTick(() => {
+        this.draggableKey += 1;
+      });
     }
   }
 
@@ -328,6 +344,10 @@ export default class GroupFieldInputComponent extends Vue {
       const [fieldItem] = this.fieldData.splice(index, 1);
 
       this.fieldData.splice(index + 1, 0, fieldItem);
+
+      this.$nextTick(() => {
+        this.draggableKey += 1;
+      });
     }
   }
 }

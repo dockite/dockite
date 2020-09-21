@@ -42,6 +42,7 @@
     "@dockite/field-media-manager",
     "@dockite/field-sort-index",
     "@dockite/field-id",
+    "@dockite/field-unique",
   ],
   "modules": {
     "internal": [
