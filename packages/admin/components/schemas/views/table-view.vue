@@ -90,7 +90,7 @@
           </template>
 
           <template slot-scope="scope">
-            <span v-if="field.type === 'reference' && scope.row.data[field.name]">
+            <span v-if="field.type.includes('reference') && scope.row.data[field.name]">
               {{ scope.row.data[field.name].identifier }}
             </span>
 
