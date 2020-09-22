@@ -423,7 +423,13 @@ export default class ReferenceFieldInputComponent extends Vue {
         const value = con.value.replace(/{{ (.+) }}/g, (str, match) => {
           const path = match.replace('data.', '');
 
-          return get(this.formData, path, str);
+          const data = get(this.formData, path, str);
+
+          if (typeof data === 'object' || Array.isArray(data)) {
+            return JSON.stringify(data);
+          }
+
+          return data;
         });
 
         return { ...con, value };
