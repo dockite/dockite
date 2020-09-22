@@ -1,9 +1,11 @@
 import { BaseField } from '@dockite/database';
+import { Constraint } from '@dockite/where-builder';
 
 export interface ReferenceFieldSettings {
   required: boolean;
   schemaIds: string[];
   fieldsToDisplay?: FieldToDisplayItem[];
+  constraints?: Constraint[];
 }
 
 export interface FieldToDisplayItem {

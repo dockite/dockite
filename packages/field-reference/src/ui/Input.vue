@@ -270,7 +270,7 @@ import {
   Constraint,
   PossibleConstraints,
 } from '@dockite/where-builder';
-import { debounce } from 'lodash';
+import { debounce, get } from 'lodash';
 
 import { DockiteFieldReferenceEntity, FieldToDisplayItem } from '../types';
 
@@ -417,6 +417,21 @@ export default class ReferenceFieldInputComponent extends Vue {
         },
       );
 
+    if (this.fieldConfig.settings.constraints && this.fieldConfig.settings.constraints.length > 0) {
+      // Get the constraints from the field settings and replace the mustache syntax with actual values.
+      const constraints = this.fieldConfig.settings.constraints.map(con => {
+        const value = con.value.replace(/{{ (.+) }}/g, (str, match) => {
+          const path = match.replace('data.', '');
+
+          return get(this.formData, path, str);
+        });
+
+        return { ...con, value };
+      });
+
+      filters.push(...constraints);
+    }
+
     if (filters.length > 0) {
       return { AND: filters };
     }
@@ -455,7 +470,7 @@ export default class ReferenceFieldInputComponent extends Vue {
     this.findDocuments();
   }, 300);
 
-  @Watch('whereConstraints')
+  @Watch('whereConstraints', { deep: true })
   handleWhereConstraintsChange(): void {
     this.page = 1;
 
@@ -507,6 +522,7 @@ export default class ReferenceFieldInputComponent extends Vue {
           term,
           where: this.whereConstraints,
         },
+        fetchPolicy: 'network-only',
       });
 
       this.documents = data.searchDocuments.results;

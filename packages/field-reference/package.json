@@ -25,6 +25,9 @@
     "vue-fragment": "^1.5.1",
     "vue-property-decorator": "^8.4.2"
   },
+  "peerDependencies": {
+    "@dockite/where-builder": "^0.2.0-alpha.33"
+  },
   "devDependencies": {
     "@babel/core": "^7.9.0",
     "@babel/plugin-proposal-class-properties": "^7.10.1",
