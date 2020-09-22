@@ -41,7 +41,7 @@
           default-first-option
         >
           <el-option
-            v-for="field in schemaFields.filter(field => field.type === 'reference')"
+            v-for="field in schemaFields.filter(field => field.type.includes('reference'))"
             :key="field.name"
             :label="field.title"
             :value="field.name"

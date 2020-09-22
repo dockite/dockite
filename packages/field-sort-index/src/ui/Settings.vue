@@ -56,7 +56,7 @@ export default class SortIndexFieldSettingsComponent extends Vue {
   }
 
   get referenceFields(): Field[] {
-    return this.fields.filter(f => f.type === 'reference');
+    return this.fields.filter(f => f.type.includes('reference'));
   }
 
   mounted() {

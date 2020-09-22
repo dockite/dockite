@@ -106,7 +106,7 @@ export default class ReferenceOfFieldSettingsComponent extends Vue {
 
     if (!schema) return [];
 
-    return schema.fields.filter(f => f.type === 'reference');
+    return schema.fields.filter(f => f.type.includes('reference'));
   }
 
   public async fetchAllSchemas(): Promise<void> {

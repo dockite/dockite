@@ -78,7 +78,7 @@ export default class SlugFieldSettingsComponent extends Vue {
   }
 
   get referenceFields(): Field[] {
-    return this.fields.filter(field => field.type === 'reference');
+    return this.fields.filter(field => field.type.includes('reference'));
   }
 
   beforeMount() {
