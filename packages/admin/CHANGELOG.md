@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.94](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.93...@dockite/admin@0.4.0-alpha.94) (2020-09-22)
+
+
+### Bug Fixes
+
+* relax reference field type checking ([b422bd3](https://github.com/dockite/dockite/commit/b422bd3ed6bfd740f9bbf6f86e87cc0948b28171))
+
+
+
+
+
 # [0.4.0-alpha.93](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.92...@dockite/admin@0.4.0-alpha.93) (2020-09-18)
 
 

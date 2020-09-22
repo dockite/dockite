@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.44](https://github.com/dockite/dockite/compare/@dockite/transformer@0.3.0-alpha.43...@dockite/transformer@0.3.0-alpha.44) (2020-09-22)
+
+
+### Bug Fixes
+
+* **transformer:** add metadata to mutations ([339cf29](https://github.com/dockite/dockite/commit/339cf29d044c9fd73244a53504522ac427876ed3))
+
+
+
+
+
 # [0.3.0-alpha.43](https://github.com/dockite/dockite/compare/@dockite/transformer@0.3.0-alpha.42...@dockite/transformer@0.3.0-alpha.43) (2020-09-16)
 
 
