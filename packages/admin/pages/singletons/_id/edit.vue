@@ -104,6 +104,7 @@
       />
 
       <el-dialog
+        top="5vh"
         title="Singleton Settings"
         :visible="showSingletonSettings !== false"
         :destroy-on-close="true"

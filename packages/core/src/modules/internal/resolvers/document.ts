@@ -17,6 +17,7 @@ import {
   Resolver,
 } from 'type-graphql';
 import { getCustomRepository, getManager, getRepository } from 'typeorm';
+import format from 'pg-format';
 
 import { Authenticated, Authorized } from '../../../common/decorators';
 import { GlobalContext } from '../../../common/types';
@@ -663,14 +664,14 @@ export class DocumentResolver {
       );
 
       // Stringify the data for the great merge
-      const encodedData = JSON.stringify(data);
+      const encodedData = format('%L', JSON.stringify(data));
 
       const qb = documentRepository
         .createQueryBuilder('document')
         .update()
         .returning('*')
         .set({
-          data: () => `data || '${encodedData}'`,
+          data: () => `data || ${encodedData}`,
           userId,
         })
         .callListeners(false)

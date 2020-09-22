@@ -1,5 +1,6 @@
 <template>
   <el-dialog
+    top="5vh"
     custom-class="dockite-document-select--modal"
     title="Select Documents"
     lock-scroll

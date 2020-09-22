@@ -122,16 +122,26 @@
           Enables the delete mutation which will allow consumers to delete {{ schema.title }}(s).
         </div>
       </el-form-item>
+
+      <el-form-item label="Extra Settings">
+        <json-editor v-model="extraSettings" class="h-48" />
+      </el-form-item>
     </el-form>
   </div>
 </template>
 
 <script lang="ts">
 import { Schema, Field } from '@dockite/database';
-import { defaultsDeep, cloneDeep, isEqual } from 'lodash';
+import { defaultsDeep, cloneDeep, isEqual, omit } from 'lodash';
 import { Component, Prop, Vue } from 'nuxt-property-decorator';
 
-@Component
+import JsonEditor from '~/components/base/json-editor.vue';
+
+@Component({
+  components: {
+    JsonEditor,
+  },
+})
 export default class SchemaSettingsComponent extends Vue {
   @Prop()
   readonly value!: Record<string, any>;
@@ -161,6 +171,32 @@ export default class SchemaSettingsComponent extends Vue {
 
   set settings(value: Record<string, any>) {
     this.$emit('input', value);
+  }
+
+  get extraSettings(): string {
+    return JSON.stringify(
+      omit(
+        this.settings,
+        'enableCreateMutation',
+        'enableDeleteMutation',
+        'enableMutations',
+        'enableTreeView',
+        'enableUpdateMutation',
+        'treeViewField',
+        'treeViewLabelField',
+        'treeViewSortField',
+        'fieldsToDisplay',
+      ),
+      null,
+      2,
+    );
+  }
+
+  set extraSettings(value) {
+    this.settings = {
+      ...this.settings,
+      ...JSON.parse(value),
+    };
   }
 
   get fieldsToDisplay(): string[] {

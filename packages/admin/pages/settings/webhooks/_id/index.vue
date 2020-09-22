@@ -51,6 +51,7 @@
     </div>
 
     <el-dialog
+      top="5vh"
       title="Webhook Call - Raw Details"
       custom-class="dockite-dialog--webhook-call"
       :visible="webhookCallToDisplay !== null"

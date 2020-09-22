@@ -78,16 +78,14 @@
       </el-row>
 
       <el-dialog
+        top="5vh"
         title="Revision Details"
         custom-class="dockite-dialog--revision-detail"
         :visible="revisionToDisplay !== null"
         :destroy-on-close="true"
         @close="revisionToDisplay = null"
       >
-        <textarea
-          ref="revisionDetail"
-          :value="JSON.stringify(revisionToDisplay, null, 2)"
-        ></textarea>
+        <json-editor style="height: 60vh" :value="JSON.stringify(revisionToDisplay, null, 2)" />
       </el-dialog>
     </div>
   </fragment>
@@ -95,25 +93,20 @@
 
 <script lang="ts">
 import { Schema } from '@dockite/database';
-import CodeMirror from 'codemirror';
 import { formatDistanceToNow } from 'date-fns';
-import { Component, Vue, Watch, Ref } from 'nuxt-property-decorator';
+import { Component, Vue, Watch } from 'nuxt-property-decorator';
 import { Fragment } from 'vue-fragment';
 
 import { ManyResultSet, AllSchemaRevisionsResultItem } from '~/common/types';
 import { stableJSONStringify } from '~/common/utils';
+import JsonEditor from '~/components/base/json-editor.vue';
 import * as data from '~/store/data';
 import * as revision from '~/store/revision';
-
-import 'codemirror/addon/merge/merge.css';
-import 'codemirror/addon/merge/merge.js';
-
-import 'codemirror/mode/javascript/javascript';
-import 'codemirror/theme/nord.css';
 
 @Component({
   components: {
     Fragment,
+    JsonEditor,
   },
 })
 export default class SchemaRevisionsPage extends Vue {
@@ -126,12 +119,6 @@ export default class SchemaRevisionsPage extends Vue {
   public showDiff = false;
 
   public loading = 0;
-
-  @Ref()
-  readonly revisionDetail!: HTMLTextAreaElement;
-
-  @Ref()
-  readonly diffDetail!: HTMLTextAreaElement;
 
   get allSchemaRevisions(): ManyResultSet<AllSchemaRevisionsResultItem> {
     const state: data.DataState = this.$store.state[data.namespace];
@@ -272,21 +259,6 @@ export default class SchemaRevisionsPage extends Vue {
   handleSchemaIdChange(): void {
     this.fetchSchemaById();
     this.fetchAllSchemaRevisions();
-  }
-
-  @Watch('revisionToDisplay', { immediate: true })
-  handleRevisionToDisplayChange(): void {
-    if (this.revisionToDisplay !== null) {
-      this.$nextTick(() => {
-        CodeMirror.fromTextArea(this.revisionDetail, {
-          mode: 'application/json',
-          tabSize: 2,
-          lineNumbers: true,
-          lineWrapping: true,
-          theme: 'nord',
-        });
-      });
-    }
   }
 }
 </script>

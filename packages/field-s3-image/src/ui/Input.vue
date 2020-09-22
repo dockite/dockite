@@ -120,7 +120,12 @@
       </div>
     </div>
 
-    <el-dialog :visible.sync="showLightbox" :destroy-on-close="true" @close="selectedImage = null">
+    <el-dialog
+      top="5vh"
+      :visible.sync="showLightbox"
+      :destroy-on-close="true"
+      @close="selectedImage = null"
+    >
       <img
         v-if="selectedImage"
         :src="selectedImage.url"

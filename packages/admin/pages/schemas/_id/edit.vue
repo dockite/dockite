@@ -101,6 +101,7 @@
       />
 
       <el-dialog
+        top="5vh"
         title="Schema Settings"
         :visible="showSchemaSettings !== false"
         :destroy-on-close="true"
