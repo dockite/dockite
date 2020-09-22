@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.24](https://github.com/dockite/dockite/compare/@dockite/field-reference@0.3.0-alpha.23...@dockite/field-reference@0.3.0-alpha.24) (2020-09-22)
+
+
+### Bug Fixes
+
+* **field-s3-image:** slugify file names for upload ([05bbd32](https://github.com/dockite/dockite/commit/05bbd32e43fca13b1523aa4ba78642069a62b8cf))
+
+
+
+
+
 # [0.3.0-alpha.23](https://github.com/dockite/dockite/compare/@dockite/field-reference@0.3.0-alpha.22...@dockite/field-reference@0.3.0-alpha.23) (2020-09-22)
 
 

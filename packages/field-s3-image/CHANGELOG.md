@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.45](https://github.com/dockite/dockite/compare/@dockite/field-s3-image@0.3.0-alpha.44...@dockite/field-s3-image@0.3.0-alpha.45) (2020-09-22)
+
+
+### Bug Fixes
+
+* assorted ui and bulk edit fixes ([748d8db](https://github.com/dockite/dockite/commit/748d8dbdaa099192d998cd9ea49f946bb78268d9))
+* **field-s3-image:** slugify file names for upload ([05bbd32](https://github.com/dockite/dockite/commit/05bbd32e43fca13b1523aa4ba78642069a62b8cf))
+
+
+
+
+
 # [0.3.0-alpha.44](https://github.com/dockite/dockite/compare/@dockite/field-s3-image@0.3.0-alpha.43...@dockite/field-s3-image@0.3.0-alpha.44) (2020-09-20)
 
 
