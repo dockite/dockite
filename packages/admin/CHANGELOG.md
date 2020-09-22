@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.95](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.94...@dockite/admin@0.4.0-alpha.95) (2020-09-22)
+
+
+### Bug Fixes
+
+* **admin:** loosen reference requirements ([5f1d9ba](https://github.com/dockite/dockite/commit/5f1d9bae7a4989c342f641e306d6ec2770fbae06))
+
+
+
+
+
 # [0.4.0-alpha.94](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.93...@dockite/admin@0.4.0-alpha.94) (2020-09-22)
 
 

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.23](https://github.com/dockite/dockite/compare/@dockite/field-reference@0.3.0-alpha.22...@dockite/field-reference@0.3.0-alpha.23) (2020-09-22)
+
+
+### Bug Fixes
+
+* **field-reference:** stringify object constraints ([d8b6194](https://github.com/dockite/dockite/commit/d8b61944d80849c0473aa74f598949f29e9b440b))
+
+
+
+
+
 # [0.3.0-alpha.22](https://github.com/dockite/dockite/compare/@dockite/field-reference@0.3.0-alpha.21...@dockite/field-reference@0.3.0-alpha.22) (2020-09-22)
 
 
