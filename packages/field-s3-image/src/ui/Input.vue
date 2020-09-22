@@ -144,6 +144,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 import { Schema } from '@dockite/database';
 import axios from 'axios';
 import gql from 'graphql-tag';
+import slugify from 'slugify';
 import VueDraggable from 'vuedraggable';
 
 import {
@@ -324,7 +325,7 @@ export default class S3ImageFieldInputComponent extends Vue {
       const path = [
         this.settings.pathPrefix || this.schema.name,
         checksum.substring(0, 8),
-        file.name.toLowerCase(),
+        slugify(file.name, { lower: true }),
       ].join('/');
 
       const { data: presignUrlData } = await this.$apolloClient.mutate({

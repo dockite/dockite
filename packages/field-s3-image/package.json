@@ -17,6 +17,7 @@
     "graphql": "^15.1.0",
     "graphql-tag": "^2.10.3",
     "reflect-metadata": "^0.1.13",
+    "slugify": "^1.4.4",
     "type-graphql": "1.0.0-rc.2",
     "typeorm": "^0.2.25",
     "validator": "^13.0.0",

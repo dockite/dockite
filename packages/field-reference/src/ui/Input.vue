@@ -429,7 +429,7 @@ export default class ReferenceFieldInputComponent extends Vue {
             return JSON.stringify(data);
           }
 
-          return data;
+          return String(data);
         });
 
         return { ...con, value };
