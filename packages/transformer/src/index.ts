@@ -673,7 +673,11 @@ const createGraphQLMutationsForSchema = async (
 
           const createdDocument = await documentRepository.save(document);
 
-          return { ...createdDocument.data, id: createdDocument.id };
+          return {
+            ...createdDocument.data,
+            id: createdDocument.id,
+            _metadata: omit(createdDocument, 'data'),
+          };
         },
       };
     }
@@ -777,7 +781,11 @@ const createGraphQLMutationsForSchema = async (
               documentRevisionRepository.save(revision),
             ]);
 
-            return { ...updatedDocument.data, id: updatedDocument.id };
+            return {
+              ...updatedDocument.data,
+              id: updatedDocument.id,
+              _metadata: omit(updatedDocument, 'data'),
+            };
           } catch (err) {
             log(err);
             throw new Error(`The ${schema.title} with id: ${input.id} does not exist.`);
@@ -843,8 +851,9 @@ const createGraphQLMutationsForSchema = async (
 
             await documentRepository.remove(document);
 
-            return { ...document.data, id: document.id };
+            return { ...document.data, id: document.id, _metadata: omit(document, 'data') };
           } catch (err) {
+            log(err);
             throw new Error(`The ${schema.title} with id: ${input.id} does not exist.`);
           }
         },
