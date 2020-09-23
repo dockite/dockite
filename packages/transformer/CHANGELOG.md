@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.46](https://github.com/dockite/dockite/compare/@dockite/transformer@0.3.0-alpha.45...@dockite/transformer@0.3.0-alpha.46) (2020-09-23)
+
+
+### Bug Fixes
+
+* **transformer:** pass document context during fetch ([6788351](https://github.com/dockite/dockite/commit/6788351a70a0c947b224c6231b860f1fbdf233f8))
+
+
+
+
+
 # [0.3.0-alpha.45](https://github.com/dockite/dockite/compare/@dockite/transformer@0.3.0-alpha.44...@dockite/transformer@0.3.0-alpha.45) (2020-09-23)
 
 

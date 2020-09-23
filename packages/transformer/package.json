@@ -1,6 +1,6 @@
 {
   "name": "@dockite/transformer",
-  "version": "0.3.0-alpha.45",
+  "version": "0.3.0-alpha.46",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
