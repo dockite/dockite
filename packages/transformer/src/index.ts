@@ -270,7 +270,7 @@ const makeFieldsForGraphQLObjectType = async (fieldConfig: ConfigBagItem): Promi
           type: outputType,
           args: outputArgs,
           resolve: async (data: Record<string, any>, args): Promise<any> => {
-            const fieldData = data[field.name];
+            const fieldData = data[field.name] ?? null;
 
             return dockiteField.processOutputGraphQL<typeof outputType>({
               data,

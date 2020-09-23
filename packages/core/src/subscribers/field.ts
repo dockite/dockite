@@ -7,6 +7,7 @@ import {
   RemoveEvent,
   UpdateEvent,
 } from 'typeorm';
+import format from 'pg-format';
 
 @EventSubscriber()
 export class FieldSubscriber implements EntitySubscriberInterface {
@@ -49,11 +50,11 @@ export class FieldSubscriber implements EntitySubscriberInterface {
       .update()
       .set({
         data: () =>
-          `data || '{ "${event.entity.name}": ${this.dataToJSONBValue(
+          `data || jsonb_build_object(${format('%L', event.entity.name)}, ${this.dataToJSONBValue(
             event.entity.settings.default !== undefined
               ? event.entity.settings.default
               : event.entity.dockiteField?.defaultValue(),
-          )} }'`,
+          )})`,
         updatedAt: () => '"updatedAt"',
       })
       .where('schemaId = :schemaId', { schemaId: event.entity.schemaId })
@@ -77,7 +78,7 @@ export class FieldSubscriber implements EntitySubscriberInterface {
 
   private dataToJSONBValue(data: any): any {
     if (typeof data === 'string') {
-      return `${JSON.stringify(data)}`;
+      return `${format('%L', JSON.stringify(data))}`;
     }
 
     if (typeof data === 'boolean') {
@@ -92,10 +93,14 @@ export class FieldSubscriber implements EntitySubscriberInterface {
       return null;
     }
 
-    if (data instanceof Date) {
-      return `${JSON.stringify(data.toISOString())}"`;
+    if (typeof data === 'object') {
+      return format('%L::jsonb', JSON.stringify(data));
     }
 
-    return `${JSON.stringify(data)}`;
+    if (data instanceof Date) {
+      return `'${JSON.stringify(data.toISOString())}'`;
+    }
+
+    return `${format('%L', JSON.stringify(data))}`;
   }
 }

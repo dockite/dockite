@@ -32,6 +32,16 @@ export class DockiteFieldGroup extends DockiteField {
     children: [],
   };
 
+  public defaultValue() {
+    const settings = this.schemaField.settings as GroupFieldSettings;
+
+    if (settings.repeatable) {
+      return [];
+    }
+
+    return null;
+  }
+
   private getMappedChildFields(): Omit<Field, 'id'>[] {
     const staticFields = Object.values(this.fieldManager);
 
@@ -246,8 +256,9 @@ export class DockiteFieldGroup extends DockiteField {
 
   public async processOutput<T>(ctx: HookContext): Promise<T> {
     const childFields = this.getMappedChildFields();
+    const settings = this.schemaField.settings as GroupFieldSettings;
 
-    if (Array.isArray(ctx.fieldData)) {
+    if (settings.repeatable && Array.isArray(ctx.fieldData)) {
       await Promise.all(
         ctx.fieldData.map(async (_, i) => {
           await Promise.all(
@@ -305,13 +316,14 @@ export class DockiteFieldGroup extends DockiteField {
       );
     }
 
-    return (ctx.data[this.schemaField.name] as any) as T;
+    return (ctx.fieldData as any) as T;
   }
 
   public async validateInput(ctx: HookContextWithOldData): Promise<void> {
     const childFields = this.getMappedChildFields();
+    const settings = this.schemaField.settings as GroupFieldSettings;
 
-    if (Array.isArray(ctx.fieldData)) {
+    if (settings.repeatable && Array.isArray(ctx.fieldData)) {
       await Promise.all(
         ctx.fieldData.map(async (_, i) => {
           await Promise.all(
@@ -370,8 +382,9 @@ export class DockiteFieldGroup extends DockiteField {
 
   public async onCreate(ctx: HookContext): Promise<void> {
     const childFields = this.getMappedChildFields();
+    const settings = this.schemaField.settings as GroupFieldSettings;
 
-    if (Array.isArray(ctx.fieldData)) {
+    if (settings.repeatable && Array.isArray(ctx.fieldData)) {
       await Promise.all(
         ctx.fieldData.map(async (_, i) => {
           await Promise.all(
@@ -422,8 +435,9 @@ export class DockiteFieldGroup extends DockiteField {
 
   public async onUpdate(ctx: HookContextWithOldData): Promise<void> {
     const childFields = this.getMappedChildFields();
+    const settings = this.schemaField.settings as GroupFieldSettings;
 
-    if (Array.isArray(ctx.fieldData)) {
+    if (settings.repeatable && Array.isArray(ctx.fieldData)) {
       await Promise.all(
         ctx.fieldData.map(async (_, i) => {
           await Promise.all(
@@ -480,8 +494,9 @@ export class DockiteFieldGroup extends DockiteField {
 
   public async onSoftDelete(ctx: HookContext): Promise<void> {
     const childFields = this.getMappedChildFields();
+    const settings = this.schemaField.settings as GroupFieldSettings;
 
-    if (Array.isArray(ctx.fieldData)) {
+    if (settings.repeatable && Array.isArray(ctx.fieldData)) {
       await Promise.all(
         ctx.fieldData.map(async (_, i) => {
           await Promise.all(
@@ -532,8 +547,9 @@ export class DockiteFieldGroup extends DockiteField {
 
   public async onPermanentDelete(ctx: HookContext): Promise<void> {
     const childFields = this.getMappedChildFields();
+    const settings = this.schemaField.settings as GroupFieldSettings;
 
-    if (Array.isArray(ctx.fieldData)) {
+    if (settings.repeatable && Array.isArray(ctx.fieldData)) {
       await Promise.all(
         ctx.fieldData.map(async (_, i) => {
           await Promise.all(
