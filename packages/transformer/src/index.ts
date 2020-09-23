@@ -1,3 +1,5 @@
+/* eslint-disable no-underscore-dangle */
+
 import { can } from '@dockite/ability';
 import { Document, DocumentRevision, Field, Schema, SchemaType, User } from '@dockite/database';
 import {
@@ -235,7 +237,6 @@ const makeFieldsForGraphQLObjectType = async (fieldConfig: ConfigBagItem): Promi
     type: GraphQLString,
   };
 
-  // eslint-disable-next-line no-underscore-dangle
   fieldConfigMap._metadata = {
     type: DocumentMetadata,
   };
@@ -277,6 +278,7 @@ const makeFieldsForGraphQLObjectType = async (fieldConfig: ConfigBagItem): Promi
               fieldData,
               field,
               args,
+              document: data._metadata,
             });
           },
         };
@@ -345,7 +347,7 @@ const createGraphQLQueriesForSchema = async (
           },
         });
 
-        return { id: document.id, ...document.data, _metadata: omit(document, 'data') };
+        return { id: document.id, ...document.data, _metadata: cloneDeep(document) };
       },
     },
 
@@ -419,7 +421,7 @@ const createGraphQLQueriesForSchema = async (
         const totalPages = Math.ceil(totalItems / perPage);
 
         return {
-          results: results.map(doc => ({ id: doc.id, ...doc.data, _metadata: omit(doc, 'data') })),
+          results: results.map(doc => ({ id: doc.id, ...doc.data, _metadata: cloneDeep(doc) })),
           totalItems,
           currentPage: page,
           hasNextPage: page < totalPages,
@@ -498,7 +500,7 @@ const createGraphQLQueriesForSchema = async (
         const totalPages = Math.ceil(totalItems / perPage);
 
         return {
-          results: results.map(doc => ({ id: doc.id, ...doc.data, _metadata: omit(doc, 'data') })),
+          results: results.map(doc => ({ id: doc.id, ...doc.data, _metadata: cloneDeep(doc) })),
           totalItems,
           currentPage: page,
           hasNextPage: page < totalPages,
@@ -676,7 +678,7 @@ const createGraphQLMutationsForSchema = async (
           return {
             ...createdDocument.data,
             id: createdDocument.id,
-            _metadata: omit(createdDocument, 'data'),
+            _metadata: cloneDeep(createdDocument),
           };
         },
       };
@@ -784,7 +786,7 @@ const createGraphQLMutationsForSchema = async (
             return {
               ...updatedDocument.data,
               id: updatedDocument.id,
-              _metadata: omit(updatedDocument, 'data'),
+              _metadata: cloneDeep(updatedDocument),
             };
           } catch (err) {
             log(err);
@@ -851,7 +853,7 @@ const createGraphQLMutationsForSchema = async (
 
             await documentRepository.remove(document);
 
-            return { ...document.data, id: document.id, _metadata: omit(document, 'data') };
+            return { ...document.data, id: document.id, _metadata: cloneDeep(document) };
           } catch (err) {
             log(err);
             throw new Error(`The ${schema.title} with id: ${input.id} does not exist.`);
