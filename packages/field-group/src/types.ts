@@ -1,4 +1,4 @@
-import { BaseField, Field } from '@dockite/database';
+import { BaseField } from '@dockite/database';
 import { FieldSettings } from '@dockite/types';
 
 export interface DockiteFieldGroupEntity extends BaseField {
@@ -6,7 +6,7 @@ export interface DockiteFieldGroupEntity extends BaseField {
   settings: GroupFieldSettings & BaseField['settings'];
 }
 
-export type ChildField = Omit<Field, 'id' | 'schema' | 'schemaId' | 'dockiteField'>;
+export type ChildField = Omit<BaseField, 'id' | 'schema' | 'schemaId' | 'dockiteField'>;
 
 export interface GroupFieldSettings extends FieldSettings {
   required: boolean;
