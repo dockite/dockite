@@ -321,6 +321,14 @@ export default class S3ImageFieldInputComponent extends Vue {
     return constraints;
   }
 
+  private slugifyFileName(name: string) {
+    const [ext, ...rest] = name.split('.').reverse();
+
+    const slugged = slugify(rest.reverse().join('.'), { lower: true, remove: /[*+~.()'"!:@]/g });
+
+    return `${slugged}.${ext}`;
+  }
+
   async handleUpload({ file }: { file: File }) {
     try {
       this.key += 1;
@@ -330,7 +338,7 @@ export default class S3ImageFieldInputComponent extends Vue {
       const path = [
         this.settings.pathPrefix || this.schema.name,
         checksum.substring(0, 8),
-        slugify(file.name, { lower: true }),
+        this.slugifyFileName(file.name),
       ].join('/');
 
       const { data: presignUrlData } = await this.$apolloClient.mutate({
