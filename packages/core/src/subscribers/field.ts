@@ -78,7 +78,7 @@ export class FieldSubscriber implements EntitySubscriberInterface {
 
   private dataToJSONBValue(data: any): any {
     if (typeof data === 'string') {
-      return `${format('%L', JSON.stringify(data))}`;
+      return `${format('%L', data)}`;
     }
 
     if (typeof data === 'boolean') {
@@ -98,9 +98,9 @@ export class FieldSubscriber implements EntitySubscriberInterface {
     }
 
     if (data instanceof Date) {
-      return `'${JSON.stringify(data.toISOString())}'`;
+      return `${format('%L', data.toISOString())}`;
     }
 
-    return `${format('%L', JSON.stringify(data))}`;
+    return `${format('%L', String(data))}`;
   }
 }
