@@ -72,6 +72,7 @@ export default class SlugFieldInputComponent extends Vue {
       this.fieldData = slugify(String(this.formData[this.settings.fieldToSlugify]), {
         lower: true,
         replacement: '-',
+        remove: /[*+~.()'"!:@]/g,
       });
     }
   }

@@ -97,9 +97,17 @@ export class DockiteFieldSlug extends DockiteField {
     let slug = ctx.fieldData;
 
     if (slug) {
-      slug = slugify(ctx.fieldData, { lower: true, replacement: '-' });
+      slug = slugify(ctx.fieldData, {
+        lower: true,
+        replacement: '-',
+        remove: /[*+~.()'"!:@]/g,
+      });
     } else if (settings.fieldToSlugify && ctx.data[settings.fieldToSlugify]) {
-      slug = slugify(ctx.data[settings.fieldToSlugify], { lower: true, replacement: '-' });
+      slug = slugify(ctx.data[settings.fieldToSlugify], {
+        lower: true,
+        replacement: '-',
+        remove: /[*+~.()'"!:@]/g,
+      });
     } else {
       slug = null;
     }
