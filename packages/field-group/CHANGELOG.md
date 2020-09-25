@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.45](https://github.com/dockite/dockite/compare/@dockite/field-group@0.4.0-alpha.44...@dockite/field-group@0.4.0-alpha.45) (2020-09-25)
+
+
+### Bug Fixes
+
+* **field-group:** resolve child field typing ([6106a17](https://github.com/dockite/dockite/commit/6106a177e33f22539a68dc896a206b26f5df3808))
+* **field-group:** resolve incorrect typing ([1941347](https://github.com/dockite/dockite/commit/1941347fe66cea2d1d13675713a6c71d6e166f34))
+
+
+
+
+
 # [0.4.0-alpha.44](https://github.com/dockite/dockite/compare/@dockite/field-group@0.4.0-alpha.43...@dockite/field-group@0.4.0-alpha.44) (2020-09-23)
 
 
