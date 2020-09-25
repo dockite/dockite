@@ -7,6 +7,7 @@ import {
   GraphQLOutputType,
   GraphQLString,
   GraphQLUnionType,
+  GraphQLNonNull,
 } from 'graphql';
 import { GraphQLJSON } from 'graphql-type-json';
 import { startCase } from 'lodash';
@@ -19,8 +20,8 @@ const graphqlCase = (value: string): string => startCase(value).replace(/\s/g, '
 const DockiteFieldReferenceInputType = new GraphQLInputObjectType({
   name: 'ReferenceFieldInput',
   fields: {
-    id: { type: GraphQLString },
-    schemaId: { type: GraphQLString },
+    id: { type: GraphQLNonNull(GraphQLString) },
+    schemaId: { type: GraphQLNonNull(GraphQLString) },
     identifier: { type: GraphQLString },
   },
 });
