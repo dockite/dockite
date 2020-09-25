@@ -1,4 +1,5 @@
 /* eslint-disable no-param-reassign */
+import { Field, Schema } from '@dockite/database';
 import { DockiteField } from '@dockite/field';
 import { FieldIOContext, GlobalContext, HookContext, HookContextWithOldData } from '@dockite/types';
 import {
@@ -12,10 +13,9 @@ import {
   GraphQLOutputType,
   Source,
 } from 'graphql';
-import { Schema, Field } from '@dockite/database';
 import { merge } from 'lodash';
 
-import { GroupFieldSettings, ChildField } from './types';
+import { ChildField, GroupFieldSettings } from './types';
 
 export class DockiteFieldGroup extends DockiteField {
   public static type = 'group';
@@ -46,8 +46,8 @@ export class DockiteFieldGroup extends DockiteField {
     const staticFields = Object.values(this.fieldManager);
 
     return (this.schemaField.settings.children ?? []).map(
-      (child: ChildField): Omit<Field, 'id'> => {
-        const mappedChild: Omit<Field, 'id'> = {
+      (child: ChildField): Omit<Field, 'id' | 'setDockiteField'> => {
+        const mappedChild: Omit<Field, 'id' | 'setDockiteField'> = {
           ...child,
           schemaId: this.schemaField.schemaId,
           schema: {
