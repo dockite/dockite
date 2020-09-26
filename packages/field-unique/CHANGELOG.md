@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.1.0-alpha.2](https://github.com/dockite/dockite/compare/@dockite/field-unique@0.1.0-alpha.1...@dockite/field-unique@0.1.0-alpha.2) (2020-09-26)
+
+
+### Bug Fixes
+
+* **field-unique:** resolve json comparisons ([1002db2](https://github.com/dockite/dockite/commit/1002db2a6ca96caff1e7861c60333799e5a0973f))
+
+
+
+
+
 # [0.1.0-alpha.1](https://github.com/dockite/dockite/compare/@dockite/field-unique@0.1.0-alpha.0...@dockite/field-unique@0.1.0-alpha.1) (2020-09-26)
 
 
