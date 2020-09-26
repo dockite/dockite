@@ -2,6 +2,7 @@ import { DockiteField } from '@dockite/field';
 import { GraphQLInputType, GraphQLOutputType } from 'graphql';
 import { HookContextWithOldData, HookContext } from '@dockite/types';
 import { get } from 'lodash';
+import format from 'pg-format';
 import { Document } from '@dockite/database';
 
 import { UniqueFieldSettings } from './types';
@@ -37,7 +38,7 @@ export class DockiteFieldUnique extends DockiteField {
 
     await Promise.all(
       settings.validationGroups.map(async group => {
-        const concat = group.map(g => this.getValueFromPath(ctx.data, g)).join('');
+        const concat = group.map(g => this.getValueFromPath(ctx.data, g));
 
         await this.checkForUniqueness(concat, group, ctx.document as Maybe<Document>);
       }),
@@ -49,7 +50,7 @@ export class DockiteFieldUnique extends DockiteField {
 
     await Promise.all(
       settings.validationGroups.map(async group => {
-        const concat = group.map(g => get(ctx.data, g, '')).join('');
+        const concat = group.map(g => this.getValueFromPath(ctx.data, g));
 
         await this.checkForUniqueness(concat, group, ctx.document as Maybe<Document>);
       }),
@@ -60,14 +61,14 @@ export class DockiteFieldUnique extends DockiteField {
     const value = get(data, path, '');
 
     if (typeof value === 'object') {
-      return JSON.stringify(value);
+      return format('(%L::jsonb)::text', JSON.stringify(value));
     }
 
-    return value;
+    return format('%L::text', value);
   }
 
   private async checkForUniqueness(
-    value: string,
+    values: string[],
     fields: string[],
     document?: Document | undefined,
   ): Promise<void> {
@@ -76,7 +77,7 @@ export class DockiteFieldUnique extends DockiteField {
     const qb = this.orm
       .getRepository(Document)
       .createQueryBuilder('document')
-      .where(`CONCAT(${concatFields.join(', ')}) = :value`, { value })
+      .where(`CONCAT(${concatFields.join(', ')}) = CONCAT(${values.join(', ')})`)
       .andWhere('document.schemaId = :schemaId', { schemaId: this.schemaField.schemaId });
 
     if (document) {
