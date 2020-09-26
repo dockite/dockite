@@ -37,7 +37,7 @@ export class DockiteFieldUnique extends DockiteField {
 
     await Promise.all(
       settings.validationGroups.map(async group => {
-        const concat = group.map(g => get(ctx.data, g, '')).join('');
+        const concat = group.map(g => this.getValueFromPath(ctx.data, g)).join('');
 
         await this.checkForUniqueness(concat, group, ctx.document as Maybe<Document>);
       }),
@@ -54,6 +54,16 @@ export class DockiteFieldUnique extends DockiteField {
         await this.checkForUniqueness(concat, group, ctx.document as Maybe<Document>);
       }),
     );
+  }
+
+  private getValueFromPath(data: Record<string, any>, path: string): string {
+    const value = get(data, path, '');
+
+    if (typeof value === 'object') {
+      return JSON.stringify(value);
+    }
+
+    return value;
   }
 
   private async checkForUniqueness(
