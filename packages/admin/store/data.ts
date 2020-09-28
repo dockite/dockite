@@ -309,7 +309,7 @@ export const actions: ActionTree<DataState, RootState> = {
       fetchPolicy: 'no-cache',
       variables: {
         schemaId: payload.schemaId,
-        perPage: payload.perPage ?? null,
+        perPage: payload.perPage ?? 20,
       },
     });
 
@@ -328,7 +328,7 @@ export const actions: ActionTree<DataState, RootState> = {
       fetchPolicy: 'no-cache',
       variables: {
         documentId: payload.documentId,
-        perPage: payload.perPage ?? null,
+        perPage: payload.perPage ?? 20,
       },
     });
 
