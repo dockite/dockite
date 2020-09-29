@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.32](https://github.com/dockite/dockite/compare/@dockite/field-variant@0.3.0-alpha.31...@dockite/field-variant@0.3.0-alpha.32) (2020-09-29)
+
+
+### Bug Fixes
+
+* **field-variant:** update children typing ([808e7df](https://github.com/dockite/dockite/commit/808e7df798ea3c30db01610036ebed175512f642))
+
+
+
+
+
 # [0.3.0-alpha.31](https://github.com/dockite/dockite/compare/@dockite/field-variant@0.3.0-alpha.30...@dockite/field-variant@0.3.0-alpha.31) (2020-09-29)
 
 
