@@ -1,9 +1,9 @@
-import { BaseField, Field } from '@dockite/database';
+import { BaseField } from '@dockite/database';
 import { FieldSettings } from '@dockite/types';
 
 export interface VariantFieldSettings extends FieldSettings {
   required: boolean;
-  children: Field[];
+  children: BaseField[];
 }
 
 export interface DockiteFieldVariantEntity extends BaseField {
