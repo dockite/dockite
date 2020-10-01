@@ -15,9 +15,38 @@
       class="document-revision-compare-page el-loading-parent__min-height"
     >
       <div
+        v-if="primaryRevision && secondaryRevision"
+        class="flex w-full py-5 rounded-t"
+        style="background: #f8fafd; border: 1px solid #ddd; border-bottom: 0;"
+      >
+        <div
+          v-for="revision in [primaryRevision, secondaryRevision]"
+          :key="revision.id"
+          class="flex-1 px-3 -my-1"
+        >
+          <ul>
+            <li class="py-1">
+              <strong>Revision ID:</strong>
+              {{ revision.id }}
+            </li>
+
+            <li class="py-1">
+              <strong>Created At:</strong>
+              {{ revision.createdAt | toLocaleDateString }}
+            </li>
+
+            <li class="py-1">
+              <strong>Created By:</strong>
+              {{ revision.user && revision.user.email }}
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div
         v-if="diffHTML"
         :class="{ 'dockite-diff--highlight': highlight }"
-        style="background: #ffffff; margin-bottom: 1rem;"
+        style="background: #ffffff; margin-bottom: 1rem; margin-top: -0.25rem"
         v-html="diffHTML"
       />
       <el-alert
@@ -66,6 +95,11 @@ import 'diff2html/bundles/css/diff2html.min.css';
   components: {
     Fragment,
   },
+  filters: {
+    toLocaleDateString(val: string): string {
+      return new Date(val).toLocaleString();
+    },
+  },
 })
 export default class DocumentRevisionsPage extends Vue {
   public highlight = false;
@@ -91,25 +125,33 @@ export default class DocumentRevisionsPage extends Vue {
     return state.allDocumentRevisions;
   }
 
-  get primaryRevision(): string {
+  get primaryRevision(): AllDocumentRevisionsResultItem | null {
     const revision = this.allDocumentRevisions.results.find(
       revision => revision.id === this.primary,
     );
 
-    if (revision) {
-      return stableJSONStringify(revision.data);
+    return revision ?? null;
+  }
+
+  get primaryRevisionData(): string {
+    if (this.primaryRevision && this.primaryRevision.data) {
+      return stableJSONStringify(this.primaryRevision.data);
     }
 
     return '';
   }
 
-  get secondaryRevision(): string {
+  get secondaryRevision(): AllDocumentRevisionsResultItem | null {
     const revision = this.allDocumentRevisions.results.find(
       revision => revision.id === this.secondary,
     );
 
-    if (revision) {
-      return stableJSONStringify(revision.data);
+    return revision ?? null;
+  }
+
+  get secondaryRevisionData(): string {
+    if (this.secondaryRevision && this.secondaryRevision.data) {
+      return stableJSONStringify(this.secondaryRevision.data);
     }
 
     return '';
@@ -219,7 +261,7 @@ export default class DocumentRevisionsPage extends Vue {
   handleDocumentRevisionsChange(): void {
     if (this.allDocumentRevisions.results.length > 0) {
       const diff = unidiff.formatLines(
-        unidiff.diffLines(this.primaryRevision, this.secondaryRevision),
+        unidiff.diffLines(this.primaryRevisionData, this.secondaryRevisionData),
         {
           context: Infinity,
           aname: this.primary,
@@ -257,5 +299,14 @@ export default class DocumentRevisionsPage extends Vue {
   .d2h-file-side-diff:first-of-type {
     background: #ffffed;
   }
+}
+
+.d2h-file-header {
+  display: none;
+}
+
+.d2h-file-wrapper {
+  border-top: 0;
+  border-radius: 0;
 }
 </style>

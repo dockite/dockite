@@ -55,7 +55,6 @@ export class FieldSubscriber implements EntitySubscriberInterface {
               ? event.entity.settings.default
               : event.entity.dockiteField?.defaultValue(),
           )})`,
-        updatedAt: () => '"updatedAt"',
       })
       .where('schemaId = :schemaId', { schemaId: event.entity.schemaId })
       .andWhere('data ->> :fieldName IS NULL', { fieldName: event.entity.name })
@@ -69,7 +68,6 @@ export class FieldSubscriber implements EntitySubscriberInterface {
       .update()
       .set({
         data: () => `data - '${event.entity?.name}'`,
-        updatedAt: () => '"updatedAt"',
       })
       .callListeners(false)
       .where('schemaId = :schemaId', { schemaId: event.entity?.schemaId })

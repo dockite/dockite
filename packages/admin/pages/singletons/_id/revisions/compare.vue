@@ -10,12 +10,53 @@
     </portal>
 
     <div class="singleton-revision-compare-page el-loading-parent__min-height">
-      <!-- eslint-disable-next-line -->
       <div
+        v-if="primaryRevision && secondaryRevision"
+        class="flex w-full py-5 rounded-t"
+        style="background: #f8fafd; border: 1px solid #ddd; border-bottom: 0;"
+      >
+        <div
+          v-for="revision in [primaryRevision, secondaryRevision]"
+          :key="revision.id"
+          class="flex-1 px-3 -my-1"
+        >
+          <ul>
+            <li class="py-1">
+              <strong>Revision ID:</strong>
+              {{ revision.id }}
+            </li>
+
+            <li class="py-1">
+              <strong>Created At:</strong>
+              {{ revision.createdAt | toLocaleDateString }}
+            </li>
+
+            <li class="py-1">
+              <strong>Created By:</strong>
+              {{ revision.user && revision.user.email }}
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div
+        v-if="diffHTML"
         :class="{ 'dockite-diff--highlight': highlight }"
-        style="background: #ffffff; margin-bottom: 1rem;"
+        style="background: #ffffff; margin-bottom: 1rem; margin-top: -0.25rem"
         v-html="diffHTML"
       />
+
+      <el-alert
+        v-else
+        type="warning"
+        title="No changes made between revisions"
+        show-icon
+        style="margin-bottom: 1rem;"
+        :closable="false"
+      >
+        There are no differences between {{ primary }} and {{ secondary }}.
+      </el-alert>
+
       <el-button
         style="width: auto"
         class="dockite-button--restore"
@@ -71,25 +112,33 @@ export default class SingletonRevisionsPage extends Vue {
     return state.allSchemaRevisions;
   }
 
-  get primaryRevision(): string {
+  get primaryRevision(): AllSchemaRevisionsResultItem | null {
     const revision = this.allSingletonRevisions.results.find(
       revision => revision.id === this.primary,
     );
 
-    if (revision) {
-      return stableJSONStringify(revision.data);
+    return revision ?? null;
+  }
+
+  get primaryRevisionData(): string {
+    if (this.primaryRevision && this.primaryRevision.data) {
+      return stableJSONStringify(this.primaryRevision.data);
     }
 
     return '';
   }
 
-  get secondaryRevision(): string {
+  get secondaryRevision(): AllSchemaRevisionsResultItem | null {
     const revision = this.allSingletonRevisions.results.find(
       revision => revision.id === this.secondary,
     );
 
-    if (revision) {
-      return stableJSONStringify(revision.data);
+    return revision ?? null;
+  }
+
+  get secondaryRevisionData(): string {
+    if (this.secondaryRevision && this.secondaryRevision.data) {
+      return stableJSONStringify(this.secondaryRevision.data);
     }
 
     return '';
@@ -132,7 +181,7 @@ export default class SingletonRevisionsPage extends Vue {
   }
 
   public fetchAllSingletonRevisions(): void {
-    this.$store.dispatch(`${data.namespace}/fetchAllShcmeaRevisionsForShcmea`, {
+    this.$store.dispatch(`${data.namespace}/fetchAllShcmeaRevisionsForSchema`, {
       schemaId: this.singletonId,
     });
   }
@@ -178,18 +227,22 @@ export default class SingletonRevisionsPage extends Vue {
   @Watch('allSingletonRevisions', { immediate: true })
   handleSingletonRevisionsChange(): void {
     if (this.allSingletonRevisions.results.length > 0) {
-      this.diffHTML = html(
-        unidiff.formatLines(unidiff.diffLines(this.primaryRevision, this.secondaryRevision), {
+      const diff = unidiff.formatLines(
+        unidiff.diffLines(this.primaryRevisionData, this.secondaryRevisionData),
+        {
           context: Infinity,
           aname: this.primary,
           bname: this.secondary,
-        }),
-        {
-          drawFileList: false,
-          outputFormat: 'side-by-side',
-          renderNothingWhenEmpty: false,
         },
       );
+
+      if (diff) {
+        this.diffHTML = html(diff, {
+          drawFileList: false,
+          outputFormat: 'side-by-side',
+          renderNothingWhenEmpty: true,
+        });
+      }
     }
   }
 }
@@ -213,5 +266,14 @@ export default class SingletonRevisionsPage extends Vue {
   .d2h-file-side-diff:first-of-type {
     background: #ffffed;
   }
+}
+
+.d2h-file-header {
+  display: none;
+}
+
+.d2h-file-wrapper {
+  border-top: 0;
+  border-radius: 0;
 }
 </style>
