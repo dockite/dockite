@@ -35,6 +35,7 @@
             :is="$dockiteFieldManager[selectedField.type].input"
             v-if="fieldData !== null && !selectedField.settings.hidden"
             v-model="fieldData[selectedField.name]"
+            :errors="errors"
             :name="`${name}.${selectedField.name}`"
             :schema="schema"
             :field-config="selectedField"
@@ -81,6 +82,9 @@ export default class VariantFieldInputComponent extends Vue {
 
   @Prop({ required: true, type: Object })
   readonly schema!: Schema;
+
+  @Prop({ required: true, type: Object })
+  readonly errors!: Record<string, string>;
 
   public expanded = '';
 

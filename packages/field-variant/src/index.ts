@@ -217,7 +217,7 @@ export class DockiteFieldVariant extends DockiteField {
     return (ctx.data[this.schemaField.name] as any) as T;
   }
 
-  public async validateInput(ctx: HookContextWithOldData): Promise<void> {
+  public async validateInputGraphQL(ctx: HookContextWithOldData): Promise<void> {
     const childFields = this.getMappedChildFields();
 
     await Promise.all(
@@ -234,9 +234,36 @@ export class DockiteFieldVariant extends DockiteField {
             fieldData: ctx.data[this.schemaField.name][child.name],
             field: child as Field,
             oldData,
+            path: `${ctx.path || this.schemaField.name}.${child.name}`,
           };
 
-          await child.dockiteField.validateInput(childCtx);
+          await child.dockiteField.validateInputGraphQL(childCtx);
+        }
+      }),
+    );
+  }
+
+  public async validateInputRaw(ctx: HookContextWithOldData): Promise<void> {
+    const childFields = this.getMappedChildFields();
+
+    await Promise.all(
+      childFields.map(async child => {
+        if (!child.dockiteField) {
+          throw new Error(`dockiteFiled failed to map for ${this.schemaField.name}.${child.name}`);
+        }
+
+        const oldData = (ctx.oldData ?? {})[this.schemaField.name];
+        if (ctx.data[this.schemaField.name] && ctx.data[this.schemaField.name][child.name]) {
+          const childCtx: HookContextWithOldData = {
+            ...ctx,
+            data: ctx.data[this.schemaField.name],
+            fieldData: ctx.data[this.schemaField.name][child.name],
+            field: child as Field,
+            oldData,
+            path: `${ctx.path || this.schemaField.name}.${child.name}`,
+          };
+
+          await child.dockiteField.validateInputRaw(childCtx);
         }
       }),
     );
