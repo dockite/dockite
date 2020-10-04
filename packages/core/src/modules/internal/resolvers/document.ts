@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Document, DocumentRevision, Schema, SearchEngineRepository } from '@dockite/database';
-import { HookContext, HookContextWithOldData } from '@dockite/types';
+import { HookContext, HookContextWithOldData, DockiteFieldValidationError } from '@dockite/types';
 import { QueryBuilder, WhereBuilder, WhereBuilderInputType } from '@dockite/where-builder';
 import GraphQLJSON from 'graphql-type-json';
 import { cloneDeep } from 'lodash';
@@ -23,6 +23,7 @@ import { Authenticated, Authorized } from '../../../common/decorators';
 import { GlobalContext } from '../../../common/types';
 import { afterRemove, afterUpdate } from '../../../subscribers';
 import { strToColumnPath } from '../../../utils';
+import { DocumentValidationError } from '../../../errors/validation';
 
 import { SortInputType } from './inputs/sort';
 
@@ -410,6 +411,8 @@ export class DocumentResolver {
     const documentRepository = getRepository(Document);
     const revisionRepository = getRepository(DocumentRevision);
 
+    const validationErrors: Record<string, string> = {};
+
     const { id: userId } = ctx.user!; // eslint-disable-line
 
     const document = await documentRepository.findOne({
@@ -441,15 +444,30 @@ export class DocumentResolver {
           data,
           oldData,
           document,
+          path: field.name,
         };
 
         data[field.name] = await field.dockiteField!.processInputRaw(hookContext);
 
-        await field.dockiteField!.validateInputRaw(hookContext);
+        await field.dockiteField!.validateInputRaw(hookContext).catch(err => {
+          if (err instanceof DockiteFieldValidationError) {
+            validationErrors[err.path] = err.message;
+
+            if (err.children) {
+              err.children.forEach(e => {
+                validationErrors[e.path] = e.message;
+              });
+            }
+          }
+        });
 
         await field.dockiteField!.onUpdate(hookContext);
       }),
     );
+
+    if (Object.keys(validationErrors).length > 0) {
+      throw new DocumentValidationError(validationErrors);
+    }
 
     document.data = { ...document.data, ...data };
 
@@ -478,6 +496,8 @@ export class DocumentResolver {
   ): Promise<Document[] | null> {
     const documentRepository = getRepository(Document);
     const revisionRepository = getRepository(DocumentRevision);
+
+    const validationErrors: Record<string, string[]> = {};
 
     const { id: userId } = ctx.user!; // eslint-disable-line
 
@@ -530,7 +550,15 @@ export class DocumentResolver {
 
             data[field.name] = await field.dockiteField!.processInputRaw(hookContext);
 
-            await field.dockiteField!.validateInputRaw(hookContext);
+            await field.dockiteField!.validateInputRaw(hookContext).catch(err => {
+              if (err instanceof DockiteFieldValidationError) {
+                if (!validationErrors[err.path]) {
+                  validationErrors[err.path] = [err.message];
+                } else {
+                  validationErrors[err.path].push(err.message);
+                }
+              }
+            });
 
             await field.dockiteField!.onUpdate(hookContext);
           }),

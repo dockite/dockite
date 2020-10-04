@@ -20,6 +20,7 @@ export interface FieldContext {
   data: Record<string, any>;
   args?: Record<string, any>;
   document?: Document;
+  path?: string;
 }
 
 export interface HookContext {
@@ -27,6 +28,7 @@ export interface HookContext {
   fieldData: any;
   data: Record<string, any>;
   document?: Document;
+  path?: string;
 }
 
 export interface HookContextWithOldData extends HookContext {
@@ -51,15 +53,15 @@ export interface DockiteField {
 
   inputType(ctx: FieldIOContext): Promise<GraphQLInputType>;
 
-  processInput<T>(ctx: HookContextWithOldData): Promise<T>;
+  processInput<T = any>(ctx: HookContextWithOldData): Promise<T>;
 
   validateInput(ctx: HookContextWithOldData): Promise<void>;
 
-  processInputRaw<T>(ctx: HookContextWithOldData): Promise<T>;
+  processInputRaw<T = any>(ctx: HookContextWithOldData): Promise<T>;
 
   validateInputRaw(ctx: HookContextWithOldData): Promise<void>;
 
-  processInputGraphQL<T>(ctx: FieldContext): Promise<T>;
+  processInputGraphQL<T = any>(ctx: FieldContext): Promise<T>;
 
   validateInputGraphQL(ctx: HookContextWithOldData): Promise<void>;
 
@@ -67,11 +69,11 @@ export interface DockiteField {
 
   outputArgs(): Promise<GraphQLFieldConfigArgumentMap>;
 
-  processOutputRaw<T>(ctx: HookContext): Promise<T>;
+  processOutputRaw<T = any>(ctx: HookContext): Promise<T>;
 
-  processOutputGraphQL<T>(ctx: FieldContext): Promise<T>;
+  processOutputGraphQL<T = any>(ctx: FieldContext): Promise<T>;
 
-  processOutput<T>(ctx: HookContext): Promise<T>;
+  processOutput<T = any>(ctx: HookContext): Promise<T>;
 
   onCreate(ctx: HookContext): Promise<void>;
 

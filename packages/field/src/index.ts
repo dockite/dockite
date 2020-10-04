@@ -35,7 +35,7 @@ export abstract class DockiteField {
 
   public abstract inputType(ctx: FieldIOContext): Promise<GraphQLInputType>;
 
-  public async processInput<T>(ctx: HookContextWithOldData): Promise<T> {
+  public async processInput<T extends any>(ctx: HookContextWithOldData): Promise<T> {
     return ctx.fieldData as T;
   }
 
@@ -43,7 +43,7 @@ export abstract class DockiteField {
     return Promise.resolve();
   }
 
-  public processInputRaw<T>(ctx: HookContextWithOldData): Promise<T> {
+  public processInputRaw<T extends any>(ctx: HookContextWithOldData): Promise<T> {
     return this.processInput(ctx);
   }
 
@@ -51,7 +51,7 @@ export abstract class DockiteField {
     return this.validateInput(ctx);
   }
 
-  public processInputGraphQL<T>(ctx: FieldContext): Promise<T> {
+  public processInputGraphQL<T extends any>(ctx: FieldContext): Promise<T> {
     return this.processInput(ctx);
   }
 
@@ -65,15 +65,15 @@ export abstract class DockiteField {
     return Promise.resolve({});
   }
 
-  public async processOutput<T>(ctx: HookContext): Promise<T> {
+  public async processOutput<T extends any>(ctx: HookContext): Promise<T> {
     return ctx.fieldData as T;
   }
 
-  public processOutputRaw<T>(ctx: HookContext): Promise<T> {
+  public processOutputRaw<T extends any>(ctx: HookContext): Promise<T> {
     return this.processOutput(ctx);
   }
 
-  public processOutputGraphQL<T>(ctx: FieldContext): Promise<T> {
+  public processOutputGraphQL<T extends any>(ctx: FieldContext): Promise<T> {
     return this.processOutput(ctx);
   }
 
