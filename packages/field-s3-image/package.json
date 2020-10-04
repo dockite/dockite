@@ -1,6 +1,6 @@
 {
   "name": "@dockite/field-s3-image",
-  "version": "0.3.0-alpha.46",
+  "version": "0.3.0-alpha.47",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
@@ -9,9 +9,9 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@dockite/database": "^0.4.0-alpha.22",
-    "@dockite/field": "^0.3.0-alpha.12",
-    "@dockite/types": "^0.3.0-alpha.13",
+    "@dockite/database": "^0.4.0-alpha.23",
+    "@dockite/field": "^0.3.0-alpha.13",
+    "@dockite/types": "^0.3.0-alpha.14",
     "apollo-client": "^2.6.10",
     "axios": "^0.19.2",
     "graphql": "^15.1.0",
@@ -26,9 +26,9 @@
     "vue-property-decorator": "^8.4.2"
   },
   "devDependencies": {
-    "@dockite/webpack": "^1.1.0-alpha.3",
     "@babel/plugin-proposal-class-properties": "^7.10.1",
     "@babel/plugin-proposal-decorators": "^7.10.1",
+    "@dockite/webpack": "^1.1.0-alpha.3",
     "@typescript-eslint/eslint-plugin": "^2.20.0",
     "@typescript-eslint/parser": "^2.20.0",
     "eslint": "^6.8.0",

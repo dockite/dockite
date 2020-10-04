@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.26](https://github.com/dockite/dockite/compare/@dockite/field-string@0.3.0-alpha.25...@dockite/field-string@0.3.0-alpha.26) (2020-10-04)
+
+
+### Features
+
+* **field-string:** first cut validation and testing ([afb8e23](https://github.com/dockite/dockite/commit/afb8e2337819ab1236d5c6184d72e071e0f6b83d))
+
+
+
+
+
 # [0.3.0-alpha.25](https://github.com/dockite/dockite/compare/@dockite/field-string@0.3.0-alpha.24...@dockite/field-string@0.3.0-alpha.25) (2020-09-14)
 
 

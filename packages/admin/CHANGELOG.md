@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.98](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.97...@dockite/admin@0.4.0-alpha.98) (2020-10-04)
+
+
+### Bug Fixes
+
+* make revisions less confusing ([4445e4a](https://github.com/dockite/dockite/commit/4445e4ad030ae8d4b9a4f167fb51cd3f7673c3b0))
+
+
+### Features
+
+* **admin,core:** add remove validation support ([eed0c7d](https://github.com/dockite/dockite/commit/eed0c7dbb1f6b580ebc6d6898f2e3dc1a8b8faa9))
+
+
+
+
+
 # [0.4.0-alpha.97](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.96...@dockite/admin@0.4.0-alpha.97) (2020-09-28)
 
 

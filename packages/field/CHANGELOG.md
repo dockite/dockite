@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.13](https://github.com/dockite/dockite/compare/@dockite/field@0.3.0-alpha.12...@dockite/field@0.3.0-alpha.13) (2020-10-04)
+
+
+### Features
+
+* **admin,core:** add remove validation support ([eed0c7d](https://github.com/dockite/dockite/commit/eed0c7dbb1f6b580ebc6d6898f2e3dc1a8b8faa9))
+
+
+
+
+
 # [0.3.0-alpha.12](https://github.com/dockite/dockite/compare/@dockite/field@0.3.0-alpha.11...@dockite/field@0.3.0-alpha.12) (2020-09-08)
 
 **Note:** Version bump only for package @dockite/field

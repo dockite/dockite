@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.46](https://github.com/dockite/dockite/compare/@dockite/field-group@0.4.0-alpha.45...@dockite/field-group@0.4.0-alpha.46) (2020-10-04)
+
+
+### Features
+
+* **field-group:** refactor field and pass errors prop ([0a30bb8](https://github.com/dockite/dockite/commit/0a30bb8bcad65c1bc04fd216ea066e0f0c3bd199))
+
+
+
+
+
 # [0.4.0-alpha.45](https://github.com/dockite/dockite/compare/@dockite/field-group@0.4.0-alpha.44...@dockite/field-group@0.4.0-alpha.45) (2020-09-25)
 
 

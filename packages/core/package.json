@@ -1,6 +1,6 @@
 {
   "name": "@dockite/core",
-  "version": "0.4.0-alpha.84",
+  "version": "0.4.0-alpha.85",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
@@ -11,13 +11,13 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@dockite/ability": "^0.2.1-alpha.14",
-    "@dockite/database": "^0.4.0-alpha.22",
-    "@dockite/field": "^0.3.0-alpha.12",
-    "@dockite/manager": "^0.2.1-alpha.12",
-    "@dockite/transformer": "^0.3.0-alpha.46",
-    "@dockite/types": "^0.3.0-alpha.13",
-    "@dockite/where-builder": "^0.2.0-alpha.33",
+    "@dockite/ability": "^0.2.1-alpha.15",
+    "@dockite/database": "^0.4.0-alpha.23",
+    "@dockite/field": "^0.3.0-alpha.13",
+    "@dockite/manager": "^0.2.1-alpha.13",
+    "@dockite/transformer": "^0.3.0-alpha.47",
+    "@dockite/types": "^0.3.0-alpha.14",
+    "@dockite/where-builder": "^0.2.0-alpha.34",
     "@graphql-modules/core": "^0.7.14",
     "ajv": "^6.12.2",
     "apollo-server-express": "^2.15.1",

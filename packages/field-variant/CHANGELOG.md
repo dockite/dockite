@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.33](https://github.com/dockite/dockite/compare/@dockite/field-variant@0.3.0-alpha.32...@dockite/field-variant@0.3.0-alpha.33) (2020-10-04)
+
+
+### Features
+
+* **field-variant:** correctly handle validation ([12ca826](https://github.com/dockite/dockite/commit/12ca82687ee5ccbb27139704f3cfb8f4494956bf))
+
+
+
+
+
 # [0.3.0-alpha.32](https://github.com/dockite/dockite/compare/@dockite/field-variant@0.3.0-alpha.31...@dockite/field-variant@0.3.0-alpha.32) (2020-09-29)
 
 
