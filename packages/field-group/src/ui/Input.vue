@@ -85,6 +85,7 @@
                           v-if="$dockiteFieldManager[field.type].input && !field.settings.hidden"
                           :key="fieldIndex"
                           v-model="fieldData[itemIndex][field.name]"
+                          :errors="errors"
                           :name="`${name}.${itemIndex}.${field.name}`"
                           :field-config="field"
                           :form-data="formData"
@@ -105,6 +106,7 @@
                       :is="$dockiteFieldManager[field.type].input"
                       v-if="$dockiteFieldManager[field.type].input && !field.settings.hidden"
                       v-model="fieldData[field.name]"
+                      :errors="errors"
                       :name="`${name}.${field.name}`"
                       :field-config="field"
                       :form-data="formData"
@@ -168,6 +170,9 @@ export default class GroupFieldInputComponent extends Vue {
 
   @Prop({ required: true, type: Object })
   readonly schema!: Schema;
+
+  @Prop({ required: true, type: Object })
+  readonly errors!: Record<string, string>;
 
   public rules: object[] = [];
 
