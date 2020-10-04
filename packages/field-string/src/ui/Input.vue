@@ -1,5 +1,11 @@
 <template>
-  <el-form-item :label="fieldConfig.title" :prop="name" :rules="rules" class="dockite-field-string">
+  <el-form-item
+    :label="fieldConfig.title"
+    :prop="name"
+    :rules="rules"
+    class="dockite-field-string"
+    :class="{ 'is-error': errors[name] }"
+  >
     <el-input
       v-if="settings.textarea"
       v-model="fieldData"
@@ -8,6 +14,11 @@
       :allow-clear="true"
     />
     <el-input v-else v-model="fieldData" />
+
+    <div v-if="errors[name]" class="el-form-item__error">
+      {{ errors[name] }}
+    </div>
+
     <div class="el-form-item__description">
       {{ fieldConfig.description }}
     </div>
@@ -34,6 +45,9 @@ export default class StringFieldInputComponent extends Vue {
 
   @Prop({ required: true })
   readonly fieldConfig!: DockiteFieldStringEntity;
+
+  @Prop({ required: true, type: Object })
+  readonly errors!: Record<string, string[]>;
 
   public rules: object[] = [];
 
