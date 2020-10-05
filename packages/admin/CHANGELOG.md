@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.99](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.98...@dockite/admin@0.4.0-alpha.99) (2020-10-05)
+
+
+### Bug Fixes
+
+* **admin:** add label position to forms ([fe0b253](https://github.com/dockite/dockite/commit/fe0b25318ffc37ef6516294cdb774d0b21ea121c))
+* **admin:** reduce form line-height ([adadefd](https://github.com/dockite/dockite/commit/adadefd73198f3ae93fc747b9989a1fda2da9646))
+
+
+
+
+
 # [0.4.0-alpha.98](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.97...@dockite/admin@0.4.0-alpha.98) (2020-10-04)
 
 
