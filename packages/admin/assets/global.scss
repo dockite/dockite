@@ -122,3 +122,11 @@ button:focus,
   bottom: 0;
   left: 12px;
 }
+
+.el-form-item {
+  margin-bottom: 2rem;
+
+  .el-form-item__label {
+    line-height: 1.2;
+  }
+}
