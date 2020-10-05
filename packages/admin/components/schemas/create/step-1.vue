@@ -12,6 +12,7 @@
 
     <el-form
       ref="form"
+      label-position="top"
       :model="stepOneForm"
       :rules="stepOneFormRules"
       @submit.native.prevent="handleNextStep"

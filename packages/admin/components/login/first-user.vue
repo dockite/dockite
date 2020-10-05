@@ -8,20 +8,25 @@
       ref="form"
       :model="registerForm"
       :rules="registerFormRules"
+      label-position="top"
       @submit.native.prevent="register"
     >
       <el-form-item label="Email" prop="email">
         <el-input ref="email" v-model="registerForm.email" type="email" />
       </el-form-item>
+
       <el-form-item label="First Name" prop="firstName">
         <el-input v-model="registerForm.firstName" />
       </el-form-item>
+
       <el-form-item label="Last Name" prop="lastName">
         <el-input v-model="registerForm.lastName" />
       </el-form-item>
+
       <el-form-item label="Password" prop="password">
         <el-input v-model="registerForm.password" type="password" />
       </el-form-item>
+
       <el-form-item>
         <el-button native-type="submit" type="primary">
           Start using Dockite

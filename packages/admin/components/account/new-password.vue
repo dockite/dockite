@@ -1,11 +1,18 @@
 <template>
-  <el-form-item :required="true" label="Update Password" :class="{ 'is-error': error !== '' }">
+  <el-form-item
+    :required="true"
+    label="Update Password"
+    :class="{ 'is-error': error !== '' }"
+    label-position="top"
+  >
     <el-row type="flex" justify="space-between">
-      <el-input v-model="password" type="password" placeholder="Password"></el-input>
+      <el-input v-model="password" type="password" placeholder="Password" />
+
       <el-button style="margin-left: 1rem;" @click="handleUpdatePassword">
         Update
       </el-button>
     </el-row>
+
     <div v-if="error !== ''" class="el-form-item__error">
       {{ error }}
     </div>

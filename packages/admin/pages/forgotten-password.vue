@@ -8,6 +8,7 @@
         ref="resetForgottenPasswordForm"
         :model="resetForgottenPasswordForm"
         :rules="resetForgottenPasswordFormRules"
+        label-position="top"
         @submit.native.prevent="resetForgottenPassword"
       >
         <h2 class="mb-3">Forgotten Password Reset</h2>

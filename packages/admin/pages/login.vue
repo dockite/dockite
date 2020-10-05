@@ -12,6 +12,7 @@
           ref="form"
           :model="loginForm"
           :rules="loginFormRules"
+          label-position="top"
           @submit.native.prevent="login"
         >
           <el-form-item :label="$t('login.labels.email')" prop="email">
