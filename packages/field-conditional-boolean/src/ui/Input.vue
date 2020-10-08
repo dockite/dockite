@@ -56,7 +56,7 @@ export default class ConditionalBooleanFieldInputComponent extends Vue {
     this.$emit('input', value);
   }
 
-  get hidden(): Record<string, string[]> {
+  get itemsToHide(): Record<string, string[]> {
     console.log({ fieldConfig: this.fieldConfig });
     return Object.keys(this.groupsBackup).reduce((acc, curr) => {
       if (this.fieldConfig.settings.groupsToHide.includes(curr)) {
@@ -67,6 +67,22 @@ export default class ConditionalBooleanFieldInputComponent extends Vue {
         ...acc,
         [curr]: this.groupsBackup[curr].filter(
           x => !this.fieldConfig.settings.fieldsToHide.includes(x),
+        ),
+      };
+    }, {});
+  }
+
+  get itemsToShow(): Record<string, string[]> {
+    console.log({ fieldConfig: this.fieldConfig });
+    return Object.keys(this.groupsBackup).reduce((acc, curr) => {
+      if (this.fieldConfig.settings.groupsToShow.includes(curr)) {
+        return acc;
+      }
+
+      return {
+        ...acc,
+        [curr]: this.groupsBackup[curr].filter(
+          x => !this.fieldConfig.settings.fieldsToShow.includes(x),
         ),
       };
     }, {});
@@ -83,9 +99,7 @@ export default class ConditionalBooleanFieldInputComponent extends Vue {
 
     this.groupsBackup = cloneDeep(this.groups);
 
-    if (this.fieldData) {
-      this.handleFieldDataChange(this.fieldData);
-    }
+    this.handleFieldDataChange(this.fieldData);
   }
 
   getRequiredRule(): object {
@@ -101,9 +115,10 @@ export default class ConditionalBooleanFieldInputComponent extends Vue {
     if (!this.bulkEditMode) {
       if (newValue) {
         this.$emit('update:groups', cloneDeep(this.groupsBackup));
-        this.$emit('update:groups', cloneDeep(this.hidden));
+        this.$emit('update:groups', cloneDeep(this.itemsToHide));
       } else {
         this.$emit('update:groups', cloneDeep(this.groupsBackup));
+        this.$emit('update:groups', cloneDeep(this.itemsToShow));
       }
     }
   }

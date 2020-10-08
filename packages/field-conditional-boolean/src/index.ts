@@ -20,6 +20,8 @@ export class DockiteFieldConditionalBoolean extends DockiteField {
     required: false,
     groupsToHide: [],
     fieldsToHide: [],
+    fieldsToShow: [],
+    groupsToShow: [],
   };
 
   public async inputType(): Promise<GraphQLInputType> {

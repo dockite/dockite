@@ -5,6 +5,8 @@ export interface ConditionalBooleanSettings extends FieldSettings {
   required: boolean;
   fieldsToHide: string[];
   groupsToHide: string[];
+  fieldsToShow: string[];
+  groupsToShow: string[];
 }
 
 export interface DockiteFieldConditionalBooleanEntity extends BaseField {

@@ -32,6 +32,35 @@
         <el-option v-for="group in allGroups" :key="group" :label="group" :value="group" />
       </el-select>
     </el-form-item>
+
+    <el-form-item label="Fields to Show">
+      <el-select
+        v-model="settings.fieldsToShow"
+        multiple
+        filterable
+        placeholder="Fields to Show"
+        class="w-full mb-2"
+      >
+        <el-option
+          v-for="field in allFields"
+          :key="field.name"
+          :label="field.title"
+          :value="field.name"
+        />
+      </el-select>
+    </el-form-item>
+
+    <el-form-item label="Groups to Show">
+      <el-select
+        v-model="settings.groupsToShow"
+        multiple
+        filterable
+        placeholder="Groups to Show"
+        class="w-full mb-2"
+      >
+        <el-option v-for="group in allGroups" :key="group" :label="group" :value="group" />
+      </el-select>
+    </el-form-item>
   </fragment>
 </template>
 
