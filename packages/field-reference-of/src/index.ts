@@ -69,7 +69,16 @@ export class DockiteFieldReferenceOf extends DockiteField {
       return GraphQLList(GraphQLBoolean);
     }
 
-    return new GraphQLList(schemaType as GraphQLObjectType);
+    return new GraphQLObjectType({
+      name: `${this.schemaField.name}_${schemaType.name ?? 'Unknown'}_ManyResults`,
+      fields: {
+        results: { type: GraphQLList(schemaType) },
+        totalItems: { type: GraphQLInt },
+        currentPage: { type: GraphQLInt },
+        totalPages: { type: GraphQLInt },
+        hasNextPage: { type: GraphQLBoolean },
+      },
+    });
   }
 
   public async outputArgs(): Promise<GraphQLFieldConfigArgumentMap> {
@@ -114,8 +123,16 @@ export class DockiteFieldReferenceOf extends DockiteField {
       qb.addOrderBy(`document.${args.orderBy}`, args.orderDirection);
     }
 
-    const documents: Document[] = await qb.getMany();
+    const [documents, totalItems] = await qb.getManyAndCount();
 
-    return (documents.map(d => ({ id: d.id, ...d.data })) as any) as T;
+    const totalPages = Math.ceil(totalItems / perPage);
+
+    return ({
+      results: documents.map(d => ({ id: d.id, ...d.data })),
+      totalPages,
+      totalItems,
+      currentPage: page,
+      hasNextPage: page < totalPages,
+    } as any) as T;
   }
 }
