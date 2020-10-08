@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.1.0-alpha.21](https://github.com/dockite/dockite/compare/@dockite/field-conditional-boolean@0.1.0-alpha.20...@dockite/field-conditional-boolean@0.1.0-alpha.21) (2020-10-08)
+
+
+### Features
+
+* **field-conditional-boolean:** hide fields when false ([41e18ac](https://github.com/dockite/dockite/commit/41e18ac74767a6bc975bcf39218af25bfddeede0))
+
+
+
+
+
 # [0.1.0-alpha.20](https://github.com/dockite/dockite/compare/@dockite/field-conditional-boolean@0.1.0-alpha.19...@dockite/field-conditional-boolean@0.1.0-alpha.20) (2020-10-04)
 
 **Note:** Version bump only for package @dockite/field-conditional-boolean

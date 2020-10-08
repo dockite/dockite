@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.20](https://github.com/dockite/dockite/compare/@dockite/field-reference-of@0.3.0-alpha.19...@dockite/field-reference-of@0.3.0-alpha.20) (2020-10-08)
+
+
+### Features
+
+* **field-reference-of:** use many results graphql type ([e2d89b0](https://github.com/dockite/dockite/commit/e2d89b04e7ff54d1789dc2267cd499c1dfe2c709))
+
+
+
+
+
 # [0.3.0-alpha.19](https://github.com/dockite/dockite/compare/@dockite/field-reference-of@0.3.0-alpha.18...@dockite/field-reference-of@0.3.0-alpha.19) (2020-10-04)
 
 **Note:** Version bump only for package @dockite/field-reference-of
