@@ -353,6 +353,8 @@ export class DocumentResolver {
     const documentRepository = getRepository(Document);
     const schemaRepository = getRepository(Schema);
 
+    const validationErrors: Record<string, string> = {};
+
     const schema = await schemaRepository.findOneOrFail({
       where: { id: schemaId, deletedAt: null },
       relations: ['fields'],
@@ -368,11 +370,35 @@ export class DocumentResolver {
 
         data[field.name] = await field.dockiteField!.processInputRaw(hookContext);
 
-        await field.dockiteField!.validateInputRaw(hookContext);
+        await field.dockiteField!.validateInputRaw(hookContext).catch(err => {
+          if (err instanceof DockiteFieldValidationError) {
+            validationErrors[err.path] = err.message;
 
-        await field.dockiteField!.onCreate(hookContext);
+            if (err.children) {
+              err.children.forEach(e => {
+                validationErrors[e.path] = e.message;
+              });
+            }
+          }
+        });
+
+        await field.dockiteField!.onCreate(hookContext).catch(err => {
+          if (err instanceof DockiteFieldValidationError) {
+            validationErrors[err.path] = err.message;
+
+            if (err.children) {
+              err.children.forEach(e => {
+                validationErrors[e.path] = e.message;
+              });
+            }
+          }
+        });
       }),
     );
+
+    if (Object.keys(validationErrors).length > 0) {
+      throw new DocumentValidationError(validationErrors);
+    }
 
     const initialData = this.makeInitialData(schema);
 
@@ -461,7 +487,17 @@ export class DocumentResolver {
           }
         });
 
-        await field.dockiteField!.onUpdate(hookContext);
+        await field.dockiteField!.onUpdate(hookContext).catch(err => {
+          if (err instanceof DockiteFieldValidationError) {
+            validationErrors[err.path] = err.message;
+
+            if (err.children) {
+              err.children.forEach(e => {
+                validationErrors[e.path] = e.message;
+              });
+            }
+          }
+        });
       }),
     );
 
@@ -497,7 +533,7 @@ export class DocumentResolver {
     const documentRepository = getRepository(Document);
     const revisionRepository = getRepository(DocumentRevision);
 
-    const validationErrors: Record<string, string[]> = {};
+    const validationErrors: Record<string, string> = {};
 
     const { id: userId } = ctx.user!; // eslint-disable-line
 
@@ -552,15 +588,27 @@ export class DocumentResolver {
 
             await field.dockiteField!.validateInputRaw(hookContext).catch(err => {
               if (err instanceof DockiteFieldValidationError) {
-                if (!validationErrors[err.path]) {
-                  validationErrors[err.path] = [err.message];
-                } else {
-                  validationErrors[err.path].push(err.message);
+                validationErrors[err.path] = err.message;
+
+                if (err.children) {
+                  err.children.forEach(e => {
+                    validationErrors[e.path] = e.message;
+                  });
                 }
               }
             });
 
-            await field.dockiteField!.onUpdate(hookContext);
+            await field.dockiteField!.onUpdate(hookContext).catch(err => {
+              if (err instanceof DockiteFieldValidationError) {
+                validationErrors[err.path] = err.message;
+
+                if (err.children) {
+                  err.children.forEach(e => {
+                    validationErrors[e.path] = e.message;
+                  });
+                }
+              }
+            });
           }),
         );
 

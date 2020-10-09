@@ -36,6 +36,7 @@
                 :form-data="form"
                 :schema="schema"
                 :groups="groups"
+                :errors="validationErrors"
               />
             </div>
           </el-tab-pane>
@@ -57,6 +58,7 @@
 <script lang="ts">
 import { Schema, Field } from '@dockite/database';
 import { Form } from 'element-ui';
+import { GraphQLError } from 'graphql';
 import { sortBy } from 'lodash';
 import { Component, Vue, Watch, Ref } from 'nuxt-property-decorator';
 import { Fragment } from 'vue-fragment';
@@ -78,6 +80,8 @@ export default class CreateSchemaDocumentPage extends Vue {
   public form: Record<string, any> = {};
 
   public tabErrors: Record<string, boolean> = {};
+
+  public validationErrors: Record<string, boolean> = {};
 
   public ready = false;
 
@@ -188,6 +192,7 @@ export default class CreateSchemaDocumentPage extends Vue {
 
   public async submit(): Promise<void> {
     try {
+      this.validationErrors = {};
       this.tabErrors = {};
 
       this.loading += 1;
@@ -205,43 +210,83 @@ export default class CreateSchemaDocumentPage extends Vue {
       });
 
       this.$router.push(`/schemas/${this.schemaId}`);
-    } catch (_) {
-      // It's any's all the way down
-      const errors = (this.formEl as any).fields.filter(
-        (f: any): boolean => f.validateState === 'error',
-      );
+    } catch (err) {
+      if (err.graphQLErrors && err.graphQLErrors.length > 0) {
+        const error: GraphQLError = err.graphQLErrors.pop();
 
-      errors.forEach((f: any): void => {
-        const groupName = this.getGroupNameFromFieldName(f.prop.split('.').shift());
+        console.log(err);
 
-        Vue.set(this.tabErrors, groupName, true);
-      });
+        if (
+          error.extensions &&
+          error.extensions.code &&
+          error.extensions.code === 'VALIDATION_ERROR'
+        ) {
+          const errors = error.extensions.errors;
 
-      errors.slice(0, 4).forEach((f: any): void => {
-        const groupName = this.getGroupNameFromFieldName(f.prop.split('.').shift());
+          this.validationErrors = errors;
 
-        setImmediate(() => {
-          this.$message({
-            message: `${groupName}: ${f.validateMessage}`,
-            type: 'warning',
+          const entries = Object.entries(errors);
+
+          entries.forEach((entry: any): void => {
+            const [key] = entry;
+            const groupName = this.getGroupNameFromFieldName(key.split('.').shift());
+
+            Vue.set(this.tabErrors, groupName, true);
+          });
+
+          entries.slice(0, 4).forEach((entry: any): void => {
+            const [key, value] = entry;
+
+            const groupName = this.getGroupNameFromFieldName(key.split('.').shift());
+
+            setImmediate(() => {
+              this.$message({
+                message: `${groupName}: ${value}`,
+                type: 'warning',
+              });
+            });
+          });
+
+          if (entries.length > 4) {
+            setImmediate(() => {
+              this.$message({
+                message: `And ${entries.length - 4} more errors`,
+                type: 'warning',
+              });
+            });
+          }
+        }
+      } else {
+        // It's any's all the way down
+        const errors = (this.formEl as any).fields.filter(
+          (f: any): boolean => f.validateState === 'error',
+        );
+
+        errors.forEach((f: any): void => {
+          const groupName = this.getGroupNameFromFieldName(f.prop.split('.').shift());
+
+          Vue.set(this.tabErrors, groupName, true);
+        });
+
+        errors.slice(0, 4).forEach((f: any): void => {
+          const groupName = this.getGroupNameFromFieldName(f.prop.split('.').shift());
+
+          setImmediate(() => {
+            this.$message({
+              message: `${groupName}: ${f.validateMessage}`,
+              type: 'warning',
+            });
           });
         });
-      });
 
-      if (errors.length > 4) {
-        setImmediate(() => {
-          this.$message({
-            message: `And ${errors.length - 4} more errors`,
-            type: 'warning',
+        if (errors.length > 4) {
+          setImmediate(() => {
+            this.$message({
+              message: `And ${errors.length - 4} more errors`,
+              type: 'warning',
+            });
           });
-        });
-      }
-
-      if (errors.length === 0) {
-        this.$message({
-          message: `An error occured whilst creating the document, please try again later.`,
-          type: 'error',
-        });
+        }
       }
     } finally {
       this.$nextTick(() => {

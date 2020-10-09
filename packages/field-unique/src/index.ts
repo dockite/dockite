@@ -1,11 +1,11 @@
 import { DockiteField } from '@dockite/field';
 import { GraphQLInputType, GraphQLOutputType } from 'graphql';
-import { HookContextWithOldData, HookContext } from '@dockite/types';
+import { HookContextWithOldData, HookContext, DockiteFieldValidationError } from '@dockite/types';
 import { get } from 'lodash';
 import format from 'pg-format';
 import { Document } from '@dockite/database';
 
-import { UniqueFieldSettings } from './types';
+import { UniqueFieldSettings, Constraint } from './types';
 
 type Maybe<T> = T | undefined;
 
@@ -19,6 +19,7 @@ export class DockiteFieldUnique extends DockiteField {
   public static defaultOptions: UniqueFieldSettings = {
     required: false,
     validationGroups: [],
+    constraints: [],
   };
 
   public async inputType(): Promise<GraphQLInputType> {
@@ -38,9 +39,21 @@ export class DockiteFieldUnique extends DockiteField {
 
     await Promise.all(
       settings.validationGroups.map(async group => {
+        const schemaFields = this.schemaField.schema?.fields ?? [];
         const concat = group.map(g => this.getValueFromPath(ctx.data, g));
+        const fieldTitles = group.map(g => schemaFields.find(f => f.name === g) ?? g);
 
-        await this.checkForUniqueness(concat, group, ctx.document as Maybe<Document>);
+        if (this.meetsConstraints(settings.constraints ?? [], ctx.data)) {
+          await this.checkForUniqueness(concat, group, ctx.document as Maybe<Document>).catch(
+            () => {
+              throw new DockiteFieldValidationError(
+                'UNIQUE_FAILURE',
+                `Combination of ${fieldTitles.join(', ')} were not unique`,
+                ctx.path || this.schemaField.name,
+              );
+            },
+          );
+        }
       }),
     );
   }
@@ -50,9 +63,21 @@ export class DockiteFieldUnique extends DockiteField {
 
     await Promise.all(
       settings.validationGroups.map(async group => {
+        const schemaFields = this.schemaField.schema?.fields ?? [];
         const concat = group.map(g => this.getValueFromPath(ctx.data, g));
+        const fieldTitles = group.map(g => schemaFields.find(f => f.name === g) ?? g);
 
-        await this.checkForUniqueness(concat, group, ctx.document as Maybe<Document>);
+        if (this.meetsConstraints(settings.constraints ?? [], ctx.data)) {
+          await this.checkForUniqueness(concat, group, ctx.document as Maybe<Document>).catch(
+            () => {
+              throw new DockiteFieldValidationError(
+                'UNIQUE_FAILURE',
+                `Combination of ${fieldTitles.join(', ')} were not unique`,
+                ctx.path || this.schemaField.name,
+              );
+            },
+          );
+        }
       }),
     );
   }
@@ -64,7 +89,7 @@ export class DockiteFieldUnique extends DockiteField {
       return format('(%L::jsonb)::text', JSON.stringify(value));
     }
 
-    return format('%L::text', value);
+    return format('%L::text', String(value));
   }
 
   private async checkForUniqueness(
@@ -99,5 +124,21 @@ export class DockiteFieldUnique extends DockiteField {
     const columnPath = other.reverse().join('->');
 
     return `${columnPath}->>${final}`;
+  }
+
+  private meetsConstraints(constraints: Constraint[], data: Record<string, any>): boolean {
+    if (constraints.length === 0) {
+      return true;
+    }
+
+    const result = !constraints.some(constraint => {
+      if (constraint.operator === '$eq') {
+        return constraint.value !== get(data, constraint.name);
+      }
+
+      return constraint.value === get(data, constraint.name);
+    });
+
+    return result;
   }
 }
