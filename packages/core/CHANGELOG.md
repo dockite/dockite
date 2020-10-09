@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.86](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.85...@dockite/core@0.4.0-alpha.86) (2020-10-09)
+
+
+### Bug Fixes
+
+* **field-unique:** add basic conditional validation support ([299ea01](https://github.com/dockite/dockite/commit/299ea016771919dc27f6c176d75198037b0a6b74))
+
+
+
+
+
 # [0.4.0-alpha.85](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.84...@dockite/core@0.4.0-alpha.85) (2020-10-04)
 
 

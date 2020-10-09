@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.1.0-alpha.4](https://github.com/dockite/dockite/compare/@dockite/field-unique@0.1.0-alpha.3...@dockite/field-unique@0.1.0-alpha.4) (2020-10-09)
+
+
+### Bug Fixes
+
+* **field-unique:** add basic conditional validation support ([299ea01](https://github.com/dockite/dockite/commit/299ea016771919dc27f6c176d75198037b0a6b74))
+
+
+
+
+
 # [0.1.0-alpha.3](https://github.com/dockite/dockite/compare/@dockite/field-unique@0.1.0-alpha.2...@dockite/field-unique@0.1.0-alpha.3) (2020-10-04)
 
 **Note:** Version bump only for package @dockite/field-unique
