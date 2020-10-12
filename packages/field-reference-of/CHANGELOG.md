@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.21](https://github.com/dockite/dockite/compare/@dockite/field-reference-of@0.3.0-alpha.20...@dockite/field-reference-of@0.3.0-alpha.21) (2020-10-12)
+
+
+### Bug Fixes
+
+* **field-reference-of:** resolve duplicate graphql types ([a0c1b26](https://github.com/dockite/dockite/commit/a0c1b26b0cd4d3d5a02901f7c550da49636972f5))
+
+
+
+
+
 # [0.3.0-alpha.20](https://github.com/dockite/dockite/compare/@dockite/field-reference-of@0.3.0-alpha.19...@dockite/field-reference-of@0.3.0-alpha.20) (2020-10-08)
 
 
