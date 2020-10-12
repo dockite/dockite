@@ -35,6 +35,7 @@ type MaybePromise<T> = T | Promise<T>;
 
 const log = debug('dockite:transformer');
 
+//
 let anonymousUser: User;
 
 interface ConfigBagItem {
