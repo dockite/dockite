@@ -35,7 +35,7 @@
                 :field-config="field"
                 :form-data="form"
                 :schema="schema"
-                :groups="groups"
+                :groups.sync="groups"
                 :errors="validationErrors"
               />
             </div>
@@ -83,6 +83,8 @@ export default class CreateSchemaDocumentPage extends Vue {
 
   public validationErrors: Record<string, boolean> = {};
 
+  public localGroups: Record<string, string[]> | null = null;
+
   public ready = false;
 
   public loading = 0;
@@ -127,6 +129,10 @@ export default class CreateSchemaDocumentPage extends Vue {
   }
 
   get groups(): Record<string, string[]> {
+    if (this.localGroups && Object.keys(this.localGroups).length > 0) {
+      return this.localGroups;
+    }
+
     if (this.schema) {
       return this.schema.groups;
     }
@@ -134,7 +140,15 @@ export default class CreateSchemaDocumentPage extends Vue {
     return {};
   }
 
+  set groups(value: Record<string, string[]>) {
+    this.localGroups = { ...value };
+  }
+
   get availableTabs(): string[] {
+    if (this.localGroups && Object.keys(this.localGroups).length > 0) {
+      return Object.keys(this.localGroups);
+    }
+
     if (this.schema) {
       return Object.keys(this.schema.groups);
     }

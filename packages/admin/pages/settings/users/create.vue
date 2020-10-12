@@ -100,6 +100,9 @@ type UserForm = Omit<
   components: {
     Fragment,
   },
+  meta: {
+    can: ['internal:user:create'],
+  },
 })
 export default class CreateUserPage extends Vue {
   public loading = 0;

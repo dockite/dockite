@@ -49,7 +49,7 @@ interface BreadcrumbItem {
 }
 
 @Component({
-  middleware: 'authenticated',
+  middleware: ['authenticated', 'authorized'],
   components: {
     SideMenu,
   },

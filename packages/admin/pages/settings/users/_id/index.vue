@@ -101,6 +101,9 @@ interface UserForm
   components: {
     Fragment,
   },
+  meta: {
+    can: ['internal:user:read'],
+  },
 })
 export default class CreateUserPage extends Vue {
   public loading = 0;

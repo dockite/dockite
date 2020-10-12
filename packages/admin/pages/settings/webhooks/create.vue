@@ -104,6 +104,9 @@ type WebhookForm = Omit<Webhook, 'id' | 'createdAt' | 'updatedAt' | 'calls'>;
     Fragment,
     Logo,
   },
+  meta: {
+    can: ['internal:webhook:create'],
+  },
 })
 export default class CreateWebhookPage extends Vue {
   public loading = 0;

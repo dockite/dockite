@@ -24,6 +24,7 @@ interface JWTToken {
 export interface AuthState {
   authenticated: boolean;
   user: User | null;
+  scopes: string[] | null;
   token: string | null;
   tokenDecoded: JWTToken | null;
 }
@@ -45,6 +46,7 @@ export const namespace = 'auth';
 export const state = (): AuthState => ({
   authenticated: false,
   user: null,
+  scopes: null,
   token: null,
   tokenDecoded: null,
 });
@@ -91,6 +93,7 @@ export const actions: ActionTree<AuthState, RootState> = {
 
     commit('setToken', data.login.token);
     commit('setUser', data.login.user);
+    commit('setScopes', data.login.user.normalizedScopes);
     commit('setAuthenticated', true);
   },
 
@@ -116,6 +119,7 @@ export const actions: ActionTree<AuthState, RootState> = {
 
     commit('clearToken');
     commit('setUser', null);
+    commit('setScopes', null);
     commit('setAuthenticated', false);
 
     await this.$apolloClient.clearStore();
@@ -170,6 +174,10 @@ export const mutations: MutationTree<AuthState> = {
 
   setUser(state, payload: User): void {
     state.user = payload;
+  },
+
+  setScopes(state, payload: string[]): void {
+    state.scopes = payload;
   },
 
   setAuthenticated(state, payload: boolean): void {

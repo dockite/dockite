@@ -82,6 +82,9 @@ import * as webhook from '~/store/webhook';
   components: {
     Fragment,
   },
+  meta: {
+    can: ['internal:webhook:read'],
+  },
 })
 export default class AllWebhooksPage extends Vue {
   public loading = 0;

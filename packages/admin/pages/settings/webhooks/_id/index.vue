@@ -80,6 +80,9 @@ import * as data from '~/store/data';
   components: {
     Fragment,
   },
+  meta: {
+    can: ['internal:webhook:read'],
+  },
 })
 export default class WebhookCallsPage extends Vue {
   public loading = 0;

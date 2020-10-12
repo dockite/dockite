@@ -93,6 +93,9 @@ import * as user from '~/store/user';
   components: {
     Fragment,
   },
+  meta: {
+    can: ['internal:user:read'],
+  },
 })
 export default class AllUsersPage extends Vue {
   public loading = 0;
