@@ -54,6 +54,7 @@ export class DockiteFieldReferenceOf extends DockiteField {
     graphqlTypes,
   }: FieldIOContext): Promise<GraphQLOutputType> {
     const schemaId: string = this.schemaField.settings.schemaId ?? this.schemaField.schemaId;
+    const schemaName = this.schemaField.schema?.name ?? 'Unknown';
 
     const [schemaType] = dockiteSchemas
       .filter(schema => schemaId === schema.id)
@@ -70,7 +71,7 @@ export class DockiteFieldReferenceOf extends DockiteField {
     }
 
     return new GraphQLObjectType({
-      name: `${this.schemaField.name}_${schemaType.name ?? 'Unknown'}_ManyResults`,
+      name: `${this.schemaField.name}_${schemaName}_${schemaType.name ?? 'Unknown'}_ManyResults`,
       fields: {
         results: { type: GraphQLList(schemaType) },
         totalItems: { type: GraphQLInt },
