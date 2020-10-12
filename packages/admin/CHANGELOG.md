@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.101](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.100...@dockite/admin@0.4.0-alpha.101) (2020-10-12)
+
+
+### Bug Fixes
+
+* **admin:** support errors on singletons ([64fdd76](https://github.com/dockite/dockite/commit/64fdd76b2cc9f75e7972b350b8fddc3a4a4e87bf))
+
+
+
+
+
 # [0.4.0-alpha.100](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.99...@dockite/admin@0.4.0-alpha.100) (2020-10-09)
 
 
