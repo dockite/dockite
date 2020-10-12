@@ -64,6 +64,7 @@
                 :is="$dockiteFieldManager[field.type].input"
                 v-if="$dockiteFieldManager[field.type].input && !field.settings.hidden"
                 v-model="form[field.name]"
+                :errors="validationErrors"
                 :name="field.name"
                 :field-config="field"
                 :form-data="form"
@@ -90,6 +91,7 @@
 <script lang="ts">
 import { Singleton, Field } from '@dockite/database';
 import { Form } from 'element-ui';
+import { GraphQLError } from 'graphql';
 import { sortBy, omit, cloneDeep } from 'lodash';
 import { Component, Vue, Watch, Ref } from 'nuxt-property-decorator';
 import { Fragment } from 'vue-fragment';
@@ -112,9 +114,13 @@ export default class CreateSingletonDocumentPage extends Vue {
 
   public ready = false;
 
+  public tabErrors: Record<string, boolean> = {};
+
   public loading = 0;
 
   public localGroups: Record<string, string[]> | null = null;
+
+  public validationErrors: Record<string, string> = {};
 
   @Ref()
   readonly formEl!: Form;
@@ -209,11 +215,10 @@ export default class CreateSingletonDocumentPage extends Vue {
 
   public async submit(): Promise<void> {
     try {
-      this.loading += 1;
+      this.validationErrors = {};
+      this.tabErrors = {};
 
-      if (!this.singleton) {
-        throw new Error("Singleton hasn't been loaded");
-      }
+      this.loading += 1;
 
       await this.formEl.validate();
 
@@ -226,43 +231,87 @@ export default class CreateSingletonDocumentPage extends Vue {
         deletedFields: [],
       });
 
+      this.$router.push(`/singletons`);
+
       this.$message({
         message: 'Singleton updated successfully',
         type: 'success',
       });
+    } catch (err) {
+      if (err.graphQLErrors && err.graphQLErrors.length > 0) {
+        const error: GraphQLError = err.graphQLErrors.pop();
 
-      this.$router.push(`/singletons`);
-    } catch (_) {
-      // It's any's all the way down
-      const errors = (this.formEl as any).fields.filter(
-        (f: any): boolean => f.validateState === 'error',
-      );
+        if (
+          error.extensions &&
+          error.extensions.code &&
+          error.extensions.code === 'VALIDATION_ERROR'
+        ) {
+          const errors = error.extensions.errors;
 
-      errors.slice(0, 4).forEach((f: any): void => {
-        const groupName = this.getGroupNameFromFieldName(f.prop.split('.').shift());
+          this.validationErrors = errors;
 
-        setImmediate(() => {
-          this.$message({
-            message: `${groupName}: ${f.validateMessage}`,
-            type: 'warning',
+          const entries = Object.entries(errors);
+
+          entries.forEach((entry: any): void => {
+            const [key] = entry;
+            const groupName = this.getGroupNameFromFieldName(key.split('.').shift());
+
+            Vue.set(this.tabErrors, groupName, true);
+          });
+
+          entries.slice(0, 4).forEach((entry: any): void => {
+            const [key, value] = entry;
+
+            const groupName = this.getGroupNameFromFieldName(key.split('.').shift());
+
+            setImmediate(() => {
+              this.$message({
+                message: `${groupName}: ${value}`,
+                type: 'warning',
+              });
+            });
+          });
+
+          if (entries.length > 4) {
+            setImmediate(() => {
+              this.$message({
+                message: `And ${entries.length - 4} more errors`,
+                type: 'warning',
+              });
+            });
+          }
+        }
+      } else {
+        // It's any's all the way down
+        const errors = (this.formEl as any).fields.filter(
+          (f: any): boolean => f.validateState === 'error',
+        );
+
+        errors.forEach((f: any): void => {
+          const groupName = this.getGroupNameFromFieldName(f.prop.split('.').shift());
+
+          Vue.set(this.tabErrors, groupName, true);
+        });
+
+        errors.slice(0, 4).forEach((f: any): void => {
+          const groupName = this.getGroupNameFromFieldName(f.prop.split('.').shift());
+
+          setImmediate(() => {
+            this.$message({
+              message: `${groupName}: ${f.validateMessage}`,
+              type: 'warning',
+            });
           });
         });
-      });
 
-      if (errors.length > 4) {
-        setImmediate(() => {
-          this.$message({
-            message: `And ${errors.length - 4} more errors`,
-            type: 'warning',
+        if (errors.length > 4) {
+          setImmediate(() => {
+            this.$message({
+              message: `And ${errors.length - 4} more errors`,
+              type: 'warning',
+            });
           });
-        });
-      }
-
-      if (errors.length === 0) {
-        this.$message({
-          message: 'There was an error saving the singleton, please try again later.',
-          type: 'error',
-        });
+        }
       }
     } finally {
       this.$nextTick(() => {
@@ -277,7 +326,9 @@ export default class CreateSingletonDocumentPage extends Vue {
     this.loading += 1;
 
     await this.fetchSingletonById();
+
     this.initialiseForm();
+
     this.currentTab = this.availableTabs[0];
 
     this.$nextTick(() => {
