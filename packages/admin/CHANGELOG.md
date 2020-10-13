@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.102](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.101...@dockite/admin@0.4.0-alpha.102) (2020-10-13)
+
+
+### Features
+
+* **admin:** add route level authorization ([aef09d7](https://github.com/dockite/dockite/commit/aef09d730c45a1c4c716aeb8987beff4ca8a10db))
+
+
+
+
+
 # [0.4.0-alpha.101](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.100...@dockite/admin@0.4.0-alpha.101) (2020-10-12)
 
 
