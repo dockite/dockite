@@ -26,7 +26,7 @@ export class DockiteFieldSlug extends DockiteField {
   public static description = 'A slug field';
 
   public static defaultOptions: SlugFieldSettings = {
-    fieldToSlugify: null,
+    fieldsToSlugify: [],
     parent: null,
     unique: true,
   };
@@ -102,12 +102,18 @@ export class DockiteFieldSlug extends DockiteField {
         replacement: '-',
         remove: /[*+~.()'"!:@]/g,
       });
-    } else if (settings.fieldToSlugify && ctx.data[settings.fieldToSlugify]) {
-      slug = slugify(ctx.data[settings.fieldToSlugify], {
-        lower: true,
-        replacement: '-',
-        remove: /[*+~.()'"!:@]/g,
-      });
+    } else if (
+      settings.fieldsToSlugify &&
+      settings.fieldsToSlugify.every(field => !!ctx.data[field])
+    ) {
+      slug = slugify(
+        settings.fieldsToSlugify.map(field => String(ctx.data[field]).trim()).join('-'),
+        {
+          lower: true,
+          replacement: '-',
+          remove: /[*+~.()'"!:@]/g,
+        },
+      );
     } else {
       slug = null;
     }

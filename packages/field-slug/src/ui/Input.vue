@@ -65,15 +65,18 @@ export default class SlugFieldInputComponent extends Vue {
     }
 
     if (
-      this.settings.fieldToSlugify &&
-      this.formData[this.settings.fieldToSlugify] &&
+      this.settings.fieldsToSlugify &&
+      this.settings.fieldsToSlugify.every(field => this.formData[field]) &&
       !this.freezeSlug
     ) {
-      this.fieldData = slugify(String(this.formData[this.settings.fieldToSlugify]), {
-        lower: true,
-        replacement: '-',
-        remove: /[*+~.()'"!:@]/g,
-      });
+      this.fieldData = slugify(
+        this.settings.fieldsToSlugify.map(field => String(this.formData[field]).trim()).join('-'),
+        {
+          lower: true,
+          replacement: '-',
+          remove: /[*+~.()'"!:@]/g,
+        },
+      );
     }
   }
 }

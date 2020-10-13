@@ -2,7 +2,7 @@ import { BaseField } from '@dockite/database';
 import { FieldSettings } from '@dockite/types';
 
 export interface SlugFieldSettings extends FieldSettings {
-  fieldToSlugify: string | null;
+  fieldsToSlugify: string[] | null;
   unique: boolean;
   parent: string | null;
 }

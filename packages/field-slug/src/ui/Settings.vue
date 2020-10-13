@@ -1,7 +1,7 @@
 <template>
   <fragment>
-    <el-form-item label="Field to slugify">
-      <el-select v-model="settings.fieldToSlugify">
+    <el-form-item label="Fields to slugify">
+      <el-select v-model="settings.fieldsToSlugify" multiple filterable>
         <el-option
           v-for="field in fields"
           :key="field.name"
