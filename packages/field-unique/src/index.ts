@@ -135,25 +135,13 @@ export class DockiteFieldUnique extends DockiteField {
       return true;
     }
 
-    let result = true;
-
-    constraints.forEach(constraint => {
+    return constraints.every(constraint => {
       if (constraint.operator === '$eq') {
-        const r = constraint.value === get(data, constraint.name);
-
-        if (!r) {
-          result = false;
-        }
+        return constraint.value === get(data, constraint.name);
       }
 
       // Handles $ne
-      const r = constraint.value !== get(data, constraint.name);
-
-      if (!r) {
-        result = false;
-      }
+      return constraint.value !== get(data, constraint.name);
     });
-
-    return result;
   }
 }
