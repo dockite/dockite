@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.88](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.87...@dockite/core@0.4.0-alpha.88) (2020-10-13)
+
+
+### Bug Fixes
+
+* **admin:** ui improvements ([ede30a5](https://github.com/dockite/dockite/commit/ede30a598433bc5fdb679eb8c0f20836e2ecfb6b))
+
+
+
+
+
 # [0.4.0-alpha.87](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.86...@dockite/core@0.4.0-alpha.87) (2020-10-12)
 
 **Note:** Version bump only for package @dockite/core
