@@ -5,7 +5,7 @@ export type ValidationGroup = string[];
 
 export interface UniqueFieldSettings extends FieldSettings {
   validationGroups: ValidationGroup[];
-  constraints: Constraint[];
+  constraints: Constraint[][];
 }
 
 export interface DockiteFieldUniqueEntity extends BaseField {

@@ -43,7 +43,9 @@ export class DockiteFieldUnique extends DockiteField {
         const concat = group.map(g => this.getValueFromPath(ctx.data, g));
         const fieldTitles = group.map(g => schemaFields.find(f => f.name === g) ?? g);
 
-        if (this.meetsConstraints(settings.constraints ?? [], ctx.data)) {
+        const constraints = settings.constraints ?? [];
+
+        if (constraints.length === 0 || constraints.some(c => this.meetsConstraints(c, ctx.data))) {
           await this.checkForUniqueness(concat, group, ctx.document as Maybe<Document>).catch(
             () => {
               throw new DockiteFieldValidationError(
@@ -67,7 +69,9 @@ export class DockiteFieldUnique extends DockiteField {
         const concat = group.map(g => this.getValueFromPath(ctx.data, g));
         const fieldTitles = group.map(g => schemaFields.find(f => f.name === g) ?? g);
 
-        if (this.meetsConstraints(settings.constraints ?? [], ctx.data)) {
+        const constraints = settings.constraints ?? [];
+
+        if (constraints.length === 0 || constraints.some(c => this.meetsConstraints(c, ctx.data))) {
           await this.checkForUniqueness(concat, group, ctx.document as Maybe<Document>).catch(
             () => {
               throw new DockiteFieldValidationError(
@@ -131,12 +135,23 @@ export class DockiteFieldUnique extends DockiteField {
       return true;
     }
 
-    const result = !constraints.some(constraint => {
+    let result = true;
+
+    constraints.forEach(constraint => {
       if (constraint.operator === '$eq') {
-        return constraint.value !== get(data, constraint.name);
+        const r = constraint.value === get(data, constraint.name);
+
+        if (!r) {
+          result = false;
+        }
       }
 
-      return constraint.value === get(data, constraint.name);
+      // Handles $ne
+      const r = constraint.value !== get(data, constraint.name);
+
+      if (!r) {
+        result = false;
+      }
     });
 
     return result;
