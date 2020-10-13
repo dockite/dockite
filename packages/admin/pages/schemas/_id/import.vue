@@ -69,7 +69,7 @@ export default class ImportSchemaWithIdPage extends Vue {
         type: 'success',
       });
 
-      this.$router.replace('/schemas');
+      this.$router.replace(`/schemas/${this.schemaId}`);
     } catch (err) {
       console.log(err);
 

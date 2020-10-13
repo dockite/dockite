@@ -3,7 +3,7 @@
     <portal to="header">
       <h2>Access Forbidden</h2>
     </portal>
-    <div class="container">
+    <div class="container w-full flex justify-center">
       <div class="w-2/3 mx-auto bg-white p-5 shadow rounded my-5">
         <h1 class="title text-2xl">
           Sorry, the page you were trying to access is forbidden.

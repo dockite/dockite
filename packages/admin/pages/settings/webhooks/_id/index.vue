@@ -1,7 +1,15 @@
 <template>
   <fragment>
     <portal to="header">
-      <h2>Edit - {{ (webhook && webhook.name) || '' }}</h2>
+      <div class="flex justify-between items-center">
+        <h2>Webhook Calls - {{ (webhook && webhook.name) || '' }}</h2>
+
+        <router-link :to="`/settings/webhooks/${webhookId}/edit`">
+          <el-button>
+            Edit
+          </el-button>
+        </router-link>
+      </div>
     </portal>
 
     <div

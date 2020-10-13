@@ -59,7 +59,7 @@ export class WebhookResolver {
     const [results, totalItems] = await repository.findAndCount({
       take: perPage,
       skip: perPage * (page - 1),
-      order: { createdAt: 'DESC' },
+      order: { name: 'ASC' },
     });
 
     const totalPages = Math.ceil(totalItems / perPage);

@@ -7,27 +7,13 @@
           {{ documentIdentifier }}
         </h2>
 
-        <el-dropdown :disabled="!dirty" split-button @click="submit">
-          Save and Publish
-          <el-dropdown-menu slot="dropdown">
-            <!-- <el-dropdown-item>Save as Draft</el-dropdown-item> -->
-            <!-- <el-dropdown-item>Add to Release</el-dropdown-item> -->
-            <el-dropdown-item>
-              <router-link class="block w-full" :to="`/documents/${documentId}/revisions`">
-                View Revisions
-              </router-link>
-            </el-dropdown-item>
-            <el-dropdown-item>
-              <router-link
-                v-if="schema && $can(`schema:${schema.name}:delete`)"
-                class="block w-full text-red-400 hover:text-red-500"
-                :to="`/documents/${documentId}/delete`"
-              >
-                Delete
-              </router-link>
-            </el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
+        <document-actions
+          v-if="schema"
+          :disabled="dirty"
+          :document-id="documentId"
+          :schema="schema"
+          :handle-save-and-publish="submit"
+        />
       </el-row>
     </portal>
 
@@ -131,12 +117,14 @@ import { Fragment } from 'vue-fragment';
 import { ManyResultSet, AllDocumentRevisionsResultItem } from '../../../common/types';
 
 import Logo from '~/components/base/logo.vue';
+import DocumentActions from '~/components/documents/actions.vue';
 import * as auth from '~/store/auth';
 import * as data from '~/store/data';
 import * as document from '~/store/document';
 
 @Component({
   components: {
+    DocumentActions,
     Fragment,
     Logo,
   },

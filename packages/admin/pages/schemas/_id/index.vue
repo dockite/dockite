@@ -20,25 +20,25 @@
               >
                 <router-link :to="`/schemas/${schemaId}/create`">
                   <i class="el-icon-document-add" />
-                  Create
+                  Create Document
                 </router-link>
               </el-dropdown-item>
               <el-dropdown-item v-if="$can('internal:schema:update')">
                 <router-link :to="`/schemas/${schemaId}/edit`">
                   <i class="el-icon-edit" />
-                  Edit
+                  Edit Schema
                 </router-link>
               </el-dropdown-item>
               <el-dropdown-item>
                 <router-link :to="`/schemas/${schemaId}/bulk-edit`">
                   <i class="el-icon-magic-stick" />
-                  Bulk Edit
+                  Bulk Edit Documents
                 </router-link>
               </el-dropdown-item>
               <el-dropdown-item v-if="$can('internal:schema:delete')">
                 <router-link :to="`/schemas/${schemaId}/delete`" style="color: rgb(245, 108, 108);">
                   <i class="el-icon-delete" />
-                  Delete
+                  Delete Schema
                 </router-link>
               </el-dropdown-item>
               <el-dropdown-item
@@ -47,7 +47,7 @@
               >
                 <router-link :to="`/schemas/${schemaId}/revisions`">
                   <i class="el-icon-folder-opened" />
-                  Revisions
+                  Schema Revisions
                 </router-link>
               </el-dropdown-item>
               <el-dropdown-item v-if="$can('internal:schema:update')">
@@ -60,7 +60,7 @@
               <el-dropdown-item>
                 <router-link :to="`/schemas/${schemaId}/deleted`">
                   <i class="el-icon-delete" />
-                  View Deleted
+                  Deleted Documents
                 </router-link>
               </el-dropdown-item>
             </el-dropdown-menu>
