@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.105](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.104...@dockite/admin@0.4.0-alpha.105) (2020-10-14)
+
+
+### Bug Fixes
+
+* **admin:** modularize table actions ([c594fdb](https://github.com/dockite/dockite/commit/c594fdbc6c06be5d17fd8b7ae644e2d23e7c3fba))
+
+
+
+
+
 # [0.4.0-alpha.104](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.103...@dockite/admin@0.4.0-alpha.104) (2020-10-14)
 
 
