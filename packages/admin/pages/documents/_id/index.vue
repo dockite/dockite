@@ -10,6 +10,7 @@
         <document-actions-dropdown
           v-if="schema"
           :disabled="dirty"
+          :document="document"
           :document-id="documentId"
           :schema="schema"
           :handle-save-and-publish="submit"

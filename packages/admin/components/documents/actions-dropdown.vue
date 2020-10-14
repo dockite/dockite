@@ -23,7 +23,7 @@
 </template>
 
 <script lang="ts">
-import { Schema } from '@dockite/database';
+import { Schema, Document } from '@dockite/database';
 import { Component, Prop, Vue } from 'nuxt-property-decorator';
 
 @Component({
@@ -35,6 +35,9 @@ export class DocumentActionsComponent extends Vue {
 
   @Prop({ required: true })
   readonly disabled!: boolean;
+
+  @Prop({ required: true, type: Object })
+  readonly document!: Document;
 
   @Prop({ required: true, type: Object })
   readonly schema!: Schema;
