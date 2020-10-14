@@ -28,7 +28,7 @@
             >
               {{ scope.row.schema.id | shortDesc }}
             </router-link>
-            <router-link v-else :to="`/documents/${scope.row.id}`">
+            <router-link v-else :to="`/documents/${scope.row.id}/deleted`">
               {{ scope.row.id | shortDesc }}
             </router-link>
           </template>

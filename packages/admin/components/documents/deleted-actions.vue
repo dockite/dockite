@@ -10,13 +10,9 @@
         </router-link>
       </el-dropdown-item>
       <el-dropdown-item>
-        <router-link
-          v-if="schema && $can(`schema:${schema.name}:delete`)"
-          class="block w-full text-red-400 hover:text-red-500"
-          :to="`/documents/${documentId}/delete`"
-        >
-          Delete
-        </router-link>
+        <a href="#" @click.prevent="handleRestoreDocument(documentId)">
+          Restore Document
+        </a>
       </el-dropdown-item>
     </el-dropdown-menu>
   </el-dropdown>
@@ -41,6 +37,9 @@ export class DocumentActionsComponent extends Vue {
 
   @Prop({ required: true, type: Function })
   readonly handleSaveAndPublish!: Function;
+
+  @Prop({ required: true, type: Function })
+  readonly handleRestoreDocument!: Function;
 }
 
 export default DocumentActionsComponent;

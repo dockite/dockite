@@ -31,7 +31,11 @@
 
         <el-table-column sortable="custom" prop="id" label="ID">
           <template slot-scope="scope">
-            <router-link :to="`/documents/${scope.row.id}`">
+            <router-link v-if="deleted" :to="`/documents/${scope.row.id}/deleted`">
+              {{ scope.row.id | shortDesc }}
+            </router-link>
+
+            <router-link v-else :to="`/documents/${scope.row.id}`">
               {{ scope.row.id | shortDesc }}
             </router-link>
           </template>
