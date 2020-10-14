@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.104](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.103...@dockite/admin@0.4.0-alpha.104) (2020-10-14)
+
+
+### Bug Fixes
+
+* **admin:** ensure semantic pathing for deleted documents ([4ff43f5](https://github.com/dockite/dockite/commit/4ff43f5d49fab52bd12b4f9997cf44a31ae09128))
+
+
+
+
+
 # [0.4.0-alpha.103](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.102...@dockite/admin@0.4.0-alpha.103) (2020-10-13)
 
 
