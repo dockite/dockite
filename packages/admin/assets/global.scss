@@ -47,6 +47,14 @@ pre.dockite-data--raw {
 }
 
 .dockite-table--actions {
+  .dockite-table-actions--column > * {
+    padding-right: 0.75rem;
+
+    &:last-child {
+      padding-right: 0;
+    }
+  }
+
   > * {
     padding-right: 0.75rem;
 

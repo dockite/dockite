@@ -87,33 +87,12 @@
 
         <el-table-column label="Actions">
           <span slot-scope="scope" class="dockite-table--actions">
-            <el-popconfirm
-              title="Are you sure? The document will be restored and visible again."
-              confirm-button-text="Restore"
-              cancel-button-text="Cancel"
-              @onConfirm="handleRestoreDocument(scope.row.id)"
-            >
-              <el-button
-                v-if="$can('internal:document:update', `schema:${scope.row.schema.name}:update`)"
-                slot="reference"
-                type="text"
-                title="Restore Document"
-              >
-                <i class="el-icon-refresh-left" />
-              </el-button>
-            </el-popconfirm>
-
-            <router-link
-              v-if="$can('internal:document:delete', `schema:${scope.row.schema.name}:delete`)"
-              title="Delete Document"
-              :to="`/documents/${scope.row.id}/delete`"
-            >
-              <i class="el-icon-delete" />
-            </router-link>
-
-            <router-link title="View Revisions" :to="`/documents/${scope.row.id}/revisions`">
-              <i class="el-icon-folder-opened" />
-            </router-link>
+            <document-table-actions-column
+              :document="scope.row"
+              :schema="scope.row.schema"
+              :deleted="true"
+              :handle-restore-document="handleRestoreDocument"
+            />
           </span>
         </el-table-column>
       </el-table>
@@ -137,8 +116,7 @@
 
 <script lang="ts">
 import { User, SchemaType } from '@dockite/database';
-import { DockiteGraphqlSortInput } from '@dockite/types';
-import { DockiteSortDirection } from '@dockite/types/src';
+import { DockiteGraphqlSortInput, DockiteSortDirection } from '@dockite/types';
 import { formatDistanceToNow } from 'date-fns';
 import { debounce } from 'lodash';
 import { Component, Vue, Watch } from 'nuxt-property-decorator';
@@ -152,6 +130,7 @@ import {
   TableSortDirection,
 } from '../../common/types';
 
+import DocumentTableActionsColumn from '~/components/documents/table-actions-column.vue';
 import * as auth from '~/store/auth';
 import * as data from '~/store/data';
 import * as document from '~/store/document';
@@ -159,6 +138,7 @@ import * as document from '~/store/document';
 @Component({
   components: {
     Fragment,
+    DocumentTableActionsColumn,
   },
 })
 export default class AllDocumentsPage extends Vue {

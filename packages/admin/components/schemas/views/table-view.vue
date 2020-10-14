@@ -148,43 +148,12 @@
 
         <el-table-column v-if="showActions" label="Actions">
           <span slot-scope="scope" class="dockite-table--actions">
-            <el-popconfirm
-              v-if="deleted"
-              title="Are you sure? The document will be restored and visible again."
-              confirm-button-text="Restore"
-              cancel-button-text="Cancel"
-              @onConfirm="handleRestoreDocument(scope.row.id)"
-            >
-              <el-button
-                v-if="$can('internal:document:update', `schema:${scope.row.schema.name}:update`)"
-                slot="reference"
-                type="text"
-                title="Restore Document"
-              >
-                <i class="el-icon-refresh-left" />
-              </el-button>
-            </el-popconfirm>
-
-            <router-link v-else title="Edit Document" :to="`/documents/${scope.row.id}`">
-              <i class="el-icon-edit-outline" />
-            </router-link>
-
-            <router-link
-              v-if="
-                $can(
-                  'internal:document:delete',
-                  `schema:${scope.row.schema && scope.row.schema.name}:delete`,
-                )
-              "
-              title="Delete Document"
-              :to="`/documents/${scope.row.id}/delete`"
-            >
-              <i class="el-icon-delete" />
-            </router-link>
-
-            <router-link title="View Revisions" :to="`/documents/${scope.row.id}/revisions`">
-              <i class="el-icon-folder-opened" />
-            </router-link>
+            <document-table-actions-column
+              :document="scope.row"
+              :schema="scope.row.schema"
+              :deleted="deleted"
+              :handle-restore-document="() => {}"
+            />
           </span>
         </el-table-column>
       </el-table>
@@ -229,6 +198,7 @@ import {
 } from '~/common/types';
 import { greedySplit } from '~/common/utils';
 import FilterInput from '~/components/base/filter-input.vue';
+import DocumentTableActionsColumn from '~/components/documents/table-actions-column.vue';
 import * as data from '~/store/data';
 import * as document from '~/store/document';
 
@@ -236,6 +206,7 @@ import * as document from '~/store/document';
   components: {
     Fragment,
     FilterInput,
+    DocumentTableActionsColumn,
   },
 })
 export default class TableViewComponent extends Vue {

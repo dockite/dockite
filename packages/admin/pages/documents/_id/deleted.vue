@@ -7,7 +7,7 @@
           {{ documentIdentifier }}
         </h2>
 
-        <document-deleted-actions
+        <document-deleted-actions-dropdown
           v-if="schema"
           :disabled="dirty"
           :document-id="documentId"
@@ -118,14 +118,14 @@ import { Fragment } from 'vue-fragment';
 import { ManyResultSet, AllDocumentRevisionsResultItem } from '../../../common/types';
 
 import Logo from '~/components/base/logo.vue';
-import DocumentDeletedActions from '~/components/documents/deleted-actions.vue';
+import DocumentDeletedActionsDropdown from '~/components/documents/deleted-actions-dropdown.vue';
 import * as auth from '~/store/auth';
 import * as data from '~/store/data';
 import * as document from '~/store/document';
 
 @Component({
   components: {
-    DocumentDeletedActions,
+    DocumentDeletedActionsDropdown,
     Fragment,
     Logo,
   },
