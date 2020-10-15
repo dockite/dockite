@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.27](https://github.com/dockite/dockite/compare/@dockite/field-reference@0.3.0-alpha.26...@dockite/field-reference@0.3.0-alpha.27) (2020-10-15)
+
+
+### Bug Fixes
+
+* **field-reference:** handle empty objects and array constraints ([f156e10](https://github.com/dockite/dockite/commit/f156e10c092d1f06e685b33db01a1744be3a6190))
+
+
+
+
+
 # [0.3.0-alpha.26](https://github.com/dockite/dockite/compare/@dockite/field-reference@0.3.0-alpha.25...@dockite/field-reference@0.3.0-alpha.26) (2020-10-04)
 
 **Note:** Version bump only for package @dockite/field-reference
