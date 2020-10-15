@@ -513,6 +513,10 @@ export default class S3ImageFieldInputComponent extends Vue {
       // this.$emit('input', );
     }
 
+    if (this.settings.required) {
+      this.rules.push(this.getRequiredRule());
+    }
+
     if (this.settings.multiple) {
       if (this.settings.min) {
         this.rules.push(this.getMinRule());
@@ -527,6 +531,14 @@ export default class S3ImageFieldInputComponent extends Vue {
   public handleShowImage(image: S3ImageType): void {
     this.selectedImage = image;
     this.showLightbox = true;
+  }
+
+  getRequiredRule(): object {
+    return {
+      required: true,
+      message: `${this.fieldConfig.title} is required`,
+      trigger: 'blur',
+    };
   }
 
   public getMinRule(): object {
