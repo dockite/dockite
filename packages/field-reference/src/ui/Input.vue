@@ -277,6 +277,8 @@ import { DockiteFieldReferenceEntity, FieldToDisplayItem } from '../types';
 import { SEARCH_DOCUMENTS_QUERY } from './graphql-queries';
 import FilterInput from './components/filter-input.vue';
 
+const FIELD_UNDEFINED = 'FIELD:UNDEFINED';
+
 interface SchemaResults {
   results: Schema[];
 }
@@ -419,20 +421,34 @@ export default class ReferenceFieldInputComponent extends Vue {
 
     if (this.fieldConfig.settings.constraints && this.fieldConfig.settings.constraints.length > 0) {
       // Get the constraints from the field settings and replace the mustache syntax with actual values.
-      const constraints = this.fieldConfig.settings.constraints.map(con => {
+      const constraints: Constraint[] = [];
+
+      this.fieldConfig.settings.constraints.forEach(con => {
         const value = con.value.replace(/{{ (.+) }}/g, (str, match) => {
           const path = match.replace('data.', '');
 
           const data = get(this.formData, path, str);
 
           if (typeof data === 'object' || Array.isArray(data)) {
+            if (Array.isArray(data) && data.length === 0) {
+              return FIELD_UNDEFINED;
+            }
+
+            if (data && Object.keys(data).length === 0) {
+              return FIELD_UNDEFINED;
+            }
+
             return JSON.stringify(data);
           }
 
           return String(data);
         });
 
-        return { ...con, value };
+        if (value === FIELD_UNDEFINED) {
+          return;
+        }
+
+        constraints.push({ ...con, value });
       });
 
       filters.push(...constraints);

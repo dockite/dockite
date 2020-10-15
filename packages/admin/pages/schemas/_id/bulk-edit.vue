@@ -57,6 +57,7 @@
                     v-model="form[field.name]"
                     :bulk-edit-mode="true"
                     :name="field.name"
+                    :errors="validationErrors"
                     :field-config="field"
                     :form-data="form"
                     :schema="schema"
@@ -149,6 +150,8 @@ export default class CreateSchemaDocumentPage extends Vue {
   public showDocumentSelectModal = false;
 
   public localGroups: Record<string, string[]> | null = null;
+
+  public validationErrors: Record<string, string> = {};
 
   @Ref()
   readonly formEl!: Form;
