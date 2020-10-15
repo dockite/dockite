@@ -368,8 +368,10 @@ export class DockiteFieldGroup extends DockiteField {
     return this.handleProcessField(ctx, ProcessMethodType.OUTPUT_RAW);
   }
 
-  public processOutputGraphQL<T extends any>(ctx: FieldContext): Promise<T> {
-    return this.handleProcessField(ctx, ProcessMethodType.OUTPUT_GRAPHQL);
+  public async processOutputGraphQL<T extends any>(ctx: FieldContext): Promise<T> {
+    // return this.handleProcessField(ctx, ProcessMethodType.OUTPUT_GRAPHQL);
+
+    return (ctx.fieldData as any) as T;
   }
 
   public async validateInputRaw(ctx: HookContextWithOldData): Promise<void> {
