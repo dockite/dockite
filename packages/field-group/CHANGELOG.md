@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.47](https://github.com/dockite/dockite/compare/@dockite/field-group@0.4.0-alpha.46...@dockite/field-group@0.4.0-alpha.47) (2020-10-15)
+
+
+### Bug Fixes
+
+* **field-group:** handle processOutputGraphQL double call ([12006f8](https://github.com/dockite/dockite/commit/12006f8922013a656dcef7d5669546b71c001038))
+
+
+
+
+
 # [0.4.0-alpha.46](https://github.com/dockite/dockite/compare/@dockite/field-group@0.4.0-alpha.45...@dockite/field-group@0.4.0-alpha.46) (2020-10-04)
 
 
