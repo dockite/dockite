@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.2.0-alpha.36](https://github.com/dockite/dockite/compare/@dockite/field-slug@0.2.0-alpha.35...@dockite/field-slug@0.2.0-alpha.36) (2020-10-16)
+
+
+### Bug Fixes
+
+* **field-slug:** parent query variable overwriting ([b7caabb](https://github.com/dockite/dockite/commit/b7caabb2997ac89b31b6326428c9e46c7adb6afe))
+
+
+
+
+
 # [0.2.0-alpha.35](https://github.com/dockite/dockite/compare/@dockite/field-slug@0.2.0-alpha.34...@dockite/field-slug@0.2.0-alpha.35) (2020-10-13)
 
 
