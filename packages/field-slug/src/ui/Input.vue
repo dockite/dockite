@@ -13,6 +13,7 @@ import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import slugify from 'slugify';
 
 import { SlugFieldSettings, DockiteFieldSlugEntity } from '../types';
+import { REMOVE_REGEX } from '../constants';
 
 @Component({
   name: 'SlugFieldInputComponent',
@@ -74,7 +75,7 @@ export default class SlugFieldInputComponent extends Vue {
         {
           lower: true,
           replacement: '-',
-          remove: /[*+~.()'"!:@]/g,
+          remove: REMOVE_REGEX,
         },
       );
     }

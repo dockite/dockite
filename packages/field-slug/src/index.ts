@@ -12,6 +12,7 @@ import { Document } from '@dockite/database';
 import slugify from 'slugify';
 
 import { SlugFieldSettings } from './types';
+import { REMOVE_REGEX } from './constants';
 
 const DockiteFieldSlugType = new GraphQLScalarType({
   ...GraphQLString.toConfig(),
@@ -52,9 +53,9 @@ export class DockiteFieldSlug extends DockiteField {
     }
 
     if (settings.parent && parent) {
-      qb.andWhere(`data-> :field ->> 'id' = :documentId`, {
+      qb.andWhere(`data-> :field ->> 'id' = :parentId`, {
         field: settings.parent,
-        documentId: parent.id,
+        parentId: parent.id,
       });
     }
 
@@ -97,10 +98,10 @@ export class DockiteFieldSlug extends DockiteField {
     let slug = ctx.fieldData;
 
     if (slug) {
-      slug = slugify(ctx.fieldData, {
+      slug = slugify(slug, {
         lower: true,
         replacement: '-',
-        remove: /[*+~.()'"!:@]/g,
+        remove: REMOVE_REGEX,
       });
     } else if (
       settings.fieldsToSlugify &&
@@ -111,7 +112,7 @@ export class DockiteFieldSlug extends DockiteField {
         {
           lower: true,
           replacement: '-',
-          remove: /[*+~.()'"!:@]/g,
+          remove: REMOVE_REGEX,
         },
       );
     } else {
@@ -128,8 +129,23 @@ export class DockiteFieldSlug extends DockiteField {
 
     let slug = ctx.fieldData;
 
+    if (
+      !slug &&
+      settings.fieldsToSlugify &&
+      settings.fieldsToSlugify.every(field => !!ctx.data[field])
+    ) {
+      slug = slugify(
+        settings.fieldsToSlugify.map(field => String(ctx.data[field]).trim()).join('-'),
+        {
+          lower: true,
+          replacement: '-',
+          remove: REMOVE_REGEX,
+        },
+      );
+    }
+
     if (slug) {
-      slug = slugify(ctx.fieldData, { lower: true, replacement: '-' });
+      slug = slugify(slug, { lower: true, replacement: '-', remove: REMOVE_REGEX });
 
       const documentId = ctx.document?.id ?? null;
 
@@ -145,7 +161,11 @@ export class DockiteFieldSlug extends DockiteField {
 
           if (count > 0) {
             increment += 1;
-            slug = slugify(`${ctx.fieldData}-${increment}`, { lower: true, replacement: '-' });
+            slug = slugify(`${ctx.fieldData}-${increment}`, {
+              lower: true,
+              replacement: '-',
+              remove: REMOVE_REGEX,
+            });
           } else {
             shouldContinue = false;
           }
