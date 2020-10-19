@@ -368,7 +368,19 @@ export class DocumentResolver {
 
         const hookContext: HookContext = { field, fieldData, data };
 
-        data[field.name] = await field.dockiteField!.processInputRaw(hookContext);
+        data[field.name] = await field.dockiteField!.processInputRaw(hookContext).catch(err => {
+          if (err instanceof DockiteFieldValidationError) {
+            validationErrors[err.path] = err.message;
+
+            if (err.children) {
+              err.children.forEach(e => {
+                validationErrors[e.path] = e.message;
+              });
+            }
+          }
+
+          throw new DocumentValidationError(validationErrors);
+        });
 
         await field.dockiteField!.validateInputRaw(hookContext).catch(err => {
           if (err instanceof DockiteFieldValidationError) {
@@ -473,7 +485,19 @@ export class DocumentResolver {
           path: field.name,
         };
 
-        data[field.name] = await field.dockiteField!.processInputRaw(hookContext);
+        data[field.name] = await field.dockiteField!.processInputRaw(hookContext).catch(err => {
+          if (err instanceof DockiteFieldValidationError) {
+            validationErrors[err.path] = err.message;
+
+            if (err.children) {
+              err.children.forEach(e => {
+                validationErrors[e.path] = e.message;
+              });
+            }
+          }
+
+          throw new DocumentValidationError(validationErrors);
+        });
 
         await field.dockiteField!.validateInputRaw(hookContext).catch(err => {
           if (err instanceof DockiteFieldValidationError) {
@@ -584,7 +608,19 @@ export class DocumentResolver {
               document,
             };
 
-            data[field.name] = await field.dockiteField!.processInputRaw(hookContext);
+            data[field.name] = await field.dockiteField!.processInputRaw(hookContext).catch(err => {
+              if (err instanceof DockiteFieldValidationError) {
+                validationErrors[err.path] = err.message;
+
+                if (err.children) {
+                  err.children.forEach(e => {
+                    validationErrors[e.path] = e.message;
+                  });
+                }
+              }
+
+              throw new DocumentValidationError(validationErrors);
+            });
 
             await field.dockiteField!.validateInputRaw(hookContext).catch(err => {
               if (err instanceof DockiteFieldValidationError) {

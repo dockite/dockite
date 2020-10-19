@@ -25,6 +25,14 @@
       </div>
     </el-form-item>
 
+    <el-form-item v-if="settings.unique" label="Auto Increment">
+      <el-switch v-model="settings.autoIncrement" />
+
+      <div class="el-form-item__description">
+        Enables the addition of "-[digit]" when a slug is not unique.
+      </div>
+    </el-form-item>
+
     <el-form-item label="Parent">
       <el-select v-model="settings.parent" clearable>
         <el-option
@@ -82,9 +90,7 @@ export default class SlugFieldSettingsComponent extends Vue {
   }
 
   beforeMount() {
-    if (Object.keys(this.settings).length === 0) {
-      this.settings = { ...DockiteFieldSlug.defaultOptions };
-    }
+    this.settings = { ...DockiteFieldSlug.defaultOptions, ...this.settings };
   }
 }
 </script>

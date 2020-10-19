@@ -1,6 +1,6 @@
 <template>
   <el-form-item :label="fieldConfig.title" :prop="name" :rules="rules" class="dockite-field-slug">
-    <el-input v-model="fieldData" />
+    <el-input v-model="fieldData" @blur="freezeSlug = true" />
 
     <div class="el-form-item__description">
       {{ fieldConfig.description }}
@@ -59,26 +59,35 @@ export default class SlugFieldInputComponent extends Vue {
     }
   }
 
-  @Watch('formData', { deep: true })
-  handleFormDataChange() {
-    if (this.fieldData === '') {
+  get slugifyFormFields(): Record<string, any> {
+    return (this.settings.fieldsToSlugify || []).reduce(
+      (acc, curr) => ({ ...acc, [curr]: this.formData[curr] }),
+      {},
+    );
+  }
+
+  @Watch('slugifyFormFields', { deep: true })
+  handleSlugifyFormFieldsChange() {
+    if (this.fieldData === '' || this.fieldData === null) {
       this.freezeSlug = false;
     }
 
-    if (
-      this.settings.fieldsToSlugify &&
-      this.settings.fieldsToSlugify.every(field => this.formData[field]) &&
-      !this.freezeSlug
-    ) {
-      this.fieldData = slugify(
-        this.settings.fieldsToSlugify.map(field => String(this.formData[field]).trim()).join('-'),
-        {
-          lower: true,
-          replacement: '-',
-          remove: REMOVE_REGEX,
-        },
-      );
-    }
+    this.$nextTick(() => {
+      if (
+        this.settings.fieldsToSlugify &&
+        this.settings.fieldsToSlugify.every(field => this.formData[field]) &&
+        !this.freezeSlug
+      ) {
+        this.fieldData = slugify(
+          this.settings.fieldsToSlugify.map(field => String(this.formData[field]).trim()).join('-'),
+          {
+            lower: true,
+            replacement: '-',
+            remove: REMOVE_REGEX,
+          },
+        );
+      }
+    });
   }
 }
 </script>

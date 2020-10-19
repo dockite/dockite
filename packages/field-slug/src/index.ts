@@ -1,18 +1,12 @@
 /* eslint-disable no-await-in-loop */
-import { DockiteField } from '@dockite/field';
-import {
-  GraphQLInputType,
-  GraphQLOutputType,
-  GraphQLScalarType,
-  GraphQLString,
-  GraphQLError,
-} from 'graphql';
-import { HookContext, HookContextWithOldData } from '@dockite/types';
 import { Document } from '@dockite/database';
+import { DockiteField } from '@dockite/field';
+import { DockiteFieldValidationError, HookContext } from '@dockite/types';
+import { GraphQLInputType, GraphQLOutputType, GraphQLScalarType, GraphQLString } from 'graphql';
 import slugify from 'slugify';
 
-import { SlugFieldSettings } from './types';
 import { REMOVE_REGEX } from './constants';
+import { SlugFieldSettings } from './types';
 
 const DockiteFieldSlugType = new GraphQLScalarType({
   ...GraphQLString.toConfig(),
@@ -30,6 +24,7 @@ export class DockiteFieldSlug extends DockiteField {
     fieldsToSlugify: [],
     parent: null,
     unique: true,
+    autoIncrement: true,
   };
 
   private async getSlugCount(
@@ -70,61 +65,11 @@ export class DockiteFieldSlug extends DockiteField {
     return DockiteFieldSlugType;
   }
 
-  public async validateInputGraphQL(ctx: HookContextWithOldData): Promise<void> {
-    const settings = this.schemaField.settings as SlugFieldSettings;
-
-    let slugCount = 0;
-
-    if (settings.unique) {
-      if (settings.parent && ctx.data[settings.parent]) {
-        slugCount = await this.getSlugCount(
-          ctx.fieldData,
-          ctx.document?.id ?? null,
-          ctx.data[settings.parent],
-        );
-      } else {
-        slugCount = await this.getSlugCount(ctx.fieldData, ctx.document?.id ?? null);
-      }
-    }
-
-    if (slugCount > 0) {
-      throw new GraphQLError(`${this.schemaField.name}: slug provided has already been used`);
-    }
-  }
-
-  public async processInputGraphQL<T>(ctx: HookContext): Promise<T> {
-    const settings = this.schemaField.settings as SlugFieldSettings;
-
-    let slug = ctx.fieldData;
-
-    if (slug) {
-      slug = slugify(slug, {
-        lower: true,
-        replacement: '-',
-        remove: REMOVE_REGEX,
-      });
-    } else if (
-      settings.fieldsToSlugify &&
-      settings.fieldsToSlugify.every(field => !!ctx.data[field])
-    ) {
-      slug = slugify(
-        settings.fieldsToSlugify.map(field => String(ctx.data[field]).trim()).join('-'),
-        {
-          lower: true,
-          replacement: '-',
-          remove: REMOVE_REGEX,
-        },
-      );
-    } else {
-      slug = null;
-    }
-
-    return (slug as any) as T;
-  }
-
-  public async processInputRaw<T>(ctx: HookContext): Promise<T> {
+  public async processInput<T>(ctx: HookContext): Promise<T> {
     let count;
+
     let increment = 0;
+
     const settings = this.schemaField.settings as SlugFieldSettings;
 
     let slug = ctx.fieldData;
@@ -157,6 +102,16 @@ export class DockiteFieldSlug extends DockiteField {
             count = await this.getSlugCount(slug, documentId, ctx.data[settings.parent]);
           } else {
             count = await this.getSlugCount(slug, documentId);
+          }
+
+          if (count > 0 && settings.autoIncrement === false) {
+            shouldContinue = false;
+
+            throw new DockiteFieldValidationError(
+              'SLUG_USED',
+              `The slug for ${this.schemaField.title} has already been used.`,
+              ctx.path || this.schemaField.name,
+            );
           }
 
           if (count > 0) {
