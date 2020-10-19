@@ -151,7 +151,6 @@ export default class CreateWebhookPage extends Vue {
       const schemaName = schema.name.toLowerCase();
 
       actions.push(
-        `schema:${schemaName}:create`,
         `schema:${schemaName}:update`,
         `schema:${schemaName}:delete`,
         `document:${schemaName}:create`,
@@ -164,7 +163,6 @@ export default class CreateWebhookPage extends Vue {
       const schemaName = schema.name.toLowerCase();
 
       actions.push(
-        `schema:${schemaName}:create`,
         `schema:${schemaName}:update`,
         `schema:${schemaName}:delete`,
         `document:${schemaName}:create`,
