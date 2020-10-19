@@ -13,7 +13,7 @@
 import { Fragment } from 'vue-fragment';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 
-import { DateFieldSettings } from '../../lib/types';
+import { DateFieldSettings } from '../types';
 import { DockiteFieldDatetime } from '..';
 
 @Component({

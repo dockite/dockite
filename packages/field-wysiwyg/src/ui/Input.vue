@@ -16,8 +16,12 @@
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import * as ElementTipTap from 'element-tiptap';
 
-import { WysiwygFieldSettings, DockiteFieldWysiwygEntity, AvailableExtensions } from '../types';
-import { AvailableExtensionItem } from '../../lib/types';
+import {
+  WysiwygFieldSettings,
+  DockiteFieldWysiwygEntity,
+  AvailableExtensions,
+  AvailableExtensionItem,
+} from '../types';
 
 import 'element-tiptap/lib/index.css';
 

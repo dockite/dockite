@@ -10,6 +10,7 @@
         </el-alert>
         <el-form
           ref="form"
+          v-loading="loading > 0"
           :model="loginForm"
           :rules="loginFormRules"
           label-position="top"
@@ -75,9 +76,13 @@ export default class LoginPage extends Vue {
   readonly email!: Input;
 
   async fetch(): Promise<void> {
+    this.loading += 1;
+
     const { data } = await this.$apolloClient.query<NewInstallationQueryResponse>({
       query: NewInstallationQuery,
     });
+
+    this.loading -= 1;
 
     this.newInstallation = data.newInstallation;
   }
