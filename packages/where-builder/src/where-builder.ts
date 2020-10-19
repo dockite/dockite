@@ -70,8 +70,12 @@ const ConstraintHandlerMap: Record<ConstraintOperator, ConstraintHandlerFn> = {
 
     const value = unsafeStringToNativeType(constraint.value);
 
+    if (!Array.isArray(value) || value.length === 0) {
+      return;
+    }
+
     qb.andWhere(`${name} IN (:...${param})`, {
-      [param]: (Array.isArray(value) && value) || [],
+      [param]: value,
     });
   },
 
