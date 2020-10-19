@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.108](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.107...@dockite/admin@0.4.0-alpha.108) (2020-10-19)
+
+
+### Bug Fixes
+
+* resolve incorrect auto-imports ([ac04396](https://github.com/dockite/dockite/commit/ac04396303f2b3cdef635636973b5efcb934d771))
+
+
+
+
+
 # [0.4.0-alpha.107](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.106...@dockite/admin@0.4.0-alpha.107) (2020-10-15)
 
 

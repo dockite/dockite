@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.17](https://github.com/dockite/dockite/compare/@dockite/field-datetime@0.3.0-alpha.16...@dockite/field-datetime@0.3.0-alpha.17) (2020-10-19)
+
+
+### Bug Fixes
+
+* resolve incorrect auto-imports ([ac04396](https://github.com/dockite/dockite/commit/ac04396303f2b3cdef635636973b5efcb934d771))
+
+
+
+
+
 # [0.3.0-alpha.16](https://github.com/dockite/dockite/compare/@dockite/field-datetime@0.3.0-alpha.15...@dockite/field-datetime@0.3.0-alpha.16) (2020-10-04)
 
 **Note:** Version bump only for package @dockite/field-datetime

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.28](https://github.com/dockite/dockite/compare/@dockite/field-wysiwyg@0.3.0-alpha.27...@dockite/field-wysiwyg@0.3.0-alpha.28) (2020-10-19)
+
+
+### Bug Fixes
+
+* resolve incorrect auto-imports ([ac04396](https://github.com/dockite/dockite/commit/ac04396303f2b3cdef635636973b5efcb934d771))
+
+
+
+
+
 # [0.3.0-alpha.27](https://github.com/dockite/dockite/compare/@dockite/field-wysiwyg@0.3.0-alpha.26...@dockite/field-wysiwyg@0.3.0-alpha.27) (2020-10-04)
 
 **Note:** Version bump only for package @dockite/field-wysiwyg
