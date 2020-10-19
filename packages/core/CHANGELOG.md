@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.89](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.88...@dockite/core@0.4.0-alpha.89) (2020-10-19)
+
+
+### Features
+
+* **field-slug:** add autoincrement option ([94927b3](https://github.com/dockite/dockite/commit/94927b3a5a8ed9b1e431de8859b02a8049188e4b))
+
+
+
+
+
 # [0.4.0-alpha.88](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.87...@dockite/core@0.4.0-alpha.88) (2020-10-13)
 
 

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.2.0-alpha.35](https://github.com/dockite/dockite/compare/@dockite/where-builder@0.2.0-alpha.34...@dockite/where-builder@0.2.0-alpha.35) (2020-10-19)
+
+
+### Bug Fixes
+
+* **where-builder:** silently ignore empty $in constraints ([0aefcd4](https://github.com/dockite/dockite/commit/0aefcd495528e02d48b96c4d65ab3e9d3ef4bef5))
+
+
+
+
+
 # [0.2.0-alpha.34](https://github.com/dockite/dockite/compare/@dockite/where-builder@0.2.0-alpha.33...@dockite/where-builder@0.2.0-alpha.34) (2020-10-04)
 
 **Note:** Version bump only for package @dockite/where-builder

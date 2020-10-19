@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.109](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.108...@dockite/admin@0.4.0-alpha.109) (2020-10-19)
+
+
+### Bug Fixes
+
+* **admin:** remove schema:create webhooks ([74fa814](https://github.com/dockite/dockite/commit/74fa814ba2f84a2f31ef6e8efb814bab408ef2b0))
+
+
+
+
+
 # [0.4.0-alpha.108](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.107...@dockite/admin@0.4.0-alpha.108) (2020-10-19)
 
 
