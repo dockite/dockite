@@ -8,7 +8,7 @@
         </h2>
 
         <document-actions-dropdown
-          v-if="schema"
+          v-if="schema && document"
           :disabled="dirty"
           :document="document"
           :document-id="documentId"

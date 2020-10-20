@@ -8,9 +8,10 @@
         </h2>
 
         <document-deleted-actions-dropdown
-          v-if="schema"
+          v-if="schema && document"
           :disabled="dirty"
           :document-id="documentId"
+          :document="document"
           :schema="schema"
           :handle-save-and-publish="submit"
           :handle-restore-document="handleRestoreDocument"
