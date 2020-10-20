@@ -8,10 +8,10 @@
       default-first-option
     >
       <el-option
-        v-for="(value, label) in settings.options"
-        :key="value.value"
-        :value="value.value"
-        :label="label"
+        v-for="option in settings.options"
+        :key="option.value"
+        :value="option.value"
+        :label="option.label"
       />
     </el-select>
     <div class="el-form-item__description">
@@ -27,7 +27,7 @@ import { cloneDeep } from 'lodash';
 import {
   DockiteFieldConditionalSelectEntity,
   ConditionalSelectFieldSettings,
-  ConditionalSelectFieldOptionValue,
+  ConditionalSelectFieldOption,
 } from '../types';
 
 @Component({
@@ -68,7 +68,7 @@ export default class ConditionalSelectFieldInputComponent extends Vue {
     return this.fieldConfig.settings;
   }
 
-  get currentHideConfig(): Omit<ConditionalSelectFieldOptionValue, 'value'> {
+  get currentHideConfig(): Omit<ConditionalSelectFieldOption, 'label' | 'value'> {
     if (!this.fieldData) {
       return {
         fieldsToHide: [],
@@ -76,9 +76,9 @@ export default class ConditionalSelectFieldInputComponent extends Vue {
       };
     }
 
-    const currentSelection = Object.values(this.settings.options).find(
-      x => x.value === this.fieldData,
-    );
+    const currentSelection = this.settings.options.find(x => x.value === this.fieldData);
+
+    console.log({ currentSelection });
 
     if (!currentSelection) {
       return {
@@ -131,6 +131,7 @@ export default class ConditionalSelectFieldInputComponent extends Vue {
 
   @Watch('fieldData', { immediate: true })
   public handleFieldDataChange(newValue: string | null) {
+    console.log(this.fieldData);
     if (!this.bulkEditMode) {
       if (newValue) {
         this.$emit('update:groups', cloneDeep(this.groupsBackup));

@@ -27,7 +27,7 @@
         <el-table-column prop="value" label="Value" />
         <el-table-column label="Action">
           <template slot-scope="scope">
-            <el-button type="text" size="small" @click="handleRemoveOption(scope.row.key)">
+            <el-button type="text" size="small" @click="handleRemoveOption(scope.$index)">
               <i class="el-icon-delete" />
             </el-button>
           </template>
@@ -95,29 +95,27 @@ export default class SelectFieldSettingsComponent extends Vue {
       return [];
     }
 
-    return Object.entries(this.settings.options).map(i => {
-      const [key, value] = i;
-
-      return { key, value };
+    return this.settings.options.map(x => {
+      return {
+        key: x.label,
+        value: x.value,
+      };
     });
   }
 
   public handleAddOption(): void {
     this.error = '';
 
-    if (this.settings.options[this.optionLabel]) {
+    if (this.settings.options.find(x => x.label === this.optionLabel)) {
       this.error = 'Label has already been used.';
       return;
     }
 
     if (this.optionLabel !== '' && this.optionValue !== '') {
-      this.settings = {
-        ...this.settings,
-        options: {
-          ...this.settings.options,
-          [this.optionLabel]: this.optionValue,
-        },
-      };
+      this.settings.options.push({
+        label: this.optionLabel,
+        value: this.optionValue,
+      });
 
       this.optionLabel = '';
       this.optionValue = '';
@@ -126,14 +124,12 @@ export default class SelectFieldSettingsComponent extends Vue {
     }
   }
 
-  public handleRemoveOption(label: string): void {
-    Vue.delete(this.settings.options, label);
+  public handleRemoveOption(index: number): void {
+    this.settings.options.splice(index, 1);
   }
 
   beforeMount(): void {
-    if (Object.keys(this.settings).length === 0) {
-      this.settings = { ...DockiteFieldSelect.defaultOptions };
-    }
+    this.settings = { ...DockiteFieldSelect.defaultOptions, ...this.settings };
   }
 }
 </script>

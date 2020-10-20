@@ -26,7 +26,7 @@ export class DockiteFieldConditionalSelect extends DockiteField {
   public static defaultOptions: ConditionalSelectFieldSettings = {
     required: false,
     multiple: false,
-    options: {},
+    options: [],
   };
 
   public async inputType(): Promise<GraphQLInputType> {
@@ -50,12 +50,7 @@ export class DockiteFieldConditionalSelect extends DockiteField {
       input = [input];
     }
 
-    const invalid = input.some(
-      i =>
-        !Object.values(settings.options)
-          .map(x => x.value)
-          .includes(i),
-    );
+    const invalid = input.some(i => !settings.options.map(x => x.value).includes(i));
 
     if (invalid) {
       throw new Error(`${this.schemaField.name} contains invalid items`);

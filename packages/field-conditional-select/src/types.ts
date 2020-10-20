@@ -1,7 +1,8 @@
 import { BaseField } from '@dockite/database';
 
-export interface ConditionalSelectFieldOptionValue {
-  value: string | null;
+export interface ConditionalSelectFieldOption {
+  label: string;
+  value: string;
   fieldsToHide: string[];
   groupsToHide: string[];
 }
@@ -9,7 +10,7 @@ export interface ConditionalSelectFieldOptionValue {
 export interface ConditionalSelectFieldSettings {
   required: boolean;
   multiple: boolean;
-  options: Record<string, ConditionalSelectFieldOptionValue>;
+  options: ConditionalSelectFieldOption[];
 }
 
 export interface DockiteFieldConditionalSelectEntity extends BaseField {

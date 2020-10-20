@@ -8,10 +8,10 @@
       default-first-option
     >
       <el-option
-        v-for="(value, label) in settings.options"
-        :key="value"
-        :value="value"
-        :label="label"
+        v-for="option in settings.options"
+        :key="option.value"
+        :value="option.value"
+        :label="option.label"
       />
     </el-select>
     <div class="el-form-item__description">

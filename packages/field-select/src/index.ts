@@ -26,7 +26,7 @@ export class DockiteFieldSelect extends DockiteField {
   public static defaultOptions: SelectFieldSettings = {
     required: false,
     multiple: false,
-    options: {},
+    options: [],
   };
 
   public async inputType(): Promise<GraphQLInputType> {
@@ -54,7 +54,7 @@ export class DockiteFieldSelect extends DockiteField {
       return;
     }
 
-    const invalid = input.some(i => !Object.values(this.schemaField.settings.options).includes(i));
+    const invalid = input.some(i => !settings.options.map(x => x.value).includes(i));
 
     if (invalid) {
       throw new DockiteFieldValidationError(

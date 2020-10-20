@@ -1,9 +1,14 @@
 import { BaseField } from '@dockite/database';
 
+export interface SelectFieldOptionItem {
+  label: string;
+  value: string;
+}
+
 export interface SelectFieldSettings {
   required: boolean;
   multiple: boolean;
-  options: Record<string, string>;
+  options: SelectFieldOptionItem[];
 }
 
 export interface DockiteFieldSelectEntity extends BaseField {

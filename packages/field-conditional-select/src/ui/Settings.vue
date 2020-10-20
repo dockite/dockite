@@ -27,10 +27,10 @@
         </el-table-column>
       </el-table>
 
-      <el-input v-model="optionLabel" class="mb-2" placeholder="Label" />
-      <el-input v-model="optionValue.value" class="mb-2" placeholder="Value" />
+      <el-input v-model="optionItem.label" class="mb-2" placeholder="Label" />
+      <el-input v-model="optionItem.value" class="mb-2" placeholder="Value" />
       <el-select
-        v-model="optionValue.fieldsToHide"
+        v-model="optionItem.fieldsToHide"
         class="w-full mb-2"
         placeholder="Fields to Hide"
         multiple
@@ -44,7 +44,7 @@
         />
       </el-select>
       <el-select
-        v-model="optionValue.groupsToHide"
+        v-model="optionItem.groupsToHide"
         class="w-full mb-2"
         placeholder="Groups to Hide"
         multiple
@@ -70,7 +70,7 @@ import { Fragment } from 'vue-fragment';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { Field } from '@dockite/database';
 
-import { ConditionalSelectFieldSettings, ConditionalSelectFieldOptionValue } from '../types';
+import { ConditionalSelectFieldSettings, ConditionalSelectFieldOption } from '../types';
 import { DockiteFieldConditionalSelect } from '..';
 
 interface KV {
@@ -99,10 +99,9 @@ export default class SelectFieldSettingsComponent extends Vue {
   @Prop({ required: true })
   readonly fields!: Field[];
 
-  public optionLabel = '';
-
-  public optionValue: ConditionalSelectFieldOptionValue = {
-    value: null,
+  public optionItem: ConditionalSelectFieldOption = {
+    label: '',
+    value: '',
     fieldsToHide: [],
     groupsToHide: [],
   };
@@ -132,14 +131,12 @@ export default class SelectFieldSettingsComponent extends Vue {
       return [];
     }
 
-    return Object.entries(this.settings.options).map(i => {
-      const [key, value] = i;
-
+    return this.settings.options.map(i => {
       return {
-        key,
-        value: value.value,
-        fieldsToHide: value.fieldsToHide.join(', '),
-        groupsToHide: value.groupsToHide.join(', '),
+        key: i.label,
+        value: i.value,
+        fieldsToHide: i.fieldsToHide.join(', '),
+        groupsToHide: i.groupsToHide.join(', '),
       };
     });
   }
@@ -147,23 +144,17 @@ export default class SelectFieldSettingsComponent extends Vue {
   public handleAddOption() {
     this.error = '';
 
-    if (this.settings.options[this.optionLabel]) {
+    if (this.settings.options.find(x => x.label === this.optionItem.label)) {
       this.error = 'Label has already been used.';
       return;
     }
 
-    if (this.optionLabel !== '' && this.optionValue.value) {
-      this.settings = {
-        ...this.settings,
-        options: {
-          ...this.settings.options,
-          [this.optionLabel]: this.optionValue,
-        },
-      };
+    if (this.optionItem.label !== '' && this.optionItem.value) {
+      this.settings.options.push(this.optionItem);
 
-      this.optionLabel = '';
-      this.optionValue = {
-        value: null,
+      this.optionItem = {
+        label: '',
+        value: '',
         fieldsToHide: [],
         groupsToHide: [],
       };
