@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.33](https://github.com/dockite/dockite/compare/@dockite/field-select@0.3.0-alpha.32...@dockite/field-select@0.3.0-alpha.33) (2020-10-20)
+
+
+### Features
+
+* **field-*select:** update options shape for ordered values ([dd113bb](https://github.com/dockite/dockite/commit/dd113bb1b801eceb03457cb9967686142ca5018d))
+
+
+
+
+
 # [0.3.0-alpha.32](https://github.com/dockite/dockite/compare/@dockite/field-select@0.3.0-alpha.31...@dockite/field-select@0.3.0-alpha.32) (2020-10-04)
 
 **Note:** Version bump only for package @dockite/field-select

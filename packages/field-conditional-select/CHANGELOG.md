@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.1.0-alpha.26](https://github.com/dockite/dockite/compare/@dockite/field-conditional-select@0.1.0-alpha.25...@dockite/field-conditional-select@0.1.0-alpha.26) (2020-10-20)
+
+
+### Features
+
+* **field-*select:** update options shape for ordered values ([dd113bb](https://github.com/dockite/dockite/commit/dd113bb1b801eceb03457cb9967686142ca5018d))
+
+
+
+
+
 # [0.1.0-alpha.25](https://github.com/dockite/dockite/compare/@dockite/field-conditional-select@0.1.0-alpha.24...@dockite/field-conditional-select@0.1.0-alpha.25) (2020-10-04)
 
 **Note:** Version bump only for package @dockite/field-conditional-select

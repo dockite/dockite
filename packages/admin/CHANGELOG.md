@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.110](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.109...@dockite/admin@0.4.0-alpha.110) (2020-10-20)
+
+
+### Bug Fixes
+
+* **admin:** provide document to actions dropdown ([9bef42f](https://github.com/dockite/dockite/commit/9bef42fba33bc46bbbf91886eba9afe2a9c8eb4d))
+
+
+
+
+
 # [0.4.0-alpha.109](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.108...@dockite/admin@0.4.0-alpha.109) (2020-10-19)
 
 
