@@ -1,6 +1,16 @@
 <template>
-  <el-form-item :label="fieldConfig.title" :prop="name" :rules="rules" class="dockite-field-slug">
+  <el-form-item
+    :label="fieldConfig.title"
+    :prop="name"
+    :rules="rules"
+    class="dockite-field-slug"
+    :class="{ 'is-error': errors[name] }"
+  >
     <el-input v-model="fieldData" @blur="freezeSlug = true" />
+
+    <div v-if="errors[name]" class="el-form-item__error">
+      {{ errors[name] }}
+    </div>
 
     <div class="el-form-item__description">
       {{ fieldConfig.description }}
@@ -30,6 +40,9 @@ export default class SlugFieldInputComponent extends Vue {
 
   @Prop({ required: true })
   readonly fieldConfig!: DockiteFieldSlugEntity;
+
+  @Prop({ required: true, type: Object })
+  readonly errors!: Record<string, string[]>;
 
   public freezeSlug = true;
 

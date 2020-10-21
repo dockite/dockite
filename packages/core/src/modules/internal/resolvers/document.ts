@@ -1,10 +1,11 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Document, DocumentRevision, Schema, SearchEngineRepository } from '@dockite/database';
-import { HookContext, HookContextWithOldData, DockiteFieldValidationError } from '@dockite/types';
+import { DockiteFieldValidationError, HookContextWithOldData } from '@dockite/types';
 import { QueryBuilder, WhereBuilder, WhereBuilderInputType } from '@dockite/where-builder';
 import GraphQLJSON from 'graphql-type-json';
 import { cloneDeep } from 'lodash';
+import format from 'pg-format';
 import {
   Arg,
   Ctx,
@@ -17,13 +18,12 @@ import {
   Resolver,
 } from 'type-graphql';
 import { getCustomRepository, getManager, getRepository } from 'typeorm';
-import format from 'pg-format';
 
 import { Authenticated, Authorized } from '../../../common/decorators';
 import { GlobalContext } from '../../../common/types';
+import { DocumentValidationError } from '../../../errors/validation';
 import { afterRemove, afterUpdate } from '../../../subscribers';
 import { strToColumnPath } from '../../../utils';
-import { DocumentValidationError } from '../../../errors/validation';
 
 import { SortInputType } from './inputs/sort';
 
@@ -353,8 +353,6 @@ export class DocumentResolver {
     const documentRepository = getRepository(Document);
     const schemaRepository = getRepository(Schema);
 
-    const validationErrors: Record<string, string> = {};
-
     const schema = await schemaRepository.findOneOrFail({
       where: { id: schemaId, deletedAt: null },
       relations: ['fields'],
@@ -362,61 +360,15 @@ export class DocumentResolver {
 
     const { id: userId } = ctx.user!; // eslint-disable-line
 
-    await Promise.all(
-      schema.fields.map(async field => {
-        const fieldData = data[field.name] ?? null;
+    const input = { ...this.makeInitialData(schema), ...data };
 
-        const hookContext: HookContext = { field, fieldData, data };
-
-        data[field.name] = await field.dockiteField!.processInputRaw(hookContext).catch(err => {
-          if (err instanceof DockiteFieldValidationError) {
-            validationErrors[err.path] = err.message;
-
-            if (err.children) {
-              err.children.forEach(e => {
-                validationErrors[e.path] = e.message;
-              });
-            }
-          }
-
-          throw new DocumentValidationError(validationErrors);
-        });
-
-        await field.dockiteField!.validateInputRaw(hookContext).catch(err => {
-          if (err instanceof DockiteFieldValidationError) {
-            validationErrors[err.path] = err.message;
-
-            if (err.children) {
-              err.children.forEach(e => {
-                validationErrors[e.path] = e.message;
-              });
-            }
-          }
-        });
-
-        await field.dockiteField!.onCreate(hookContext).catch(err => {
-          if (err instanceof DockiteFieldValidationError) {
-            validationErrors[err.path] = err.message;
-
-            if (err.children) {
-              err.children.forEach(e => {
-                validationErrors[e.path] = e.message;
-              });
-            }
-          }
-        });
-      }),
-    );
-
-    if (Object.keys(validationErrors).length > 0) {
-      throw new DocumentValidationError(validationErrors);
-    }
-
-    const initialData = this.makeInitialData(schema);
+    await this.callLifeCycleHooks(schema, input, 'processInputRaw', true);
+    await this.callLifeCycleHooks(schema, input, 'validateInputRaw');
+    await this.callLifeCycleHooks(schema, input, 'onCreate');
 
     const document = documentRepository.create({
       locale,
-      data: { ...initialData, ...data },
+      data: input,
       schemaId,
       schema,
       releaseId,
@@ -465,6 +417,7 @@ export class DocumentResolver {
     const { schema } = document;
 
     const oldData = cloneDeep(document.data);
+
     const revision = revisionRepository.create({
       documentId: document.id,
       data: cloneDeep(document.data),
@@ -472,58 +425,9 @@ export class DocumentResolver {
       userId: document.userId ?? '',
     });
 
-    await Promise.all(
-      schema.fields.map(async field => {
-        const fieldData = data[field.name] ?? null;
-
-        const hookContext: HookContextWithOldData = {
-          field,
-          fieldData,
-          data,
-          oldData,
-          document,
-          path: field.name,
-        };
-
-        data[field.name] = await field.dockiteField!.processInputRaw(hookContext).catch(err => {
-          if (err instanceof DockiteFieldValidationError) {
-            validationErrors[err.path] = err.message;
-
-            if (err.children) {
-              err.children.forEach(e => {
-                validationErrors[e.path] = e.message;
-              });
-            }
-          }
-
-          throw new DocumentValidationError(validationErrors);
-        });
-
-        await field.dockiteField!.validateInputRaw(hookContext).catch(err => {
-          if (err instanceof DockiteFieldValidationError) {
-            validationErrors[err.path] = err.message;
-
-            if (err.children) {
-              err.children.forEach(e => {
-                validationErrors[e.path] = e.message;
-              });
-            }
-          }
-        });
-
-        await field.dockiteField!.onUpdate(hookContext).catch(err => {
-          if (err instanceof DockiteFieldValidationError) {
-            validationErrors[err.path] = err.message;
-
-            if (err.children) {
-              err.children.forEach(e => {
-                validationErrors[e.path] = e.message;
-              });
-            }
-          }
-        });
-      }),
-    );
+    await this.callLifeCycleHooks(schema, data, 'processInputRaw', true, document, oldData);
+    await this.callLifeCycleHooks(schema, data, 'validateInputRaw', false, document, oldData);
+    await this.callLifeCycleHooks(schema, data, 'onUpdate', false, document, oldData);
 
     if (Object.keys(validationErrors).length > 0) {
       throw new DocumentValidationError(validationErrors);
@@ -556,8 +460,6 @@ export class DocumentResolver {
   ): Promise<Document[] | null> {
     const documentRepository = getRepository(Document);
     const revisionRepository = getRepository(DocumentRevision);
-
-    const validationErrors: Record<string, string> = {};
 
     const { id: userId } = ctx.user!; // eslint-disable-line
 
@@ -596,57 +498,9 @@ export class DocumentResolver {
           userId: document.userId ?? '',
         });
 
-        await Promise.all(
-          schema.fields.map(async field => {
-            const fieldData = data[field.name] ?? null;
-
-            const hookContext: HookContextWithOldData = {
-              field,
-              fieldData,
-              data,
-              oldData,
-              document,
-            };
-
-            data[field.name] = await field.dockiteField!.processInputRaw(hookContext).catch(err => {
-              if (err instanceof DockiteFieldValidationError) {
-                validationErrors[err.path] = err.message;
-
-                if (err.children) {
-                  err.children.forEach(e => {
-                    validationErrors[e.path] = e.message;
-                  });
-                }
-              }
-
-              throw new DocumentValidationError(validationErrors);
-            });
-
-            await field.dockiteField!.validateInputRaw(hookContext).catch(err => {
-              if (err instanceof DockiteFieldValidationError) {
-                validationErrors[err.path] = err.message;
-
-                if (err.children) {
-                  err.children.forEach(e => {
-                    validationErrors[e.path] = e.message;
-                  });
-                }
-              }
-            });
-
-            await field.dockiteField!.onUpdate(hookContext).catch(err => {
-              if (err instanceof DockiteFieldValidationError) {
-                validationErrors[err.path] = err.message;
-
-                if (err.children) {
-                  err.children.forEach(e => {
-                    validationErrors[e.path] = e.message;
-                  });
-                }
-              }
-            });
-          }),
-        );
+        await this.callLifeCycleHooks(schema, data, 'processInputRaw', true, document, oldData);
+        await this.callLifeCycleHooks(schema, data, 'validateInputRaw', false, document, oldData);
+        await this.callLifeCycleHooks(schema, data, 'onUpdate', false, document, oldData);
 
         document.data = { ...document.data, ...data };
 
@@ -729,27 +583,9 @@ export class DocumentResolver {
       const schema = await schemaRepository.findOneOrFail(schemaId, { relations: ['fields'] });
 
       // Fire the update hooks for each field
-      await Promise.all(
-        schema.fields.map(async field => {
-          if (!data[field.name]) {
-            return;
-          }
-
-          const fieldData = data[field.name] ?? null;
-
-          const hookContext: HookContextWithOldData = {
-            field,
-            fieldData,
-            data,
-          };
-
-          data[field.name] = await field.dockiteField!.processInputRaw(hookContext);
-
-          await field.dockiteField!.validateInputRaw(hookContext);
-
-          await field.dockiteField!.onUpdate(hookContext);
-        }),
-      );
+      await this.callLifeCycleHooks(schema, data, 'processInputRaw', true);
+      await this.callLifeCycleHooks(schema, data, 'validateInputRaw');
+      await this.callLifeCycleHooks(schema, data, 'onCreate');
 
       // Create a collection of params for the following query
       const params: any[] = [schemaId];
@@ -907,6 +743,62 @@ export class DocumentResolver {
             : curr.dockiteField?.defaultValue(),
       }),
       {},
+    );
+  }
+
+  private async callLifeCycleHooks(
+    schema: Schema,
+    data: Record<string, any>,
+    hook:
+      | 'processInputRaw'
+      | 'onCreate'
+      | 'onUpdate'
+      | 'onSoftDelete'
+      | 'onPermanentDelete'
+      | 'validateInputRaw',
+    mutates = false,
+    document?: Document,
+    oldData?: Record<string, any>,
+  ): Promise<void> {
+    const validationErrors: Record<string, string> = {};
+
+    await Promise.all(
+      schema.fields.map(async field => {
+        if (!field.dockiteField) {
+          throw new Error(`dockiteField failed to map for ${field.name} of ${schema.name}`);
+        }
+
+        const fieldData = data[field.name] ?? null;
+
+        const hookContext: HookContextWithOldData = {
+          field,
+          fieldData,
+          data,
+          oldData,
+          document,
+          path: field.name,
+        };
+
+        try {
+          if (mutates) {
+            data[field.name] = await field.dockiteField[hook](hookContext);
+          } else {
+            await field.dockiteField[hook](hookContext);
+          }
+        } catch (err) {
+          if (err instanceof DockiteFieldValidationError) {
+            validationErrors[err.path] = err.message;
+
+            if (err.children) {
+              err.children.forEach(e => {
+                validationErrors[e.path] = e.message;
+              });
+            }
+
+            throw new DocumentValidationError(validationErrors);
+          }
+        }
+      }),
     );
   }
 }

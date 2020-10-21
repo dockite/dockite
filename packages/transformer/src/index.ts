@@ -651,13 +651,32 @@ const createGraphQLMutationsForSchema = async (
                 field,
                 fieldData: input[field.name],
               });
+            }),
+          );
+
+          await Promise.all(
+            schema.fields.map(async field => {
+              if (!field.dockiteField) {
+                throw new Error(
+                  `dockiteField wasn't assigned to ${field.name} of ${schema.name} during load.`,
+                );
+              }
 
               await field.dockiteField.validateInputGraphQL({
                 data: input,
                 fieldData: input[field.name],
                 field,
               });
+            }),
+          );
 
+          await Promise.all(
+            schema.fields.map(async field => {
+              if (!field.dockiteField) {
+                throw new Error(
+                  `dockiteField wasn't assigned to ${field.name} of ${schema.name} during load.`,
+                );
+              }
               await field.dockiteField.onCreate({
                 data: input,
                 fieldData: input[field.name],
@@ -749,6 +768,16 @@ const createGraphQLMutationsForSchema = async (
                   fieldData: input[field.name],
                   document,
                 });
+              }),
+            );
+
+            await Promise.all(
+              schema.fields.map(async field => {
+                if (!field.dockiteField) {
+                  throw new Error(
+                    `dockiteField wasn't assigned to ${field.name} of ${schema.name} during load.`,
+                  );
+                }
 
                 await field.dockiteField.validateInputGraphQL({
                   data: input,
@@ -757,6 +786,16 @@ const createGraphQLMutationsForSchema = async (
                   oldData: cloneDeep(document.data),
                   document,
                 });
+              }),
+            );
+
+            await Promise.all(
+              schema.fields.map(async field => {
+                if (!field.dockiteField) {
+                  throw new Error(
+                    `dockiteField wasn't assigned to ${field.name} of ${schema.name} during load.`,
+                  );
+                }
 
                 await field.dockiteField.onUpdate({
                   data: input,
