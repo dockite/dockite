@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.90](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.89...@dockite/core@0.4.0-alpha.90) (2020-10-21)
+
+
+### Bug Fixes
+
+* resolve incorrect hook lifecycle ([5c68732](https://github.com/dockite/dockite/commit/5c68732c48d9e284ce99bdf0963e55781a518faa))
+
+
+
+
+
 # [0.4.0-alpha.89](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.88...@dockite/core@0.4.0-alpha.89) (2020-10-19)
 
 
