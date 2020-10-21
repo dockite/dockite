@@ -9,4 +9,5 @@ export interface DockiteFieldDateTimeEntity extends BaseField {
 export interface DateFieldSettings extends FieldSettings {
   required: boolean;
   date: boolean;
+  time: boolean;
 }

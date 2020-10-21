@@ -5,7 +5,9 @@
     :rules="rules"
     class="dockite-field-datetime"
   >
-    <el-date-picker v-model="fieldData" :type="settings.date ? 'date' : 'datetime'" />
+    <el-date-picker v-if="settings.date" v-model="fieldData" clearable type="date" />
+    <el-time-picker v-else-if="settings.time" v-model="fieldData" clearable />
+    <el-date-picker v-else v-model="fieldData" clearable type="datetime" />
 
     <div class="el-form-item__description">
       {{ fieldConfig.description }}

@@ -111,7 +111,6 @@ export default class ImportSchemaWithIdPage extends Vue {
 
   @Watch('schema', { immediate: true })
   handleSchemaChange(): void {
-    console.log(this.schema);
     if (this.schema !== null) {
       this.payload = JSON.stringify(
         {

@@ -6,6 +6,9 @@
     <el-form-item label="Date only">
       <el-switch v-model="settings.date" />
     </el-form-item>
+    <el-form-item label="Time only">
+      <el-switch v-model="settings.time" />
+    </el-form-item>
   </fragment>
 </template>
 
