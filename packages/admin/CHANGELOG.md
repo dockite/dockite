@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.111](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.110...@dockite/admin@0.4.0-alpha.111) (2020-10-21)
+
+
+### Features
+
+* **field-datetime:** add time option ([cb00f0c](https://github.com/dockite/dockite/commit/cb00f0caba1502ded2dc3eec7300fd290886df2a))
+
+
+
+
+
 # [0.4.0-alpha.110](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.109...@dockite/admin@0.4.0-alpha.110) (2020-10-20)
 
 
