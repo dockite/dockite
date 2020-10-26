@@ -585,7 +585,7 @@ export class DocumentResolver {
       // Fire the update hooks for each field
       await this.callLifeCycleHooks(schema, data, 'processInputRaw', true);
       await this.callLifeCycleHooks(schema, data, 'validateInputRaw');
-      await this.callLifeCycleHooks(schema, data, 'onCreate');
+      await this.callLifeCycleHooks(schema, data, 'onUpdate');
 
       // Create a collection of params for the following query
       const params: any[] = [schemaId];
@@ -641,7 +641,7 @@ export class DocumentResolver {
 
       return true;
     } catch (err) {
-      console.log(err);
+      console.log({ partialUpdateDocumentsInSchemaId: err });
 
       return false;
     }
@@ -766,6 +766,11 @@ export class DocumentResolver {
       schema.fields.map(async field => {
         if (!field.dockiteField) {
           throw new Error(`dockiteField failed to map for ${field.name} of ${schema.name}`);
+        }
+
+        // Skip fields which don't exist (resolves bulk-update issues)
+        if (data[field.name] === undefined) {
+          return;
         }
 
         const fieldData = data[field.name] ?? null;
