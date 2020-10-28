@@ -47,11 +47,17 @@ export class DockiteFieldSlug extends DockiteField {
       qb.andWhere('document.id != :documentId', { documentId });
     }
 
-    if (settings.parent && parent) {
-      qb.andWhere(`data-> :field ->> 'id' = :parentId`, {
-        field: settings.parent,
-        parentId: parent.id,
-      });
+    if (settings.parent) {
+      if (parent) {
+        qb.andWhere(`data-> :field ->> 'id' = :parentId`, {
+          field: settings.parent,
+          parentId: parent.id,
+        });
+      } else {
+        qb.andWhere(`data->> :field IS NULL`, {
+          field: settings.parent,
+        });
+      }
     }
 
     return qb.getCount();
@@ -98,7 +104,7 @@ export class DockiteFieldSlug extends DockiteField {
 
       if (settings.unique) {
         while (shouldContinue === true) {
-          if (settings.parent && ctx.data[settings.parent]) {
+          if (settings.parent) {
             count = await this.getSlugCount(slug, documentId, ctx.data[settings.parent]);
           } else {
             count = await this.getSlugCount(slug, documentId);
