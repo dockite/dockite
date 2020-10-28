@@ -149,6 +149,8 @@ export class DocumentResolver {
       qb.orderBy('document.updatedAt', 'DESC');
     }
 
+    qb.addOrderBy('document.id');
+
     if (deleted) {
       qb.andWhere('document.deletedAt IS NOT NULL').withDeleted();
     } else {
@@ -215,6 +217,8 @@ export class DocumentResolver {
     } else {
       qb.orderBy('document.updatedAt', 'DESC');
     }
+
+    qb.addOrderBy('document.id');
 
     if (where) {
       WhereBuilder.Build(qb, where);
@@ -291,6 +295,8 @@ export class DocumentResolver {
     } else {
       qb.orderBy('document.updatedAt', 'DESC');
     }
+
+    qb.addOrderBy('document.id');
 
     if (schemaId && schemaId !== '') {
       qb.andWhere('document.schemaId = :schemaId', { schemaId });

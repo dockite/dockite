@@ -6,6 +6,7 @@ import {
   GraphQLString,
   GraphQLInt,
 } from 'graphql';
+import { FieldContext, DockiteFieldValidationError } from '@dockite/types';
 
 import { IDFieldSettings } from './types';
 
@@ -49,5 +50,17 @@ export class DockiteFieldID extends DockiteField {
     }
 
     return DockiteFieldStringIDType;
+  }
+
+  public async validateInput(ctx: FieldContext): Promise<void> {
+    const settings = this.schemaField.settings as IDFieldSettings;
+
+    if (settings.required && !ctx.fieldData) {
+      throw new DockiteFieldValidationError(
+        'REQUIRED',
+        `${this.schemaField.title} is required.`,
+        ctx.path || this.schemaField.name,
+      );
+    }
   }
 }
