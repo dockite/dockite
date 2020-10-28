@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.92](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.91...@dockite/core@0.4.0-alpha.92) (2020-10-28)
+
+
+### Bug Fixes
+
+* **field-id:** validate field being required ([9d7365c](https://github.com/dockite/dockite/commit/9d7365c24053698506659e477dfe209f4275aab1))
+
+
+
+
+
 # [0.4.0-alpha.91](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.90...@dockite/core@0.4.0-alpha.91) (2020-10-26)
 
 

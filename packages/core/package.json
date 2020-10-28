@@ -1,6 +1,6 @@
 {
   "name": "@dockite/core",
-  "version": "0.4.0-alpha.91",
+  "version": "0.4.0-alpha.92",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {

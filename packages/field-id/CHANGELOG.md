@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.26](https://github.com/dockite/dockite/compare/@dockite/field-id@0.3.0-alpha.25...@dockite/field-id@0.3.0-alpha.26) (2020-10-28)
+
+
+### Bug Fixes
+
+* **field-id:** validate field being required ([9d7365c](https://github.com/dockite/dockite/commit/9d7365c24053698506659e477dfe209f4275aab1))
+
+
+
+
+
 # [0.3.0-alpha.25](https://github.com/dockite/dockite/compare/@dockite/field-id@0.3.0-alpha.24...@dockite/field-id@0.3.0-alpha.25) (2020-10-04)
 
 **Note:** Version bump only for package @dockite/field-id
