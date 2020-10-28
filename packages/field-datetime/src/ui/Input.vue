@@ -9,6 +9,7 @@
       v-if="settings.date"
       v-model="fieldData"
       :format="settings.format"
+      value-format="yyyy-MM-dd"
       editable
       clearable
       type="date"
