@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.20](https://github.com/dockite/dockite/compare/@dockite/field-datetime@0.3.0-alpha.19...@dockite/field-datetime@0.3.0-alpha.20) (2020-10-28)
+
+
+### Bug Fixes
+
+* **field-datetime:** remove timezone details from date ([b2bc18b](https://github.com/dockite/dockite/commit/b2bc18be80467e0059c43b314860a1eab4257a1a))
+
+
+
+
+
 # [0.3.0-alpha.19](https://github.com/dockite/dockite/compare/@dockite/field-datetime@0.3.0-alpha.18...@dockite/field-datetime@0.3.0-alpha.19) (2020-10-26)
 
 
