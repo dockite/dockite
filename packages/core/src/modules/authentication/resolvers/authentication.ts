@@ -42,14 +42,26 @@ export class Authentication {
 
       delete user.password;
 
+      const tokenPayload = {
+        id: user.id,
+        firstname: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        verified: user.verified,
+      };
+
       const [bearerToken, refreshToken] = await Promise.all([
         Promise.resolve(
-          sign({ ...user }, config.app.secret ?? '', {
-            expiresIn: '15m',
-          }),
+          sign(
+            { ...tokenPayload, normalizedScopes: user.normalizedScopes },
+            config.app.secret ?? '',
+            {
+              expiresIn: '15m',
+            },
+          ),
         ),
         Promise.resolve(
-          sign({ ...user }, config.app.secret ?? '', {
+          sign(tokenPayload, config.app.secret ?? '', {
             expiresIn: '3d',
           }),
         ),
@@ -113,14 +125,26 @@ export class Authentication {
     Object.assign(user, firstUser);
     user.handleNormalizeScopes();
 
+    const tokenPayload = {
+      id: user.id,
+      firstname: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      verified: user.verified,
+    };
+
     const [bearerToken, refreshToken] = await Promise.all([
       Promise.resolve(
-        sign({ ...user }, config.app.secret ?? '', {
-          expiresIn: '15m',
-        }),
+        sign(
+          { ...tokenPayload, normalizedScopes: user.normalizedScopes },
+          config.app.secret ?? '',
+          {
+            expiresIn: '15m',
+          },
+        ),
       ),
       Promise.resolve(
-        sign({ ...user }, config.app.secret ?? '', {
+        sign(tokenPayload, config.app.secret ?? '', {
           expiresIn: '3d',
         }),
       ),

@@ -7,4 +7,5 @@ export interface User {
   createdAt: Date;
   updatedAt: Date;
   verified: boolean;
+  normalizedScopes?: string[];
 }

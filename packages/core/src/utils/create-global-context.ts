@@ -73,14 +73,23 @@ export const createGlobalContext = async (ctx: ExpressContext): Promise<GlobalCo
     const user = await exchangeRefreshTokenForUser(refreshTokenCookie);
 
     if (user) {
+      const tokenPayload = {
+        id: user.id,
+        firstname: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        verified: user.verified,
+        normalizedScopes: user.normalizedScopes,
+      };
+
       const [bearerToken, refreshToken] = await Promise.all([
         Promise.resolve(
-          sign({ ...user }, config.app.secret ?? '', {
+          sign(tokenPayload, config.app.secret ?? '', {
             expiresIn: '15m',
           }),
         ),
         Promise.resolve(
-          sign({ ...user }, config.app.secret ?? '', {
+          sign(tokenPayload, config.app.secret ?? '', {
             expiresIn: '3d',
           }),
         ),
