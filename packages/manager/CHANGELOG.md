@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.1-alpha.14](https://github.com/dockite/dockite/compare/@dockite/manager@0.2.1-alpha.13...@dockite/manager@0.2.1-alpha.14) (2020-10-29)
+
+**Note:** Version bump only for package @dockite/manager
+
+
+
+
+
 ## [0.2.1-alpha.13](https://github.com/dockite/dockite/compare/@dockite/manager@0.2.1-alpha.12...@dockite/manager@0.2.1-alpha.13) (2020-10-04)
 
 **Note:** Version bump only for package @dockite/manager

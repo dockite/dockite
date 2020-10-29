@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.93](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.92...@dockite/core@0.4.0-alpha.93) (2020-10-29)
+
+
+### Bug Fixes
+
+* reduce jwt payload size ([1f28d26](https://github.com/dockite/dockite/commit/1f28d2665e1e4cdfea632b1f147ea0b541083b28))
+
+
+
+
+
 # [0.4.0-alpha.92](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.91...@dockite/core@0.4.0-alpha.92) (2020-10-28)
 
 
