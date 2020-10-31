@@ -7,14 +7,20 @@
           {{ documentIdentifier }}
         </h2>
 
-        <document-actions-dropdown
-          v-if="schema && document"
-          :disabled="dirty"
-          :document="document"
-          :document-id="documentId"
-          :schema="schema"
-          :handle-save-and-publish="submit"
-        />
+        <div>
+          <el-button>
+            View Draft
+          </el-button>
+
+          <document-actions-dropdown
+            v-if="schema && document"
+            :disabled="dirty"
+            :document="document"
+            :document-id="documentId"
+            :schema="schema"
+            :handle-save-and-publish="submit"
+          />
+        </div>
       </el-row>
     </portal>
 

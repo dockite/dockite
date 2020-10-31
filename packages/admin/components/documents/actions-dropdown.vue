@@ -1,5 +1,10 @@
 <template>
-  <el-dropdown :disabled="!disabled" split-button @click="handleSaveAndPublish">
+  <el-dropdown
+    :type="disabled && 'primary'"
+    :disabled="!disabled"
+    split-button
+    @click="handleSaveAndPublishClick"
+  >
     Save and Publish
     <el-dropdown-menu slot="dropdown">
       <!-- <el-dropdown-item>Save as Draft</el-dropdown-item> -->
@@ -33,6 +38,7 @@ export class DocumentActionsComponent extends Vue {
   @Prop({ required: true })
   readonly documentId!: string;
 
+  // At the moment this actually refers to whether the document is "dirty"
   @Prop({ required: true })
   readonly disabled!: boolean;
 
@@ -44,6 +50,19 @@ export class DocumentActionsComponent extends Vue {
 
   @Prop({ required: true, type: Function })
   readonly handleSaveAndPublish!: Function;
+
+  public handleSaveAndPublishClick(): void {
+    if (!this.disabled) {
+      this.$message({
+        message: 'Document has not been edited, not performing save.',
+        type: 'warning',
+      });
+
+      return;
+    }
+
+    this.handleSaveAndPublish();
+  }
 }
 
 export default DocumentActionsComponent;

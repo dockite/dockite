@@ -43,7 +43,7 @@
             </el-dropdown-menu>
           </el-dropdown>
 
-          <el-button :loading="loading > 0" type="primary" @click="submit">
+          <el-button :loading="loading > 0" :disabled="!dirty" type="primary" @click="submit">
             Save
           </el-button>
         </el-row>
@@ -75,15 +75,6 @@
           </el-tab-pane>
         </el-tabs>
       </el-form>
-      <el-row type="flex" justify="space-between" align="middle" style="margin-top: 1rem;">
-        <el-button type="text" @click="$router.go(-1)">
-          Cancel
-        </el-button>
-
-        <el-button type="primary" @click="submit">
-          Save
-        </el-button>
-      </el-row>
     </div>
   </fragment>
 </template>
@@ -121,6 +112,8 @@ export default class CreateSingletonDocumentPage extends Vue {
   public localGroups: Record<string, string[]> | null = null;
 
   public validationErrors: Record<string, string> = {};
+
+  public dirty = false;
 
   @Ref()
   readonly formEl!: Form;
@@ -198,6 +191,10 @@ export default class CreateSingletonDocumentPage extends Vue {
       if (this.form[field.name] === undefined) {
         Vue.set(this.form, field.name, field.settings.default ?? null);
       }
+    });
+
+    this.$nextTick(() => {
+      this.dirty = false;
     });
   }
 
@@ -318,6 +315,11 @@ export default class CreateSingletonDocumentPage extends Vue {
         this.loading -= 1;
       });
     }
+  }
+
+  @Watch('form', { deep: true })
+  public handleFormChange(): void {
+    this.dirty = true;
   }
 
   @Watch('singletonId', { immediate: true })
