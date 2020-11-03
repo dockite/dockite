@@ -1,6 +1,6 @@
 <template>
   <el-dropdown
-    :type="disabled && 'primary'"
+    :type="disabled ? 'primary' : undefined"
     :disabled="!disabled"
     split-button
     @click="handleSaveAndPublishClick"

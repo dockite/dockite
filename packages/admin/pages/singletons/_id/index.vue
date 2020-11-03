@@ -50,43 +50,25 @@
       </el-row>
     </portal>
     <div v-loading="loading > 0" class="singleton-document-page el-loading-parent__min-height">
-      <el-form
-        v-if="ready"
+      <document-form
+        v-if="singleton"
         ref="formEl"
-        label-position="top"
-        :model="form"
-        @submit.native.prevent="submit"
-      >
-        <el-tabs v-model="currentTab" type="border-card">
-          <el-tab-pane v-for="tab in availableTabs" :key="tab" :label="tab" :name="tab">
-            <div v-for="field in getFieldsByGroupName(tab)" :key="field.id">
-              <component
-                :is="$dockiteFieldManager[field.type].input"
-                v-if="$dockiteFieldManager[field.type].input && !field.settings.hidden"
-                v-model="form[field.name]"
-                :errors="validationErrors"
-                :name="field.name"
-                :field-config="field"
-                :form-data="form"
-                :schema="singleton"
-                :groups.sync="groups"
-              />
-            </div>
-          </el-tab-pane>
-        </el-tabs>
-      </el-form>
+        v-model="form"
+        :schema="singleton"
+        :dirty.sync="dirty"
+        :handle-submit="updateSingleton"
+      />
     </div>
   </fragment>
 </template>
 
 <script lang="ts">
-import { Singleton, Field } from '@dockite/database';
-import { Form } from 'element-ui';
-import { GraphQLError } from 'graphql';
-import { sortBy, omit, cloneDeep } from 'lodash';
+import { Singleton } from '@dockite/database';
+import { omit } from 'lodash';
 import { Component, Vue, Watch, Ref } from 'nuxt-property-decorator';
 import { Fragment } from 'vue-fragment';
 
+import DocumentForm from '~/components/base/document-form.vue';
 import Logo from '~/components/base/logo.vue';
 import * as auth from '~/store/auth';
 import * as data from '~/store/data';
@@ -94,29 +76,22 @@ import * as singleton from '~/store/singleton';
 
 @Component({
   components: {
+    DocumentForm,
     Fragment,
     Logo,
   },
 })
 export default class CreateSingletonDocumentPage extends Vue {
-  public currentTab = 'Default';
-
   public form: Record<string, any> = {};
 
   public ready = false;
 
-  public tabErrors: Record<string, boolean> = {};
-
   public loading = 0;
-
-  public localGroups: Record<string, string[]> | null = null;
-
-  public validationErrors: Record<string, string> = {};
 
   public dirty = false;
 
   @Ref()
-  readonly formEl!: Form;
+  readonly formEl!: any;
 
   get singletonId(): string {
     return this.$route.params.id;
@@ -130,72 +105,8 @@ export default class CreateSingletonDocumentPage extends Vue {
     return this.$store.getters[`${data.namespace}/getSingletonWithFieldsById`](this.singletonId);
   }
 
-  get fields(): Field[] {
-    if (this.singleton) {
-      return this.singleton.fields;
-    }
-
-    return [];
-  }
-
-  get groups(): Record<string, string[]> {
-    if (this.localGroups) {
-      return this.localGroups;
-    }
-
-    if (this.singleton) {
-      return this.singleton.groups;
-    }
-
-    return {};
-  }
-
-  set groups(value: Record<string, string[]>) {
-    this.localGroups = { ...value };
-  }
-
-  get availableTabs(): string[] {
-    if (this.singleton) {
-      return Object.keys(this.singleton.groups);
-    }
-
-    return [];
-  }
-
   get user(): string {
     return this.$store.getters[`${auth.namespace}/fullName`];
-  }
-
-  public getFieldsByGroupName(name: string): Field[] {
-    const filteredFields = this.fields.filter(field => this.groups[name].includes(field.name));
-
-    return sortBy(filteredFields, [i => this.groups[name].indexOf(i.name)]);
-  }
-
-  public getGroupNameFromFieldName(name: string): string {
-    for (const key of Object.keys(this.groups)) {
-      if (this.groups[key].includes(name)) {
-        return key;
-      }
-    }
-
-    return '';
-  }
-
-  public initialiseForm(): void {
-    if (this.singleton) {
-      this.form = { ...this.form, ...cloneDeep(this.singleton.data) };
-    }
-
-    this.fields.forEach(field => {
-      if (this.form[field.name] === undefined) {
-        Vue.set(this.form, field.name, field.settings.default ?? null);
-      }
-    });
-
-    this.$nextTick(() => {
-      this.dirty = false;
-    });
   }
 
   public async fetchSingletonById(): Promise<void> {
@@ -210,116 +121,35 @@ export default class CreateSingletonDocumentPage extends Vue {
     });
   }
 
+  public async updateSingleton(): Promise<void> {
+    await this.$store.dispatch(`${singleton.namespace}/updateSingletonAndFields`, {
+      singleton: {
+        ...omit(this.singleton, 'fields'),
+        data: this.form,
+      },
+      fields: [],
+      deletedFields: [],
+    });
+
+    this.$router.push(`/singletons`);
+
+    this.$message({
+      message: 'Singleton updated successfully',
+      type: 'success',
+    });
+  }
+
   public async submit(): Promise<void> {
     try {
-      this.validationErrors = {};
-      this.tabErrors = {};
-
       this.loading += 1;
 
-      await this.formEl.validate();
-
-      await this.$store.dispatch(`${singleton.namespace}/updateSingletonAndFields`, {
-        singleton: {
-          ...omit(this.singleton, 'fields'),
-          data: this.form,
-        },
-        fields: [],
-        deletedFields: [],
-      });
-
-      this.$router.push(`/singletons`);
-
-      this.$message({
-        message: 'Singleton updated successfully',
-        type: 'success',
-      });
-    } catch (err) {
-      if (err.graphQLErrors && err.graphQLErrors.length > 0) {
-        const error: GraphQLError = err.graphQLErrors.pop();
-
-        if (
-          error.extensions &&
-          error.extensions.code &&
-          error.extensions.code === 'VALIDATION_ERROR'
-        ) {
-          const errors = error.extensions.errors;
-
-          this.validationErrors = errors;
-
-          const entries = Object.entries(errors);
-
-          entries.forEach((entry: any): void => {
-            const [key] = entry;
-            const groupName = this.getGroupNameFromFieldName(key.split('.').shift());
-
-            Vue.set(this.tabErrors, groupName, true);
-          });
-
-          entries.slice(0, 4).forEach((entry: any): void => {
-            const [key, value] = entry;
-
-            const groupName = this.getGroupNameFromFieldName(key.split('.').shift());
-
-            setImmediate(() => {
-              this.$message({
-                message: `${groupName}: ${value}`,
-                type: 'warning',
-              });
-            });
-          });
-
-          if (entries.length > 4) {
-            setImmediate(() => {
-              this.$message({
-                message: `And ${entries.length - 4} more errors`,
-                type: 'warning',
-              });
-            });
-          }
-        }
-      } else {
-        // It's any's all the way down
-        const errors = (this.formEl as any).fields.filter(
-          (f: any): boolean => f.validateState === 'error',
-        );
-
-        errors.forEach((f: any): void => {
-          const groupName = this.getGroupNameFromFieldName(f.prop.split('.').shift());
-
-          Vue.set(this.tabErrors, groupName, true);
-        });
-
-        errors.slice(0, 4).forEach((f: any): void => {
-          const groupName = this.getGroupNameFromFieldName(f.prop.split('.').shift());
-
-          setImmediate(() => {
-            this.$message({
-              message: `${groupName}: ${f.validateMessage}`,
-              type: 'warning',
-            });
-          });
-        });
-
-        if (errors.length > 4) {
-          setImmediate(() => {
-            this.$message({
-              message: `And ${errors.length - 4} more errors`,
-              type: 'warning',
-            });
-          });
-        }
-      }
+      await this.formEl.submit();
+    } catch (_) {
     } finally {
       this.$nextTick(() => {
         this.loading -= 1;
       });
     }
-  }
-
-  @Watch('form', { deep: true })
-  public handleFormChange(): void {
-    this.dirty = true;
   }
 
   @Watch('singletonId', { immediate: true })
@@ -329,13 +159,10 @@ export default class CreateSingletonDocumentPage extends Vue {
 
     await this.fetchSingletonById();
 
-    this.initialiseForm();
-
-    this.currentTab = this.availableTabs[0];
-
     this.$nextTick(() => {
       this.loading -= 1;
     });
+
     this.ready = true;
   }
 }
