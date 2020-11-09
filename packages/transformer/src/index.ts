@@ -559,7 +559,7 @@ const createGraphQLQueriesForSingleton = async (
           take: 1,
         });
 
-        return { id: document.id, ...document.data };
+        return { id: document.id, ...document.data, _metadata: cloneDeep(document) };
       },
     },
   };
