@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.113](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.112...@dockite/admin@0.4.0-alpha.113) (2020-11-09)
+
+
+### Bug Fixes
+
+* **admin:** disable saving of document until changes have been made ([37e0093](https://github.com/dockite/dockite/commit/37e0093d3e70ea1f1e2e2e5e923736a389b2b807))
+
+
+### Features
+
+* **admin:** migrate document forms to separate component ([7d75400](https://github.com/dockite/dockite/commit/7d754009385dde867977b669e815a4fcc2da5edf))
+
+
+
+
+
 # [0.4.0-alpha.112](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.111...@dockite/admin@0.4.0-alpha.112) (2020-10-29)
 
 **Note:** Version bump only for package @dockite/admin

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.94](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.93...@dockite/core@0.4.0-alpha.94) (2020-11-09)
+
+
+### Bug Fixes
+
+* **core:** singletons not creating document revisions ([7f1680f](https://github.com/dockite/dockite/commit/7f1680fa7ec3457afeb859689275875407fc12b9))
+
+
+
+
+
 # [0.4.0-alpha.93](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.92...@dockite/core@0.4.0-alpha.93) (2020-10-29)
 
 

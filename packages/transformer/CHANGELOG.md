@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.52](https://github.com/dockite/dockite/compare/@dockite/transformer@0.3.0-alpha.51...@dockite/transformer@0.3.0-alpha.52) (2020-11-09)
+
+
+### Bug Fixes
+
+* **transformer:** add metadata to singleton queries ([a68cf90](https://github.com/dockite/dockite/commit/a68cf907f4096fc1205a93837acb3f1f16cc678c))
+
+
+
+
+
 # [0.3.0-alpha.51](https://github.com/dockite/dockite/compare/@dockite/transformer@0.3.0-alpha.50...@dockite/transformer@0.3.0-alpha.51) (2020-10-29)
 
 **Note:** Version bump only for package @dockite/transformer
