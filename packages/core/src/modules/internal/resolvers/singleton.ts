@@ -6,11 +6,12 @@ import {
   Singleton,
   SchemaType,
   Field,
+  DocumentRevision,
 } from '@dockite/database';
 import { GlobalContext } from '@dockite/types';
 import { AuthenticationError, ValidationError } from 'apollo-server-express';
 import { GraphQLError } from 'graphql';
-import { omit } from 'lodash';
+import { omit, cloneDeep } from 'lodash';
 import {
   Arg,
   Ctx,
@@ -199,6 +200,7 @@ export class SingletonResolver {
   ): Promise<Singleton | null> {
     const schemaRepository = getRepository(Schema);
     const documentRepository = getRepository(Document);
+    const documentRevisionRepository = getRepository(DocumentRevision);
 
     const { user } = ctx;
 
@@ -225,7 +227,17 @@ export class SingletonResolver {
     schema.settings = settings;
 
     if (data) {
+      const revision = documentRevisionRepository.create({
+        documentId: document.id,
+        data: cloneDeep(document.data),
+        userId: document.userId ?? '',
+        schemaId: document.schemaId,
+      });
+
+      await documentRevisionRepository.save(revision);
+
       document.data = data;
+      document.userId = user.id;
     }
 
     await this.createRevision(schema.id, user.id);
