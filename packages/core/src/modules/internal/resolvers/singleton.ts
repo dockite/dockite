@@ -226,6 +226,8 @@ export class SingletonResolver {
     schema.groups = preservedGroups;
     schema.settings = settings;
 
+    schema.updatedAt = new Date();
+
     if (data) {
       const revision = documentRevisionRepository.create({
         documentId: document.id,
