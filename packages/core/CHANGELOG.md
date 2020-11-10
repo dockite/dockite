@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.95](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.94...@dockite/core@0.4.0-alpha.95) (2020-11-10)
+
+
+### Bug Fixes
+
+* **singleton:** update timestamp on save ([8f13611](https://github.com/dockite/dockite/commit/8f136116a2ba3909bb25af0a217c8b9a6b354fca))
+
+
+
+
+
 # [0.4.0-alpha.94](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.93...@dockite/core@0.4.0-alpha.94) (2020-11-09)
 
 
