@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.114](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.113...@dockite/admin@0.4.0-alpha.114) (2020-11-11)
+
+
+### Bug Fixes
+
+* **admin:** add ready check to avoid loading errors ([6695253](https://github.com/dockite/dockite/commit/669525357199ff85844134558f7bf64c3e9e5d90))
+
+
+
+
+
 # [0.4.0-alpha.113](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.112...@dockite/admin@0.4.0-alpha.113) (2020-11-09)
 
 
