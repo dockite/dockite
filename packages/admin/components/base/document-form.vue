@@ -56,6 +56,8 @@ export default class DocumentFormComponent extends Vue {
   @Ref()
   readonly formEl!: any;
 
+  public ready = false;
+
   public currentTab = 'Default';
 
   public localGroups: Record<string, string[]> | null = null;
@@ -137,6 +139,8 @@ export default class DocumentFormComponent extends Vue {
   }
 
   public createFormData(): void {
+    this.ready = false;
+
     const form = { ...this.form, ...cloneDeep(this.data) };
 
     this.fields.forEach(field => {
@@ -149,6 +153,8 @@ export default class DocumentFormComponent extends Vue {
 
     this.$nextTick(() => {
       this.dirtySync = false;
+
+      this.ready = true;
     });
   }
 
