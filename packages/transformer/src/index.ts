@@ -415,6 +415,8 @@ const createGraphQLQueriesForSchema = async (
           qb.orderBy('document.updatedAt', 'DESC');
         }
 
+        qb.addOrderBy('document.id', 'DESC');
+
         qb.take(perPage).skip(perPage * (page - 1));
 
         const [results, totalItems] = await qb.getManyAndCount();
@@ -493,6 +495,8 @@ const createGraphQLQueriesForSchema = async (
         } else {
           qb.orderBy('document.updatedAt', 'DESC');
         }
+
+        qb.addOrderBy('document.id', 'DESC');
 
         qb.take(perPage).skip(perPage * (page - 1));
 
