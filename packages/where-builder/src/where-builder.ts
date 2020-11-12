@@ -74,6 +74,8 @@ const ConstraintHandlerMap: Record<ConstraintOperator, ConstraintHandlerFn> = {
       return;
     }
 
+    console.log({ value });
+
     qb.andWhere(`${name} IN (:...${param})`, {
       [param]: value,
     });
@@ -327,6 +329,8 @@ export class WhereBuilder {
   static OrBuilder(qb: WhereExpression, constraints: ConstraintArray): void {
     qb.orWhere(
       new Brackets(q => {
+        q.andWhere('1 = 1');
+
         constraints.forEach(constraint => {
           if (isAndQuery(constraint)) {
             this.Build(q, constraint);
@@ -347,6 +351,8 @@ export class WhereBuilder {
   static AndBuilder(qb: WhereExpression, constraints: ConstraintArray): void {
     qb.andWhere(
       new Brackets(q => {
+        q.andWhere('1 = 1');
+
         constraints.forEach(constraint => {
           if (isAndQuery(constraint)) {
             this.Build(q, constraint);
