@@ -1,4 +1,4 @@
-import { Document, Role, Schema, User, Singleton, Webhook } from '@dockite/database';
+import { Document, Role, Schema, User, Singleton, Webhook, Draft } from '@dockite/database';
 import { DockiteFieldStatic, DockiteGraphqlSortInput } from '@dockite/types';
 import { AndQuery, Constraint } from '@dockite/where-builder';
 import Vue from 'vue';
@@ -11,6 +11,8 @@ import {
   AllDocumentRevisionsResultItem,
   AllDocumentsWithSchemaQueryResponse,
   AllDocumentsWithSchemaResultItem,
+  AllDraftsForDocumentQueryResponse,
+  AllDraftsForDocumentResultItem,
   AllRolesQueryResponse,
   AllRolesResultItem,
   AllSchemaRevisionsQueryResponse,
@@ -28,6 +30,7 @@ import {
   FindWebhookCallsQueryResponse,
   FindWebhookCallsResultItem,
   GetDocumentQueryResponse,
+  GetDraftQueryResponse,
   GetRoleQueryResponse,
   GetSchemaWithFieldsQueryResponse,
   GetUserQueryResponse,
@@ -41,6 +44,7 @@ import {
 } from '~/common/types';
 import AllDocumentRevisionsQuery from '~/graphql/queries/all-document-revisions.gql';
 import AllDocumentsWithSchemaQuery from '~/graphql/queries/all-documents-with-schema.gql';
+import AllDraftsForDocumentQuery from '~/graphql/queries/all-drafts-for-document.gql';
 import AllRolesQuery from '~/graphql/queries/all-roles.gql';
 import AllSchemaRevisionsQuery from '~/graphql/queries/all-schema-revisions.gql';
 import AllSchemasQuery from '~/graphql/queries/all-schemas.gql';
@@ -53,6 +57,7 @@ import FindDocumentsBySchemaIdQuery from '~/graphql/queries/find-documents-by-sc
 import FindDocumentsBySchemaIdsQuery from '~/graphql/queries/find-documents-by-schema-ids.gql';
 import FindWebhookCallsByWebhookIdQuery from '~/graphql/queries/find-webhook-calls-by-webhook-id.gql';
 import GetDocumentQuery from '~/graphql/queries/get-document.gql';
+import GetDraftQuery from '~/graphql/queries/get-draft.gql';
 import GetRoleQuery from '~/graphql/queries/get-role.gql';
 import GetSchemaWithFieldsQuery from '~/graphql/queries/get-schema-with-fields.gql';
 import GetSingletonWithFieldsQuery from '~/graphql/queries/get-singleton-with-fields.gql';
@@ -87,8 +92,10 @@ export interface DataState {
   allRoles: ManyResultSet<AllRolesResultItem>;
   allScopes: string[];
   allDocumentsWithSchema: ManyResultSet<AllDocumentsWithSchemaResultItem>;
+  allDraftsForDocument: ManyResultSet<AllDraftsForDocumentResultItem>;
   searchDocumentsWithSchema: ManyResultSet<SearchDocumentsWithSchemaResultItem>;
   getDocument: Record<string, Document>;
+  getDraft: Record<string, Draft>;
   getUser: Record<string, Omit<User, 'handleNormalizeScopes'>>;
   getRole: Record<string, Role>;
   getWebhook: Record<string, Webhook>;
@@ -157,6 +164,13 @@ export const state = (): DataState => ({
     currentPage: null,
     hasNextPage: null,
   },
+  allDraftsForDocument: {
+    results: [],
+    totalItems: null,
+    totalPages: null,
+    currentPage: null,
+    hasNextPage: null,
+  },
   allSchemaRevisions: {
     results: [],
     totalItems: null,
@@ -179,6 +193,7 @@ export const state = (): DataState => ({
     hasNextPage: null,
   },
   getDocument: {},
+  getDraft: {},
   getUser: {},
   getRole: {},
   getWebhook: {},
@@ -218,6 +233,10 @@ export const state = (): DataState => ({
 export const getters: GetterTree<DataState, RootState> = {
   getDocumentById: state => (id: string): Document | null => {
     return state.getDocument[id] ?? null;
+  },
+
+  getDraftById: state => (id: string): Draft | null => {
+    return state.getDraft[id] ?? null;
   },
 
   getUserById: state => (id: string): Omit<User, 'handleNormalizeScopes'> | null => {
@@ -300,6 +319,22 @@ export const actions: ActionTree<DataState, RootState> = {
     commit('setAllDocumentsWithSchema', data);
   },
 
+  async fetchAllDraftsForDocument(
+    { commit },
+    payload: { documentId: string } & PaginationPayload & SortablePayload & DeletablePayload,
+  ): Promise<void> {
+    const { data } = await this.$apolloClient.query<AllDraftsForDocumentQueryResponse>({
+      query: AllDraftsForDocumentQuery,
+      variables: { ...payload },
+    });
+
+    if (!data.allDraftsForDocument) {
+      throw new Error('graphql: allDraftsForDocument could not be fetched');
+    }
+
+    commit('setAllDraftsForDocument', data);
+  },
+
   async fetchAllSchemaRevisionsForSchema(
     { commit },
     payload: { schemaId: string } & PaginationPayload,
@@ -373,6 +408,23 @@ export const actions: ActionTree<DataState, RootState> = {
     }
 
     commit('setDocument', data);
+  },
+
+  async fetchDraftById({ state, commit }, payload: { id: string; force?: boolean }): Promise<void> {
+    if (state.getDraft[payload.id] && !payload.force) {
+      return;
+    }
+
+    const { data } = await this.$apolloClient.query<GetDraftQueryResponse>({
+      query: GetDraftQuery,
+      variables: { id: payload.id },
+    });
+
+    if (!data.getDraft) {
+      throw new Error('graphql: getDraft could not be fetched');
+    }
+
+    commit('setDraft', data);
   },
 
   async fetchSchemaWithFieldsById(
@@ -692,6 +744,10 @@ export const mutations: MutationTree<DataState> = {
     state.allDocumentsWithSchema = { ...payload.allDocuments };
   },
 
+  setAllDraftsForDocument(state, payload: AllDraftsForDocumentQueryResponse): void {
+    state.allDraftsForDocument = { ...payload.allDraftsForDocument };
+  },
+
   setSearchDocumentsWithSchema(state, payload: SearchDocumentsWithSchemaQueryResponse): void {
     state.searchDocumentsWithSchema = { ...payload.searchDocuments };
   },
@@ -701,6 +757,15 @@ export const mutations: MutationTree<DataState> = {
       ...state.getDocument,
       [payload.getDocument.id]: {
         ...payload.getDocument,
+      },
+    };
+  },
+
+  setDraft(state, payload: GetDraftQueryResponse): void {
+    state.getDraft = {
+      ...state.getDraft,
+      [payload.getDraft.id]: {
+        ...payload.getDraft,
       },
     };
   },
@@ -807,6 +872,14 @@ export const mutations: MutationTree<DataState> = {
     state.findDocumentsBySchemaId = makeEmptyResultSet<FindDocumentResultItem>();
     state.findDocumentsBySchemaIds = makeEmptyResultSet<FindDocumentResultItem>();
     state.searchDocumentsWithSchema = makeEmptyResultSet<SearchDocumentsWithSchemaResultItem>();
+  },
+
+  clearDraftData(state, payload?: string): void {
+    if (payload) {
+      Vue.delete(state.getDraft, payload);
+    }
+
+    state.allDraftsForDocument = makeEmptyResultSet<AllDraftsForDocumentResultItem>();
   },
 
   clearSchemaData(state, payload?: string): void {

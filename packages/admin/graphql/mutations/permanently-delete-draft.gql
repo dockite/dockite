@@ -1,0 +1,3 @@
+mutation RemoveDraftMutation($id: String!) {
+  permanentlyRemoveDraft(id: $id)
+}

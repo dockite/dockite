@@ -1,0 +1,20 @@
+query GetDraft($id: String!) {
+  getDraft(id: $id) {
+    id
+    name
+    locale
+    data
+    createdAt
+    updatedAt
+    deletedAt
+    releaseId
+    schemaId
+    userId
+    user {
+      id
+      firstName
+      lastName
+      email
+    }
+  }
+}

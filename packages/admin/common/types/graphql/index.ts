@@ -1,4 +1,13 @@
-import { User, Schema, Document, Webhook, WebhookCall, Role, Singleton } from '@dockite/database';
+import {
+  User,
+  Schema,
+  Document,
+  Webhook,
+  WebhookCall,
+  Role,
+  Singleton,
+  Draft,
+} from '@dockite/database';
 import { DockiteFieldStatic } from '@dockite/types';
 
 export interface ManyResultsResponse<T> {
@@ -84,6 +93,12 @@ export interface AllDocumentsWithSchemaQueryResponse {
   allDocuments: ManyResultsResponse<AllDocumentsWithSchemaResultItem>;
 }
 
+export type AllDraftsForDocumentResultItem = Omit<Draft, 'user' | 'userId' | 'schemaId'>;
+
+export interface AllDraftsForDocumentQueryResponse {
+  allDraftsForDocument: ManyResultsResponse<AllDraftsForDocumentResultItem>;
+}
+
 export type SearchDocumentsWithSchemaResultItem = Omit<Document, 'user' | 'userId' | 'schemaId'>;
 
 export interface SearchDocumentsWithSchemaQueryResponse {
@@ -92,6 +107,10 @@ export interface SearchDocumentsWithSchemaQueryResponse {
 
 export interface GetDocumentQueryResponse {
   getDocument: Document;
+}
+
+export interface GetDraftQueryResponse {
+  getDraft: Draft;
 }
 
 export interface GetUserQueryResponse {
@@ -203,6 +222,25 @@ export interface DeleteDocumentMutationResponse {
 
 export interface PermanentlyDeleteDocumentMutationResponse {
   permanentlyRemoveDocument: boolean;
+}
+
+export interface CreateDraftMutationResponse {
+  createDraft: {
+    id: string;
+  };
+}
+
+export interface UpdateDraftMutationResponse {
+  updateDraft: {
+    id: string;
+  };
+}
+export interface DeleteDraftMutationResponse {
+  removeDraft: boolean;
+}
+
+export interface PermanentlyDeleteDraftMutationResponse {
+  permanentlyRemoveDraft: boolean;
 }
 
 export type AllWebhooksResultItem = Webhook;

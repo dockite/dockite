@@ -94,7 +94,7 @@ export const actions: ActionTree<DocumentState, RootState> = {
       throw new Error('Unable to update document');
     }
 
-    this.commit(`${data.namespace}/removeDocument`, payload.documentId);
+    this.commit(`${data.namespace}/clearDocumentData`, payload.documentId);
   },
 
   async updateManyDocuments(_, payload: UpdateManyDocumentPayload): Promise<void> {
@@ -111,6 +111,8 @@ export const actions: ActionTree<DocumentState, RootState> = {
     if (!documentData?.updateManyDocuments) {
       throw new Error('Unable to update many documents');
     }
+
+    this.commit(`${data.namespace}/clearDocumentData`);
 
     payload.documents.forEach(document =>
       this.commit(`${data.namespace}/removeDocument`, document.id),
@@ -139,6 +141,10 @@ export const actions: ActionTree<DocumentState, RootState> = {
       throw new Error('Unable to update document');
     }
 
+    if (payload.documentIds) {
+      payload.documentIds.forEach(id => this.commit(`${data.namespace}/removeDocument`, id));
+    }
+
     this.commit(`${data.namespace}/clearDocumentData`);
   },
 
@@ -157,10 +163,12 @@ export const actions: ActionTree<DocumentState, RootState> = {
     if (!data?.removeDocument) {
       throw new Error('Unable to delete document');
     }
+
+    this.commit(`${data.namespace}/clearDocumentData`, payload.documentId);
   },
 
   async restoreDocument(_, payload: DeleteDocumentPayload): Promise<void> {
-    const { data } = await this.$apolloClient.mutate<RestoreDocumentMutationResponse>({
+    const { data: restoreData } = await this.$apolloClient.mutate<RestoreDocumentMutationResponse>({
       mutation: RestoreDocumentMutation,
       variables: {
         id: payload.documentId,
@@ -171,13 +179,17 @@ export const actions: ActionTree<DocumentState, RootState> = {
       },
     });
 
-    if (!data?.restoreDocument) {
+    if (!restoreData?.restoreDocument) {
       throw new Error('Unable to restore document');
     }
+
+    this.commit(`${data.namespace}/clearDocumentData`, payload.documentId);
   },
 
   async permanentlyDeleteDocument(_, payload: DeleteDocumentPayload): Promise<void> {
-    const { data } = await this.$apolloClient.mutate<PermanentlyDeleteDocumentMutationResponse>({
+    const { data: deleteData } = await this.$apolloClient.mutate<
+      PermanentlyDeleteDocumentMutationResponse
+    >({
       mutation: PermanentlyDeleteDocumentMutation,
       variables: {
         id: payload.documentId,
@@ -188,9 +200,11 @@ export const actions: ActionTree<DocumentState, RootState> = {
       },
     });
 
-    if (!data?.permanentlyRemoveDocument) {
+    if (!deleteData?.permanentlyRemoveDocument) {
       throw new Error('Unable to delete document');
     }
+
+    this.commit(`${data.namespace}/clearDocumentData`, payload.documentId);
   },
 };
 

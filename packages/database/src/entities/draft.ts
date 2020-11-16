@@ -3,26 +3,28 @@ import { Field as GraphQLField, ObjectType } from 'type-graphql';
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-  DeleteDateColumn,
 } from 'typeorm';
 
+import { Document } from './document';
 import { Release } from './release';
 import { Schema } from './schema';
 import { User } from './user';
-import { DocumentRevision } from './document-revision';
-import { Draft } from './draft';
 
 @Entity()
 @ObjectType()
-export class Document {
+export class Draft {
   @PrimaryGeneratedColumn('uuid')
   @GraphQLField(_type => String)
   public id!: string;
+
+  @Column()
+  @GraphQLField(_type => String)
+  public name!: string;
 
   @Column()
   @GraphQLField(_type => String)
@@ -31,10 +33,6 @@ export class Document {
   @Column({ type: 'jsonb' })
   @GraphQLField(_type => GraphQLJSON)
   public data!: Record<string, any>; // eslint-disable-line
-
-  @Column({ type: 'timestamp', nullable: true, default: null })
-  @GraphQLField(_type => Date, { nullable: true })
-  public publishedAt?: Date | null;
 
   @CreateDateColumn()
   @GraphQLField(_type => Date)
@@ -47,6 +45,21 @@ export class Document {
   @DeleteDateColumn()
   @GraphQLField(_type => Date, { nullable: true })
   public deletedAt?: Date | null;
+
+  @Column()
+  @GraphQLField(_type => String)
+  public documentId!: string;
+
+  @ManyToOne(
+    _type => Document,
+    document => document.drafts,
+    {
+      onDelete: 'CASCADE',
+      nullable: false,
+    },
+  )
+  @GraphQLField(_type => Document)
+  public document?: Document;
 
   @Column()
   @GraphQLField(_type => String)
@@ -77,25 +90,9 @@ export class Document {
   )
   public release!: Release;
 
-  @OneToMany(
-    _type => Document,
-    document => document.revisions,
-  )
-  public revisions!: DocumentRevision[];
-
-  @OneToMany(
-    _type => Document,
-    document => document.drafts,
-  )
-  public drafts!: Draft[];
-
   @Column({ nullable: true })
   @GraphQLField(_type => String, { nullable: true })
   public userId?: string;
-
-  @Column({ nullable: true })
-  @GraphQLField(_type => String, { nullable: true })
-  public externalUserId?: string;
 
   @ManyToOne(_type => User, { nullable: true, onDelete: 'SET NULL' })
   @GraphQLField(_type => User, { nullable: true })

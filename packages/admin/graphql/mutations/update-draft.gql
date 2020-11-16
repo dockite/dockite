@@ -1,0 +1,11 @@
+mutation UpdateDraftMutation($id: String!, $data: JSON!) {
+  updateDraft(id: $id, data: $data) {
+    id
+    data
+    createdAt
+    updatedAt
+    schemaId
+    releaseId
+    userId
+  }
+}

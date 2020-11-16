@@ -1,0 +1,12 @@
+mutation CreateDraftMutation($documentId: String!, $schemaId: String!, $data: JSON!, $locale: String!) {
+  createDraft(documentId: $documentId, schemaId: $schemaId, data: $data, locale: $locale) {
+    id
+    locale
+    data
+    createdAt
+    updatedAt
+    schemaId
+    releaseId
+    userId
+  }
+}

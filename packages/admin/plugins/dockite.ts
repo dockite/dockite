@@ -1,7 +1,10 @@
 import { Plugin } from '@nuxt/types';
 import Vue, { Component } from 'vue';
+import { Plugin as VueFragmentPlugin } from 'vue-fragment';
 
 window.$Vue = Vue;
+
+Vue.use(VueFragmentPlugin);
 
 export interface DockiteFieldManager {
   [name: string]: {

@@ -8,9 +8,11 @@
         </h2>
 
         <div>
-          <el-button>
-            View Draft
-          </el-button>
+          <router-link :to="`/documents/${documentId}/drafts`">
+            <el-button>
+              View Drafts
+            </el-button>
+          </router-link>
 
           <document-actions-dropdown
             v-if="schema && document"

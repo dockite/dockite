@@ -1,5 +1,6 @@
 export * from './dockite';
 export * from './document';
+export * from './draft';
 export * from './field';
 export * from './revision';
 export * from './release';

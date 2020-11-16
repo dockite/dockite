@@ -1,0 +1,28 @@
+query allDraftsForDocument($documentId: String!, $page: Int!, $perPage: Int! = 25, $sort: SortInputType, $deleted: Boolean = false) {
+  allDraftsForDocument(documentId: $documentId, page: $page, perPage: $perPage, sort: $sort, deleted: $deleted) {
+    results {
+      id
+      name
+      locale
+      data
+      createdAt
+      updatedAt
+      deletedAt
+      schemaId
+      schema {
+        id
+        name
+        title
+        type
+        groups
+        settings
+        createdAt
+        updatedAt
+      }
+    }
+    totalItems
+    currentPage
+    totalPages
+    hasNextPage
+  }
+}

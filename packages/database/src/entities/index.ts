@@ -1,5 +1,6 @@
 export * from './document-revision';
 export * from './document';
+export * from './draft';
 export * from './field';
 export * from './password-reset';
 export * from './release';
