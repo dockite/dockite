@@ -51,4 +51,5 @@ export interface CoreConfiguration {
   entities?: string[];
   modules?: Record<'internal' | 'external', string[]>;
   fields?: string[];
+  listeners?: string[];
 }

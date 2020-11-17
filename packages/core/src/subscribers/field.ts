@@ -9,8 +9,16 @@ import {
 } from 'typeorm';
 import format from 'pg-format';
 
+import { getListeners } from './util';
+
 @EventSubscriber()
 export class FieldSubscriber implements EntitySubscriberInterface {
+  public listeners: Promise<Record<string, Function>[]>;
+
+  constructor() {
+    this.listeners = getListeners();
+  }
+
   listenTo(): typeof Field {
     return Field;
   }
@@ -27,6 +35,18 @@ export class FieldSubscriber implements EntitySubscriberInterface {
     }
 
     await entity.dockiteField.onFieldCreate();
+
+    const listeners = await this.listeners;
+
+    await Promise.all(
+      listeners.map(x => {
+        if (x.beforeFieldCreate) {
+          return x.beforeFieldCreate(event);
+        }
+
+        return Promise.resolve(null);
+      }),
+    );
   }
 
   async beforeUpdate(event: UpdateEvent<Field>): Promise<void> {
@@ -41,10 +61,45 @@ export class FieldSubscriber implements EntitySubscriberInterface {
     }
 
     await entity.dockiteField.onFieldUpdate();
+
+    const listeners = await this.listeners;
+
+    await Promise.all(
+      listeners.map(x => {
+        if (x.beforeFieldUpdate) {
+          return x.beforeFieldUpdate(event);
+        }
+
+        return Promise.resolve(null);
+      }),
+    );
+  }
+
+  async afterUpdate(event: UpdateEvent<Field>): Promise<void> {
+    const { entity } = event;
+
+    const f = new Field();
+
+    f.setDockiteField.apply(entity);
+
+    if (!entity.dockiteField) {
+      return;
+    }
+
+    const listeners = await this.listeners;
+
+    await Promise.all(
+      listeners.map(x => {
+        if (x.afterFieldUpdate) {
+          return x.afterFieldUpdate(event);
+        }
+
+        return Promise.resolve(null);
+      }),
+    );
   }
 
   async afterInsert(event: InsertEvent<Field>): Promise<void> {
-    console.log('field update');
     await getRepository(Document)
       .createQueryBuilder()
       .update()
@@ -60,6 +115,18 @@ export class FieldSubscriber implements EntitySubscriberInterface {
       .andWhere('data ->> :fieldName IS NULL', { fieldName: event.entity.name })
       .callListeners(false)
       .execute();
+
+    const listeners = await this.listeners;
+
+    await Promise.all(
+      listeners.map(x => {
+        if (x.afterFieldCreate) {
+          return x.afterFieldCreate(event);
+        }
+
+        return Promise.resolve(null);
+      }),
+    );
   }
 
   async beforeRemove(event: RemoveEvent<Field>): Promise<void> {
@@ -72,6 +139,32 @@ export class FieldSubscriber implements EntitySubscriberInterface {
       .callListeners(false)
       .where('schemaId = :schemaId', { schemaId: event.entity?.schemaId })
       .execute();
+
+    const listeners = await this.listeners;
+
+    await Promise.all(
+      listeners.map(x => {
+        if (x.beforeFieldRemove) {
+          return x.beforeFieldRemove(event);
+        }
+
+        return Promise.resolve(null);
+      }),
+    );
+  }
+
+  async afterRemove(event: RemoveEvent<Field>): Promise<void> {
+    const listeners = await this.listeners;
+
+    await Promise.all(
+      listeners.map(x => {
+        if (x.afterFieldRemove) {
+          return x.afterFieldRemove(event);
+        }
+
+        return Promise.resolve(null);
+      }),
+    );
   }
 
   private dataToJSONBValue(data: any): any {

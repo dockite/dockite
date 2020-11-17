@@ -1,17 +1,18 @@
 import {
   Document,
+  DocumentRevision,
+  Field,
   Schema,
   SchemaImportRepository,
   SchemaRevision,
-  Singleton,
   SchemaType,
-  Field,
-  DocumentRevision,
+  Singleton,
 } from '@dockite/database';
 import { GlobalContext } from '@dockite/types';
 import { AuthenticationError, ValidationError } from 'apollo-server-express';
 import { GraphQLError } from 'graphql';
-import { omit, cloneDeep } from 'lodash';
+import GraphQLJSON from 'graphql-type-json';
+import { cloneDeep, omit } from 'lodash';
 import {
   Arg,
   Ctx,
@@ -23,7 +24,6 @@ import {
   Resolver,
 } from 'type-graphql';
 import { getCustomRepository, getRepository } from 'typeorm';
-import GraphQLJSON from 'graphql-type-json';
 
 import { Authenticated, Authorized } from '../../../common/decorators';
 import { DockiteEvents } from '../../../events';
