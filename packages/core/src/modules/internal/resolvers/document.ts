@@ -482,8 +482,8 @@ export class DocumentResolver {
       return null;
     }
 
-    const documentsToSave: Document[] = [];
-    const revisionsToSave: DocumentRevision[] = [];
+    const documentsToSave: Promise<Document>[] = [];
+    const revisionsToSave: Promise<DocumentRevision>[] = [];
 
     await Promise.all(
       retrievedDocuments.map(async document => {
@@ -512,15 +512,13 @@ export class DocumentResolver {
 
         document.userId = userId;
 
-        revisionsToSave.push(revision);
-        documentsToSave.push(document);
+        revisionsToSave.push(revisionRepository.save(revision));
+        documentsToSave.push(documentRepository.save(document));
       }),
     );
 
-    const [savedDocuments] = await Promise.all([
-      documentRepository.save(documentsToSave),
-      revisionRepository.save(revisionsToSave),
-    ]);
+    const savedDocuments = await Promise.all(documentsToSave);
+    await Promise.all(revisionsToSave);
 
     return savedDocuments;
   }

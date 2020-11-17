@@ -1,6 +1,3 @@
-import fs from 'fs';
-import path from 'path';
-
 import { Schema } from '@dockite/database';
 import { FieldManager, registerScopeResourceId, registerScopes } from '@dockite/manager';
 import { createSchema } from '@dockite/transformer';
@@ -8,16 +5,13 @@ import { GraphQLSchema } from 'graphql';
 import * as typeorm from 'typeorm';
 
 import { getConfig } from '../../config';
+import { getPackage } from '../../utils/get-package';
 
 const config = getConfig();
 
 const getExternalAuthPackage = (): string => {
   if (config.externalAuthPackage) {
-    if (fs.existsSync(path.join(process.cwd(), config.externalAuthPackage))) {
-      return path.join(process.cwd(), config.externalAuthPackage);
-    }
-
-    return config.externalAuthPackage;
+    return getPackage(config.externalAuthPackage);
   }
 
   return './dummy-auth';

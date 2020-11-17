@@ -7,6 +7,8 @@ import { graphql } from 'graphql';
 import { getRepository, InsertResult } from 'typeorm';
 import { stringify } from 'flatted';
 
+import { meetsObjectConstraints } from './webhook-object-constraints';
+
 const log = debug('dockite:core:webhooks');
 
 const dockiteFieldReplacer = (key: string, value: any): any => {
@@ -35,6 +37,12 @@ export const fireWebhooks = async (entity: any, action: WebhookAction | string):
     webhooks.map(
       (webhook): Promise<InsertResult | null> => {
         if (!webhook.options.query) {
+          if (webhook.options.constraints && webhook.options.constraints.length > 0) {
+            if (!meetsObjectConstraints(entity, webhook.options.constraints)) {
+              return Promise.resolve(null);
+            }
+          }
+
           return Axios({
             url: webhook.url,
             method: webhook.method as Method,
@@ -44,6 +52,10 @@ export const fireWebhooks = async (entity: any, action: WebhookAction | string):
                 : stringify(entity, dockiteFieldReplacer),
           }).then(
             (response: AxiosResponse) => {
+              if (response === null) {
+                return Promise.resolve(null);
+              }
+
               return webhookCallRepository.insert({
                 executedAt: new Date(),
                 request: {
@@ -107,12 +119,22 @@ export const fireWebhooks = async (entity: any, action: WebhookAction | string):
             { ...entity },
           ).then(
             result => {
+              if (webhook.options.constraints && webhook.options.constraints.length > 0) {
+                if (!meetsObjectConstraints(result, webhook.options.constraints)) {
+                  return Promise.resolve(null);
+                }
+              }
+
               return Axios({
                 url: webhook.url,
                 method: webhook.method as Method,
                 data: webhook.method.toLowerCase() === 'get' ? undefined : stringify(result),
               }).then(
                 (response: AxiosResponse) => {
+                  if (response === null) {
+                    return Promise.resolve(null);
+                  }
+
                   return webhookCallRepository.insert({
                     executedAt: new Date(),
                     request: {

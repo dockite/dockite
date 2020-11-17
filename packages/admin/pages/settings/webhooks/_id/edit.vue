@@ -42,9 +42,41 @@
           </el-select>
         </el-form-item>
 
+        <el-form-item label="Apply Constraints?">
+          <el-switch v-model="willApplyConstraints"></el-switch>
+        </el-form-item>
+
+        <el-form-item v-if="willApplyConstraints" label="Constraints" prop="options.constraints">
+          <div class="border border-dashed p-3">
+            <div
+              v-for="(_, index) in form.options.constraints"
+              :key="index"
+              class="w-full pb-3 flex -mx-3"
+            >
+              <webhook-constraint v-model="form.options.constraints[index]" class="flex-1 px-3" />
+
+              <div class="px-3">
+                <el-button type="text">
+                  <i class="el-icon-delete text-red-600" />
+                </el-button>
+              </div>
+            </div>
+
+            <div
+              v-if="!form.options.constraints || form.options.constraints.length === 0"
+              class="py-1 text-gray-700"
+            >
+              There are currently no constraints...
+            </div>
+
+            <el-button @click="handleAddConstraint">Add Constraint</el-button>
+          </div>
+        </el-form-item>
+
         <el-form-item label="Execute GraphQL Query?">
           <el-switch v-model="willExecuteGraphQL"></el-switch>
         </el-form-item>
+
         <el-form-item v-if="willExecuteGraphQL" label="GraphQL Query" prop="options.query">
           <el-input ref="graphqlEditor" v-model="form.options.query" type="textarea"></el-input>
           <!-- <textarea ref="graphqlEditor"></textarea> -->
@@ -89,10 +121,10 @@ import {
   ManyResultSet,
   AllSchemasResultItem,
   AllSingletonsResultItem,
-} from '../../../../common/types';
-
-import { RequestMethod } from '~/common/types';
+  RequestMethod,
+} from '~/common/types';
 import Logo from '~/components/base/logo.vue';
+import WebhookConstraint from '~/components/webhooks/constraint.vue';
 import * as auth from '~/store/auth';
 import * as data from '~/store/data';
 import * as webhook from '~/store/webhook';
@@ -103,6 +135,7 @@ type WebhookForm = Omit<Webhook, 'id' | 'createdAt' | 'updatedAt' | 'calls'>;
   components: {
     Fragment,
     Logo,
+    WebhookConstraint,
   },
   meta: {
     can: 'internal:webhook:update',
@@ -125,6 +158,8 @@ export default class CreateWebhookPage extends Vue {
   readonly formRef!: Form;
 
   public willExecuteGraphQL = false;
+
+  public willApplyConstraints = false;
 
   get user(): string {
     return this.$store.getters[`${auth.namespace}/fullName`];
@@ -293,6 +328,18 @@ export default class CreateWebhookPage extends Vue {
     }
   }
 
+  public handleAddConstraint(): void {
+    if (!this.form.options.constraints) {
+      Vue.set(this.form.options, 'constraints', []);
+    }
+
+    this.form.options.constraints!.push({
+      name: '',
+      operator: '$eq',
+      value: '',
+    });
+  }
+
   @Watch('webhook', { immediate: true })
   handleWebhookChange(): void {
     if (this.webhook) {
@@ -306,6 +353,10 @@ export default class CreateWebhookPage extends Vue {
 
       if (this.webhook.options.query) {
         this.willExecuteGraphQL = true;
+      }
+
+      if (this.webhook.options.constraints && this.webhook.options.constraints.length > 0) {
+        this.willApplyConstraints = true;
       }
     }
   }
