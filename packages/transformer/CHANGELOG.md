@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.53](https://github.com/dockite/dockite/compare/@dockite/transformer@0.3.0-alpha.52...@dockite/transformer@0.3.0-alpha.53) (2020-11-17)
+
+
+### Bug Fixes
+
+* **transformer:** document sorting isn't consistent ([5aefaa4](https://github.com/dockite/dockite/commit/5aefaa492bf6e8456a7aa271954b441dfa71c928))
+
+
+
+
+
 # [0.3.0-alpha.52](https://github.com/dockite/dockite/compare/@dockite/transformer@0.3.0-alpha.51...@dockite/transformer@0.3.0-alpha.52) (2020-11-09)
 
 
