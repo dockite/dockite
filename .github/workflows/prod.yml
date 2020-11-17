@@ -20,6 +20,8 @@ jobs:
 
     - run: yarn global add lerna
     - run: echo "::add-path::$(yarn global bin)"
+      env:
+        ACTIONS_ALLOW_UNSECURE_COMMANDS: true
 
     - run: lerna bootstrap
     - run: lerna run build --ignore @dockite/admin --ignore @dockite/core
@@ -45,6 +47,8 @@ jobs:
 
     - run: yarn global add lerna
     - run: echo "::add-path::$(yarn global bin)"
+      env:
+        ACTIONS_ALLOW_UNSECURE_COMMANDS: true
 
     - run: lerna bootstrap
     - run: lerna run build --ignore @dockite/admin --ignore @dockite/core
@@ -92,6 +96,8 @@ jobs:
 
     - run: yarn global add lerna
     - run: echo "::add-path::$(yarn global bin)"
+      env:
+        ACTIONS_ALLOW_UNSECURE_COMMANDS: true
 
     - run: lerna bootstrap
     - run: lerna run build --ignore @dockite/admin --ignore @dockite/core
