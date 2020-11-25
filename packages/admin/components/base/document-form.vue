@@ -13,7 +13,11 @@
         <div v-for="field in getFieldsByGroupName(tab)" :key="field.id">
           <component
             :is="$dockiteFieldManager[field.type].input"
-            v-if="$dockiteFieldManager[field.type].input && !field.settings.hidden"
+            v-if="
+              $dockiteFieldManager[field.type].input &&
+                !field.settings.hidden &&
+                form[field.name] !== undefined
+            "
             v-model="form[field.name]"
             :errors="validationErrors"
             :name="field.name"
