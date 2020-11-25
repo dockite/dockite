@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.116](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.115...@dockite/admin@0.4.0-alpha.116) (2020-11-25)
+
+
+### Bug Fixes
+
+* **admin:** resolve timing issue with nested fields ([159e1b6](https://github.com/dockite/dockite/commit/159e1b61739bc7412d8ad8ad3c10fcaef748c574))
+
+
+
+
+
 # [0.4.0-alpha.115](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.114...@dockite/admin@0.4.0-alpha.115) (2020-11-17)
 
 
