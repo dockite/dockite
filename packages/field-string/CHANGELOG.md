@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.29](https://github.com/dockite/dockite/compare/@dockite/field-string@0.3.0-alpha.28...@dockite/field-string@0.3.0-alpha.29) (2020-12-01)
+
+
+### Features
+
+* add graphql schema to dockite fields for usage ([db4c2c7](https://github.com/dockite/dockite/commit/db4c2c77528daaddcdd49fb115858c8a205440ef))
+
+
+
+
+
 # [0.3.0-alpha.28](https://github.com/dockite/dockite/compare/@dockite/field-string@0.3.0-alpha.27...@dockite/field-string@0.3.0-alpha.28) (2020-11-17)
 
 **Note:** Version bump only for package @dockite/field-string

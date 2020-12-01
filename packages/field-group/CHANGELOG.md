@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.50](https://github.com/dockite/dockite/compare/@dockite/field-group@0.4.0-alpha.49...@dockite/field-group@0.4.0-alpha.50) (2020-12-01)
+
+
+### Features
+
+* add graphql schema to dockite fields for usage ([db4c2c7](https://github.com/dockite/dockite/commit/db4c2c77528daaddcdd49fb115858c8a205440ef))
+
+
+
+
+
 # [0.4.0-alpha.49](https://github.com/dockite/dockite/compare/@dockite/field-group@0.4.0-alpha.48...@dockite/field-group@0.4.0-alpha.49) (2020-11-17)
 
 **Note:** Version bump only for package @dockite/field-group

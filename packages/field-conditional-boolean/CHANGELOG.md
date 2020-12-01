@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.1.0-alpha.24](https://github.com/dockite/dockite/compare/@dockite/field-conditional-boolean@0.1.0-alpha.23...@dockite/field-conditional-boolean@0.1.0-alpha.24) (2020-12-01)
+
+**Note:** Version bump only for package @dockite/field-conditional-boolean
+
+
+
+
+
 # [0.1.0-alpha.23](https://github.com/dockite/dockite/compare/@dockite/field-conditional-boolean@0.1.0-alpha.22...@dockite/field-conditional-boolean@0.1.0-alpha.23) (2020-11-17)
 
 **Note:** Version bump only for package @dockite/field-conditional-boolean
