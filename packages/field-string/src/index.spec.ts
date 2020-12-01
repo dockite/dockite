@@ -1,5 +1,5 @@
 /* eslint-env jest */
-import { GraphQLScalarType } from 'graphql';
+import { GraphQLScalarType, GraphQLSchema } from 'graphql';
 import { DockiteFieldValidationError } from '@dockite/types';
 
 import { DockiteFieldStringEntity } from './types';
@@ -24,7 +24,7 @@ const BaseDockiteFieldString: DockiteFieldStringEntity = {
 
 describe('DockiteFieldString', () => {
   it('creates the corresponding graphql types', async () => {
-    const field = new DockiteFieldString(null as any, null as any, {});
+    const field = new DockiteFieldString(null as any, null as any, {}, new GraphQLSchema({}));
 
     const [inputType, outputType] = await Promise.all([field.inputType(), field.outputType()]);
 
@@ -42,7 +42,12 @@ describe('DockiteFieldString', () => {
       },
     };
 
-    const field = new DockiteFieldString(DockiteFieldWithMinLen, null as any, {});
+    const field = new DockiteFieldString(
+      DockiteFieldWithMinLen,
+      null as any,
+      {},
+      new GraphQLSchema({}),
+    );
 
     const minLenResult: DockiteFieldValidationError = await field
       .validateInput({
@@ -76,7 +81,12 @@ describe('DockiteFieldString', () => {
       },
     };
 
-    const field = new DockiteFieldString(DockiteFieldWithUrlSafe, null as any, {});
+    const field = new DockiteFieldString(
+      DockiteFieldWithUrlSafe,
+      null as any,
+      {},
+      new GraphQLSchema({}),
+    );
 
     const result = await field
       .validateInput({

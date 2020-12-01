@@ -41,6 +41,7 @@ export class DockiteFieldVariant extends DockiteField {
             mappedChild as Field,
             this.orm,
             this.fieldManager,
+            this.graphqlSchema,
           );
         }
 

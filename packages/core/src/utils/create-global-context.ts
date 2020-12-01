@@ -4,6 +4,7 @@ import { ExpressContext } from 'apollo-server-express/dist/ApolloServer';
 import debug from 'debug';
 import { sign } from 'jsonwebtoken';
 import { getRepository } from 'typeorm';
+import { GraphQLSchema } from 'graphql';
 
 import { getConfig } from '../config';
 
@@ -52,7 +53,10 @@ const exchangeAPIKeyForUser = async (apiKey: string): Promise<UserContext | null
   return user;
 };
 
-export const createGlobalContext = async (ctx: ExpressContext): Promise<GlobalContext> => {
+export const createGlobalContext = async (
+  ctx: ExpressContext,
+  schema: GraphQLSchema,
+): Promise<GlobalContext> => {
   const { req, res } = ctx;
 
   const authorization = req.headers.authorization ?? '';
@@ -63,7 +67,7 @@ export const createGlobalContext = async (ctx: ExpressContext): Promise<GlobalCo
     const user = exchangeBearerTokenForUser(authorization);
 
     if (user) {
-      return { req, res, user };
+      return { req, res, user, schema };
     }
   }
 
@@ -102,7 +106,7 @@ export const createGlobalContext = async (ctx: ExpressContext): Promise<GlobalCo
 
       res.setHeader('authorization', `Bearer ${bearerToken}`);
 
-      return { req, res, user };
+      return { req, res, user, schema };
     }
   }
 
@@ -116,11 +120,11 @@ export const createGlobalContext = async (ctx: ExpressContext): Promise<GlobalCo
     const user = await exchangeAPIKeyForUser(apiKey as string);
 
     if (!user) {
-      return { req, res, user: undefined };
+      return { req, res, user: undefined, schema };
     }
 
-    return { req, res, user };
+    return { req, res, user, schema };
   }
 
-  return { req, res, user: undefined };
+  return { req, res, user: undefined, schema };
 };

@@ -3,6 +3,7 @@ import {
   GraphQLInputType,
   GraphQLObjectType,
   GraphQLOutputType,
+  GraphQLSchema,
 } from 'graphql';
 import typeorm from 'typeorm';
 
@@ -45,6 +46,7 @@ export interface DockiteFieldStatic {
     schemaField: Field,
     orm: typeof typeorm,
     fieldManager: Record<string, DockiteFieldStatic>,
+    graphqlSchema: GraphQLSchema,
   ): DockiteField;
 }
 

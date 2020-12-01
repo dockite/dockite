@@ -1,4 +1,4 @@
-import { FieldManager } from '@dockite/manager';
+import { FieldManager, SchemaManager } from '@dockite/manager';
 import { DockiteField, FieldSettings } from '@dockite/types';
 import GraphQLJSON from 'graphql-type-json';
 import { Field as GraphQLField, ObjectType } from 'type-graphql';
@@ -53,7 +53,7 @@ export class Field {
       const FieldClass = Object.values(FieldManager).find(field => field.type === this.type);
 
       if (FieldClass && typeof FieldClass === 'function') {
-        this.dockiteField = new FieldClass(this, typeorm, FieldManager);
+        this.dockiteField = new FieldClass(this, typeorm, FieldManager, SchemaManager.internal);
       }
     }
   }

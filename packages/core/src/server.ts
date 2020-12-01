@@ -98,7 +98,7 @@ export const createServer = async (): Promise<Express> => {
   log('creating servers');
   const internalServer = new ApolloServer({
     schema: root.schema,
-    context: createGlobalContext,
+    context: ctx => createGlobalContext(ctx, SchemaManager.internalSchema),
     introspection: true,
     playground: true,
     tracing: !!process.env.DOCKITE_APOLLO_TRACING,

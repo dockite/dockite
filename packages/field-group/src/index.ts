@@ -82,6 +82,7 @@ export class DockiteFieldGroup extends DockiteField {
             mappedChild as Field,
             this.orm,
             this.fieldManager,
+            this.graphqlSchema,
           );
         }
 

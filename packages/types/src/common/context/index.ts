@@ -1,4 +1,5 @@
 import * as express from 'express';
+import { GraphQLSchema } from 'graphql';
 
 import { User } from '../../entities';
 
@@ -9,6 +10,7 @@ export interface SessionContext {
 
 export interface GlobalContext extends SessionContext {
   user?: UserContext;
+  schema: GraphQLSchema;
 }
 
 export type UserContext = Omit<User, 'password'>;
