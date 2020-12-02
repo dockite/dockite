@@ -51,9 +51,10 @@
     </portal>
     <div v-loading="loading > 0" class="singleton-document-page el-loading-parent__min-height">
       <document-form
-        v-if="singleton"
+        v-if="singleton && singleton.data"
         ref="formEl"
         v-model="form"
+        :data="singleton.data"
         :schema="singleton"
         :dirty.sync="dirty"
         :handle-submit="updateSingleton"

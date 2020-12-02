@@ -7,7 +7,7 @@ import {
 } from 'graphql';
 import typeorm from 'typeorm';
 
-import { Field, Schema, Document } from '../entities';
+import { Field, Schema, Document, User } from '../entities';
 
 export interface FieldIOContext {
   dockiteFields: Record<string, DockiteFieldStatic>;
@@ -22,6 +22,7 @@ export interface FieldContext {
   args?: Record<string, any>;
   document?: Document;
   path?: string;
+  user?: Omit<User, 'password' | 'handleNormalizeScopes' | 'can'>;
 }
 
 export interface HookContext {
@@ -30,6 +31,7 @@ export interface HookContext {
   data: Record<string, any>;
   document?: Document;
   path?: string;
+  user?: Omit<User, 'password' | 'handleNormalizeScopes' | 'can'>;
 }
 
 export interface HookContextWithOldData extends HookContext {

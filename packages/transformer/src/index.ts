@@ -271,7 +271,7 @@ const makeFieldsForGraphQLObjectType = async (fieldConfig: ConfigBagItem): Promi
         fieldConfigMap[field.name] = {
           type: outputType,
           args: outputArgs,
-          resolve: async (data: Record<string, any>, args): Promise<any> => {
+          resolve: async (data: Record<string, any>, args, ctx): Promise<any> => {
             const fieldData = data[field.name] ?? null;
 
             return dockiteField.processOutputGraphQL<typeof outputType>({
@@ -280,6 +280,7 @@ const makeFieldsForGraphQLObjectType = async (fieldConfig: ConfigBagItem): Promi
               field,
               args,
               document: data._metadata,
+              user: ctx.user,
             });
           },
         };

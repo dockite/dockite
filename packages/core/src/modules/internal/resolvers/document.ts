@@ -65,6 +65,8 @@ export class DocumentResolver {
   async getDocument(
     @Arg('id')
     id: string,
+    @Ctx()
+    ctx: GlobalContext,
   ): Promise<Document | null> {
     const repository = getRepository(Document);
 
@@ -85,6 +87,7 @@ export class DocumentResolver {
           field,
           fieldData: document.data[field.name] ?? null,
           document,
+          user: ctx.user,
         });
       }),
     );
@@ -113,6 +116,8 @@ export class DocumentResolver {
     sort: SortInputType | null,
     @Arg('deleted', _type => Boolean, { nullable: true })
     deleted: boolean | null,
+    @Ctx()
+    ctx: GlobalContext,
   ): Promise<ManyDocuments> {
     const repository = getRepository(Document);
 
@@ -170,6 +175,7 @@ export class DocumentResolver {
               field,
               fieldData: item.data[field.name] ?? null,
               document: item,
+              user: ctx.user,
             });
           }),
         );
@@ -202,6 +208,8 @@ export class DocumentResolver {
     sort: SortInputType | null,
     @Arg('deleted', _type => Boolean, { nullable: true })
     deleted: boolean | null,
+    @Ctx()
+    ctx: GlobalContext,
   ): Promise<ManyDocuments> {
     const repository = getRepository(Document);
 
@@ -240,6 +248,7 @@ export class DocumentResolver {
               data: { id: item.id, ...item.data },
               field,
               fieldData: item.data[field.name] ?? null,
+              user: ctx.user,
             });
           }),
         );
@@ -280,6 +289,8 @@ export class DocumentResolver {
     sort: SortInputType | null,
     @Arg('deleted', _type => Boolean, { nullable: true })
     deleted: boolean | null,
+    @Ctx()
+    ctx: GlobalContext,
   ): Promise<ManyDocuments> {
     const repository = getCustomRepository(SearchEngineRepository);
 
@@ -326,6 +337,7 @@ export class DocumentResolver {
               data: { id: item.id, ...item.data },
               field,
               fieldData: item.data[field.name] ?? null,
+              user: ctx.user,
             });
           }),
         );

@@ -156,7 +156,7 @@ export class DockiteFieldVariant extends DockiteField {
                 [child.name]: {
                   type: outputType,
                   args: outputArgs,
-                  resolve: async (data: Record<string, any>, args): Promise<any> => {
+                  resolve: async (data: Record<string, any>, args, gqlCtx): Promise<any> => {
                     const fieldData = data[child.name];
 
                     const field = { ...child, id: 'child' };
@@ -166,6 +166,7 @@ export class DockiteFieldVariant extends DockiteField {
                       fieldData,
                       data,
                       args,
+                      user: gqlCtx.user,
                     });
                   },
                 },
