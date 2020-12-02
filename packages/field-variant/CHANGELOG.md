@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.37](https://github.com/dockite/dockite/compare/@dockite/field-variant@0.3.0-alpha.36...@dockite/field-variant@0.3.0-alpha.37) (2020-12-02)
+
+
+### Features
+
+* add user details to field context ([496df55](https://github.com/dockite/dockite/commit/496df55a08ce0eb4e97fdc18d6e189eb097d4c57))
+
+
+
+
+
 # [0.3.0-alpha.36](https://github.com/dockite/dockite/compare/@dockite/field-variant@0.3.0-alpha.35...@dockite/field-variant@0.3.0-alpha.36) (2020-12-01)
 
 

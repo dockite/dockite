@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.18](https://github.com/dockite/dockite/compare/@dockite/module-s3-presign@0.3.0-alpha.17...@dockite/module-s3-presign@0.3.0-alpha.18) (2020-12-02)
+
+**Note:** Version bump only for package @dockite/module-s3-presign
+
+
+
+
+
 # [0.3.0-alpha.17](https://github.com/dockite/dockite/compare/@dockite/module-s3-presign@0.3.0-alpha.16...@dockite/module-s3-presign@0.3.0-alpha.17) (2020-12-01)
 
 **Note:** Version bump only for package @dockite/module-s3-presign

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.55](https://github.com/dockite/dockite/compare/@dockite/transformer@0.3.0-alpha.54...@dockite/transformer@0.3.0-alpha.55) (2020-12-02)
+
+
+### Features
+
+* add user details to field context ([496df55](https://github.com/dockite/dockite/commit/496df55a08ce0eb4e97fdc18d6e189eb097d4c57))
+
+
+
+
+
 # [0.3.0-alpha.54](https://github.com/dockite/dockite/compare/@dockite/transformer@0.3.0-alpha.53...@dockite/transformer@0.3.0-alpha.54) (2020-12-01)
 
 **Note:** Version bump only for package @dockite/transformer

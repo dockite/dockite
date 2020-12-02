@@ -1,6 +1,6 @@
 {
   "name": "@dockite/field-reference",
-  "version": "0.3.0-alpha.31",
+  "version": "0.3.0-alpha.32",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
@@ -9,9 +9,9 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@dockite/database": "^0.4.0-alpha.26",
-    "@dockite/field": "^0.3.0-alpha.15",
-    "@dockite/types": "^0.3.0-alpha.16",
+    "@dockite/database": "^0.4.0-alpha.27",
+    "@dockite/field": "^0.3.0-alpha.16",
+    "@dockite/types": "^0.3.0-alpha.17",
     "apollo-client": "^2.6.10",
     "graphql": "^15.1.0",
     "graphql-tag": "^2.10.3",
@@ -32,7 +32,7 @@
     "@babel/plugin-proposal-class-properties": "^7.10.1",
     "@babel/plugin-proposal-decorators": "^7.10.1",
     "@dockite/webpack": "^1.1.0-alpha.3",
-    "@dockite/where-builder": "^0.2.0-alpha.38",
+    "@dockite/where-builder": "^0.2.0-alpha.39",
     "@types/graphql-type-json": "^0.3.2",
     "@typescript-eslint/eslint-plugin": "^2.20.0",
     "@typescript-eslint/parser": "^2.20.0",

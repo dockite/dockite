@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.98](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.97...@dockite/core@0.4.0-alpha.98) (2020-12-02)
+
+
+### Features
+
+* add user details to field context ([496df55](https://github.com/dockite/dockite/commit/496df55a08ce0eb4e97fdc18d6e189eb097d4c57))
+
+
+
+
+
 # [0.4.0-alpha.97](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.96...@dockite/core@0.4.0-alpha.97) (2020-12-01)
 
 

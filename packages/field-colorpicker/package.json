@@ -1,6 +1,6 @@
 {
   "name": "@dockite/field-colorpicker",
-  "version": "0.3.0-alpha.19",
+  "version": "0.3.0-alpha.20",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
@@ -9,9 +9,9 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@dockite/database": "^0.4.0-alpha.26",
-    "@dockite/field": "^0.3.0-alpha.15",
-    "@dockite/types": "^0.3.0-alpha.16",
+    "@dockite/database": "^0.4.0-alpha.27",
+    "@dockite/field": "^0.3.0-alpha.16",
+    "@dockite/types": "^0.3.0-alpha.17",
     "graphql": "^15.1.0",
     "graphql-scalars": "^1.1.0",
     "reflect-metadata": "^0.1.13",
