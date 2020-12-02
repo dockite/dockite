@@ -1,6 +1,6 @@
 {
   "name": "@dockite/transformer",
-  "version": "0.3.0-alpha.55",
+  "version": "0.3.0-alpha.56",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
@@ -8,11 +8,11 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@dockite/ability": "^0.2.1-alpha.18",
-    "@dockite/database": "^0.4.0-alpha.27",
-    "@dockite/field": "^0.3.0-alpha.16",
-    "@dockite/types": "^0.3.0-alpha.17",
-    "@dockite/where-builder": "^0.2.0-alpha.39",
+    "@dockite/ability": "^0.2.1-alpha.19",
+    "@dockite/database": "^0.4.0-alpha.28",
+    "@dockite/field": "^0.3.0-alpha.17",
+    "@dockite/types": "^0.3.0-alpha.18",
+    "@dockite/where-builder": "^0.2.0-alpha.40",
     "debug": "^4.1.1",
     "express": "^4.17.1",
     "graphql": "^15.1.0",
