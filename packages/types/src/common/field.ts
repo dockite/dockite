@@ -48,7 +48,7 @@ export interface DockiteFieldStatic {
     schemaField: Field,
     orm: typeof typeorm,
     fieldManager: Record<string, DockiteFieldStatic>,
-    graphqlSchema: GraphQLSchema,
+    graphqlSchemas: Record<string, GraphQLSchema>,
   ): DockiteField;
 }
 

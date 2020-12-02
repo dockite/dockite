@@ -53,7 +53,7 @@ export class Field {
       const FieldClass = Object.values(FieldManager).find(field => field.type === this.type);
 
       if (FieldClass && typeof FieldClass === 'function') {
-        this.dockiteField = new FieldClass(this, typeorm, FieldManager, SchemaManager.internal);
+        this.dockiteField = new FieldClass(this, typeorm, FieldManager, SchemaManager);
       }
     }
   }

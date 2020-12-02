@@ -28,12 +28,12 @@ export abstract class DockiteField {
     protected schemaField: Field,
     protected orm: typeof typeorm,
     protected fieldManager: Record<string, DockiteFieldStatic>,
-    protected graphqlSchema: GraphQLSchema,
+    protected graphqlSchemas: Record<string, GraphQLSchema>,
   ) {
     this.schemaField = schemaField;
     this.orm = orm;
     this.fieldManager = fieldManager;
-    this.graphqlSchema = graphqlSchema;
+    this.graphqlSchemas = graphqlSchemas;
   }
 
   public defaultValue(): any {
