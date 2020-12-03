@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.121](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.120...@dockite/admin@0.4.0-alpha.121) (2020-12-03)
+
+
+### Bug Fixes
+
+* **admin:** remove files option in package.json ([c974a5f](https://github.com/dockite/dockite/commit/c974a5fb681143e0686cc72803d9dc9a7614a143))
+
+
+
+
+
 # [0.4.0-alpha.120](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.119...@dockite/admin@0.4.0-alpha.120) (2020-12-03)
 
 **Note:** Version bump only for package @dockite/admin
