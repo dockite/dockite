@@ -137,8 +137,7 @@
 
 <script lang="ts">
 import { User, SchemaType } from '@dockite/database';
-import { DockiteGraphqlSortInput } from '@dockite/types';
-import { DockiteSortDirection } from '@dockite/types/src';
+import { DockiteGraphqlSortInput, DockiteSortDirection } from '@dockite/types';
 import { formatDistanceToNow } from 'date-fns';
 import { debounce } from 'lodash';
 import { Component, Vue, Watch } from 'nuxt-property-decorator';
