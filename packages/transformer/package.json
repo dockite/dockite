@@ -7,6 +7,9 @@
     "build": "tsc",
     "typecheck": "tsc --noEmit"
   },
+  "files": [
+    "lib"
+  ],
   "dependencies": {
     "@dockite/ability": "^0.2.1-alpha.19",
     "@dockite/database": "^0.4.0-alpha.28",

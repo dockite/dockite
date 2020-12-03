@@ -7,6 +7,9 @@
     "build": "tsc && cp -r ./extra ./lib/",
     "typecheck": "tsc --noEmit"
   },
+  "files": [
+    "lib"
+  ],
   "dependencies": {
     "@dockite/field": "^0.3.0-alpha.17",
     "@dockite/manager": "^0.2.1-alpha.17",

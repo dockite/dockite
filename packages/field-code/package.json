@@ -11,6 +11,9 @@
   "sideEffects": [
     "*.css"
   ],
+  "files": [
+    "lib"
+  ],
   "dependencies": {
     "@dockite/database": "^0.4.0-alpha.28",
     "@dockite/field": "^0.3.0-alpha.17",

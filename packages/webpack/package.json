@@ -3,6 +3,9 @@
   "version": "1.1.0-alpha.3",
   "main": "webpack.config.js",
   "license": "MIT",
+  "files": [
+    "lib"
+  ],
   "dependencies": {
     "@babel/core": "^7.9.0",
     "@babel/plugin-proposal-class-properties": "^7.10.4",

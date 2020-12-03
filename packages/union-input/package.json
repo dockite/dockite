@@ -8,6 +8,9 @@
     "build": "tsc",
     "typecheck": "tsc --noEmit"
   },
+  "files": [
+    "lib"
+  ],
   "dependencies": {
     "graphql": "^15.1.0",
     "lodash": "^4.17.15"

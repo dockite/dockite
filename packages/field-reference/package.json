@@ -8,6 +8,9 @@
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx --quiet",
     "typecheck": "tsc --noEmit"
   },
+  "files": [
+    "lib"
+  ],
   "dependencies": {
     "@dockite/database": "^0.4.0-alpha.28",
     "@dockite/field": "^0.3.0-alpha.17",
