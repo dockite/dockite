@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.39](https://github.com/dockite/dockite/compare/@dockite/field-variant@0.3.0-alpha.38...@dockite/field-variant@0.3.0-alpha.39) (2020-12-03)
+
+
+### Bug Fixes
+
+* **field-variant:** remove debugging console.log ([544e6ca](https://github.com/dockite/dockite/commit/544e6caa0901bdcde063f1a53b71431d2527f328))
+
+
+
+
+
 # [0.3.0-alpha.38](https://github.com/dockite/dockite/compare/@dockite/field-variant@0.3.0-alpha.37...@dockite/field-variant@0.3.0-alpha.38) (2020-12-02)
 
 
