@@ -175,7 +175,6 @@ export class DockiteFieldVariant extends DockiteField {
               // object that isTypeOf will work on, therefore it should be the same as
               // the field name.
               isTypeOf(value: any) {
-                console.log('variant isTypeOf', { value });
                 const [name] = Object.keys(value);
 
                 return name === child.name;
