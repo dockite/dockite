@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.54](https://github.com/dockite/dockite/compare/@dockite/field-s3-image@0.3.0-alpha.53...@dockite/field-s3-image@0.3.0-alpha.54) (2020-12-03)
+
+**Note:** Version bump only for package @dockite/field-s3-image
+
+
+
+
+
 # [0.3.0-alpha.53](https://github.com/dockite/dockite/compare/@dockite/field-s3-image@0.3.0-alpha.52...@dockite/field-s3-image@0.3.0-alpha.53) (2020-12-02)
 
 **Note:** Version bump only for package @dockite/field-s3-image

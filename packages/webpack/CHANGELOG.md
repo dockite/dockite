@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.1.0-alpha.4](https://github.com/dockite/dockite/compare/@dockite/webpack@1.1.0-alpha.3...@dockite/webpack@1.1.0-alpha.4) (2020-12-03)
+
+**Note:** Version bump only for package @dockite/webpack
+
+
+
+
+
 # 1.1.0-alpha.3 (2020-07-19)
 
 

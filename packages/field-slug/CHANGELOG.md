@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.2.0-alpha.45](https://github.com/dockite/dockite/compare/@dockite/field-slug@0.2.0-alpha.44...@dockite/field-slug@0.2.0-alpha.45) (2020-12-03)
+
+**Note:** Version bump only for package @dockite/field-slug
+
+
+
+
+
 # [0.2.0-alpha.44](https://github.com/dockite/dockite/compare/@dockite/field-slug@0.2.0-alpha.43...@dockite/field-slug@0.2.0-alpha.44) (2020-12-02)
 
 **Note:** Version bump only for package @dockite/field-slug

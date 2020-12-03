@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0-alpha.39](https://github.com/dockite/dockite/compare/@dockite/field-select@0.3.0-alpha.38...@dockite/field-select@0.3.0-alpha.39) (2020-12-03)
+
+**Note:** Version bump only for package @dockite/field-select
+
+
+
+
+
 # [0.3.0-alpha.38](https://github.com/dockite/dockite/compare/@dockite/field-select@0.3.0-alpha.37...@dockite/field-select@0.3.0-alpha.38) (2020-12-02)
 
 **Note:** Version bump only for package @dockite/field-select

@@ -1,6 +1,6 @@
 {
   "name": "@dockite/field-code",
-  "version": "0.3.0-alpha.20",
+  "version": "0.3.0-alpha.21",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
@@ -15,9 +15,9 @@
     "lib"
   ],
   "dependencies": {
-    "@dockite/database": "^0.4.0-alpha.28",
-    "@dockite/field": "^0.3.0-alpha.17",
-    "@dockite/types": "^0.3.0-alpha.18",
+    "@dockite/database": "^0.4.0-alpha.29",
+    "@dockite/field": "^0.3.0-alpha.18",
+    "@dockite/types": "^0.3.0-alpha.19",
     "codemirror": "^5.52.2",
     "codemirror-graphql": "^0.11.6",
     "diff-match-patch": "^1.0.4",
@@ -35,7 +35,7 @@
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.10.1",
     "@babel/plugin-proposal-decorators": "^7.10.1",
-    "@dockite/webpack": "^1.1.0-alpha.3",
+    "@dockite/webpack": "^1.1.0-alpha.4",
     "@types/graphql-type-json": "^0.3.2",
     "@typescript-eslint/eslint-plugin": "^2.20.0",
     "@typescript-eslint/parser": "^2.20.0",
