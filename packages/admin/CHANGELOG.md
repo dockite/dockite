@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.122](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.121...@dockite/admin@0.4.0-alpha.122) (2020-12-03)
+
+
+### Bug Fixes
+
+* **admin:** remove illegal type import ([c7bbeef](https://github.com/dockite/dockite/commit/c7bbeef5c42adeb847e37b1692719b41ad605be5))
+
+
+
+
+
 # [0.4.0-alpha.121](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.120...@dockite/admin@0.4.0-alpha.121) (2020-12-03)
 
 
