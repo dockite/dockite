@@ -5,12 +5,16 @@ import {
   RemoveEvent,
   UpdateEvent,
 } from 'typeorm';
+import * as typeorm from 'typeorm';
 import { Schema } from '@dockite/database';
 import { WebhookAction } from '@dockite/types';
 
 import { fireWebhooks } from '../utils/fire-webhooks';
+import { getConfig } from '../config';
 
 import { getListeners } from './util';
+
+const config = getConfig();
 
 @EventSubscriber()
 export class SchemaSubscriber implements EntitySubscriberInterface {
@@ -30,7 +34,7 @@ export class SchemaSubscriber implements EntitySubscriberInterface {
     await Promise.all(
       listeners.map(x => {
         if (x.beforeSchemaCreate) {
-          return x.beforeSchemaCreate(event);
+          return x.beforeSchemaCreate(event, typeorm, config);
         }
 
         return Promise.resolve(null);
@@ -49,7 +53,7 @@ export class SchemaSubscriber implements EntitySubscriberInterface {
     await Promise.all(
       listeners.map(x => {
         if (x.beforeSchemaCreate) {
-          return x.beforeSchemaCreate(event);
+          return x.beforeSchemaCreate(event, typeorm, config);
         }
 
         return Promise.resolve(null);
@@ -63,7 +67,7 @@ export class SchemaSubscriber implements EntitySubscriberInterface {
     await Promise.all(
       listeners.map(x => {
         if (x.beforeSchemaUpdate) {
-          return x.beforeSchemaUpdate(event);
+          return x.beforeSchemaUpdate(event, typeorm, config);
         }
 
         return Promise.resolve(null);
@@ -88,7 +92,7 @@ export class SchemaSubscriber implements EntitySubscriberInterface {
     await Promise.all(
       listeners.map(x => {
         if (x.afterSchemaUpdate) {
-          return x.afterSchemaUpdate(event);
+          return x.afterSchemaUpdate(event, typeorm, config);
         }
 
         return Promise.resolve(null);
@@ -102,7 +106,7 @@ export class SchemaSubscriber implements EntitySubscriberInterface {
     await Promise.all(
       listeners.map(x => {
         if (x.beforeSchemaDelete) {
-          return x.beforeSchemaDelete(event);
+          return x.beforeSchemaDelete(event, typeorm, config);
         }
 
         return Promise.resolve(null);
@@ -121,7 +125,7 @@ export class SchemaSubscriber implements EntitySubscriberInterface {
     await Promise.all(
       listeners.map(x => {
         if (x.afterSchemaDelete) {
-          return x.afterSchemaDelete(event);
+          return x.afterSchemaDelete(event, typeorm, config);
         }
 
         return Promise.resolve(null);

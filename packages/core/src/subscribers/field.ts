@@ -7,9 +7,14 @@ import {
   RemoveEvent,
   UpdateEvent,
 } from 'typeorm';
+import * as typeorm from 'typeorm';
 import format from 'pg-format';
 
+import { getConfig } from '../config';
+
 import { getListeners } from './util';
+
+const config = getConfig();
 
 @EventSubscriber()
 export class FieldSubscriber implements EntitySubscriberInterface {
@@ -41,7 +46,7 @@ export class FieldSubscriber implements EntitySubscriberInterface {
     await Promise.all(
       listeners.map(x => {
         if (x.beforeFieldCreate) {
-          return x.beforeFieldCreate(event);
+          return x.beforeFieldCreate(event, typeorm, config);
         }
 
         return Promise.resolve(null);
@@ -67,7 +72,7 @@ export class FieldSubscriber implements EntitySubscriberInterface {
     await Promise.all(
       listeners.map(x => {
         if (x.beforeFieldUpdate) {
-          return x.beforeFieldUpdate(event);
+          return x.beforeFieldUpdate(event, typeorm, config);
         }
 
         return Promise.resolve(null);
@@ -91,7 +96,7 @@ export class FieldSubscriber implements EntitySubscriberInterface {
     await Promise.all(
       listeners.map(x => {
         if (x.afterFieldUpdate) {
-          return x.afterFieldUpdate(event);
+          return x.afterFieldUpdate(event, typeorm, config);
         }
 
         return Promise.resolve(null);
@@ -121,7 +126,7 @@ export class FieldSubscriber implements EntitySubscriberInterface {
     await Promise.all(
       listeners.map(x => {
         if (x.afterFieldCreate) {
-          return x.afterFieldCreate(event);
+          return x.afterFieldCreate(event, typeorm, config);
         }
 
         return Promise.resolve(null);
@@ -145,7 +150,7 @@ export class FieldSubscriber implements EntitySubscriberInterface {
     await Promise.all(
       listeners.map(x => {
         if (x.beforeFieldRemove) {
-          return x.beforeFieldRemove(event);
+          return x.beforeFieldRemove(event, typeorm, config);
         }
 
         return Promise.resolve(null);
@@ -159,7 +164,7 @@ export class FieldSubscriber implements EntitySubscriberInterface {
     await Promise.all(
       listeners.map(x => {
         if (x.afterFieldRemove) {
-          return x.afterFieldRemove(event);
+          return x.afterFieldRemove(event, typeorm, config);
         }
 
         return Promise.resolve(null);

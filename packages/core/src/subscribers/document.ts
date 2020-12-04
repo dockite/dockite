@@ -8,10 +8,14 @@ import {
   RemoveEvent,
   UpdateEvent,
 } from 'typeorm';
+import * as typeorm from 'typeorm';
 
 import { fireWebhooks } from '../utils/fire-webhooks';
+import { getConfig } from '../config';
 
 import { getListeners } from './util';
+
+const config = getConfig();
 
 export const afterInsert = async (entity: Document): Promise<void> => {
   await Promise.all([
@@ -58,7 +62,7 @@ export class DocumentSubscriber implements EntitySubscriberInterface {
     await Promise.all(
       listeners.map(x => {
         if (x.beforeDocumentCreate) {
-          return x.beforeDocumentCreate(event);
+          return x.beforeDocumentCreate(event, typeorm, config);
         }
 
         return Promise.resolve(null);
@@ -76,7 +80,7 @@ export class DocumentSubscriber implements EntitySubscriberInterface {
     await Promise.all(
       listeners.map(x => {
         if (x.afterDocumentCreate) {
-          return x.afterDocumentCreate(event);
+          return x.afterDocumentCreate(event, typeorm, config);
         }
 
         return Promise.resolve(null);
@@ -90,7 +94,7 @@ export class DocumentSubscriber implements EntitySubscriberInterface {
     await Promise.all(
       listeners.map(x => {
         if (x.beforeDocumentUpdate) {
-          return x.beforeDocumentUpdate(event);
+          return x.beforeDocumentUpdate(event, typeorm, config);
         }
 
         return Promise.resolve(null);
@@ -110,7 +114,7 @@ export class DocumentSubscriber implements EntitySubscriberInterface {
     await Promise.all(
       listeners.map(x => {
         if (x.afterDocumentUpdate) {
-          return x.afterDocumentUpdate(event);
+          return x.afterDocumentUpdate(event, typeorm, config);
         }
 
         return Promise.resolve(null);
@@ -124,7 +128,7 @@ export class DocumentSubscriber implements EntitySubscriberInterface {
     await Promise.all(
       listeners.map(x => {
         if (x.beforeDocumentDelete) {
-          return x.beforeDocumentDelete(event);
+          return x.beforeDocumentDelete(event, typeorm, config);
         }
 
         return Promise.resolve(null);
@@ -142,7 +146,7 @@ export class DocumentSubscriber implements EntitySubscriberInterface {
     await Promise.all(
       listeners.map(x => {
         if (x.afterDocumentDelete) {
-          return x.afterDocumentDelete(event);
+          return x.afterDocumentDelete(event, typeorm, config);
         }
 
         return Promise.resolve(null);
