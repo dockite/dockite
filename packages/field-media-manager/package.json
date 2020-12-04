@@ -1,6 +1,6 @@
 {
   "name": "@dockite/field-media-manager",
-  "version": "0.1.0-alpha.18",
+  "version": "0.1.0",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
@@ -12,9 +12,9 @@
     "lib"
   ],
   "dependencies": {
-    "@dockite/database": "^0.4.0-alpha.29",
-    "@dockite/field": "^0.3.0-alpha.18",
-    "@dockite/types": "^0.3.0-alpha.19",
+    "@dockite/database": "^0.4.0",
+    "@dockite/field": "^0.3.0",
+    "@dockite/types": "^0.3.0",
     "apollo-client": "^2.6.10",
     "axios": "^0.19.2",
     "graphql": "^15.1.0",
@@ -33,7 +33,7 @@
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.10.1",
     "@babel/plugin-proposal-decorators": "^7.10.1",
-    "@dockite/webpack": "^1.1.0-alpha.4",
+    "@dockite/webpack": "^1.1.0",
     "@typescript-eslint/eslint-plugin": "^2.20.0",
     "@typescript-eslint/parser": "^2.20.0",
     "eslint": "^6.8.0",

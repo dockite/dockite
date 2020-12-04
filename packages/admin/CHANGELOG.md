@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.122...@dockite/admin@0.4.0) (2020-12-04)
+
+**Note:** Version bump only for package @dockite/admin
+
+
+
+
+
 # [0.4.0-alpha.122](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0-alpha.121...@dockite/admin@0.4.0-alpha.122) (2020-12-03)
 
 

@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0](https://github.com/dockite/dockite/compare/@dockite/transformer@0.3.0-alpha.57...@dockite/transformer@0.3.0) (2020-12-04)
+
+**Note:** Version bump only for package @dockite/transformer
+
+
+
+
+
 # [0.3.0-alpha.57](https://github.com/dockite/dockite/compare/@dockite/transformer@0.3.0-alpha.56...@dockite/transformer@0.3.0-alpha.57) (2020-12-03)
 
 **Note:** Version bump only for package @dockite/transformer

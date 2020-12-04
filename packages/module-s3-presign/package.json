@@ -1,6 +1,6 @@
 {
   "name": "@dockite/module-s3-presign",
-  "version": "0.3.0-alpha.20",
+  "version": "0.3.0",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
@@ -11,8 +11,8 @@
     "lib"
   ],
   "dependencies": {
-    "@dockite/field": "^0.3.0-alpha.18",
-    "@dockite/types": "^0.3.0-alpha.19",
+    "@dockite/field": "^0.3.0",
+    "@dockite/types": "^0.3.0",
     "@graphql-modules/core": "^0.7.14",
     "debug": "^4.1.1",
     "graphql": "^15.1.0",

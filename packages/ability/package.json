@@ -1,6 +1,6 @@
 {
   "name": "@dockite/ability",
-  "version": "0.2.1-alpha.20",
+  "version": "0.2.1",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
@@ -11,8 +11,8 @@
     "lib"
   ],
   "dependencies": {
-    "@dockite/field": "^0.3.0-alpha.18",
-    "@dockite/types": "^0.3.0-alpha.19",
+    "@dockite/field": "^0.3.0",
+    "@dockite/types": "^0.3.0",
     "debug": "^4.1.1",
     "graphql": "^15.1.0",
     "lodash": "^4.17.15",
