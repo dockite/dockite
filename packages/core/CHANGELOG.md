@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.101](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.100...@dockite/core@0.4.0-alpha.101) (2020-12-04)
+
+
+### Bug Fixes
+
+* **core:** pass additional arguments to listeners ([acb3285](https://github.com/dockite/dockite/commit/acb32857f30de8ef7ac56faf77201cecaf1a37b9))
+
+
+
+
+
 # [0.4.0-alpha.100](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.99...@dockite/core@0.4.0-alpha.100) (2020-12-03)
 
 **Note:** Version bump only for package @dockite/core
