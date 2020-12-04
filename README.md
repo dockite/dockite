@@ -1,28 +1,29 @@
 ![Dockite](./docs/assets/dockite.svg)
-<!-- [![FVCproductions](https://avatars1.githubusercontent.com/u/4284691?v=3&s=200)](http://fvcproductions.com) -->
 
-
-> A simple HeadlessCMS written in Typescript utilising Apollo GraphQL, Typeorm, TypeGraphQL and GraphQL Modules
-
-## 🚧 Under Construction
-
-Dockite is currently still under construction with many features missing and being worked on.
-
-It is not suitable for public use and is not currently in a released state.
+> A Powerful HeadlessCMS written in Typescript utilising Apollo GraphQL, Typeorm, TypeGraphQL and GraphQL Modules
 
 ## Table of Contents
 
 - [Installation](#installation)
-- [Features](#features)
-- [Documentation](#documentation)
-- [Tests](#tests)
+- [Development](#development)
 - [Contributing](#contributing)
-- [Contributors](#contributors)
-- [FAQ](#faq)
 
 ## Installation
 
-Dockite is structured as a mono-repo using Lerna and Yarn Workspaces.
+The best way to get up and running with Dockite is via the Dockite CLI as follows:
+
+1. Install the Dockite CLI `yarn global add @dockite/cli`
+2. Create a new project `dockite new <project-name>`
+3. Build the Admin UI `dockite build`
+4. Run the server `node server.js`
+
+## Development
+
+Dockite is set up as a monorepo with each package implementing a singular and specific feature that is required for the `core` and `admin` packages to function.
+
+To contribute to Dockite, it should be possible to pick a package which interests you and work on updates independent of other packages. This modularity supports parts of the application being upgraded individually as required, rather than only supporting monolithic upgrades.
+
+Get started with development by following the steps below:
 
 ### Clone
 
@@ -37,44 +38,8 @@ $ yarn
 $ yarn lerna bootstrap
 ```
 
-## Features
-
-TBD
-
-## Documentation
-
-TBD
-
-## Tests
-
-Due to the experimental state that Dockite is in, no tests are currently written. Once features are fleshed out and architecture has solidifed Jest + Typescript will be used for testing across the mono-repo.
-
 ## Contributing
 
-> Get started building and contributing to Dockite by following the steps below:
+All contributions are welcome. If you would like to report an issue when using Dockite, please create an issue using the templates provided. Otherwise, start hacking away and submit a PR when ready.
 
-### Step 1
-
-- **Option 1**
-  - 🍴 Fork this repo!
-
-- **Option 2**
-  - 👯 Clone this repo to your local machine using `git clone https://github.com/dockite/dockite`
-
-### Step 2
-
-- **HACK AWAY!** 🔨🔨🔨
-
-### Step 3
-
-- 🔃 Create a new pull request using [this link](https://github.com/dockite/compare/)
-
-## Contributors
-
-- [Mythie](https://github.com/Mythie)
-
-## FAQ
-
-- How dedicated are you to this?
-
-I am quite passionate about this product due to the lack of robust open source HeadlessCMS, currently there is no key player that allows for features such as custom fields or mutations etc. in a non hacky way.
+If your change isn't accepted as it's too specific to your niche you can always add it into the system via local modules.
