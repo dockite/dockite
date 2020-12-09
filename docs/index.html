@@ -7,6 +7,7 @@
     <meta name="description" content="Description" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0" />
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css" />
+
     <style>
       .app-name img {
         max-width: 80%;
@@ -19,7 +20,19 @@
       window.$docsify = {
         name: 'Dockite',
         repo: 'https://github.com/dockite/dockite',
-        // logo: '/_media/dockite.svg',
+        search: 'auto',
+        search: {
+          maxAge: 86400000, // Expiration time, the default one day
+          paths: 'auto',
+          placeholder: 'Type to search',
+
+          noData: 'No Results!',
+
+          // Headline depth, 1 - 6
+          depth: 4,
+
+          hideOtherSidebarContent: false, // whether or not to hide other sidebar content
+        },
         onlyCover: true,
         coverpage: ['/'],
         themeColor: '#2B6CB0',
@@ -32,5 +45,6 @@
     </script>
     <!-- Docsify v4 -->
     <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
+    <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
   </body>
 </html>
