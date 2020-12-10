@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.4.1-alpha.0](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0...@dockite/core@0.4.1-alpha.0) (2020-12-10)
+
+**Note:** Version bump only for package @dockite/core
+
+
+
+
+
 # [0.4.0](https://github.com/dockite/dockite/compare/@dockite/core@0.4.0-alpha.101...@dockite/core@0.4.0) (2020-12-04)
 
 **Note:** Version bump only for package @dockite/core
