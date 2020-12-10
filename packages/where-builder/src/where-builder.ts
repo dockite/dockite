@@ -71,6 +71,7 @@ const ConstraintHandlerMap: Record<ConstraintOperator, ConstraintHandlerFn> = {
     const value = unsafeStringToNativeType(constraint.value);
 
     if (!Array.isArray(value) || value.length === 0) {
+      qb.andWhere('1 = 1');
       return;
     }
 
@@ -329,7 +330,9 @@ export class WhereBuilder {
   static OrBuilder(qb: WhereExpression, constraints: ConstraintArray): void {
     qb.orWhere(
       new Brackets(q => {
-        q.andWhere('1 = 1');
+        if (constraints.length === 0) {
+          q.andWhere('1 = 1');
+        }
 
         constraints.forEach(constraint => {
           if (isAndQuery(constraint)) {
@@ -351,7 +354,9 @@ export class WhereBuilder {
   static AndBuilder(qb: WhereExpression, constraints: ConstraintArray): void {
     qb.andWhere(
       new Brackets(q => {
-        q.andWhere('1 = 1');
+        if (constraints.length === 0) {
+          q.andWhere('1 = 1');
+        }
 
         constraints.forEach(constraint => {
           if (isAndQuery(constraint)) {
