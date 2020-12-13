@@ -22,6 +22,7 @@
             :document-id="documentId"
             :schema="schema"
             :handle-save-and-publish="submit"
+            :handle-save-as-draft="saveDocumentAsDraft"
           />
         </div>
       </el-row>
@@ -105,6 +106,7 @@ import DocumentActionsDropdown from '~/components/documents/actions-dropdown.vue
 import * as auth from '~/store/auth';
 import * as data from '~/store/data';
 import * as document from '~/store/document';
+import * as draft from '~/store/draft';
 
 @Component({
   components: {
@@ -248,6 +250,42 @@ export default class UpdateDocumentPage extends Vue {
 
   public async updateDocument(): Promise<void> {
     await this.$store.dispatch(`${document.namespace}/updateDocument`, {
+      data: this.form,
+      documentId: this.documentId,
+      schemaId: this.schemaId,
+    });
+
+    await this.fetchDocumentById(true);
+
+    this.$message({
+      message: 'Document updated successfully',
+      type: 'success',
+    });
+  }
+
+  public async saveDocumentAsDraft(): Promise<void> {
+    const { value: name } = (await this.$prompt(
+      'Please enter a name for the new draft:',
+      'Tab Name',
+      {
+        confirmButtonText: 'Create Draft',
+        cancelButtonText: 'Cancel',
+        inputValidator: (input: string) => {
+          if (input.length <= 3) {
+            return 'Name must contain atleast 3 characters';
+          }
+
+          if (input.length > 50) {
+            return 'Name must container no more than 50 characters';
+          }
+
+          return true;
+        },
+      },
+    )) as { value: string };
+
+    await this.$store.dispatch(`${draft.namespace}/createDraft`, {
+      name,
       data: this.form,
       documentId: this.documentId,
       schemaId: this.schemaId,

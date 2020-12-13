@@ -162,6 +162,7 @@ export class DraftResolver {
   })
   @Mutation(_returns => Draft)
   async createDraft(
+    @Arg('name') name: string,
     @Arg('locale') locale: string,
     @Arg('data', _type => GraphQLJSON) data: any,
     @Arg('documentId') documentId: string,
@@ -192,6 +193,7 @@ export class DraftResolver {
     await this.callLifeCycleHooks(schema, input, 'onCreate');
 
     const draft = draftRepository.create({
+      name,
       locale,
       data: input,
       schemaId,
@@ -217,7 +219,9 @@ export class DraftResolver {
   @Mutation(_returns => Draft, { nullable: true })
   async updateDraft(
     @Arg('id', _type => String)
-    id: string | null,
+    id: string,
+    @Arg('name', _type => String)
+    name: string,
     // @Arg('locale', _type => String, { nullable: true })
     // locale: string | null,
     @Arg('data', _type => GraphQLJSON)
@@ -250,6 +254,8 @@ export class DraftResolver {
     if (Object.keys(validationErrors).length > 0) {
       throw new DocumentValidationError(validationErrors);
     }
+
+    draft.name = name;
 
     draft.data = { ...draft.data, ...data };
 
@@ -427,6 +433,7 @@ export class DraftResolver {
           oldData,
           document: draft,
           path: field.name,
+          draft: true,
         };
 
         try {

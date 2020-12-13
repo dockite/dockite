@@ -2,7 +2,20 @@
   <fragment>
     <portal to="header">
       <el-row type="flex" align="middle" justify="space-between">
-        <h2>New Draft: {{ name }}</h2>
+        <h2>
+          New Draft:
+          <div
+            class="p-2 rounded hover:bg-gray-200 focus:bg-gray-200 hover:cursor-text inline-block"
+            contenteditable
+            @input="
+              e => {
+                name = e.target.innerText.trim();
+              }
+            "
+          >
+            {{ name }}
+          </div>
+        </h2>
 
         <el-button :type="dirty ? 'primary' : undefined" @click="handleCreateDraft">
           Create Draft
@@ -11,12 +24,6 @@
     </portal>
 
     <div class="document-drafts-create-page">
-      <el-form label-position="top">
-        <el-form-item label="Draft Name">
-          <el-input v-model="name" class="w-full" />
-        </el-form-item>
-      </el-form>
-
       <document-form
         v-if="schema && document"
         ref="formEl"
@@ -32,12 +39,12 @@
 <script lang="ts">
 import { Document, Schema } from '@dockite/database';
 import { cloneDeep } from 'lodash';
-import { Component, Watch, Vue } from 'nuxt-property-decorator';
+import { Component, Vue } from 'nuxt-property-decorator';
 
 import DocumentForm from '~/components/base/document-form.vue';
-import * as auth from '~/store/auth';
 import * as data from '~/store/data';
-import * as document from '~/store/document';
+// import * as document from '~/store/document';
+import * as draft from '~/store/draft';
 
 @Component({
   name: 'DocumentDraftCreatePage',
@@ -70,6 +77,30 @@ export default class DocumentDraftCreatePage extends Vue {
     }
 
     return null;
+  }
+
+  get schemaId(): string {
+    if (this.document) {
+      return this.document.schemaId;
+    }
+
+    return '';
+  }
+
+  public getIdentifier(document: Document): string {
+    if (document.data?.name) {
+      return document.data.name;
+    }
+
+    if (document.data?.title) {
+      return document.data.title;
+    }
+
+    if (document.data?.identifier) {
+      return document.data.identifier;
+    }
+
+    return document.id;
   }
 
   public async fetchDocumentById(force = false): Promise<void> {
@@ -117,6 +148,11 @@ export default class DocumentDraftCreatePage extends Vue {
       this.loading += 1;
 
       await this.fetchDocumentById();
+
+      if (!this.document) {
+        throw new Error('Unable to retrieve document');
+      }
+
       await this.fetchSchemaById(this.document.schemaId);
 
       await this.$confirm("Would you like to use the current document's data?", 'Bootstrap', {
@@ -130,6 +166,11 @@ export default class DocumentDraftCreatePage extends Vue {
           }
         })
         .catch(() => {});
+
+      if (!this.name) {
+        const identifier = this.getIdentifier(this.document);
+        this.name = `${identifier}-${Date.now()}`;
+      }
     } catch (err) {
       this.$message({
         message: 'An error occurred whilst bootstrapping the draft, please try again later.',
@@ -141,7 +182,32 @@ export default class DocumentDraftCreatePage extends Vue {
   }
 
   public async handleCreateDraft(): Promise<void> {
-    // ! TO BE IMPLEMENTED
+    try {
+      this.loading += 1;
+
+      await this.$store.dispatch(`${draft.namespace}/createDraft`, {
+        name: this.name,
+        data: this.form,
+        documentId: this.documentId,
+        schemaId: this.schemaId,
+      });
+
+      await this.fetchDocumentById(true);
+
+      this.$message({
+        message: 'Draft created successfully',
+        type: 'success',
+      });
+    } catch (e) {
+      console.log(e);
+
+      this.$message({
+        message: 'Unable to create draft, please try again later.',
+        type: 'success',
+      });
+    } finally {
+      this.loading -= 1;
+    }
   }
 
   beforeMount(): void {

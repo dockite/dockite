@@ -32,6 +32,7 @@ export interface HookContext {
   document?: Document;
   path?: string;
   user?: Omit<User, 'password' | 'handleNormalizeScopes' | 'can'>;
+  draft?: boolean;
 }
 
 export interface HookContextWithOldData extends HookContext {

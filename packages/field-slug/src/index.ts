@@ -102,7 +102,7 @@ export class DockiteFieldSlug extends DockiteField {
 
       let shouldContinue = true;
 
-      if (settings.unique) {
+      if (settings.unique && ctx.draft !== true) {
         while (shouldContinue === true) {
           if (settings.parent) {
             count = await this.getSlugCount(slug, documentId, ctx.data[settings.parent]);

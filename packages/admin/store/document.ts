@@ -149,7 +149,9 @@ export const actions: ActionTree<DocumentState, RootState> = {
   },
 
   async deleteDocument(_, payload: DeleteDocumentPayload): Promise<void> {
-    const { data } = await this.$apolloClient.mutate<DeleteDocumentMutationResponse>({
+    const { data: deleteDocumentData } = await this.$apolloClient.mutate<
+      DeleteDocumentMutationResponse
+    >({
       mutation: DeleteDocumentMutation,
       variables: {
         id: payload.documentId,
@@ -160,7 +162,7 @@ export const actions: ActionTree<DocumentState, RootState> = {
       },
     });
 
-    if (!data?.removeDocument) {
+    if (!deleteDocumentData?.removeDocument) {
       throw new Error('Unable to delete document');
     }
 

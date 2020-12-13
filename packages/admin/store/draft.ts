@@ -19,6 +19,7 @@ export interface DraftState {
 }
 
 interface CreateDraftPayload {
+  name: string;
   data: Record<string, any>;
   documentId: string;
   schemaId: string;
@@ -26,6 +27,7 @@ interface CreateDraftPayload {
 
 interface UpdateDraftPayload {
   draftId: string;
+  name?: string;
   data: Record<string, any>;
 }
 
@@ -46,6 +48,7 @@ export const actions: ActionTree<DraftState, RootState> = {
     const { data: createDraftData } = await this.$apolloClient.mutate<CreateDraftMutationResponse>({
       mutation: CreateDraftMutation,
       variables: {
+        name: payload.name,
         documentId: payload.documentId,
         schemaId: payload.schemaId,
         data: payload.data,
@@ -68,6 +71,7 @@ export const actions: ActionTree<DraftState, RootState> = {
       mutation: UpdateDraftMutation,
       variables: {
         id: payload.draftId,
+        name: payload.name,
         data: payload.data,
         locale: DEFAULT_LOCALE,
       },

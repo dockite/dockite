@@ -3,26 +3,21 @@
     :type="disabled ? 'primary' : undefined"
     :disabled="!disabled"
     split-button
-    @click="handleSaveAndPublishClick"
+    @click="handleUpdateDraftClick"
   >
-    Save and Publish
+    Save Draft
     <el-dropdown-menu slot="dropdown">
       <el-dropdown-item>
-        <el-button type="text" @click="handleSaveAsDraft">
-          Save as Draft
+        <el-button type="text" @click="handlePublishDraft">
+          Publish Draft
         </el-button>
       </el-dropdown-item>
       <!-- <el-dropdown-item>Add to Release</el-dropdown-item> -->
       <el-dropdown-item>
-        <router-link class="block w-full" :to="`/documents/${documentId}/revisions`">
-          View Revisions
-        </router-link>
-      </el-dropdown-item>
-      <el-dropdown-item>
         <router-link
           v-if="schema && $can(`schema:${schema.name}:delete`)"
           class="block w-full text-red-400 hover:text-red-500"
-          :to="`/documents/${documentId}/delete`"
+          :to="`/documents/${documentId}/${draftId}/delete`"
         >
           Delete
         </router-link>
@@ -42,6 +37,9 @@ export class DocumentActionsComponent extends Vue {
   @Prop({ required: true })
   readonly documentId!: string;
 
+  @Prop({ required: true })
+  readonly draftId!: string;
+
   // At the moment this actually refers to whether the document is "dirty"
   @Prop({ required: true })
   readonly disabled!: boolean;
@@ -53,22 +51,22 @@ export class DocumentActionsComponent extends Vue {
   readonly schema!: Schema;
 
   @Prop({ required: true, type: Function })
-  readonly handleSaveAndPublish!: Function;
+  readonly handleUpdateDraft!: Function;
 
   @Prop({ required: true, type: Function })
-  readonly handleSaveAsDraft!: Function;
+  readonly handlePublishDraft!: Function;
 
-  public handleSaveAndPublishClick(): void {
+  public handleUpdateDraftClick(): void {
     if (!this.disabled) {
       this.$message({
-        message: 'Document has not been edited, not performing save.',
+        message: 'Draft has not been edited, not performing save.',
         type: 'warning',
       });
 
       return;
     }
 
-    this.handleSaveAndPublish();
+    this.handleUpdateDraft();
   }
 }
 

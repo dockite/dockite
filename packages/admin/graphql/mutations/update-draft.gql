@@ -1,6 +1,7 @@
-mutation UpdateDraftMutation($id: String!, $data: JSON!) {
-  updateDraft(id: $id, data: $data) {
+mutation UpdateDraftMutation($id: String! $name: String!, $data: JSON!) {
+  updateDraft(id: $id, name: $name, data: $data) {
     id
+    name
     data
     createdAt
     updatedAt

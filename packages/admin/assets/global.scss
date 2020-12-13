@@ -138,3 +138,17 @@ button:focus,
     line-height: 1.2;
   }
 }
+
+.dockite-table--document {
+  th {
+    padding: 0;
+  }
+
+  th .cell {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    padding: 0.5rem 12px 1.5rem 12px;
+    display: flex;
+    align-items: center;
+  }
+}

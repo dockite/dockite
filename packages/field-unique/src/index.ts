@@ -35,6 +35,10 @@ export class DockiteFieldUnique extends DockiteField {
   }
 
   public async onCreate(ctx: HookContext): Promise<void> {
+    if (ctx.draft === true) {
+      return;
+    }
+
     const settings = this.schemaField.settings as UniqueFieldSettings;
 
     await Promise.all(
@@ -61,6 +65,10 @@ export class DockiteFieldUnique extends DockiteField {
   }
 
   public async onUpdate(ctx: HookContextWithOldData): Promise<void> {
+    if (ctx.draft === true) {
+      return;
+    }
+
     const settings = this.schemaField.settings as UniqueFieldSettings;
 
     await Promise.all(

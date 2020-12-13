@@ -31,6 +31,14 @@
           </template>
         </el-table-column>
 
+        <el-table-column sortable="custom" prop="name" label="Draft Name">
+          <template slot-scope="scope">
+            <router-link :to="`/documents/${documentId}/drafts/${scope.row.id}`">
+              {{ scope.row.name }}
+            </router-link>
+          </template>
+        </el-table-column>
+
         <el-table-column
           v-for="field in fieldsToDisplay"
           :key="field.name"
@@ -166,11 +174,15 @@ import { Component, Watch, Vue } from 'nuxt-property-decorator';
 
 import { ITEMS_PER_PAGE } from '~/common/constants';
 import { TableSortChangeEvent, TableSortDirection, ManyResultSet } from '~/common/types';
+import FilterInput from '~/components/base/filter-input.vue';
 import * as data from '~/store/data';
-import * as document from '~/store/document';
+// import * as document from '~/store/document';
 
 @Component({
   name: 'DocumentDraftsPage',
+  components: {
+    FilterInput,
+  },
 })
 export default class DocumentDraftsPage extends Vue {
   public loading = 1;

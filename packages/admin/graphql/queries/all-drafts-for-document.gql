@@ -18,6 +18,14 @@ query allDraftsForDocument($documentId: String!, $page: Int!, $perPage: Int! = 2
         settings
         createdAt
         updatedAt
+        fields {
+      id
+      name
+      title
+      description
+      type
+      settings
+    }
       }
     }
     totalItems
