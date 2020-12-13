@@ -16,6 +16,7 @@
     "@dockite/field": "^0.4.0-alpha.0",
     "@dockite/types": "^0.3.0",
     "@dockite/where-builder": "^0.2.1-alpha.1",
+    "apollo-server-express": "^2.15.1",
     "debug": "^4.1.1",
     "express": "^4.17.1",
     "graphql": "^15.1.0",

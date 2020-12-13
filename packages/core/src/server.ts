@@ -12,7 +12,6 @@ import { set } from 'lodash';
 
 import { EXTERNAL_GRAPHQL_PATH, INTERNAL_GRAPHQL_PATH } from './common/constants/core';
 import { scopes } from './common/scopes';
-import { SessionContext } from './common/types';
 import { getConfig } from './config';
 import { DockiteEvents } from './events';
 import { RootModule } from './modules';
@@ -106,7 +105,7 @@ export const createServer = async (): Promise<Express> => {
 
   const externalServer = new ApolloServer({
     schema: external.schema,
-    context: (ctx: SessionContext): SessionContext => ctx,
+    context: ctx => createGlobalContext(ctx, SchemaManager.externalSchema),
     introspection: true,
     playground: true,
     tracing: !!process.env.DOCKITE_APOLLO_TRACING,

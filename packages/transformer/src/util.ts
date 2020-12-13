@@ -1,3 +1,5 @@
+import { Field } from '@dockite/types';
+
 export const strToColumnPath = (str: string, splitChar = '.'): string => {
   return str
     .split(splitChar)
@@ -9,4 +11,16 @@ export const strToColumnPath = (str: string, splitChar = '.'): string => {
       return `'${chunk}'`;
     })
     .join(' ->');
+};
+
+export const makeInitialFieldDataForDocument = (fields: Field[]): Record<string, any> => {
+  return fields.reduce((acc, curr) => {
+    return {
+      ...acc,
+      [curr.name]:
+        curr.settings.default !== undefined
+          ? curr.settings.default
+          : curr.dockiteField?.defaultValue(),
+    };
+  }, {});
 };
