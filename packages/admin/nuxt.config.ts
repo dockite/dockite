@@ -205,11 +205,12 @@ const config: Configuration = {
             () => `
             const fieldManager = {};
 
-            const registerField = (name, inputComponent, settingsComponent) => {
+            const registerField = (name, inputComponent, settingsComponent, viewComponent = null) => {
               if (!fieldManager[name]) {
                 fieldManager[name] = {
                   input: inputComponent,
                   settings: settingsComponent,
+                  view: viewComponent
                 };
               }
             };

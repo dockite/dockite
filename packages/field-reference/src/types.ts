@@ -1,6 +1,12 @@
 import { BaseField } from '@dockite/database';
 import { Constraint } from '@dockite/where-builder';
 
+export interface ReferenceFieldValue {
+  identifier: string;
+  id: string;
+  schemaId: string;
+}
+
 export interface ReferenceFieldSettings {
   required: boolean;
   schemaIds: string[];

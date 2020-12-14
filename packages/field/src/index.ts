@@ -113,6 +113,7 @@ export const registerField = (
   name: string,
   inputComponent: Component | null,
   settingsComponent: Component | null,
+  viewComponent: Component | null = null,
 ): void => {
   if (typeof window === 'undefined') {
     throw new Error('registerField called in non-browser environment');
@@ -122,6 +123,6 @@ export const registerField = (
   const w = window as any;
 
   if (w.dockite && w.dockite.registerField) {
-    w.dockite.registerField(name, inputComponent, settingsComponent);
+    w.dockite.registerField(name, inputComponent, settingsComponent, viewComponent);
   }
 };

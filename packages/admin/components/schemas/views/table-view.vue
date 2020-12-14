@@ -94,35 +94,11 @@
           </template>
 
           <template slot-scope="scope">
-            <span v-if="field.type.includes('reference') && scope.row.data[field.name]">
-              {{ scope.row.data[field.name].identifier }}
-            </span>
-
-            <span v-else-if="field.type === 's3-image' && scope.row.data[field.name]">
-              <i
-                v-if="
-                  Array.isArray(scope.row.data[field.name]) &&
-                    scope.row.data[field.name].length === 0
-                "
-                class="el-icon-picture-outline font-xl"
-              />
-
-              <img
-                v-else-if="
-                  Array.isArray(scope.row.data[field.name]) && scope.row.data[field.name].length > 0
-                "
-                class="w-full mx-auto"
-                style="max-width: 75px;"
-                :src="scope.row.data[field.name][0].url"
-                alt=""
-              />
-
-              <img
-                v-else
-                class="w-full mx-auto"
-                style="max-width: 75px;"
-                :src="scope.row.data[field.name].url"
-                alt=""
+            <span v-if="$dockiteFieldManager[field.type] && $dockiteFieldManager[field.type].view">
+              <component
+                :is="$dockiteFieldManager[field.type].view"
+                :data="scope.row.data[field.name]"
+                :field="field"
               />
             </span>
 

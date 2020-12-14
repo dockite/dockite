@@ -1,5 +1,6 @@
 {
   "root": true,
+  "parser": "vue-eslint-parser",
   "parserOptions": {
     "parser": "@typescript-eslint/parser",
     "ecmaVersion": 6,
@@ -8,7 +9,7 @@
   "env": {
     "es6": true
   },
-  "plugins": ["@typescript-eslint", "import", "prettier"],
+  "plugins": ["vue", "@typescript-eslint", "import", "prettier"],
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/eslint-recommended",
@@ -17,14 +18,11 @@
     "plugin:vue/essential",
     "plugin:vue/recommended",
     "plugin:vue/strongly-recommended",
-    "prettier/vue",
-    "plugin:prettier/recommended"
+    "plugin:prettier/recommended",
+    "prettier/vue"
   ],
   "settings": {
     "import/extensions": [".ts", ".tsx", ".vue", ".js", ".mjs"],
-    "import/parsers": {
-      "@typescript-eslint/parser": [".ts", ".tsx", ".vue", ".js", ".mjs"]
-    },
     "import/resolver": {
       "node": {
         "extensions": [".ts", ".tsx", ".vue", ".js", ".mjs"]
@@ -55,7 +53,7 @@
         "tsx": "never",
         "js": "never",
         "jsx": "never",
-        "vue": "never"
+        "vue": "always"
       }
     ],
     "import/no-cycle": "off",

@@ -175,7 +175,27 @@
             </template>
 
             <template slot-scope="scope">
-              <span>{{ scope.row.data[field.name] || 'N/A' }}</span>
+              <span
+                v-if="
+                  scope.row.schema.fields[field.name] &&
+                    $dockiteFieldManager[scope.row.schema.fields[field.name].type] &&
+                    $dockiteFieldManager[scope.row.schema.fields[field.name].type].view
+                "
+              >
+                <component
+                  :is="$dockiteFieldManager[scope.row.schema.fields[field.name].type].view"
+                  :data="scope.row.data[field.name]"
+                  :field="field"
+                />
+              </span>
+
+              <span v-else-if="scope.row.data[field.name]">
+                {{ scope.row.data[field.name] }}
+              </span>
+
+              <i v-else>
+                N/A
+              </i>
             </template>
           </el-table-column>
 

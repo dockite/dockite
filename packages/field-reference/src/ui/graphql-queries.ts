@@ -44,6 +44,20 @@ export const SEARCH_DOCUMENTS_QUERY = gql`
         schema {
           id
           name
+          title
+          type
+          groups
+          settings
+          createdAt
+          updatedAt
+          fields {
+            id
+            name
+            title
+            description
+            type
+            settings
+          }
         }
       }
       totalItems

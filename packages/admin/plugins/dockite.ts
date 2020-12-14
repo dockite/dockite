@@ -7,6 +7,7 @@ export interface DockiteFieldManager {
   [name: string]: {
     input: Component;
     settings: Component;
+    view: Component | null;
   };
 }
 
@@ -16,11 +17,13 @@ const registerField = (
   name: string,
   inputComponent: Component,
   settingsComponent: Component,
+  viewComponent: Component | null = null,
 ): void => {
   if (!fieldManager[name]) {
     fieldManager[name] = {
       input: inputComponent,
       settings: settingsComponent,
+      view: viewComponent,
     };
   }
 };
