@@ -4,7 +4,7 @@ import { FieldSettings } from '@dockite/types';
 export type ChildField = Omit<BaseField, 'id' | 'schema' | 'schemaId' | 'dockiteField'>;
 
 export interface VariantFieldSettings extends FieldSettings {
-  required: boolean;
+  required?: boolean;
   children: ChildField[];
 }
 
