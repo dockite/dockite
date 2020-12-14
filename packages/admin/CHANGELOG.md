@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.5.0-alpha.0](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.1-alpha.0...@dockite/admin@0.5.0-alpha.0) (2020-12-14)
+
+
+### Features
+
+* add field level view support ([0be784c](https://github.com/dockite/dockite/commit/0be784c43a918e98329a54b4bebfff5101cafe4d))
+
+
+
+
+
 ## [0.4.1-alpha.0](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.0...@dockite/admin@0.4.1-alpha.0) (2020-12-10)
 
 **Note:** Version bump only for package @dockite/admin

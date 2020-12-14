@@ -1,6 +1,6 @@
 {
   "name": "@dockite/manager",
-  "version": "0.2.1",
+  "version": "0.2.2-alpha.0",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
@@ -11,7 +11,7 @@
     "lib"
   ],
   "dependencies": {
-    "@dockite/field": "^0.3.0",
+    "@dockite/field": "^0.4.0-alpha.0",
     "@dockite/types": "^0.3.0",
     "debug": "^4.1.1",
     "graphql": "^15.1.0",

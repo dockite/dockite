@@ -1,6 +1,6 @@
 {
   "name": "@dockite/field-conditional-select",
-  "version": "0.1.0",
+  "version": "0.2.0-alpha.0",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
@@ -12,8 +12,8 @@
     "lib"
   ],
   "dependencies": {
-    "@dockite/database": "^0.4.0",
-    "@dockite/field": "^0.3.0",
+    "@dockite/database": "^0.4.1-alpha.0",
+    "@dockite/field": "^0.4.0-alpha.0",
     "@dockite/types": "^0.3.0",
     "graphql": "^15.1.0",
     "lodash": "^4.17.15",
