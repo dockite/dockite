@@ -177,13 +177,13 @@
             <template slot-scope="scope">
               <span
                 v-if="
-                  scope.row.schema.fields[field.name] &&
-                    $dockiteFieldManager[scope.row.schema.fields[field.name].type] &&
-                    $dockiteFieldManager[scope.row.schema.fields[field.name].type].view
+                  scope.row.schema.fields &&
+                    getDockiteField(scope.row.schema.fields, field.name) &&
+                    getDockiteField(scope.row.schema.fields, field.name).view
                 "
               >
                 <component
-                  :is="$dockiteFieldManager[scope.row.schema.fields[field.name].type].view"
+                  :is="getDockiteField(scope.row.schema.fields, field.name).view"
                   :data="scope.row.data[field.name]"
                   :field="field"
                 />
@@ -291,6 +291,7 @@ import {
   PossibleConstraints,
 } from '@dockite/where-builder';
 import { debounce, get } from 'lodash';
+import { Field } from '@dockite/database';
 
 import { DockiteFieldReferenceEntity, FieldToDisplayItem } from '../types';
 
@@ -538,6 +539,16 @@ export default class ReferenceFieldInputComponent extends Vue {
     }
 
     this.loading -= 1;
+  }
+
+  public getDockiteField(fields: Field[], fieldName: string): Record<string, any> | null {
+    const field = fields.find(x => x.name === fieldName);
+
+    if (!field) {
+      return null;
+    }
+
+    return this.$dockiteFieldManager[field.type] ?? null;
   }
 
   public getRequiredRule(): object {
