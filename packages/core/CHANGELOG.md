@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.5.0-alpha.0](https://github.com/dockite/dockite/compare/@dockite/core@0.4.1-alpha.1...@dockite/core@0.5.0-alpha.0) (2020-12-16)
+
+
+### Features
+
+* **field-transformer:** refactor transformer package ([17397dd](https://github.com/dockite/dockite/commit/17397dd28a7eb3996c1abc2c6450de1bd39438ef))
+
+
+
+
+
 ## [0.4.1-alpha.1](https://github.com/dockite/dockite/compare/@dockite/core@0.4.1-alpha.0...@dockite/core@0.4.1-alpha.1) (2020-12-14)
 
 **Note:** Version bump only for package @dockite/core
