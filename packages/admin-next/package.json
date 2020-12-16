@@ -1,0 +1,51 @@
+{
+  "name": "@dockite/admin-next",
+  "version": "0.1.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "NODE_ENV=production webpack",
+    "dev": "NODE_ENV=develop webpack serve"
+  },
+  "dependencies": {
+    "@dockite/database": "^0.4.0",
+    "@dockite/webpack": "^1.1.0",
+    "@sentry/browser": "^5.29.2",
+    "@sentry/tracing": "^5.29.2",
+    "apollo-cache-inmemory": "^1.6.6",
+    "apollo-client": "^2.6.10",
+    "apollo-link": "^1.2.14",
+    "apollo-link-error": "^1.1.13",
+    "apollo-link-context": "^1.0.20",
+    "apollo-link-http": "^1.5.17",
+    "cosmiconfig": "^6.0.0",
+    "element-plus": "^1.0.1-beta.10",
+    "graphql-tag": "^2.10.3",
+    "jwt-decode": "^3.1.2",
+    "lodash": "^4.17.15",
+    "tailwindcss": "^1.9.6",
+    "vue": "^3.0.4",
+    "vue-composable": "^1.0.0-beta.12",
+    "vue-router": "^4.0.0"
+  },
+  "peerDependencies": {
+    "@auth0/auth0-spa-js": "^1.13.5",
+    "aws-amplify": "^3.3.13"
+  },
+  "devDependencies": {
+    "@auth0/auth0-spa-js": "^1.13.5",
+    "@types/lodash": "^4.14.149",
+    "@typescript-eslint/eslint-plugin": "^4.10.0",
+    "@typescript-eslint/parser": "^4.10.0",
+    "aws-amplify": "^3.3.13",
+    "eslint": "^5.16.0 || ^6.8.0 || ^7.2.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-config-prettier": "^6.10.0",
+    "eslint-import-resolver-alias": "^1.1.2",
+    "eslint-import-resolver-typescript": "^2.3.0",
+    "eslint-import-resolver-webpack": "^0.13.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-prettier": "^3.1.2",
+    "eslint-plugin-vue": "^7.3.0"
+  }
+}

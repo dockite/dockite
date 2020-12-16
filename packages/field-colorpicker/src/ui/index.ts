@@ -1,7 +1,8 @@
 import { registerField } from '@dockite/field';
 
-import Input from './Input.vue';
-import Settings from './Settings.vue';
-import View from './View.vue';
+import { FIELD_TYPE } from '../types';
 
-export default registerField('colorpicker', Input, Settings, View);
+import { InputComponent } from './Input';
+import { SettingsComponent } from './Settings';
+
+export default registerField(FIELD_TYPE, InputComponent, SettingsComponent);

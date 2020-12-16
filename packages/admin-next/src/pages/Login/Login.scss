@@ -1,0 +1,16 @@
+@import '../../assets/variables';
+
+.dockite-login--page {
+  .dockite-branding--logo {
+    max-width: 450px;
+    max-height: 125px;
+    padding-bottom: 2rem;
+  }
+
+  .el-card {
+    width: 500px;
+    max-width: 500px;
+
+    border-top: 4px solid $--color-primary;
+  }
+}

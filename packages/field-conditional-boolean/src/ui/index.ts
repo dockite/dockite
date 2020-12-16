@@ -1,7 +1,6 @@
-/* eslint-disable */
 import { registerField } from '@dockite/field';
 
-import Input from './Input.vue';
-import Settings from './Settings.vue';
+import { InputComponent } from './Input';
+import { SettingsComponent } from './Settings';
 
-export default registerField('conditional_boolean', Input, Settings);
+export default registerField('conditional_boolean', InputComponent, SettingsComponent);

@@ -1,3 +1,0 @@
-mutation PartialUpdateDocumentsInSchemaIdMutation($schemaId: String!, $data: JSON!, $documentIds: [String!]) {
-  partialUpdateDocumentsInSchemaId(schemaId: $schemaId, data: $data, documentIds: $documentIds)
-}

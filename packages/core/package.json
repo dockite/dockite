@@ -22,6 +22,7 @@
     "@dockite/types": "^0.3.0",
     "@dockite/where-builder": "^0.2.1-alpha.1",
     "@graphql-modules/core": "^0.7.14",
+    "@types/uuid": "^8.0.0",
     "ajv": "^6.12.2",
     "apollo-server-express": "^2.15.1",
     "axios": "^0.19.2",
@@ -38,13 +39,15 @@
     "graphql": "^15.1.0",
     "graphql-type-json": "^0.3.1",
     "jsonwebtoken": "^8.5.1",
+    "jwks-rsa": "^1.12.0",
     "lodash": "^4.17.15",
     "nodemailer": "^6.4.10",
     "pg": "8.3.3",
     "pg-format": "^1.0.4",
     "reflect-metadata": "^0.1.13",
     "type-graphql": "1.0.0-rc.2",
-    "typeorm": "^0.2.25"
+    "typeorm": "^0.2.25",
+    "uuid": "^8.0.0"
   },
   "devDependencies": {
     "@types/axios": "^0.14.0",

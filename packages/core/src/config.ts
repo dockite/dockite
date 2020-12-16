@@ -1,15 +1,14 @@
+import { DockiteConfiguration } from '@dockite/types';
 import { cosmiconfigSync } from 'cosmiconfig';
 import debug from 'debug';
 
-import { CoreConfiguration } from './common/types/config';
-
-let config: CoreConfiguration;
+let config: DockiteConfiguration;
 
 let hasLoadedConfig = false;
 
 const log = debug('dockite:core:config');
 
-export const getConfig = (): CoreConfiguration => {
+export const getConfig = (): DockiteConfiguration => {
   if (!hasLoadedConfig) {
     log('searching for and loading config');
     const result = cosmiconfigSync('dockite').search();

@@ -21,9 +21,9 @@
     "type-graphql": "1.0.0-rc.2",
     "typeorm": "^0.2.25",
     "validator": "^13.0.0",
-    "vue": "^2.6.11",
-    "vue-fragment": "^1.5.1",
-    "vue-property-decorator": "^8.4.2"
+    "vue": "^3.0.4"
+
+
   },
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.10.1",

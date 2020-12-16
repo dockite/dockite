@@ -2,7 +2,7 @@ import { DockiteField } from '@dockite/field';
 import { GraphQLInputType, GraphQLOutputType, GraphQLScalarType, GraphQLString } from 'graphql';
 import { HookContextWithOldData, DockiteFieldValidationError } from '@dockite/types';
 
-import { StringFieldSettings } from './types';
+import { StringFieldSettings, defaultOptions, FIELD_TYPE } from './types';
 
 const DockiteFieldStringType = new GraphQLScalarType({
   ...GraphQLString.toConfig(),
@@ -10,19 +10,13 @@ const DockiteFieldStringType = new GraphQLScalarType({
 });
 
 export class DockiteFieldString extends DockiteField {
-  public static type = 'string';
+  public static type = FIELD_TYPE;
 
   public static title = 'String';
 
   public static description = 'A string field';
 
-  public static defaultOptions: StringFieldSettings = {
-    required: false,
-    textarea: false,
-    urlSafe: false,
-    minLen: 0,
-    maxLen: 0,
-  };
+  public static defaultOptions = defaultOptions;
 
   public async inputType(): Promise<GraphQLInputType> {
     return DockiteFieldStringType;

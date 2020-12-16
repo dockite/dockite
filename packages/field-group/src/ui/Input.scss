@@ -1,0 +1,74 @@
+.dockite-field-group--fieldset {
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  padding: 1rem;
+
+  legend {
+    padding: 0.5rem;
+  }
+}
+
+.dockite-field-group--item {
+  position: relative;
+  display: flex;
+  width: 100%;
+}
+
+.dockite-field-group--remove-item {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: #f56c6c;
+  z-index: 200;
+
+  &:hover {
+    color: #f56c6c;
+    opacity: 0.75;
+  }
+
+  i {
+    font-weight: bold;
+  }
+}
+
+.dockite-field-group {
+  .flip-list-move {
+    transition: transform 0.5s;
+  }
+
+  .no-move {
+    transition: transform 0s;
+  }
+
+  .el-form-item {
+    margin-bottom: 1rem;
+  }
+
+  .el-collapse-item__header {
+    background: rgba(237, 242, 247, 1);
+  }
+
+  .el-collapse-item__content {
+    padding-bottom: 0;
+  }
+
+  .dockite-group--movement-button {
+    display: block;
+
+    margin: 0;
+    padding: 3px;
+
+    font-size: 1rem;
+  }
+
+  .dockite--group-movement-button__delete {
+    opacity: 0;
+    transition: all 300ms;
+  }
+
+  .dockite-field-group--item:hover {
+    .dockite--group-movement-button__delete {
+      opacity: 1;
+    }
+  }
+}

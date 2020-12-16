@@ -1,3 +1,0 @@
-mutation RemoveSingletonMutation($id: String!) {
-  removeSingleton(id: $id)
-}

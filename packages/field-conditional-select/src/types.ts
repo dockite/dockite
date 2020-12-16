@@ -1,5 +1,13 @@
 import { BaseField } from '@dockite/database';
 
+export const FIELD_TYPE = 'conditional_select';
+
+export const defaultOptions: ConditionalSelectFieldSettings = {
+  required: false,
+  multiple: false,
+  options: [],
+};
+
 export interface ConditionalSelectFieldOption {
   label: string;
   value: string;

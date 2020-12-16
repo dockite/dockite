@@ -1,3 +1,0 @@
-mutation RemoveSchemaMutation($id: String!) {
-  removeSchema(id: $id)
-}

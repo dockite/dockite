@@ -1,3 +1,0 @@
-mutation RestoreSchemaRevision($schemaId: String!, $revisionId: String!) {
-  restoreSchemaRevision(schemaId: $schemaId, revisionId: $revisionId)
-}

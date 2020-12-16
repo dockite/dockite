@@ -1,3 +1,0 @@
-mutation RemoveDocumentMutation($id: String!) {
-  removeDocument(id: $id)
-}

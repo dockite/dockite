@@ -1,25 +1,36 @@
+import crypto from 'crypto';
+
 import { User } from '@dockite/database';
 import { GlobalContext, UserContext } from '@dockite/types';
+import {
+  Auth0AuthConfiguration,
+  InternalAuthConfiguration,
+} from '@dockite/types/lib/common/config/auth';
 import { ExpressContext } from 'apollo-server-express/dist/ApolloServer';
+import { hashSync } from 'bcrypt';
 import debug from 'debug';
-import { sign } from 'jsonwebtoken';
-import { getRepository } from 'typeorm';
 import { GraphQLSchema } from 'graphql';
+import { sign, verify as jwtVerify } from 'jsonwebtoken';
+import JwksClient from 'jwks-rsa';
+import { getRepository } from 'typeorm';
 
 import { getConfig } from '../config';
 
 import { verify } from './jwt-verify';
+import { isInternalAuth } from './type-assertions';
 
 const log = debug('dockite:context:builder');
 
 const config = getConfig();
 
-const exchangeBearerTokenForUser = (bearerToken: string): UserContext | null => {
+const exchangeBearerTokenForUser = async (bearerToken: string): Promise<UserContext | null> => {
   const bearerSplit = bearerToken.split('Bearer');
   const token = bearerSplit[bearerSplit.length - 1].trim();
 
+  const authConfig = config.auth as InternalAuthConfiguration;
+
   try {
-    const user = verify<UserContext>(token, config.app.secret ?? '');
+    const user = verify<UserContext>(token, authConfig.secret ?? '');
 
     return user;
   } catch (err) {
@@ -27,9 +38,80 @@ const exchangeBearerTokenForUser = (bearerToken: string): UserContext | null => 
   }
 };
 
+const exchangeAuth0TokenForUser = async (bearerToken: string): Promise<UserContext | null> => {
+  const authConfig = config.auth as Auth0AuthConfiguration;
+
+  const client = JwksClient({
+    jwksUri: `https://${authConfig.domain}/.well-known/jwks.json`,
+  });
+
+  const result = await new Promise<Record<string, any>>((resolve, reject) => {
+    jwtVerify(
+      bearerToken,
+      (header, cb) => {
+        if (!header.kid) {
+          reject(new Error('No "kid" attribute in header'));
+        }
+
+        client.getSigningKey(header.kid as string, (err, key) => {
+          if (err) {
+            reject(err);
+          }
+
+          cb(null, key.getPublicKey());
+        });
+      },
+      {
+        audience: authConfig.audience,
+        algorithms: ['RS256'],
+        issuer: `https://${authConfig.domain}/`,
+      },
+      (err, verifyResult) => {
+        if (err) {
+          reject(err);
+        }
+
+        resolve(verifyResult);
+      },
+    );
+  });
+
+  const userRepository = getRepository(User);
+
+  const auth0Id = result.sub.split('|').pop();
+
+  const email = `${auth0Id}@auth0.com`;
+
+  const password = crypto
+    .randomBytes(40)
+    .toString('base64')
+    .slice(0, 30);
+
+  const user = await userRepository
+    .findOneOrFail({
+      where: { email },
+    })
+    .catch(() => {
+      const [firstName, lastName] = result.name.split(' ');
+      return userRepository.save(
+        userRepository.create({
+          email,
+          firstName: firstName || '',
+          lastName: lastName || '',
+          password: hashSync(password, 10),
+          verified: true,
+        }),
+      );
+    });
+
+  return user;
+};
+
 const exchangeRefreshTokenForUser = async (refreshToken: string): Promise<UserContext | null> => {
   try {
-    const refresh = verify<UserContext>(refreshToken, config.app.secret ?? '');
+    const authConfig = config.auth as InternalAuthConfiguration;
+
+    const refresh = verify<UserContext>(refreshToken, authConfig.secret ?? '');
 
     const user = await getRepository(User).findOneOrFail(refresh.id);
 
@@ -64,14 +146,20 @@ export const createGlobalContext = async (
   let apiKey = req.headers['x-dockite-token'] ?? '';
 
   if (authorization) {
-    const user = exchangeBearerTokenForUser(authorization);
+    let user: UserContext | null;
+
+    if (isInternalAuth(config.auth)) {
+      user = await exchangeBearerTokenForUser(authorization);
+    } else {
+      user = await exchangeAuth0TokenForUser(authorization);
+    }
 
     if (user) {
       return { req, res, user, schema };
     }
   }
 
-  if (refreshTokenCookie) {
+  if (isInternalAuth(config.auth) && refreshTokenCookie) {
     log('user session expired, issuing new jwt');
 
     const user = await exchangeRefreshTokenForUser(refreshTokenCookie);
@@ -88,12 +176,12 @@ export const createGlobalContext = async (
 
       const [bearerToken, refreshToken] = await Promise.all([
         Promise.resolve(
-          sign(tokenPayload, config.app.secret ?? '', {
+          sign(tokenPayload, config.auth.secret ?? '', {
             expiresIn: '15m',
           }),
         ),
         Promise.resolve(
-          sign(tokenPayload, config.app.secret ?? '', {
+          sign(tokenPayload, config.auth.secret ?? '', {
             expiresIn: '3d',
           }),
         ),
@@ -111,19 +199,15 @@ export const createGlobalContext = async (
   }
 
   if (!apiKey) {
-    log('api key not found in headers, checking queryparams');
-
     apiKey = (req.query['x-dockite-token'] ?? '') as string;
   }
 
   if (apiKey) {
     const user = await exchangeAPIKeyForUser(apiKey as string);
 
-    if (!user) {
-      return { req, res, user: undefined, schema };
+    if (user) {
+      return { req, res, user, schema };
     }
-
-    return { req, res, user, schema };
   }
 
   return { req, res, user: undefined, schema };

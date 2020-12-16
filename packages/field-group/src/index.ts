@@ -22,24 +22,25 @@ import {
 } from 'graphql';
 import { merge, get } from 'lodash';
 
-import { ChildField, GroupFieldSettings, ProcessMethodType, FieldHookMethod } from './types';
+import {
+  ChildField,
+  GroupFieldSettings,
+  ProcessMethodType,
+  FieldHookMethod,
+  FIELD_TYPE,
+  defaultOptions,
+} from './types';
 
 export class DockiteFieldGroup extends DockiteField {
-  public static type = 'group';
+  public static type = FIELD_TYPE;
 
   public static title = 'Group';
 
   public static description = 'A group field';
 
-  public static defaultOptions: GroupFieldSettings = {
-    required: false,
-    repeatable: false,
-    minRows: 0,
-    maxRows: Infinity,
-    children: [],
-  };
+  public static defaultOptions = defaultOptions;
 
-  public defaultValue() {
+  public defaultValue(): any[] | null {
     const settings = this.schemaField.settings as GroupFieldSettings;
 
     if (settings.repeatable) {

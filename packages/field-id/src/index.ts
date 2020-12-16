@@ -8,7 +8,7 @@ import {
 } from 'graphql';
 import { FieldContext, DockiteFieldValidationError } from '@dockite/types';
 
-import { IDFieldSettings } from './types';
+import { IDFieldSettings, FIELD_TYPE, defaultOptions } from './types';
 
 const DockiteFieldIntegerIDType = new GraphQLScalarType({
   ...GraphQLInt.toConfig(),
@@ -21,15 +21,14 @@ const DockiteFieldStringIDType = new GraphQLScalarType({
 });
 
 export class DockiteFieldID extends DockiteField {
-  public static type = 'id';
+  public static type = FIELD_TYPE;
 
   public static title = 'ID';
 
   public static description = 'An ID field only writable via the API';
 
   public static defaultOptions: IDFieldSettings = {
-    required: false,
-    type: 'string',
+    ...defaultOptions,
   };
 
   public async inputType(): Promise<GraphQLInputType> {

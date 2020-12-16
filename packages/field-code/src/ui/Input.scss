@@ -1,0 +1,18 @@
+.dockite-field-code {
+  .language-selector {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    padding-top: 0.5rem;
+  }
+
+  .CodeMirror {
+    height: auto;
+    min-height: 400px;
+    max-height: 800px;
+    padding: 0.5rem 0;
+    margin-bottom: 0.25rem;
+    line-height: normal;
+  }
+}
