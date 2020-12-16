@@ -3,7 +3,7 @@ import { FieldContext } from '@dockite/types';
 import { GraphQLInputType, GraphQLOutputType, GraphQLScalarType } from 'graphql';
 import { GraphQLDate, GraphQLDateTime, GraphQLTime } from 'graphql-iso-date';
 
-import { DateFieldSettings } from './types';
+import { DateTimeFieldSettings, defaultOptions, FIELD_TYPE } from './types';
 
 const DockiteFieldDateType = new GraphQLScalarType({
   ...GraphQLDate.toConfig(),
@@ -20,21 +20,17 @@ const DockiteFieldDateTimeType = new GraphQLScalarType({
   name: 'DockiteFieldDateTime',
 });
 
-export class DockiteFieldDatetime extends DockiteField {
-  public static type = 'datetime';
+export class DockiteFieldDateTime extends DockiteField {
+  public static type = FIELD_TYPE;
 
   public static title = 'Datetime';
 
   public static description = 'A datetime field.';
 
-  public static defaultOptions: DateFieldSettings = {
-    date: false,
-    time: false,
-    required: false,
-  };
+  public static defaultOptions = defaultOptions;
 
-  private graphqlType() {
-    const settings = this.schemaField.settings as DateFieldSettings;
+  private graphqlType(): GraphQLScalarType {
+    const settings = this.schemaField.settings as DateTimeFieldSettings;
 
     if (settings.date) {
       return DockiteFieldDateType;

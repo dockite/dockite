@@ -1,6 +1,6 @@
 import { registerField } from '@dockite/field';
 
-import Input from './Input.vue';
-import Settings from './Settings.vue';
+import { InputComponent } from './Input';
+import { SettingsComponent } from './Settings';
 
-export default registerField('group', Input, Settings);
+export default registerField('group', InputComponent, SettingsComponent);

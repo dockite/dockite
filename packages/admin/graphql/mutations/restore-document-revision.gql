@@ -1,3 +1,0 @@
-mutation RestoreDocumentRevision($documentId: String!, $revisionId: String!) {
-  restoreDocumentRevision(documentId: $documentId, revisionId: $revisionId)
-}

@@ -36,6 +36,10 @@ const derriveAlternativeScopesAccess = (
   availableScopes: string[],
 ): boolean => {
   return fields.some(field => {
+    if (!obj || !obj[field]) {
+      return false;
+    }
+
     const resourceName = getScopeResourceById(obj[field]);
 
     if (!resourceName) {
@@ -132,7 +136,7 @@ export const Authorized = (
     // And then get the resolvers response
     const resolved: FindManyResult<any> | any = await next();
 
-    if (resolved.results) {
+    if (resolved && resolved.results) {
       // If we're dealing with a collection of items
       // We filter out all results that the user isn't scoped to see.
       // For example if the results were ['123', '456'] and the user has the scope '123:read'

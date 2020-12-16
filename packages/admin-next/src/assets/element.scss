@@ -1,0 +1,57 @@
+@import 'variables.scss';
+
+/* icon font path, required */
+$--font-path: '~element-plus/lib/theme-chalk/fonts';
+
+@import "~element-plus/packages/theme-chalk/src/index";
+
+.el-form--label-top .el-form-item__label {
+  line-height: 1.2;
+}
+
+
+a {
+  color: $--color-primary;
+
+  transition: 300ms;
+
+  &:focus, &:hover {
+    color: $--color-primary-light-2;
+  }
+}
+
+.el-menu-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+
+  a {
+    flex: 1;
+
+    color: inherit;
+  }
+}
+
+.el-menu {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.el-aside {
+  overflow-x: hidden;
+}
+
+.el-submenu__title i, .el-menu-item i {
+  color: inherit;
+}
+
+.el-table th > .cell {
+  word-break: normal;
+  white-space: nowrap;
+  // text-overflow: initial;
+}
+
+.el-table .cell, .el-table th > .cell {
+  padding-left: 15px;
+  padding-right: 15px;
+}

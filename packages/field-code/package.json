@@ -27,15 +27,13 @@
     "type-graphql": "1.0.0-rc.2",
     "typeorm": "^0.2.25",
     "validator": "^13.0.0",
-    "vue": "^2.6.11",
-    "vue-codemirror": "^4.0.6",
-    "vue-fragment": "^1.5.1",
-    "vue-property-decorator": "^8.4.2"
+    "vue": "^3.0.4"
   },
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.10.1",
     "@babel/plugin-proposal-decorators": "^7.10.1",
     "@dockite/webpack": "^1.1.0",
+    "@types/codemirror": "0.0.56",
     "@types/graphql-type-json": "^0.3.2",
     "@typescript-eslint/eslint-plugin": "^2.20.0",
     "@typescript-eslint/parser": "^2.20.0",

@@ -10,6 +10,7 @@ import { getRepository, Repository } from 'typeorm';
 import { GlobalContext } from '../../../common/types';
 import { getConfig } from '../../../config';
 import { AuthenticationResponse } from '../types/response';
+import { isInternalAuth } from '../../../utils/type-assertions';
 
 // const log = debug('dockite:core:authentication:resolver');
 
@@ -33,6 +34,10 @@ export class Authentication {
       where: { email },
     });
 
+    if (!isInternalAuth(config.auth)) {
+      throw new Error('Authentication method is not compatible');
+    }
+
     try {
       const correctPassword = await compare(password, user.password);
 
@@ -54,14 +59,14 @@ export class Authentication {
         Promise.resolve(
           sign(
             { ...tokenPayload, normalizedScopes: user.normalizedScopes },
-            config.app.secret ?? '',
+            config.auth.secret ?? '',
             {
               expiresIn: '15m',
             },
           ),
         ),
         Promise.resolve(
-          sign(tokenPayload, config.app.secret ?? '', {
+          sign(tokenPayload, config.auth.secret ?? '', {
             expiresIn: '3d',
           }),
         ),
@@ -89,6 +94,10 @@ export class Authentication {
     @Ctx() ctx: GlobalContext,
   ): Promise<AuthenticationResponse> {
     const userCount = await this.userRepository.count({ withDeleted: true });
+
+    if (!isInternalAuth(config.auth)) {
+      throw new Error('Not implemented');
+    }
 
     if (userCount > 0) {
       throw new ForbiddenError('A user already exists');
@@ -137,14 +146,14 @@ export class Authentication {
       Promise.resolve(
         sign(
           { ...tokenPayload, normalizedScopes: user.normalizedScopes },
-          config.app.secret ?? '',
+          config.auth.secret ?? '',
           {
             expiresIn: '15m',
           },
         ),
       ),
       Promise.resolve(
-        sign(tokenPayload, config.app.secret ?? '', {
+        sign(tokenPayload, config.auth.secret ?? '', {
           expiresIn: '3d',
         }),
       ),

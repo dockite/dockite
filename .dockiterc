@@ -4,7 +4,19 @@
     "title": "Dockite",
     "description": "The simpler HeadlessCMS",
     "url": "http://localhost:4000",
-    "graphqlEndpoint": "http://localhost:3000/dockite/graphql/internal"
+    "graphqlEndpoint": "http://localhost:3000/dockite/graphql/internal",
+    "authProvider": "auth0"
+  },
+  "ui": {
+    "backgroundColor": "#2b6cb0",
+    "textColor": "#ffffff",
+    "activeTextColour": "#eeeeee",
+  },
+  "auth": {
+    "clientId": "secret",
+    "audience": "secret",
+    "domain": "domain.au.auth0.com",
+    "clientSecret": "secret"
   },
   "database": {
     "host": "localhost",
@@ -42,7 +54,7 @@
     "@dockite/field-media-manager",
     "@dockite/field-sort-index",
     "@dockite/field-id",
-    "@dockite/field-unique",
+    "@dockite/field-unique"
   ],
   "modules": {
     "internal": [

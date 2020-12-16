@@ -1,7 +1,7 @@
 import { DockiteField } from '@dockite/field';
-import {
-  GraphQLBoolean, GraphQLInputType, GraphQLOutputType, GraphQLScalarType,
-} from 'graphql';
+import { GraphQLBoolean, GraphQLInputType, GraphQLOutputType, GraphQLScalarType } from 'graphql';
+
+import { FIELD_TYPE, defaultOptions } from './types';
 
 const DockiteFieldBooleanType = new GraphQLScalarType({
   ...GraphQLBoolean.toConfig(),
@@ -9,13 +9,13 @@ const DockiteFieldBooleanType = new GraphQLScalarType({
 });
 
 export class DockiteFieldBoolean extends DockiteField {
-  public static type = 'boolean';
+  public static type = FIELD_TYPE;
 
   public static title = 'Boolean';
 
   public static description = 'A boolean field, rendered as a checkbox';
 
-  public static defaultOptions = {};
+  public static defaultOptions = defaultOptions;
 
   public async inputType(): Promise<GraphQLInputType> {
     return DockiteFieldBooleanType;

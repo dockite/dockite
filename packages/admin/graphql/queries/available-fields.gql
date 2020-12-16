@@ -1,8 +1,0 @@
-query AvailableFields {
-  availableFields {
-    title
-    type
-    description
-    defaultOptions
-  }
-}

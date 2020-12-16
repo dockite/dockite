@@ -1,7 +1,17 @@
 import { BaseField } from '@dockite/database';
 import { FieldSettings } from '@dockite/types';
 
-export interface ConditionalBooleanSettings extends FieldSettings {
+export const FIELD_TYPE = 'conditional_boolean';
+
+export const defaultOptions: ConditionalBooleanFieldSettings = {
+  required: false,
+  fieldsToHide: [],
+  fieldsToShow: [],
+  groupsToHide: [],
+  groupsToShow: [],
+};
+
+export interface ConditionalBooleanFieldSettings extends FieldSettings {
   required: boolean;
   fieldsToHide: string[];
   groupsToHide: string[];
@@ -11,5 +21,5 @@ export interface ConditionalBooleanSettings extends FieldSettings {
 
 export interface DockiteFieldConditionalBooleanEntity extends BaseField {
   type: 'conditional_boolean';
-  settings: ConditionalBooleanSettings & BaseField['settings'];
+  settings: ConditionalBooleanFieldSettings & BaseField['settings'];
 }

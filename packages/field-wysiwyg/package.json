@@ -31,8 +31,8 @@
     "eslint": "^6.8.0",
     "eslint-plugin-vue": "^7.0.0-alpha.0",
     "typescript": "^3.9.5",
-    "vue": "^2.6.11",
-    "vue-fragment": "^1.5.1",
-    "vue-property-decorator": "^8.4.2"
+    "vue": "^3.0.4"
+
+
   }
 }

@@ -1,7 +1,8 @@
-/* eslint-disable */
 import { registerField } from '@dockite/field';
 
-import Input from './Input.vue';
-import Settings from './Settings.vue';
+import { FIELD_TYPE } from '../types';
 
-export default registerField('conditional_select', Input, Settings);
+import { InputComponent } from './Input';
+import { SettingsComponent } from './Settings';
+
+export default registerField(FIELD_TYPE, InputComponent, SettingsComponent);

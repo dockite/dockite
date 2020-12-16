@@ -7,7 +7,7 @@ import {
   GraphQLScalarType,
 } from 'graphql';
 
-import { NumberFieldSettings } from './types';
+import { NumberFieldSettings, defaultOptions, FIELD_TYPE } from './types';
 
 const DockiteFieldFloatType = new GraphQLScalarType({
   ...GraphQLFloat.toConfig(),
@@ -20,17 +20,14 @@ const DockiteFieldIntType = new GraphQLScalarType({
 });
 
 export class DockiteFieldNumber extends DockiteField {
-  public static type = 'number';
+  public static type = FIELD_TYPE;
 
   public static title = 'Number';
 
   public static description = 'A number field, allowing for either whole or decimal numbers.';
 
   public static defaultOptions: NumberFieldSettings = {
-    required: false,
-    float: false,
-    min: -Infinity,
-    max: Infinity,
+    ...defaultOptions,
   };
 
   private graphqlType(): GraphQLScalarType {

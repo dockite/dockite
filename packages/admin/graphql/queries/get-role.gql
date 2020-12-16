@@ -1,8 +1,0 @@
-query GetRole($name: String!) {
-  getRole(name: $name) {
-    name
-    scopes
-    createdAt
-    updatedAt
-  }
-}

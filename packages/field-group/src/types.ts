@@ -1,6 +1,16 @@
 import { BaseField } from '@dockite/database';
 import { FieldSettings } from '@dockite/types';
 
+export const FIELD_TYPE = 'group';
+
+export const defaultOptions: GroupFieldSettings = {
+  required: false,
+  repeatable: false,
+  children: [],
+  minRows: 0,
+  maxRows: 0,
+};
+
 export enum ProcessMethodType {
   INPUT_GRAPHQL = 'INPUT_GRAPHQL',
   OUTPUT_GRAPHQL = 'OUTPUT_GRAPHQL',
