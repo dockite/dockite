@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.5.0-alpha.1](https://github.com/dockite/dockite/compare/@dockite/admin@0.5.0-alpha.0...@dockite/admin@0.5.0-alpha.1) (2020-12-17)
+
+
+### Bug Fixes
+
+* **admin:** remove view draft button ([d2771a3](https://github.com/dockite/dockite/commit/d2771a38a66c2f033a0c8e7c7575e0f8237ca848))
+
+
+
+
+
 # [0.5.0-alpha.0](https://github.com/dockite/dockite/compare/@dockite/admin@0.4.1-alpha.0...@dockite/admin@0.5.0-alpha.0) (2020-12-14)
 
 
