@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.5.0-alpha.2](https://github.com/dockite/dockite/compare/@dockite/admin@0.5.0-alpha.1...@dockite/admin@0.5.0-alpha.2) (2020-12-17)
+
+
+### Features
+
+* **admin:** allow adding of additional columns ([bbfeb9f](https://github.com/dockite/dockite/commit/bbfeb9f9ce1fe4348975ff3bb4d20244073bfa9e))
+
+
+
+
+
 # [0.5.0-alpha.1](https://github.com/dockite/dockite/compare/@dockite/admin@0.5.0-alpha.0...@dockite/admin@0.5.0-alpha.1) (2020-12-17)
 
 
