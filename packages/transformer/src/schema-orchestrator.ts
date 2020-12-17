@@ -2,7 +2,14 @@ import { Schema } from '@dockite/database';
 import { DockiteFieldStatic, GlobalContext } from '@dockite/types';
 import debug from 'debug';
 import typeorm from 'typeorm';
-import { GraphQLSchema, GraphQLObjectType, GraphQLFieldConfigMap, Source } from 'graphql';
+import {
+  GraphQLSchema,
+  GraphQLObjectType,
+  GraphQLFieldConfigMap,
+  Source,
+  GraphQLString,
+  GraphQLSchemaConfig,
+} from 'graphql';
 
 import { AuthenticationModule } from './types';
 import DockiteSchema from './schema';
@@ -40,7 +47,9 @@ export default class DockiteSchemaOrchestrator {
     // of fields
     const outputTypeMap = new Map<string, GraphQLObjectType>();
 
-    const queries: GraphQLFieldConfigMap<Source, GlobalContext> = {};
+    const queries: GraphQLFieldConfigMap<Source, GlobalContext> = {
+      hello: { type: GraphQLString, resolve: (): string => 'World' },
+    };
 
     const mutations: GraphQLFieldConfigMap<Source, GlobalContext> = {};
 
@@ -75,17 +84,21 @@ export default class DockiteSchemaOrchestrator {
       }),
     );
 
-    return new GraphQLSchema({
+    const schemaConfig: GraphQLSchemaConfig = {
       query: new GraphQLObjectType({
         name: 'Query',
         fields: queries,
       }),
+    };
 
-      mutation: new GraphQLObjectType({
+    if (Object.keys(mutations).length > 0) {
+      schemaConfig.mutation = new GraphQLObjectType({
         name: 'Mutation',
         fields: mutations,
-      }),
-    });
+      });
+    }
+
+    return new GraphQLSchema(schemaConfig);
   }
 
   private makeSchema(schema: Schema): DockiteSchema {
