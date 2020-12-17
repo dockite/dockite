@@ -8,10 +8,6 @@
         </h2>
 
         <div>
-          <el-button>
-            View Draft
-          </el-button>
-
           <document-actions-dropdown
             v-if="schema && document"
             class="ml-2"
