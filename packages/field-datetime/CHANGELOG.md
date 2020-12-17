@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.0](https://github.com/dockite/dockite/compare/@dockite/field-datetime@0.3.1-alpha.0...@dockite/field-datetime@0.4.0-alpha.0) (2020-12-17)
+
+
+### Features
+
+* **field-datetime:** add field view for datetimes ([3174b04](https://github.com/dockite/dockite/commit/3174b043c6943df090e1c1540f6ebca30f1e2a2d))
+
+
+
+
+
 ## [0.3.1-alpha.0](https://github.com/dockite/dockite/compare/@dockite/field-datetime@0.3.0...@dockite/field-datetime@0.3.1-alpha.0) (2020-12-14)
 
 **Note:** Version bump only for package @dockite/field-datetime
