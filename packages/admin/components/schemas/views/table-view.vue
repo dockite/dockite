@@ -11,7 +11,9 @@
       />
     </portal>
 
-    <div v-loading="loading > 0">
+    <div v-loading="loading > 0" class="relative">
+      <div class="absolute" style="top: -10px"></div>
+
       <el-table
         ref="table"
         :data="findDocumentsBySchemaId.results"
@@ -132,6 +134,36 @@
             />
           </span>
         </el-table-column>
+
+        <el-table-column width="40">
+          <div slot="header">
+            <el-dropdown>
+              <button type="text">
+                <i class="el-icon-setting"></i>
+              </button>
+
+              <el-dropdown-menu slot="dropdown">
+                <div class="px-2 py-3">
+                  <h5 class="pb-3">Additional Columns</h5>
+                  <el-checkbox-group
+                    v-if="schema"
+                    v-model="additionalFieldsToDisplay"
+                    class="flex flex-col -my-1"
+                  >
+                    <el-checkbox
+                      v-for="field in fields"
+                      :key="field.id"
+                      class="block py-1"
+                      :label="field.name"
+                    >
+                      {{ field.title }}
+                    </el-checkbox>
+                  </el-checkbox-group>
+                </div>
+              </el-dropdown-menu>
+            </el-dropdown>
+          </div>
+        </el-table-column>
       </el-table>
 
       <el-row type="flex" justify="space-between" align="middle">
@@ -159,7 +191,7 @@ import { Schema, Field, Document } from '@dockite/database';
 import { DockiteGraphqlSortInput, DockiteSortDirection } from '@dockite/types';
 import { Operators, Constraint, ConstraintOperator } from '@dockite/where-builder';
 import { formatDistanceToNow } from 'date-fns';
-import { pickBy } from 'lodash';
+import { pickBy, uniq, sortBy } from 'lodash';
 import { Component, Vue, Watch, Prop } from 'nuxt-property-decorator';
 import { Fragment } from 'vue-fragment';
 
@@ -228,6 +260,14 @@ export default class TableViewComponent extends Vue {
     return this.$store.getters[`${data.namespace}/getSchemaWithFieldsById`](this.schemaId);
   }
 
+  get fields(): Field[] {
+    if (!this.schema) {
+      return [];
+    }
+
+    return sortBy(this.schema.fields, 'name');
+  }
+
   get perPage(): number {
     return ITEMS_PER_PAGE;
   }
@@ -243,14 +283,39 @@ export default class TableViewComponent extends Vue {
     return `Displaying documents ${startingItem} to ${endingItem} of ${this.findDocumentsBySchemaId.totalItems}`;
   }
 
+  get additionalFieldsToDisplay(): string[] {
+    return this.fieldsToDisplay.map(x => x.name);
+  }
+
+  set additionalFieldsToDisplay(value) {
+    this.$router.replace({
+      query: {
+        ...this.$route.query,
+        'x-fields-to-display': value.join(','),
+      },
+    });
+  }
+
   get fieldsToDisplay(): Field[] {
+    let fieldsToDisplay: Field[] = [];
+
     if (this.schema?.settings?.fieldsToDisplay) {
-      return this.schema.settings.fieldsToDisplay
+      fieldsToDisplay = this.schema.settings.fieldsToDisplay
         .map((field: string) => this.schema.fields.find(f => f.name === field))
         .filter((field: Field | undefined) => !!field) as Field[];
     }
 
-    return [];
+    if (this.$route.query['x-fields-to-display']) {
+      const items = String(this.$route.query['x-fields-to-display'])
+        .split(',')
+        .map(x => String(x).trim())
+        .map((field: string) => this.schema.fields.find(f => f.name === field))
+        .filter((field: Field | undefined) => !!field) as Field[];
+
+      fieldsToDisplay = uniq([...fieldsToDisplay, ...items]);
+    }
+
+    return fieldsToDisplay;
   }
 
   get currentPage(): number {
@@ -428,7 +493,7 @@ export default class TableViewComponent extends Vue {
 
     this.$router.push({
       query: {
-        ...pickBy(this.$route.query as Record<string, string>, (key: string) =>
+        ...pickBy(this.$route.query as Record<string, string>, (_, key: string) =>
           key.startsWith('x-'),
         ),
         ...queryParams,
@@ -472,7 +537,7 @@ export default class TableViewComponent extends Vue {
 
   @Watch('$route.query', { deep: true })
   handleRouteQueryChange(): void {
-    if (Object.keys(this.$route.query).length > 0) {
+    if (Object.keys(this.$route.query).filter(x => !x.startsWith('x-')).length > 0) {
       const filters: Record<string, Constraint> = {};
 
       Object.keys(this.$route.query)
