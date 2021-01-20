@@ -23,4 +23,5 @@ export interface GroupFieldSettings extends FieldSettings {
   repeatable: boolean;
   minRows: number;
   maxRows: number;
+  multipleOf: number;
 }

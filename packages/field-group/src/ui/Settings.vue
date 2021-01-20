@@ -12,6 +12,9 @@
     <el-form-item label="Max Rows">
       <el-input-number v-model="settings.maxRows" />
     </el-form-item>
+    <el-form-item label="Multiple Of">
+      <el-input-number v-model="settings.multipleOf" />
+    </el-form-item>
   </fragment>
 </template>
 
@@ -25,6 +28,7 @@ interface Settings {
   repeatable: boolean;
   minRows: number;
   maxRows: number;
+  multipleOf: number;
 }
 
 interface SchemaResults {
@@ -58,6 +62,7 @@ export default class GroupFieldSettingsComponent extends Vue {
       repeatable: false,
       minRows: 0,
       maxRows: Infinity,
+      multipleOf: 1,
     };
   }
 
