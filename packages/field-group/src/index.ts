@@ -36,6 +36,7 @@ export class DockiteFieldGroup extends DockiteField {
     repeatable: false,
     minRows: 0,
     maxRows: Infinity,
+    multipleOf: 1,
     children: [],
   };
 

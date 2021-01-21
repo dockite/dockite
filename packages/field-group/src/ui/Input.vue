@@ -239,6 +239,10 @@ export default class GroupFieldInputComponent extends Vue {
       if (this.settings.maxRows) {
         this.rules.push(this.getMaxRule());
       }
+
+      if (this.settings.multipleOf) {
+        this.rules.push(this.getMultipleOfXRule());
+      }
     }
   }
 
@@ -264,6 +268,25 @@ export default class GroupFieldInputComponent extends Vue {
       type: 'array',
       max: this.settings.maxRows,
       message: `${this.fieldConfig.title} must contain at most ${this.settings.maxRows} rows.`,
+      trigger: 'blur',
+    };
+  }
+
+  public getMultipleOfXRule(): object {
+    const { settings } = this;
+    return {
+      type: 'array',
+      validator(_rule: never, value: object[], callback: Function) {
+        if (value === null || value.length === 0) {
+          return callback();
+        }
+
+        if (value.length % settings.multipleOf !== 0) {
+          return callback(false);
+        }
+        return callback();
+      },
+      message: `${this.fieldConfig.title} must contain an amount of items that is a multiple of ${this.settings.multipleOf}.`,
       trigger: 'blur',
     };
   }
