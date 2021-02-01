@@ -409,8 +409,9 @@ export default class SideMenuComponent extends Vue {
 
   public async logout(): Promise<void> {
     await this.$store.dispatch(`${namespace}/logout`);
+    const query = { redirectTo: decodeURIComponent(this.$route.path) };
 
-    this.$router.push('/login');
+    this.$router.push({ path: '/login', query });
   }
 }
 </script>

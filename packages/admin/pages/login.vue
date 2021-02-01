@@ -124,6 +124,7 @@ export default class LoginPage extends Vue {
   public async login(): Promise<void> {
     try {
       this.loading += 1;
+      const redirectRoute = encodeURIComponent(this.$route.query.redirectTo.toString());
 
       const valid = await (this.$refs.form as Form).validate();
 
@@ -135,7 +136,11 @@ export default class LoginPage extends Vue {
 
       await this.$store.dispatch(`${namespace}/login`, this.loginForm);
 
-      this.$router.push('/');
+      if (redirectRoute) {
+        this.$router.push(redirectRoute);
+      }
+
+      this.$router.back();
     } catch (_) {
       this.error = 'The username or password provided is incorrect.';
     } finally {
