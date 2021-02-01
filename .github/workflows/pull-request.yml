@@ -18,12 +18,10 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
 
-    - run: yarn global add lerna
-    - run: echo "::add-path::$(yarn global bin)"
-
-    - run: lerna bootstrap
-    - run: lerna run build --scope @dockite/types
-    - run: lerna run build --scope @dockite/manager
-    - run: lerna run build --ignore @dockite/admin --ignore @dockite/core --ignore @dockite/field-* --parallel
-    - run: lerna run build --scope @dockite/field-* --parallel
-    - run: lerna run build --scope @dockite/core --scope @dockite/admin --parallel
+    - run: yarn install
+    - run: yarn lerna bootstrap
+    - run: yarn lerna run build --scope @dockite/types
+    - run: yarn lerna run build --scope @dockite/manager
+    - run: yarn lerna run build --ignore @dockite/admin --ignore @dockite/core --ignore @dockite/field-*
+    - run: yarn lerna run build --scope @dockite/field-* --parallel
+    - run: yarn lerna run build --scope @dockite/core --scope @dockite/admin --parallel
