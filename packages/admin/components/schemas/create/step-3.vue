@@ -1,10 +1,10 @@
 <template>
   <div class="create-schema-step-1-component">
     <slot name="header">
-      <h3>Next, lets configre the Settings</h3>
+      <h3>Next, let's configure the Settings</h3>
 
       <p class="dockite-text--subtitle">
-        Next up lets configure the schema, we can define the fields that will be displayed in views
+        Next up let's configure the schema, we can define the fields that will be displayed in views
         and other useful details that will help manage our content.
       </p>
     </slot>
