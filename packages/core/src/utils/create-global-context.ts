@@ -71,7 +71,7 @@ const exchangeAuth0TokenForUser = async (bearerToken: string): Promise<UserConte
           reject(err);
         }
 
-        resolve(verifyResult);
+        resolve(verifyResult as Record<string, any>);
       },
     );
   });

@@ -6,6 +6,7 @@ import { compare, hash } from 'bcrypt';
 import { sign } from 'jsonwebtoken';
 import { Arg, Ctx, Mutation, Resolver } from 'type-graphql';
 import { getRepository, Repository } from 'typeorm';
+import { omit } from 'lodash';
 
 import { GlobalContext } from '../../../common/types';
 import { getConfig } from '../../../config';
@@ -45,8 +46,6 @@ export class Authentication {
         throw new Error('Incorrect Password');
       }
 
-      delete user.password;
-
       const tokenPayload = {
         id: user.id,
         firstname: user.firstName,
@@ -79,7 +78,7 @@ export class Authentication {
         expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 3),
       });
 
-      return { user, token: bearerToken };
+      return { user: omit(user, 'password'), token: bearerToken };
     } catch (err) {
       throw new AuthenticationError('Authentication failed.');
     }

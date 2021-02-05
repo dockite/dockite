@@ -1,0 +1,65 @@
+{
+  "app": {
+    "secret": "secret",
+    "title": "Dockite",
+    "description": "The simpler HeadlessCMS",
+    "url": "http://localhost:4000",
+    "graphqlEndpoint": "http://localhost:3000/dockite/graphql/internal",
+    "authProvider": "auth0"
+  },
+  "ui": {
+    "backgroundColor": "#2b6cb0",
+    "textColor": "#ffffff",
+    "activeTextColour": "#eeeeee",
+  },
+  "auth": {
+    "clientId": "secret",
+    "audience": "secret",
+    "domain": "domain.au.auth0.com",
+    "clientSecret": "secret"
+  },
+  "database": {
+    "host": "localhost",
+    "username": "dockite",
+    "password": "password",
+    "database": "dockite",
+    "port": 5432
+  },
+  "mail": {
+    "host": "smtp.mailgun.org",
+    "username": "user@mailgun.org",
+    "password": "password",
+    "port": 587,
+    "secure": false,
+    "fromAddress": "dockite@dockite.app"
+  },
+  "entities": [],
+  "fields": [
+    "@dockite/field-s3-image",
+    "@dockite/field-string",
+    "@dockite/field-select",
+    "@dockite/field-slug",
+    "@dockite/field-number",
+    "@dockite/field-boolean",
+    "@dockite/field-colorpicker",
+    "@dockite/field-datetime",
+    "@dockite/field-json",
+    "@dockite/field-group",
+    "@dockite/field-reference",
+    "@dockite/field-reference-of",
+    "@dockite/field-variant",
+    "@dockite/field-conditional-boolean",
+    "@dockite/field-conditional-select",
+    "@dockite/field-wysiwyg",
+    "@dockite/field-media-manager",
+    "@dockite/field-sort-index",
+    "@dockite/field-id",
+    "@dockite/field-unique"
+  ],
+  "modules": {
+    "internal": [
+      "@dockite/module-s3-presign"
+    ],
+    "external": []
+  }
+}

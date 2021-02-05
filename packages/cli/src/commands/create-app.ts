@@ -28,7 +28,7 @@ export default class CreateApp extends Command {
 
     const appPath = path.join(process.cwd(), args.appName);
 
-    const exists = await new Promise(resolve => {
+    const exists = await new Promise<boolean>(resolve => {
       fs.exists(appPath, resolve);
     });
 
@@ -36,7 +36,7 @@ export default class CreateApp extends Command {
       fs.mkdirSync(appPath);
     }
 
-    await new Promise(resolve => {
+    await new Promise<void>(resolve => {
       https.get('https://codeload.github.com/dockite/template/zip/master', res => {
         if (res.headers['content-encoding'] === 'gzip') {
           const gunzip = zlib.createGunzip();
