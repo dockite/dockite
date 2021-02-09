@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.5.0-alpha.4](https://github.com/dockite/dockite/compare/@dockite/admin@0.5.0-alpha.3...@dockite/admin@0.5.0-alpha.4) (2021-02-09)
+
+
+### Bug Fixes
+
+* **admin:** fix typo in schema creation step 3 ([4cf8685](https://github.com/dockite/dockite/commit/4cf86851c61eabd403fd695988c5d2dad88b813b))
+
+
+
+
+
 # [0.5.0-alpha.3](https://github.com/dockite/dockite/compare/@dockite/admin@0.5.0-alpha.2...@dockite/admin@0.5.0-alpha.3) (2021-02-09)
 
 
