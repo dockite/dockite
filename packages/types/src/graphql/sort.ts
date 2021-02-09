@@ -5,7 +5,7 @@ export enum DockiteSortDirection {
   DESC = 'DESC',
 }
 
-export interface DockiteGraphqlSortInput {
+export interface DockiteGraphQLSortInput {
   name: string;
   direction: DockiteSortDirection;
 }
