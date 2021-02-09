@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.5.0-alpha.3](https://github.com/dockite/dockite/compare/@dockite/admin@0.5.0-alpha.2...@dockite/admin@0.5.0-alpha.3) (2021-02-09)
+
+
+### Features
+
+* login redirect admin user to previous page ([2e0acfc](https://github.com/dockite/dockite/commit/2e0acfcc42d16478e7ab73922823fbc895276d40))
+
+
+
+
+
 # [0.5.0-alpha.2](https://github.com/dockite/dockite/compare/@dockite/admin@0.5.0-alpha.1...@dockite/admin@0.5.0-alpha.2) (2020-12-17)
 
 
