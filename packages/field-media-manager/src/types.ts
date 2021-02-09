@@ -1,5 +1,7 @@
 import { BaseField } from '@dockite/database';
 
+export const FIELD_TYPE = 'media-manager';
+
 export const DEFAULT_OPTIONS: MediaManagerFieldSettings = {
   acceptedExtensions: [],
   maxSizeKB: 10000,

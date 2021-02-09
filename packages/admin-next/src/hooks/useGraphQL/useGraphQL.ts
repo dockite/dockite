@@ -113,7 +113,7 @@ export const useGraphQL = (): UseGraphQLHook => {
     await state.client.resetStore();
   };
 
-  return {
+  const GraphQL = {
     executeQuery,
     executeMutation,
     resetCacheStore,
@@ -121,6 +121,8 @@ export const useGraphQL = (): UseGraphQLHook => {
     loading: state.loading,
     operationCount: state.operationCount,
   };
+
+  return GraphQL;
 };
 
 export default useGraphQL;

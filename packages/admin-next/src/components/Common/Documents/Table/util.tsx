@@ -11,23 +11,25 @@ export const getIdentifierColumn = (): JSX.Element => {
     <el-table-column label="Identifier">
       {{
         default: ({ row }: DocumentTableColumnDefaultScopedSlot) => {
+          let identifier = row.id;
+
           if (row.data.name) {
-            return <span>{row.data.name}</span>;
+            identifier = String(row.data.name);
           }
 
           if (row.data.title) {
-            return <span>{row.data.title}</span>;
+            identifier = String(row.data.title);
           }
 
           if (row.data.identifier) {
-            return <span>{row.data.identifier}</span>;
+            identifier = String(row.data.identifier);
           }
 
           if (row.data.id) {
-            return <span>{row.data.id}</span>;
+            identifier = String(row.data.id);
           }
 
-          return <span>{row.id}</span>;
+          return <span class="truncate">{identifier}</span>;
         },
       }}
     </el-table-column>
@@ -140,18 +142,13 @@ export const getFilterComponent = (
         ),
 
         reference: () => (
-          <div
-            class="text-xs mt-1 font-normal bg-gray-200 rounded px-2 cursor-pointer break-words relative"
-            style="word-break: break-word;"
-          >
-            <span class={filter ? 'font-bold' : ''}>{label}</span>
+          <div class="text-xs mt-1 font-normal bg-gray-200 rounded px-2 cursor-pointer flex justify-between items-center w-full overflow-hidden">
+            <div class={{ 'font-bold': !!filter, truncate: true }}>{label}</div>
 
-            <i class="el-icon-arrow-down absolute right-0 px-2" style="top: 25%;" />
+            <i class="el-icon-arrow-down" />
           </div>
         ),
       }}
     </el-popover>
   );
 };
-
-export const avoidDefaultExportIssues = null;

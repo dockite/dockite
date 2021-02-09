@@ -13,10 +13,10 @@
     "activeTextColour": "#eeeeee",
   },
   "auth": {
-    "clientId": "secret",
-    "audience": "secret",
-    "domain": "domain.au.auth0.com",
-    "clientSecret": "secret"
+    "clientId": "WJiY5aucwdZrpzSDZQNVBklS22hC2nvj",
+    "audience": "WJiY5aucwdZrpzSDZQNVBklS22hC2nvj",
+    "domain": "wekan-dev.au.auth0.com",
+    "clientSecret": "kEqziWJN2qmm2aPmD2_ZQ3f22YDs2LZb6FDc7WziBpOmeaMpr6mvvJ6P_FSH0KkJ"
   },
   "database": {
     "host": "localhost",

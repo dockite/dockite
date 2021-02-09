@@ -223,14 +223,14 @@ export const SchemaDocumentsPage = defineComponent(() => {
     return (
       <DocumentTableComponent
         class="-m-5"
-        showIdentifier={tableColumns.value.length === 0}
         columns={tableColumns.value}
         documents={documents.result.value.results}
-        schema={schema.result.value}
-        state={tableState}
         getActions={getActions}
         getFooter={getTableFooter}
+        schema={schema.result.value}
         selectable
+        showIdentifierColumn={tableColumns.value.length === 0}
+        state={tableState}
         v-models={[[selectedItems.value, 'selectedItems']]}
       />
     );

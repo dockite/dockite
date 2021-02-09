@@ -1,12 +1,14 @@
-import { DefineComponent, reactive, ref, Ref, Plugin } from 'vue';
-
 import { Field, Schema } from '@dockite/database';
+import { ElMessage, ElNotification } from 'element-plus';
+import { DefineComponent, Plugin, reactive, ref, Ref } from 'vue';
+
 import { DockiteFieldInputComponentProps } from '@dockite/types';
 
 import { importDockiteFields } from './fields';
 
 import { ApplicationError, ApplicationErrorCode } from '~/common/errors';
 import { Nullable } from '~/common/types';
+import { useGraphQL } from '~/hooks';
 
 const w = window as any;
 
@@ -67,10 +69,18 @@ export interface UseDockiteHook {
 }
 
 export const useDockite = (): UseDockiteHook => {
-  return { fieldManager, hasLoadedFields };
+  return { hasLoadedFields, fieldManager };
 };
 
 export const DockiteVuePlugin: Plugin = app => {
   // eslint-disable-next-line no-param-reassign
   app.config.globalProperties.$dockite = { hasLoadedFields, fieldManager };
+
+  const $graphql = useGraphQL();
+
+  app.provide('$graphql', $graphql);
+
+  app.provide('$dockite', { hasLoadedFields, fieldManager });
+  app.provide('$message', ElMessage);
+  app.provide('$notify', ElNotification);
 };

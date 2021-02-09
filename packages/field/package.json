@@ -2,9 +2,10 @@
   "name": "@dockite/field",
   "version": "0.4.0-alpha.0",
   "main": "lib/index.js",
+  "module": "lib/index.esm.js",
   "license": "MIT",
   "scripts": {
-    "build": "tsc",
+    "build": "rollup -c",
     "typecheck": "tsc --noEmit"
   },
   "files": [
@@ -18,6 +19,7 @@
     "vue": "^3.0.4"
   },
   "devDependencies": {
+    "@dockite/rollup": "^0.1.0",
     "typescript": "^4.1.3"
   }
 }

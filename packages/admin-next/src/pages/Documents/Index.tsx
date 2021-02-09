@@ -133,13 +133,13 @@ export const DocumentsIndexPage = defineComponent(() => {
     return (
       <DocumentTableComponent
         class="-m-5"
-        showSchema
-        showIdentifier
         columns={tableColumns.value}
         documents={documents.result.value.results}
-        state={tableState}
         getActions={getActions}
         getFooter={getTableFooter}
+        state={tableState}
+        showIdentifierColumn
+        showSchemaColumn
       />
     );
   };

@@ -7,6 +7,7 @@ module.exports = {
   },
   parser: '@typescript-eslint/parser',
   parserOptions: {
+    parser: '@typescript-eslint/parser',
     ecmaVersion: 2018,
     sourceType: 'module',
     ecmaFeatures: {
@@ -16,16 +17,14 @@ module.exports = {
   extends: [
     'airbnb-base',
     'plugin:@typescript-eslint/recommended',
-    'plugin:import/errors',
-    'plugin:import/warnings',
     'plugin:import/typescript',
+    'prettier',
     'plugin:prettier/recommended',
   ],
-  plugins: ['@typescript-eslint', 'import', 'prettier'],
+  plugins: ['prettier', '@typescript-eslint'],
   // add your custom rules here
   rules: {
     'no-shadow': 'off',
-    'class-methods-use-this': 'off',
 
     '@typescript-eslint/explicit-function-return-type': [
       'error',
@@ -34,7 +33,6 @@ module.exports = {
       },
     ],
     'import/no-cycle': 'off',
-    'import/prefer-default-export': 'off',
     'import/order': [
       'error',
       {
@@ -59,6 +57,7 @@ module.exports = {
     ],
   },
   settings: {
+    'import/resolver': 'eslint-import-resolver-webpack',
     'import/extensions': ['.js', '.mjs', '.jsx', '.ts', '.tsx', '.css', '.scss'],
     'import/parsers': {
       '@typescript-eslint/parser': ['.ts', '.tsx'],

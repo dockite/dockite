@@ -2,9 +2,10 @@
   "name": "@dockite/where-builder",
   "version": "0.2.1-alpha.1",
   "main": "lib/index.js",
+  "module": "lib/index.esm.js",
   "license": "MIT",
   "scripts": {
-    "build": "tsc",
+    "build": "rollup -c",
     "typecheck": "tsc --noEmit"
   },
   "files": [

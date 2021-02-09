@@ -1,14 +1,10 @@
-import { Schema, Document } from '@dockite/database';
 import gql from 'graphql-tag';
 
+import { Schema, Document } from '@dockite/database';
+import { FindManyResult } from '@dockite/types';
+
 export interface AllSchemasQueryResponse {
-  allSchemas: {
-    results: Schema[];
-    totalItems: number;
-    totalPages: number;
-    currentPage: number;
-    hasNextPage: boolean;
-  };
+  allSchemas: FindManyResult<Schema>;
 }
 
 export const ALL_SCHEMAS_QUERY = gql`
@@ -33,13 +29,7 @@ export const ALL_SCHEMAS_QUERY = gql`
 `;
 
 export interface SearchDocumentsQueryResponse {
-  searchDocuments: {
-    results: Document[];
-    totalItems: number;
-    totalPages: number;
-    currentPage: number;
-    hasNextPage: boolean;
-  };
+  searchDocuments: FindManyResult<Document>;
 }
 
 export const SEARCH_DOCUMENTS_QUERY = gql`
@@ -69,6 +59,25 @@ export const SEARCH_DOCUMENTS_QUERY = gql`
       totalItems
       totalPages
       currentPage
+    }
+  }
+`;
+
+export interface GetDocumentByIdQueryResponse {
+  getDocument: Document;
+}
+
+export const GET_DOCUMENT_BY_ID_QUERY = gql`
+  query GetDocumentById($id: String!) {
+    getDocument(id: $id) {
+      id
+      locale
+      data
+      publishedAt
+      createdAt
+      updatedAt
+      releaseId
+      schemaId
     }
   }
 `;

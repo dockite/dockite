@@ -26,7 +26,7 @@
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.10.1",
     "@babel/plugin-proposal-decorators": "^7.10.1",
-    "@dockite/webpack": "^1.1.0",
+    "@dockite/rollup": "^0.1.0",
     "@types/lodash": "^4.14.149",
     "@typescript-eslint/eslint-plugin": "^2.20.0",
     "@typescript-eslint/parser": "^2.20.0",

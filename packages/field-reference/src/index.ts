@@ -1,19 +1,22 @@
-import { DockiteField } from '@dockite/field';
-import { Document } from '@dockite/database';
+/* eslint-disable class-methods-use-this */
+
 import {
   GraphQLInputObjectType,
   GraphQLInputType,
+  GraphQLNonNull,
   GraphQLObjectType,
   GraphQLOutputType,
   GraphQLString,
   GraphQLUnionType,
-  GraphQLNonNull,
 } from 'graphql';
 import { GraphQLJSON } from 'graphql-type-json';
 import { startCase } from 'lodash';
-import { FieldIOContext, FieldContext } from '@dockite/types';
 
-import { ReferenceFieldSettings } from './types';
+import { Document } from '@dockite/database';
+import { DockiteField } from '@dockite/field';
+import { FieldContext, FieldIOContext } from '@dockite/types';
+
+import { defaultOptions, FIELD_TYPE } from './types';
 
 const graphqlCase = (value: string): string => startCase(value).replace(/\s/g, '');
 
@@ -27,18 +30,17 @@ const DockiteFieldReferenceInputType = new GraphQLInputObjectType({
 });
 
 export class DockiteFieldReference extends DockiteField {
-  public static type = 'reference';
+  public static type = FIELD_TYPE;
 
   public static title = 'Reference';
 
   public static description = 'A reference field';
 
-  public static defaultOptions: ReferenceFieldSettings = {
-    required: false,
-    schemaIds: [],
+  public static defaultOptions = {
+    ...defaultOptions,
   };
 
-  private updateSchemaIdPointers() {
+  private updateSchemaIdPointers(): void {
     if (
       this.schemaField.settings.schemaIds &&
       this.schemaField.settings.schemaIds.includes('self')
@@ -119,7 +121,7 @@ export class DockiteFieldReference extends DockiteField {
     }
 
     return new GraphQLUnionType({
-      name: `${this.schemaField.name}_${this.schemaField.schema?.name ?? 'Unknown'}_Union`,
+      name: `${this.schemaField.name}${this.schemaField.schema?.name ?? 'Unknown'}Union`,
       types: unionTypes as GraphQLObjectType[],
       resolveType(obj: { schemaName: string }) {
         return graphqlCase(obj.schemaName);
@@ -149,3 +151,5 @@ export class DockiteFieldReference extends DockiteField {
     return ({ id: document.id, schemaName: document.schema.name, ...document.data } as any) as T;
   }
 }
+
+export default DockiteFieldReference;

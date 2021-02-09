@@ -3,10 +3,10 @@ import { PresignResolver } from '@dockite/module-s3-presign';
 import { GlobalContext, HookContext } from '@dockite/types';
 import { GraphQLInputType, GraphQLOutputType } from 'graphql';
 
-import { DEFAULT_OPTIONS, S3Settings } from './types';
+import { DEFAULT_OPTIONS, S3Settings, FIELD_TYPE } from './types';
 
 export class DockiteFieldMediaManager extends DockiteField {
-  public static type = 'media-manager';
+  public static type = FIELD_TYPE;
 
   public static title = 'Media Manager';
 

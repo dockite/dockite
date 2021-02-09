@@ -1,4 +1,5 @@
 import { Document } from '@dockite/database';
+
 import { DockiteGraphqlSortInput as DockiteGraphQLSortInput } from '@dockite/types';
 import { Constraint } from '@dockite/where-builder';
 

@@ -1,7 +1,7 @@
-import { get } from 'lodash';
+import { Document, Schema } from '@dockite/database';
+import { get, fromPairs } from 'lodash';
 import { computed, defineComponent, PropType, WritableComputedRef } from 'vue';
 
-import { Document, Schema } from '@dockite/database';
 import { Constraint } from '@dockite/where-builder';
 
 import {
@@ -15,8 +15,8 @@ import { Maybe } from '~/common/types';
 
 export interface DocumentTableComponentProps {
   schema?: Schema;
-  showSchema: Maybe<boolean>;
-  showIdentifier: Maybe<boolean>;
+  showSchemaColumn: Maybe<boolean>;
+  showIdentifierColumn: Maybe<boolean>;
   documents: Document[];
   columns: DocumentTableColumn[];
   state: DocumentTableState;
@@ -31,18 +31,20 @@ type ComputedDocumentTableComponentProps = {
 };
 
 export const DocumentTableComponent = defineComponent({
+  name: 'DocumentTableComponent',
+
   props: {
     schema: {
       type: Object as PropType<DocumentTableComponentProps['schema']>,
     },
 
-    showSchema: {
-      type: Boolean as PropType<DocumentTableComponentProps['showSchema']>,
+    showSchemaColumn: {
+      type: Boolean as PropType<DocumentTableComponentProps['showSchemaColumn']>,
       default: false,
     },
 
-    showIdentifier: {
-      type: Boolean as PropType<DocumentTableComponentProps['showIdentifier']>,
+    showIdentifierColumn: {
+      type: Boolean as PropType<DocumentTableComponentProps['showIdentifierColumn']>,
       default: false,
     },
 
@@ -80,22 +82,26 @@ export const DocumentTableComponent = defineComponent({
   },
 
   setup: (props, ctx) => {
-    const vmodel = Object.keys(props).reduce((acc, curr) => {
-      return {
-        ...acc,
-        [curr]: computed({
-          // @ts-expect-error We can index on props due to knowing all current keys
-          get: () => props[curr],
-          set: value => ctx.emit(`update:${curr}`, value),
-        }),
-      };
-    }, {}) as ComputedDocumentTableComponentProps;
+    // Create an object containing the computed keys of the provided props to allow for 2 way binding.
+    const vmodel = fromPairs(
+      Object.keys(props).map(key => {
+        const model = computed({
+          // @ts-expect-error Indexing is fine here since keys are known
+          get: () => props[key],
+          set: value => ctx.emit(`update:${key}`, value),
+        });
 
-    const selectedIds = computed(() => (props.selectedItems ?? []).map(x => x.id));
+        return [key, model];
+      }),
+    ) as ComputedDocumentTableComponentProps;
 
-    const handleSelectableChange = (value: boolean, document: Document): void => {
+    // Stores a computed list of the selected item ids
+    const selectedItemIds = computed(() => (props.selectedItems ?? []).map(x => x.id));
+
+    // Handles the changing of a selectable column in either the results or selected table.
+    const handleSelectedItemChange = (value: boolean, document: Document): void => {
       if (props.selectable && props.selectedItems) {
-        if (value) {
+        if (value && !vmodel.selectedItems.value.find(item => item.id === document.id)) {
           vmodel.selectedItems.value.push(document);
         } else {
           vmodel.selectedItems.value = props.selectedItems.filter(d => d.id !== document.id);
@@ -103,15 +109,33 @@ export const DocumentTableComponent = defineComponent({
       }
     };
 
-    const getSelectableColumn = (): JSX.Element | null => {
+    // Handles the application of a constraint (filter) to the current table view.
+    const handleApplyConstraint = (column: DocumentTableColumn, constraint: Constraint): void => {
+      vmodel.state.value.filters[column.name] = constraint;
+    };
+
+    // Handles the removal of a constraint (filter) from the current table view.
+    const handleRemoveConstraint = (column: DocumentTableColumn): void => {
+      delete vmodel.state.value.filters[column.name];
+    };
+
+    const getColumnData = (document: Document, column: string): any => {
+      if (column in document) {
+        return get(document, column);
+      }
+
+      return get(document.data, column, '');
+    };
+
+    const getSelectableColumnView = (): JSX.Element | null => {
       if (props.selectable && props.selectedItems) {
         return (
           <el-table-column label="" prop="id" width="60">
             {{
               default: ({ row }: DocumentTableColumnDefaultScopedSlot) => (
                 <el-checkbox
-                  modelValue={selectedIds.value.includes(row.id)}
-                  onChange={(v: boolean) => handleSelectableChange(v, row)}
+                  modelValue={selectedItemIds.value.includes(row.id)}
+                  onChange={(v: boolean) => handleSelectedItemChange(v, row)}
                 />
               ),
             }}
@@ -122,7 +146,7 @@ export const DocumentTableComponent = defineComponent({
       return null;
     };
 
-    const getActionsColumn = (): JSX.Element | null => {
+    const getActionsColumnView = (): JSX.Element | null => {
       if (props.getActions) {
         return (
           <el-table-column label="Actions" width="120">
@@ -137,24 +161,8 @@ export const DocumentTableComponent = defineComponent({
       return null;
     };
 
-    const getColumnData = (document: Document, column: string): any => {
-      if (column in document) {
-        return get(document, column);
-      }
-
-      return get(document.data, column, '');
-    };
-
-    const handleApplyConstraint = (column: DocumentTableColumn, constraint: Constraint): void => {
-      vmodel.state.value.filters[column.name] = constraint;
-    };
-
-    const handleResetConstraint = (column: DocumentTableColumn): void => {
-      delete vmodel.state.value.filters[column.name];
-    };
-
     return () => {
-      const getColumns = (selectedView = false): JSX.Element[] =>
+      const getTableColumns = (selectedView = false): JSX.Element[] =>
         props.columns.map(column => (
           <el-table-column minWidth="150">
             {{
@@ -169,7 +177,7 @@ export const DocumentTableComponent = defineComponent({
                         vmodel.state.value.filters,
                         column,
                         handleApplyConstraint,
-                        handleResetConstraint,
+                        handleRemoveConstraint,
                       )}
                   </div>
                 );
@@ -186,7 +194,7 @@ export const DocumentTableComponent = defineComponent({
         <div>
           <div class="overflow-x-auto">
             <el-table style="width: 100%;" class="w-full" data={props.documents}>
-              {getSelectableColumn()}
+              {getSelectableColumnView()}
 
               <el-table-column label="ID" prop="id">
                 {{
@@ -201,7 +209,7 @@ export const DocumentTableComponent = defineComponent({
                 }}
               </el-table-column>
 
-              {props.showSchema && (
+              {props.showSchemaColumn && (
                 <el-table-column label="Schema">
                   {{
                     default: ({ row }: DocumentTableColumnDefaultScopedSlot) => (
@@ -213,9 +221,9 @@ export const DocumentTableComponent = defineComponent({
                 </el-table-column>
               )}
 
-              {props.showIdentifier && getIdentifierColumn()}
+              {props.showIdentifierColumn && getIdentifierColumn()}
 
-              {getColumns()}
+              {getTableColumns()}
 
               <el-table-column label="Created" prop="createdAt" width="150">
                 {{
@@ -233,7 +241,7 @@ export const DocumentTableComponent = defineComponent({
                 }}
               </el-table-column>
 
-              {getActionsColumn()}
+              {getActionsColumnView()}
             </el-table>
           </div>
 
@@ -249,7 +257,7 @@ export const DocumentTableComponent = defineComponent({
         <div>
           <div class="overflow-x-auto">
             <el-table class="w-full" data={props.selectedItems}>
-              {getSelectableColumn()}
+              {getSelectableColumnView()}
 
               <el-table-column label="ID" prop="id">
                 {{
@@ -264,7 +272,7 @@ export const DocumentTableComponent = defineComponent({
                 }}
               </el-table-column>
 
-              {props.showSchema && (
+              {props.showSchemaColumn && (
                 <el-table-column label="Schema">
                   {{
                     default: ({ row }: DocumentTableColumnDefaultScopedSlot) => (
@@ -276,9 +284,9 @@ export const DocumentTableComponent = defineComponent({
                 </el-table-column>
               )}
 
-              {getColumns(true)}
+              {getTableColumns(true)}
 
-              {getActionsColumn()}
+              {getActionsColumnView()}
             </el-table>
           </div>
 
@@ -290,7 +298,7 @@ export const DocumentTableComponent = defineComponent({
         <el-tabs type="border-card" style="box-shadow: none;">
           <el-tab-pane label="Results">{baseTable}</el-tab-pane>
 
-          <el-tab-pane label={`Selected Items (${selectedIds.value.length})`}>
+          <el-tab-pane label={`Selected Items (${selectedItemIds.value.length})`}>
             {selectedTable}
           </el-tab-pane>
         </el-tabs>

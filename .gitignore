@@ -114,3 +114,5 @@ lib/
 
 # We only use type-graphql in the core but allow it to emit schema files for debugging
 schema.gql
+
+stats.html
