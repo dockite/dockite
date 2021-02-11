@@ -1,6 +1,6 @@
 {
   "name": "@dockite/field-conditional-select",
-  "version": "0.2.0-alpha.0",
+  "version": "0.2.0-alpha.1",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
@@ -28,7 +28,7 @@
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.10.1",
     "@babel/plugin-proposal-decorators": "^7.10.1",
-    "@dockite/webpack": "^1.1.0",
+    "@dockite/webpack": "^1.1.1-alpha.0",
     "@typescript-eslint/eslint-plugin": "^2.20.0",
     "@typescript-eslint/parser": "^2.20.0",
     "eslint": "^6.8.0",
