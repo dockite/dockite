@@ -1,6 +1,5 @@
-import { sortBy } from 'lodash';
-
 import { Field, Schema } from '@dockite/database';
+import { sortBy } from 'lodash';
 
 import { ApplicationError, ApplicationErrorCode } from '~/common/errors';
 import { useDockite } from '~/dockite';

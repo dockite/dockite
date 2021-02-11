@@ -16,6 +16,7 @@
   ],
   "plugins": [
     "@vue/babel-plugin-jsx",
+    "babel-plugin-lodash",
     ["@babel/proposal-decorators", { "legacy": true }],
     ["@babel/proposal-class-properties", { "loose": true }]
   ]

@@ -3,9 +3,10 @@
   "version": "0.4.1-alpha.0",
   "main": "lib/index.js",
   "module": "lib/index.esm.js",
+  "module": "lib/index.esm.js",
   "license": "MIT",
   "scripts": {
-    "build": "tsc && cp -r ./extra ./lib/",
+    "build": "rollup -c && cp -r ./extra ./lib/",
     "typecheck": "tsc --noEmit"
   },
   "files": [
@@ -24,6 +25,7 @@
     "typeorm": "^0.2.25"
   },
   "devDependencies": {
+    "@dockite/rollup": "^0.1.0",
     "@types/graphql-type-json": "^0.3.2",
     "@types/lodash": "^4.14.149",
     "typescript": "^4.1.3"

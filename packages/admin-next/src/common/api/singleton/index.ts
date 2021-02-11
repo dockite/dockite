@@ -1,7 +1,7 @@
 /* eslint-disable import/prefer-default-export */
+import { Singleton } from '@dockite/database';
 import { sortBy } from 'lodash';
 
-import { Singleton } from '@dockite/database';
 import { FindManyResult } from '@dockite/types';
 
 import { DOCKITE_ITEMS_PER_PAGE } from '~/common/constants';

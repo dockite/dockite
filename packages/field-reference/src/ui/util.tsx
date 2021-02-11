@@ -2,7 +2,7 @@ import { reactive, ref, toRaw } from 'vue';
 
 import { Document } from '@dockite/database';
 import { DockiteGraphqlSortInput as DockiteGraphQLSortInput, FindManyResult } from '@dockite/types';
-import { Constraint, Operators, SupportedOperators } from '@dockite/where-builder';
+import { Constraint, Operators, SupportedOperators } from '@dockite/where-builder/lib/types';
 
 import { RESULTS_PER_PAGE } from '../types';
 

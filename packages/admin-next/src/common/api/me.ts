@@ -1,6 +1,5 @@
-import { ApolloError } from 'apollo-client';
-
 import { User } from '@dockite/database';
+import { ApolloError } from 'apollo-client';
 
 import { logE } from '../logger';
 

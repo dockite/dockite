@@ -12,7 +12,7 @@ import {
 
 import { Document } from '@dockite/database';
 import { DockiteFieldInputComponentProps, FindManyResult } from '@dockite/types';
-import { Constraint, AndQuery } from '@dockite/where-builder';
+import { Constraint, AndQuery } from '@dockite/where-builder/lib/types';
 
 import {
   DockiteFieldReferenceEntity,

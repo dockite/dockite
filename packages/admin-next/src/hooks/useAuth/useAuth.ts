@@ -61,7 +61,7 @@ export const useAuth = (): UseAuthHook => {
     }
   };
 
-  const handleLogin = (payload: LoginPayload): MaybePromise<string> => {
+  const handleLogin = (payload: LoginPayload): MaybePromise<string | void> => {
     if (state.type !== 'internal') {
       if (config.app.authProvider === 'auth0') {
         return import('~/providers/auth/auth0').then(mod => mod.login(payload));
@@ -73,7 +73,18 @@ export const useAuth = (): UseAuthHook => {
       );
     }
 
-    return internal.login(payload);
+    return internal
+      .login(payload)
+      .then(token => {
+        tokenStorage.value = token;
+
+        state.authenticated = true;
+
+        return getMe();
+      })
+      .then(user => {
+        state.user = user;
+      });
   };
 
   const handleRefreshUser = (): MaybePromise<void> => {
@@ -82,7 +93,7 @@ export const useAuth = (): UseAuthHook => {
     });
   };
 
-  const handleRegister = (payload: RegisterPayload): MaybePromise<string> => {
+  const handleRegister = (payload: RegisterPayload): MaybePromise<string | void> => {
     if (state.type !== 'internal') {
       if (config.app.authProvider === 'auth0') {
         return import('~/providers/auth/auth0').then(mod => mod.register(payload));
@@ -94,10 +105,21 @@ export const useAuth = (): UseAuthHook => {
       );
     }
 
-    return internal.register(payload);
+    return internal
+      .register(payload)
+      .then(token => {
+        tokenStorage.value = token;
+
+        state.authenticated = true;
+
+        return getMe();
+      })
+      .then(user => {
+        state.user = user;
+      });
   };
 
-  const handleRegisterFirstUser = (payload: RegisterPayload): MaybePromise<string> => {
+  const handleRegisterFirstUser = (payload: RegisterPayload): MaybePromise<string | void> => {
     if (state.type !== 'internal') {
       if (config.app.authProvider === 'auth0') {
         return import('~/providers/auth/auth0').then(mod => mod.registerFirstUser(payload));
@@ -109,7 +131,18 @@ export const useAuth = (): UseAuthHook => {
       );
     }
 
-    return internal.registerFirstUser(payload);
+    return internal
+      .registerFirstUser(payload)
+      .then(token => {
+        tokenStorage.value = token;
+
+        state.authenticated = true;
+
+        return getMe();
+      })
+      .then(user => {
+        state.user = user;
+      });
   };
 
   const handleRefreshToken = (): MaybePromise<void> => {

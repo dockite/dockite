@@ -4,8 +4,6 @@ import { getPackage } from '../utils/get-package';
 const config = getConfig();
 
 export const getListeners = async (): Promise<Record<string, Function>[]> => {
-  console.log(config.listeners);
-
   if (config.listeners) {
     const listeners = await Promise.all(
       config.listeners.map(async listener => {

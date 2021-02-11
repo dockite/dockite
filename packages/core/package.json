@@ -2,6 +2,7 @@
   "name": "@dockite/core",
   "version": "0.5.0-alpha.1",
   "main": "lib/index.js",
+  "module": "lib/index.esm.js",
   "license": "MIT",
   "scripts": {
     "debug": "DEBUG=* ts-node-dev --no-notify src/",

@@ -1,6 +1,6 @@
 import { reactive, ref, toRaw } from 'vue';
 
-import { Constraint, Operators, SupportedOperators } from '@dockite/where-builder';
+import { Constraint, Operators, SupportedOperators } from '@dockite/where-builder/lib/types';
 
 import { DocumentTableColumn, DocumentTableColumnDefaultScopedSlot } from './types';
 

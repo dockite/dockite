@@ -86,9 +86,28 @@ export const App = defineComponent<AppProps>(() => {
 
   watch(layout, (newValue, oldValue) => {
     if (newValue !== oldValue) {
-      Layout.Component = defineAsyncComponent({
-        loader: () => import(`./layouts/${layout.value ?? 'Default'}`),
-      });
+      switch (newValue) {
+        case 'Guest':
+          Layout.Component = defineAsyncComponent({
+            loader: () => import(`./layouts/Guest`),
+          });
+
+          break;
+
+        case 'Dashboard':
+          Layout.Component = defineAsyncComponent({
+            loader: () => import(`./layouts/Dashboard`),
+          });
+
+          break;
+
+        default:
+          Layout.Component = defineAsyncComponent({
+            loader: () => import(`./layouts/Default`),
+          });
+
+          break;
+      }
     }
   });
 

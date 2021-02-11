@@ -38,6 +38,7 @@
   "homepage": "https://github.com/dockite/dockite",
   "license": "MIT",
   "main": "lib/index.js",
+  "module": "lib/index.esm.js",
   "oclif": {
     "commands": "./lib/commands",
     "bin": "dockite",

@@ -2,7 +2,7 @@ import { defineComponent, reactive, ref, toRaw, watch, watchEffect } from 'vue';
 import { usePromise } from 'vue-composable';
 import { useRoute, useRouter } from 'vue-router';
 
-import { AndQuery } from '@dockite/where-builder';
+import { AndQuery } from '@dockite/where-builder/lib/types';
 
 import { getActions } from './util';
 

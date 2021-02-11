@@ -2,7 +2,7 @@ import { Document, Schema } from '@dockite/database';
 import { get, fromPairs } from 'lodash';
 import { computed, defineComponent, PropType, WritableComputedRef } from 'vue';
 
-import { Constraint } from '@dockite/where-builder';
+import { Constraint } from '@dockite/where-builder/lib/types';
 
 import {
   DocumentTableColumn,

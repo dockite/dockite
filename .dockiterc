@@ -5,7 +5,7 @@
     "description": "The simpler HeadlessCMS",
     "url": "http://localhost:4000",
     "graphqlEndpoint": "http://localhost:3000/dockite/graphql/internal",
-    "authProvider": "auth0"
+    "authProvider": "internal"
   },
   "ui": {
     "backgroundColor": "#2b6cb0",
@@ -13,10 +13,7 @@
     "activeTextColour": "#eeeeee",
   },
   "auth": {
-    "clientId": "WJiY5aucwdZrpzSDZQNVBklS22hC2nvj",
-    "audience": "WJiY5aucwdZrpzSDZQNVBklS22hC2nvj",
-    "domain": "wekan-dev.au.auth0.com",
-    "clientSecret": "kEqziWJN2qmm2aPmD2_ZQ3f22YDs2LZb6FDc7WziBpOmeaMpr6mvvJ6P_FSH0KkJ"
+    "secret": "secret"
   },
   "database": {
     "host": "localhost",

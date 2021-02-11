@@ -1,8 +1,5 @@
 @import 'variables.scss';
 
-/* icon font path, required */
-$--font-path: '~element-plus/lib/theme-chalk/fonts';
-
 @import "~element-plus/packages/theme-chalk/src/index";
 
 .el-form--label-top .el-form-item__label {
@@ -54,4 +51,10 @@ a {
 .el-table .cell, .el-table th > .cell {
   padding-left: 15px;
   padding-right: 15px;
+}
+
+.el-loading-spinner {
+  svg {
+    display: inline-block;
+  }
 }

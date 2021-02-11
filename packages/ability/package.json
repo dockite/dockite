@@ -2,9 +2,10 @@
   "name": "@dockite/ability",
   "version": "0.2.2-alpha.0",
   "main": "lib/index.js",
+  "module": "lib/index.esm.js",
   "license": "MIT",
   "scripts": {
-    "build": "tsc",
+    "build": "rollup -c",
     "typecheck": "tsc --noEmit"
   },
   "files": [

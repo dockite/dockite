@@ -2,9 +2,10 @@
   "name": "@dockite/field-colorpicker",
   "version": "0.4.0-alpha.0",
   "main": "lib/index.js",
+  "module": "lib/index.esm.js",
   "license": "MIT",
   "scripts": {
-    "build": "tsc && webpack --config ../webpack/webpack.config.js",
+    "build": "tsc && rollup -c",
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx --quiet",
     "typecheck": "tsc --noEmit"
   },

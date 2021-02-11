@@ -1,6 +1,5 @@
-import { Ref } from 'vue';
-
 import { User } from '@dockite/database';
+import { Ref } from 'vue';
 
 import { MaybePromise } from '~/common/types';
 
@@ -28,9 +27,9 @@ export interface UseAuthHook {
   state: UseAuthState;
   token: Ref<string>;
   handleInitProvider: (...args: any) => MaybePromise<void>;
-  handleLogin: (payload: LoginPayload) => MaybePromise<string>;
-  handleRegister: (payload: RegisterPayload) => MaybePromise<string>;
-  handleRegisterFirstUser: (payload: RegisterPayload) => MaybePromise<string>;
+  handleLogin: (payload: LoginPayload) => MaybePromise<string | void>;
+  handleRegister: (payload: RegisterPayload) => MaybePromise<string | void>;
+  handleRegisterFirstUser: (payload: RegisterPayload) => MaybePromise<string | void>;
   handleRefreshToken: () => MaybePromise<void>;
   handleRefreshUser: () => MaybePromise<void>;
   handleLogout: () => MaybePromise<void>;

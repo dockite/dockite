@@ -2,10 +2,11 @@
   "name": "@dockite/union-input",
   "version": "0.2.0",
   "main": "lib/index.js",
+"module": "lib/index.esm.js",
   "license": "MIT",
   "scripts": {
     "lint": "exit 0",
-    "build": "tsc",
+    "build": "rollup -c",
     "typecheck": "tsc --noEmit"
   },
   "files": [
@@ -16,6 +17,7 @@
     "lodash": "^4.17.15"
   },
   "devDependencies": {
+    "@dockite/rollup": "^0.1.0",
     "typescript": "^4.1.3"
   }
 }

@@ -1,10 +1,7 @@
 import { RouteLocation } from 'vue-router';
 
-import {
-  DockiteGraphqlSortInput as DockiteGraphQLSortInput,
-  DockiteSortDirection,
-} from '@dockite/types';
-import { Constraint, ConstraintOperator, AndQuery } from '@dockite/where-builder';
+import { DockiteGraphQLSortInput, DockiteSortDirection } from '@dockite/types';
+import { Constraint, ConstraintOperator, AndQuery } from '@dockite/where-builder/lib/types';
 
 import { Nullable, Maybe } from '~/common/types';
 

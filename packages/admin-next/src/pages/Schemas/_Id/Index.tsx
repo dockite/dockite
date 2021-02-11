@@ -1,9 +1,9 @@
+import { Document } from '@dockite/database';
 import { defineComponent, reactive, ref, toRaw, watch, watchEffect } from 'vue';
 import { usePromise, usePromiseLazy } from 'vue-composable';
 import { useRoute, useRouter } from 'vue-router';
 
-import { Document } from '@dockite/database';
-import { AndQuery } from '@dockite/where-builder';
+import { AndQuery } from '@dockite/where-builder/lib/types';
 
 import { getActions } from './util';
 

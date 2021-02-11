@@ -6,7 +6,7 @@
       {
         "modules": false,
         "targets": {
-          "node": true,
+          "node": "14",
           "esmodules": true
         }
       },
