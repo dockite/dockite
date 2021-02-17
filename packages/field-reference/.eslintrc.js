@@ -1,3 +1,5 @@
+const path = require('path');
+
 module.exports = {
   root: true,
   env: {
@@ -57,7 +59,15 @@ module.exports = {
     ],
   },
   settings: {
-    'import/resolver': 'eslint-import-resolver-webpack',
+    'import/resolver': {
+      alias: {
+        map: [
+          ['~', path.resolve(__dirname, './src')],
+          ['@', path.resolve(__dirname, './src')],
+        ],
+        extensions: ['.ts', '.tsx', '.js', '.jsx', '.json']
+      },
+    },
     'import/extensions': ['.js', '.mjs', '.jsx', '.ts', '.tsx', '.css', '.scss'],
     'import/parsers': {
       '@typescript-eslint/parser': ['.ts', '.tsx'],

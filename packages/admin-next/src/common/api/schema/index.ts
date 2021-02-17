@@ -5,6 +5,7 @@ import { sortBy } from 'lodash';
 import { FindManyResult } from '@dockite/types';
 
 import { DOCKITE_ITEMS_PER_PAGE } from '~/common/constants';
+import { ApplicationError, ApplicationErrorCode } from '~/common/errors';
 import {
   FetchAllSchemasQueryResponse,
   FetchAllSchemasQueryVariables,
@@ -18,6 +19,8 @@ import { useGraphQL } from '~/hooks/useGraphQL';
 export const getSchemaById = async (id: string): Promise<Schema> => {
   const graphql = useGraphQL();
 
+  console.log(`getSchemaById(${id})`);
+
   const result = await graphql.executeQuery<
     GetSchemaByIdQueryResponse,
     GetSchemaByIdQueryVariables
@@ -25,6 +28,13 @@ export const getSchemaById = async (id: string): Promise<Schema> => {
     query: GET_SCHEMA_BY_ID_QUERY,
     variables: { id },
   });
+
+  if (result.data.getSchema === null) {
+    throw new ApplicationError(
+      `The schema with ID "${id}" could not be found. Did you perhaps mean to fetch a singleton?`,
+      ApplicationErrorCode.SCHEMA_NOT_FOUND,
+    );
+  }
 
   return result.data.getSchema;
 };

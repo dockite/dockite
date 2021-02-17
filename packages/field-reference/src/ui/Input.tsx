@@ -1,25 +1,16 @@
-import { cloneDeep } from 'lodash';
-import {
-  computed,
-  defineComponent,
-  inject,
-  PropType,
-  reactive,
-  ref,
-  toRefs,
-  watchEffect,
-} from 'vue';
+import { cloneDeep, debounce } from 'lodash';
+import { computed, defineComponent, inject, PropType, reactive, ref, toRefs, watch } from 'vue';
 
 import { Document } from '@dockite/database';
 import { DockiteFieldInputComponentProps, FindManyResult } from '@dockite/types';
-import { Constraint, AndQuery } from '@dockite/where-builder/lib/types';
+import { AndQuery, Constraint, PossibleConstraints } from '@dockite/where-builder/lib/types';
 
 import {
   DockiteFieldReferenceEntity,
+  DocumentTableColumnDefaultScopedSlot,
   GraphQLResult,
   ReferenceFieldValue,
   RESULTS_PER_PAGE,
-  DocumentTableColumnDefaultScopedSlot,
 } from '../types';
 
 import {
@@ -35,6 +26,8 @@ import {
   getPaginationString,
 } from './util';
 
+import './Input.scss';
+
 export type InputComponentProps = DockiteFieldInputComponentProps<
   ReferenceFieldValue,
   DockiteFieldReferenceEntity
@@ -48,23 +41,28 @@ export const InputComponent = defineComponent({
       type: String as PropType<InputComponentProps['name']>,
       required: true,
     },
+
     modelValue: {
       type: (null as any) as PropType<InputComponentProps['value']>,
       required: true,
     },
+
     formData: {
       type: Object as PropType<InputComponentProps['formData']>,
       required: true,
     },
+
     fieldConfig: {
       type: Object as PropType<InputComponentProps['fieldConfig']>,
       required: true,
     },
+
     errors: {
       type: Object as PropType<InputComponentProps['errors']>,
       required: true,
     },
   },
+
   setup: (props, ctx) => {
     const { errors, fieldConfig, modelValue, name } = toRefs(props);
 
@@ -105,6 +103,24 @@ export const InputComponent = defineComponent({
       return doc.id;
     };
 
+    const handleShowDialog = (): void => {
+      visible.value = true;
+    };
+
+    const handleHideDialog = (): void => {
+      visible.value = false;
+    };
+
+    const handleSelectDocument = (doc: Document): void => {
+      fieldData.value = {
+        id: doc.id,
+        schemaId: doc.schemaId,
+        identifier: getIdentifier(doc),
+      };
+
+      handleHideDialog();
+    };
+
     // Handles the application of a constraint (filter) to the current table view.
     const handleApplyConstraint = (column: DocumentTableColumn, constraint: Constraint): void => {
       tableState.filters[column.name] = constraint;
@@ -135,7 +151,9 @@ export const InputComponent = defineComponent({
     };
 
     const fetchReferenceDocuments = async (page = 1): Promise<void> => {
-      const constraints = Object.values(tableState.filters).filter(f => !!f) as Constraint[];
+      const constraints = Object.values(tableState.filters).filter(
+        f => !!f,
+      ) as PossibleConstraints[];
 
       if (
         fieldConfig.value.settings.constraints &&
@@ -154,6 +172,7 @@ export const InputComponent = defineComponent({
         query: SEARCH_DOCUMENTS_QUERY,
         variables: {
           schemaIds: fieldConfig.value.settings.schemaIds,
+          term: tableState.term,
           perPage: RESULTS_PER_PAGE,
           page,
           where,
@@ -165,32 +184,39 @@ export const InputComponent = defineComponent({
       }
     };
 
-    watchEffect(() => {
-      if (fieldData.value) {
-        fetchTargetDocument();
-      }
+    const fetchReferenceDocumentsDebounced = debounce(fetchReferenceDocuments, 150);
 
+    watch(fieldData, () => {
+      fetchTargetDocument();
+    });
+
+    watch(visible, () => {
       if (visible.value && tableState) {
         fetchReferenceDocuments();
       }
     });
 
+    watch(tableState, () => {
+      fetchReferenceDocumentsDebounced();
+    });
+
     const getInputComponent = (): JSX.Element => {
       if (modelValue.value) {
         return (
-          <div class="p-3 border rounded shadow flex justify-between items-center">
+          <div class="p-3 border rounded shadow flex justify-between items-center leading-normal">
             <div>
-              <strong class="block">{target.value && target.value.schema.title}</strong>
+              <strong>{target.value && target.value.schema.title}</strong>
+              {' - '}
               <span>{target.value && getIdentifier(target.value)}</span>
-              <small>{fieldData.value && fieldData.value.id}</small>
+
+              <small class="block">{fieldData.value && fieldData.value.id}</small>
             </div>
 
             <el-button
-              rounded
               class="rounded hover:bg-gray-200"
               icon="el-icon-close"
-              size="mini"
-              type="secondary"
+              size="small"
+              type="text"
               onClick={handleRemoveReference}
             />
           </div>
@@ -233,12 +259,22 @@ export const InputComponent = defineComponent({
 
       return (
         <>
-          <div class="p-3 border rounded shadow flex justify-between items-center">
-            <el-button type="text">Select a Document</el-button>
+          <div
+            class="p-3 border rounded cursor-pointer hover:bg-gray-200 shadow flex justify-between items-center"
+            onClick={() => handleShowDialog()}
+          >
+            Select a Document
           </div>
 
-          <el-dialog v-model={visible.value} title="Select a Document" top="5vh" destroyOnClose>
-            <div class="flex items-center justify-between pb-3">
+          <el-dialog
+            v-model={visible.value}
+            title="Select a Document"
+            top="5vh"
+            width=""
+            customClass="w-11/12 max-w-screen-xl px-3"
+            destroyOnClose
+          >
+            <div class="flex items-center justify-between -mt-5 pb-3">
               <span />
 
               <el-input
@@ -249,17 +285,22 @@ export const InputComponent = defineComponent({
             </div>
 
             {results.value && (
-              <>
+              <div class="border rounded">
                 <el-table
                   data={results.value.results}
                   rowKey={(r: Document) => r.id}
                   maxHeight="60vh"
                 >
-                  <el-table-column label="" width={25}>
+                  <el-table-column label="" width={50}>
                     {{
                       default: (scope: DocumentTableColumnDefaultScopedSlot) => (
-                        // @ts-expect-error This is perfectly legal in Vue.JS
-                        <input v-model={target.value} type="radio" value={scope.row} />
+                        <input
+                          type="radio"
+                          value={scope.row.id}
+                          // @ts-expect-error
+                          selected={() => scope.row === target.value}
+                          onInput={() => handleSelectDocument(scope.row)}
+                        />
                       ),
                     }}
                   </el-table-column>
@@ -275,7 +316,7 @@ export const InputComponent = defineComponent({
                   {getTableColumnsView()}
                 </el-table>
 
-                <div class="flex justify-between items-center py-3">
+                <div class="flex justify-between items-center p-3 leading-normal">
                   <span>{getPaginationString(results.value)}</span>
 
                   <el-pagination
@@ -288,7 +329,7 @@ export const InputComponent = defineComponent({
                     }}
                   />
                 </div>
-              </>
+              </div>
             )}
           </el-dialog>
         </>

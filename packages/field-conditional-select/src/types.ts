@@ -1,6 +1,6 @@
 import { BaseField } from '@dockite/database';
 
-export const FIELD_TYPE = 'conditional_select';
+export const FIELD_TYPE = 'conditional-select';
 
 export const defaultOptions: ConditionalSelectFieldSettings = {
   required: false,
@@ -22,6 +22,6 @@ export interface ConditionalSelectFieldSettings {
 }
 
 export interface DockiteFieldConditionalSelectEntity extends BaseField {
-  type: 'conditional_select';
+  type: 'conditional-select';
   settings: ConditionalSelectFieldSettings & BaseField['settings'];
 }

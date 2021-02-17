@@ -1,9 +1,9 @@
-import { DockiteField } from '@dockite/field';
-import { GraphQLInputType, GraphQLInt, GraphQLOutputType, GraphQLScalarType } from 'graphql';
-import { HookContext } from '@dockite/types';
 import { Document } from '@dockite/database';
+import { DockiteField } from '@dockite/field';
+import { HookContext } from '@dockite/types';
+import { GraphQLInputType, GraphQLInt, GraphQLOutputType, GraphQLScalarType } from 'graphql';
 
-import { SortIndexFieldSettings } from './types';
+import { defaultOptions, FIELD_TYPE, SortIndexFieldSettings } from './types';
 
 const DockitefieldSortIndexType = new GraphQLScalarType({
   ...GraphQLInt.toConfig(),
@@ -11,15 +11,13 @@ const DockitefieldSortIndexType = new GraphQLScalarType({
 });
 
 export class DockiteFieldSortIndex extends DockiteField {
-  public static type = 'sort-index';
+  public static type = FIELD_TYPE;
 
   public static title = 'Sort Index';
 
   public static description = 'A sort index field, used for maintaining tree view positioning.';
 
-  public static defaultOptions: SortIndexFieldSettings = {
-    parentField: null,
-  };
+  public static defaultOptions = defaultOptions;
 
   public async inputType(): Promise<GraphQLInputType> {
     return DockitefieldSortIndexType;

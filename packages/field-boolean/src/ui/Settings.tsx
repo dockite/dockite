@@ -3,16 +3,19 @@ import { defineComponent, PropType, computed } from 'vue';
 import { BooleanFieldSettings, defaultOptions } from '../types';
 
 interface SettingsComponentProps {
-  value: BooleanFieldSettings;
+  modelValue: BooleanFieldSettings;
 }
 
 export const SettingsComponent = defineComponent({
+  name: 'DockiteFieldBooleanSettings',
+
   props: {
     modelValue: {
-      type: Object as PropType<SettingsComponentProps['value']>,
+      type: Object as PropType<SettingsComponentProps['modelValue']>,
       required: true,
     },
   },
+
   setup: (props, ctx) => {
     const settings = computed({
       get: () => props.modelValue,

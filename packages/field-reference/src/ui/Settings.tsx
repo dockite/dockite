@@ -29,7 +29,7 @@ export const SettingsComponent = defineComponent({
 
     const $graphql = inject<any>('$graphql');
 
-    const results = ref<FindManyResult<Schema> | null>(null);
+    const schemas = ref<FindManyResult<Schema> | null>(null);
 
     if (!settings.value) {
       settings.value = { ...defaultOptions };
@@ -45,7 +45,7 @@ export const SettingsComponent = defineComponent({
         query: ALL_SCHEMAS_QUERY,
       });
 
-      results.value = cloneDeep(data.allSchemas);
+      schemas.value = cloneDeep(data.allSchemas);
     };
 
     fetchSchemas();
@@ -56,7 +56,7 @@ export const SettingsComponent = defineComponent({
           <el-switch v-model={settings.value.required} />
         </el-form-item>
 
-        {results.value && (
+        {schemas.value && (
           <el-form-item label="Referring Schemas">
             <el-select
               v-model={settings.value.schemaIds}
@@ -67,7 +67,7 @@ export const SettingsComponent = defineComponent({
             >
               <el-option label="Self" value="self" />
 
-              {results.value.results.map(item => (
+              {schemas.value.results.map(item => (
                 <el-option label={item.title} value={item.id} />
               ))}
             </el-select>

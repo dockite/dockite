@@ -35,6 +35,11 @@ module.exports = {
     ],
     'import/no-cycle': 'off',
     'import/prefer-default-export': 'off',
+    'import/no-extraneous-dependencies': [
+      'error',
+      { devDependencies: ['**/*.test.[tj]s', '**/*.spec.[tj]s', '**/*.[tj]sx'] },
+    ],
+
     'import/order': [
       'error',
       {

@@ -8,7 +8,7 @@
     "lib"
   ],
   "scripts": {
-    "build": "tsc"
+    "build": "tsc && cp -r ./src/certs ./lib"
   },
   "dependencies": {
     "@babel/core": "^7.12.10",
@@ -39,6 +39,7 @@
     "graphql": "^15.1.0",
     "graphql-tag": "^2.10.3",
     "koa-compress": "^5.0.1",
+    "nollup": "^0.15.0",
     "postcss": "^8.2.5",
     "rollup": "^2.38.5",
     "rollup-plugin-copy": "^3.3.0",
@@ -46,6 +47,7 @@
     "rollup-plugin-node-externals": "^2.2.0",
     "rollup-plugin-postcss": "^4.0.0",
     "rollup-plugin-progress": "^1.1.2",
+    "rollup-plugin-serve": "^1.1.0",
     "rollup-plugin-sizes": "^1.0.3",
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-typescript2": "^0.29.0",

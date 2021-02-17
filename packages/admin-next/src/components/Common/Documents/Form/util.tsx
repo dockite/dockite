@@ -1,11 +1,18 @@
 import { Field, Schema } from '@dockite/database';
 import { sortBy } from 'lodash';
+import { toRaw } from 'vue';
 
 import { ApplicationError, ApplicationErrorCode } from '~/common/errors';
 import { useDockite } from '~/dockite';
 
 export const getFieldsByGroup = (groupName: string, schema: Schema): Field[] => {
   const groups = schema.groups as Record<string, string[]>;
+
+  if (!groups[groupName]) {
+    return [];
+  }
+
+  console.log({ groups, groupName, groupNameFields: groups[groupName] });
 
   return sortBy(
     schema.fields.filter(field => groups[groupName].includes(field.name)),
@@ -33,13 +40,13 @@ export const getFieldComponent = (
     );
   }
 
-  const FieldComponent = fieldManager[field.type].input;
-
-  console.log({ FieldComponent });
+  let FieldComponent = fieldManager[field.type].input;
 
   if (FieldComponent === null) {
     return null;
   }
+
+  FieldComponent = toRaw(FieldComponent);
 
   return (
     <FieldComponent

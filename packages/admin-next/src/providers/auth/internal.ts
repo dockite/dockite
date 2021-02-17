@@ -8,7 +8,6 @@ import {
   REGISTER_FIRST_USER_MUTATION,
 } from '~/graphql';
 import { LoginPayload, RegisterPayload } from '~/hooks/useAuth/types';
-import { useGraphQL } from '~/hooks/useGraphQL';
 
 export const init = (...args: any): void => {
   // no-op
@@ -21,7 +20,7 @@ export const init = (...args: any): void => {
  * @param payload The payload used to perform a login action
  */
 export const login = async (payload: LoginPayload): Promise<string> => {
-  const graphql = useGraphQL();
+  const graphql = await import('~/hooks/useGraphQL').then(mod => mod.useGraphQL());
 
   try {
     const result = await graphql.executeMutation<LoginMutationResponse, LoginPayload>({
@@ -52,7 +51,7 @@ export const register = async (...args: any): Promise<string> => {
 };
 
 export const registerFirstUser = async (payload: RegisterPayload): Promise<string> => {
-  const graphql = useGraphQL();
+  const graphql = await import('~/hooks/useGraphQL').then(mod => mod.useGraphQL());
 
   try {
     const result = await graphql.executeMutation<
@@ -82,7 +81,7 @@ export const registerFirstUser = async (payload: RegisterPayload): Promise<strin
 };
 
 export const logout = async (): Promise<void> => {
-  const graphql = useGraphQL();
+  const graphql = await import('~/hooks/useGraphQL').then(mod => mod.useGraphQL());
 
   try {
     await graphql.executeMutation({

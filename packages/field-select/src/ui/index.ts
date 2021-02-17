@@ -1,7 +1,9 @@
-/* eslint-disable */
 import { registerField } from '@dockite/field';
 
-import Input from './Input.vue';
-import Settings from './Settings.vue';
+import { FIELD_TYPE } from '../types';
 
-export default registerField('select', Input, Settings);
+import { InputComponent } from './Input';
+import { SettingsComponent } from './Settings';
+import { ViewComponent } from './View';
+
+export default registerField(FIELD_TYPE, InputComponent, SettingsComponent, ViewComponent);

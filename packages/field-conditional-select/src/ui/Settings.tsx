@@ -1,4 +1,5 @@
 import { Field } from '@dockite/database';
+import { cloneDeep } from 'lodash';
 import { computed, defineComponent, PropType, reactive, ref } from 'vue';
 
 import {
@@ -25,20 +26,25 @@ const BASE_OPTION_ITEM: ConditionalSelectFieldOption = {
 };
 
 export const SettingsComponent = defineComponent({
+  name: 'DockiteFieldConditionalSelectSettings',
+
   props: {
     modelValue: {
       type: Object as PropType<SettingsComponentProps['value']>,
       required: true,
     },
+
     groups: {
       type: Object as PropType<SettingsComponentProps['groups']>,
       required: true,
     },
+
     fields: {
       type: Array as PropType<SettingsComponentProps['fields']>,
       required: true,
     },
   },
+
   setup: (props, ctx) => {
     const settings = computed({
       get: () => props.modelValue,
@@ -88,7 +94,7 @@ export const SettingsComponent = defineComponent({
         return;
       }
 
-      settings.value.options.push(optionItem);
+      settings.value.options.push(cloneDeep(optionItem));
 
       Object.assign(optionItem, {
         ...BASE_OPTION_ITEM,

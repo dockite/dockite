@@ -16,6 +16,19 @@ import { Schema } from './schema';
 import { User } from './user';
 import { DocumentRevision } from './document-revision';
 
+export const DocumentEntityProperties: Array<keyof Document> = [
+  'id',
+  'locale',
+  'data',
+  'createdAt',
+  'updatedAt',
+  'schemaId',
+  'schema',
+  'release',
+  'revisions',
+  'user',
+];
+
 @Entity()
 @ObjectType()
 export class Document {

@@ -1,5 +1,13 @@
 import { BaseField } from '@dockite/database';
 
+export const FIELD_TYPE = 'select';
+
+export const defaultOptions: SelectFieldSettings = {
+  required: false,
+  multiple: false,
+  options: [],
+};
+
 export interface SelectFieldOptionItem {
   label: string;
   value: string;

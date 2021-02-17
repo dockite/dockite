@@ -1,4 +1,5 @@
 import { DockiteField } from '@dockite/field';
+import { HookContext, DockiteFieldValidationError } from '@dockite/types';
 import {
   GraphQLInputType,
   GraphQLOutputType,
@@ -6,9 +7,8 @@ import {
   GraphQLString,
   GraphQLList,
 } from 'graphql';
-import { HookContext, DockiteFieldValidationError } from '@dockite/types';
 
-import { SelectFieldSettings } from './types';
+import { defaultOptions, FIELD_TYPE, SelectFieldSettings } from './types';
 
 const DockiteFieldSelectType = new GraphQLScalarType({
   ...GraphQLString.toConfig(),
@@ -16,18 +16,14 @@ const DockiteFieldSelectType = new GraphQLScalarType({
 });
 
 export class DockiteFieldSelect extends DockiteField {
-  public static type = 'select';
+  public static type = FIELD_TYPE;
 
   public static title = 'Select';
 
   public static description =
     'A multiple choice field rendered as a select element. Supports both single and multiple values.';
 
-  public static defaultOptions: SelectFieldSettings = {
-    required: false,
-    multiple: false,
-    options: [],
-  };
+  public static defaultOptions = defaultOptions;
 
   public async inputType(): Promise<GraphQLInputType> {
     if (this.schemaField.settings.multiple) {

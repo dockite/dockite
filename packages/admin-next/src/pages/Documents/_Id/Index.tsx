@@ -2,114 +2,132 @@ import { defineComponent, reactive, ref, watchEffect } from 'vue';
 import { usePromise, usePromiseLazy } from 'vue-composable';
 import { useRoute, useRouter } from 'vue-router';
 
-import { getDocumentById, getSchemaById } from '~/common/api';
-import { DASHBOARD_HEADER_PORTAL } from '~/common/constants';
+import { getDocumentById, getSchemaById, getSingletonById } from '~/common/api';
+import { DASHBOARD_HEADER_PORTAL_TITLE } from '~/common/constants';
 import { DocumentFormComponent } from '~/components/Common/Documents/Form';
 import { useGraphQL, usePortal } from '~/hooks';
 import { getDocumentIdentifier } from '~/utils';
 
 export type DocumentFormPageProps = never;
 
-export const DocumentFormPage = defineComponent<DocumentFormPageProps>(() => {
-  const route = useRoute();
+export const DocumentFormPage = defineComponent({
+  name: 'DocumentFormPageComponent',
 
-  const router = useRouter();
+  setup: () => {
+    const route = useRoute();
 
-  const { setPortal } = usePortal();
+    const router = useRouter();
 
-  const formData = reactive<Record<string, any>>({});
+    const { setPortal } = usePortal();
 
-  const document = usePromise(() => getDocumentById(route.params.documentId as string));
+    const formData = reactive<Record<string, any>>({});
 
-  const schema = usePromiseLazy((id: string) => getSchemaById(id));
+    const document = usePromise(() => getDocumentById(route.params.documentId as string));
 
-  const error = ref<Error | null>(null);
+    const schema = usePromiseLazy((id: string) => getSchemaById(id));
 
-  const formErrors: Record<string, string> = reactive({});
+    const singleton = usePromiseLazy((id: string) => getSingletonById(id));
 
-  const { exceptionHandler } = useGraphQL();
+    const error = ref<Error | null>(null);
 
-  watchEffect(() => {
-    if (document.loading.value) {
-      setPortal(DASHBOARD_HEADER_PORTAL, <span>Fetching Documents...</span>);
+    const formErrors: Record<string, string> = reactive({});
 
-      return;
-    }
+    const { exceptionHandler } = useGraphQL();
 
-    if (document.error.value) {
-      setPortal(DASHBOARD_HEADER_PORTAL, <span>Error fetching Documents!</span>);
+    watchEffect(() => {
+      if (document.loading.value) {
+        setPortal(DASHBOARD_HEADER_PORTAL_TITLE, <span>Fetching Documents...</span>);
 
-      error.value = exceptionHandler(document.error.value, router);
+        return;
+      }
 
-      return;
-    }
+      if (document.error.value) {
+        setPortal(DASHBOARD_HEADER_PORTAL_TITLE, <span>Error fetching Documents!</span>);
 
-    if (schema.loading.value) {
-      setPortal(DASHBOARD_HEADER_PORTAL, <span>Fetching Document's Schema...</span>);
+        error.value = exceptionHandler(document.error.value, router);
 
-      return;
-    }
+        return;
+      }
 
-    if (schema.error.value) {
-      setPortal(DASHBOARD_HEADER_PORTAL, <span>Error fetching Document's Schema!</span>);
+      if (singleton.result.value) {
+        router.push(`/singletons/${singleton.result.value.id}`);
 
-      error.value = exceptionHandler(schema.error.value, router);
+        return;
+      }
 
-      return;
-    }
+      if (schema.loading.value) {
+        setPortal(DASHBOARD_HEADER_PORTAL_TITLE, <span>Fetching Document's Schema...</span>);
 
-    if (
-      document.result.value &&
-      (!schema.result.value || schema.result.value.id !== document.result.value.schemaId)
-    ) {
-      schema.exec(document.result.value.schemaId);
+        return;
+      }
 
-      return;
-    }
+      if (schema.error.value) {
+        setPortal(DASHBOARD_HEADER_PORTAL_TITLE, <span>Error fetching Document's Schema!</span>);
 
-    if (document.result.value && schema.result.value) {
-      setPortal(
-        DASHBOARD_HEADER_PORTAL,
-        <span>{getDocumentIdentifier(document.result.value)}</span>,
-      );
-    }
-  });
+        error.value = exceptionHandler(schema.error.value, router);
 
-  return () => {
-    if (schema.loading.value || document.loading.value) {
-      return <div>Loading...</div>;
-    }
+        if (!singleton.loading.value && document.result.value) {
+          singleton.exec(document.result.value.schemaId);
+        }
 
-    if (document.error.value) {
-      return (
-        <div>
-          An error occurred while fetching the Documents
-          <pre>{JSON.stringify(error.value, null, 2)}</pre>
-        </div>
-      );
-    }
+        return;
+      }
 
-    if (schema.error.value) {
-      return (
-        <div>
-          An error occurred while fetching the Schema
-          <pre>{JSON.stringify(error.value, null, 2)}</pre>
-        </div>
-      );
-    }
+      if (
+        document.result.value &&
+        document.result.value.schemaId &&
+        !singleton.loading.value &&
+        !singleton.result.value &&
+        (!schema.result.value || schema.result.value.id !== document.result.value.schemaId)
+      ) {
+        schema.exec(document.result.value.schemaId);
 
-    if (document.result.value && schema.result.value) {
-      return (
-        // @ts-expect-error Typescript can't handle v-models
-        <DocumentFormComponent
-          schema={schema.result.value}
-          document={document.result.value}
-          errors={formErrors}
-          v-model={formData}
-        />
-      );
-    }
+        return;
+      }
 
-    return <div>An unknown error is ocurring</div>;
-  };
+      if (document.result.value && schema.result.value) {
+        setPortal(
+          DASHBOARD_HEADER_PORTAL_TITLE,
+          <span>{getDocumentIdentifier(document.result.value)}</span>,
+        );
+      }
+    });
+
+    return () => {
+      if (schema.loading.value || document.loading.value) {
+        return <div>Loading...</div>;
+      }
+
+      if (document.error.value) {
+        return (
+          <div>
+            An error occurred while fetching the Documents
+            <pre>{JSON.stringify(error.value, null, 2)}</pre>
+          </div>
+        );
+      }
+
+      if (schema.error.value) {
+        return (
+          <div>
+            An error occurred while fetching the Schema
+            <pre>{JSON.stringify(error.value, null, 2)}</pre>
+          </div>
+        );
+      }
+
+      if (document.result.value && schema.result.value) {
+        return (
+          <DocumentFormComponent
+            v-model={formData}
+            schema={schema.result.value}
+            document={document.result.value}
+            errors={formErrors}
+          />
+        );
+      }
+
+      return <div>An unknown error is ocurring</div>;
+    };
+  },
 });

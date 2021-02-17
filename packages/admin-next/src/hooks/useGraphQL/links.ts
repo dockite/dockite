@@ -1,9 +1,8 @@
 import { ApolloLink } from 'apollo-link';
 import { useLocalStorage } from 'vue-composable';
 
-import { useAuth } from '../useAuth';
-
 import { AUTH_TOKEN_STORAGE_KEY } from '~/common/constants';
+import { useAuth } from '~/hooks/useAuth';
 
 export const refreshTokenLink = new ApolloLink((operation, forward) => {
   const { token: authToken } = useAuth();

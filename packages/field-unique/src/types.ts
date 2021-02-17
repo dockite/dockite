@@ -1,6 +1,14 @@
 import { BaseField } from '@dockite/database';
 import { FieldSettings } from '@dockite/types';
 
+export const FIELD_TYPE = 'unique';
+
+export const defaultOptions: UniqueFieldSettings = {
+  required: false,
+  validationGroups: [],
+  constraints: [],
+};
+
 export type ValidationGroup = string[];
 
 export interface UniqueFieldSettings extends FieldSettings {

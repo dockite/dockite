@@ -1,6 +1,15 @@
 import { BaseField } from '@dockite/database';
 import { FieldSettings } from '@dockite/types';
 
+export const FIELD_TYPE = 'wysiwyg';
+
+export const defaultOptions: WysiwygFieldSettings = {
+  required: false,
+  extensions: [],
+  minLen: 0,
+  maxLen: 0,
+};
+
 export const AvailableExtensions = [
   'Doc',
   'Paragraph',

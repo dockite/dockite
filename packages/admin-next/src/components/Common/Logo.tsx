@@ -1,22 +1,20 @@
-import { cloneDeep, merge } from 'lodash';
 import { defineComponent } from 'vue';
 
-interface LogoComponentProps {
-  primaryFillColor?: string;
-  secondaryFillColor?: string;
-}
-
 export const Logo = defineComponent({
+  name: 'LogoComponent',
+
   props: {
     primaryFillColor: {
       type: String,
       default: '#2b6cb0',
     },
+
     secondaryFillColor: {
       type: String,
       default: '#ffffff',
     },
   },
+
   setup: props => {
     return () => (
       <svg

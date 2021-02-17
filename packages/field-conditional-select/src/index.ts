@@ -1,5 +1,5 @@
 import { DockiteField } from '@dockite/field';
-import { HookContext } from '@dockite/types';
+import { HookContext, DockiteFieldValidationError } from '@dockite/types';
 import {
   GraphQLInputType,
   GraphQLList,
@@ -51,7 +51,11 @@ export class DockiteFieldConditionalSelect extends DockiteField {
     const invalid = input.some(i => !settings.options.map(x => x.value).includes(i));
 
     if (invalid) {
-      throw new Error(`${this.schemaField.name} contains invalid items`);
+      throw new DockiteFieldValidationError(
+        'SEL_INVALID_ITEMS',
+        `${this.schemaField.name} contains invalid items`,
+        ctx.path || this.schemaField.name,
+      );
     }
   }
 

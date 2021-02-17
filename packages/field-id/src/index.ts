@@ -1,4 +1,5 @@
 import { DockiteField } from '@dockite/field';
+import { FieldContext, DockiteFieldValidationError } from '@dockite/types';
 import {
   GraphQLInputType,
   GraphQLOutputType,
@@ -6,7 +7,6 @@ import {
   GraphQLString,
   GraphQLInt,
 } from 'graphql';
-import { FieldContext, DockiteFieldValidationError } from '@dockite/types';
 
 import { IDFieldSettings, FIELD_TYPE, defaultOptions } from './types';
 

@@ -7,6 +7,7 @@ export enum ApplicationErrorCode {
   INVALID_STATE = 'INVALID_STATE',
   FIELD_REGISTERED = 'FIELD_REGISTERED',
   NO_FIELD_HANDLER = 'NO_FIELD_HANDLER',
+  SCHEMA_NOT_FOUND = 'SCHEMA_NOT_FOUND',
 }
 
 export class ApplicationError extends Error {

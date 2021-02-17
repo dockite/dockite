@@ -4,7 +4,6 @@ import { useLocalStorage } from 'vue-composable';
 
 import { LoginPayload, RegisterPayload, UseAuthHook, UseAuthState } from './types';
 
-import { getMe } from '~/common/api';
 import { AUTH_TOKEN_STORAGE_KEY } from '~/common/constants';
 import { ApplicationError, ApplicationErrorCode } from '~/common/errors';
 import { MaybePromise } from '~/common/types';
@@ -48,7 +47,8 @@ export const useAuth = (): UseAuthHook => {
               }
             }),
           )
-          .then(() => getMe())
+          .then(() => import('~/common/api'))
+          .then(({ getMe }) => getMe())
           .then(user => {
             state.user = user;
           });
@@ -80,17 +80,20 @@ export const useAuth = (): UseAuthHook => {
 
         state.authenticated = true;
 
-        return getMe();
+        return import('~/common/api');
       })
+      .then(({ getMe }) => getMe())
       .then(user => {
         state.user = user;
       });
   };
 
   const handleRefreshUser = (): MaybePromise<void> => {
-    return getMe().then(user => {
-      state.user = user;
-    });
+    return import('~/common/api')
+      .then(({ getMe }) => getMe())
+      .then(user => {
+        state.user = user;
+      });
   };
 
   const handleRegister = (payload: RegisterPayload): MaybePromise<string | void> => {
@@ -112,8 +115,9 @@ export const useAuth = (): UseAuthHook => {
 
         state.authenticated = true;
 
-        return getMe();
+        return import('~/common/api');
       })
+      .then(({ getMe }) => getMe())
       .then(user => {
         state.user = user;
       });
@@ -138,8 +142,9 @@ export const useAuth = (): UseAuthHook => {
 
         state.authenticated = true;
 
-        return getMe();
+        return import('~/common/api');
       })
+      .then(({ getMe }) => getMe())
       .then(user => {
         state.user = user;
       });
@@ -164,6 +169,8 @@ export const useAuth = (): UseAuthHook => {
         ApplicationErrorCode.NO_AUTH_PROVIDER,
       );
     }
+
+    return Promise.resolve();
   };
 
   const handleLogout = (): MaybePromise<void> => {

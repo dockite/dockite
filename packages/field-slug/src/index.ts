@@ -6,7 +6,7 @@ import { GraphQLInputType, GraphQLOutputType, GraphQLScalarType, GraphQLString }
 import slugify from 'slugify';
 
 import { REMOVE_REGEX } from './constants';
-import { SlugFieldSettings } from './types';
+import { defaultOptions, FIELD_TYPE, SlugFieldSettings } from './types';
 
 const DockiteFieldSlugType = new GraphQLScalarType({
   ...GraphQLString.toConfig(),
@@ -14,18 +14,13 @@ const DockiteFieldSlugType = new GraphQLScalarType({
 });
 
 export class DockiteFieldSlug extends DockiteField {
-  public static type = 'slug';
+  public static type = FIELD_TYPE;
 
   public static title = 'Slug';
 
   public static description = 'A slug field';
 
-  public static defaultOptions: SlugFieldSettings = {
-    fieldsToSlugify: [],
-    parent: null,
-    unique: true,
-    autoIncrement: true,
-  };
+  public static defaultOptions = defaultOptions;
 
   private async getSlugCount(
     value: string,

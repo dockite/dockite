@@ -1,36 +1,54 @@
 import { defineComponent, watch, watchEffect } from 'vue';
-import { RouterView, onBeforeRouteUpdate, useRouter } from 'vue-router';
+import { RouterView, onBeforeRouteUpdate, useRouter, useRoute } from 'vue-router';
 
 import { useAuth } from '~/hooks';
 
-type GuestLayoutProps = never;
+export const GuestLayout = defineComponent({
+  name: 'GuestLayoutComponent',
 
-export const GuestLayout = defineComponent<GuestLayoutProps>(() => {
-  const { state } = useAuth();
+  setup: () => {
+    const { state } = useAuth();
 
-  const router = useRouter();
+    const router = useRouter();
 
-  // Handle authentication during the setup of the component
-  if (state.authenticated) {
-    router.push('/');
-  }
+    const route = useRoute();
 
-  watchEffect(() => {
+    // Handle authentication during the setup of the component
     if (state.authenticated) {
-      router.push('/');
-    }
-  });
-
-  // Also register a route handler to check for further authentication changes
-  onBeforeRouteUpdate((_to, _from, next) => {
-    if (state.authenticated) {
-      router.push('/');
+      if (route.query.redirectTo && typeof route.query.redirectTo === 'string') {
+        router.push(decodeURIComponent(route.query.redirectTo));
+      } else {
+        router.push('/');
+      }
     }
 
-    next();
-  });
+    //
 
-  return () => <RouterView />;
+    watchEffect(() => {
+      if (state.authenticated) {
+        if (route.query.redirectTo && typeof route.query.redirectTo === 'string') {
+          router.push(decodeURIComponent(route.query.redirectTo));
+        } else {
+          router.push('/');
+        }
+      }
+    });
+
+    // Also register a route handler to check for further authentication changes
+    onBeforeRouteUpdate((_to, _from, next) => {
+      if (state.authenticated) {
+        if (route.query.redirectTo && typeof route.query.redirectTo === 'string') {
+          router.push(decodeURIComponent(route.query.redirectTo));
+        } else {
+          router.push('/');
+        }
+      }
+
+      next();
+    });
+
+    return () => <RouterView />;
+  },
 });
 
 export default GuestLayout;

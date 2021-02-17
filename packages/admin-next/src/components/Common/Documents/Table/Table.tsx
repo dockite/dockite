@@ -18,6 +18,7 @@ export interface DocumentTableComponentProps {
   showSchemaColumn: Maybe<boolean>;
   showIdentifierColumn: Maybe<boolean>;
   documents: Document[];
+  updatableColumns: boolean;
   columns: DocumentTableColumn[];
   state: DocumentTableState;
   getActions: Maybe<(document: Document, schema: Schema) => JSX.Element | JSX.Element[]>;
@@ -53,9 +54,14 @@ export const DocumentTableComponent = defineComponent({
       required: true,
     },
 
+    updatableColumns: {
+      type: Boolean as PropType<DocumentTableComponentProps['updatableColumns']>,
+      default: false,
+    },
+
     columns: {
       type: Array as PropType<DocumentTableComponentProps['columns']>,
-      required: true,
+      // required: true,
     },
 
     state: {
@@ -98,13 +104,25 @@ export const DocumentTableComponent = defineComponent({
     // Stores a computed list of the selected item ids
     const selectedItemIds = computed(() => (props.selectedItems ?? []).map(x => x.id));
 
-    // Handles the changing of a selectable column in either the results or selected table.
+    // Handles the changing of a selectable document in either the results or selected table.
     const handleSelectedItemChange = (value: boolean, document: Document): void => {
       if (props.selectable && props.selectedItems) {
         if (value && !vmodel.selectedItems.value.find(item => item.id === document.id)) {
           vmodel.selectedItems.value.push(document);
         } else {
           vmodel.selectedItems.value = props.selectedItems.filter(d => d.id !== document.id);
+        }
+      }
+    };
+
+    // Handles the changing of a column via the column dropdown.
+    const handleColumnChange = (value: boolean, column: DocumentTableColumn): void => {
+      console.log('getting called');
+      if (props.updatableColumns && props.columns) {
+        if (value && !vmodel.columns.value.find(col => col.name === column.name)) {
+          vmodel.columns.value = [...vmodel.columns.value, column];
+        } else {
+          vmodel.columns.value = vmodel.columns.value.filter(col => col.name !== column.name);
         }
       }
     };
@@ -163,7 +181,7 @@ export const DocumentTableComponent = defineComponent({
 
     return () => {
       const getTableColumns = (selectedView = false): JSX.Element[] =>
-        props.columns.map(column => (
+        props.columns!.map(column => (
           <el-table-column minWidth="150">
             {{
               header: () => {
@@ -295,13 +313,52 @@ export const DocumentTableComponent = defineComponent({
       );
 
       return (
-        <el-tabs type="border-card" style="box-shadow: none;">
-          <el-tab-pane label="Results">{baseTable}</el-tab-pane>
+        <div class="relative">
+          <div
+            class={{
+              'absolute right-0 top-0 py-2 px-3 z-50': true,
+              hidden: !props.updatableColumns,
+            }}
+          >
+            <el-popover trigger="hover" title="Displayed Columns" width="auto">
+              {{
+                reference: () => <i class="el-icon-setting cursor-pointer p-1" role="button" />,
+                default: () => (
+                  <div
+                    class="overflow-auto flex flex-col"
+                    style={{ maxHeight: '400px', maxWidth: '400px' }}
+                  >
+                    {props.schema!.fields.map(field => {
+                      const column: DocumentTableColumn = {
+                        name: field.name,
+                        label: field.title,
+                        filterable: true,
+                      };
 
-          <el-tab-pane label={`Selected Items (${selectedItemIds.value.length})`}>
-            {selectedTable}
-          </el-tab-pane>
-        </el-tabs>
+                      return (
+                        <el-checkbox
+                          modelValue={(props.columns || []).some(c => c.name === column.name)}
+                          onChange={(v: boolean) => handleColumnChange(v, column)}
+                          class="mb-1"
+                        >
+                          {column.label}
+                        </el-checkbox>
+                      );
+                    })}
+                  </div>
+                ),
+              }}
+            </el-popover>
+          </div>
+
+          <el-tabs type="border-card" style="box-shadow: none;">
+            <el-tab-pane label="Results">{baseTable}</el-tab-pane>
+
+            <el-tab-pane label={`Selected Items (${selectedItemIds.value.length})`}>
+              {selectedTable}
+            </el-tab-pane>
+          </el-tabs>
+        </div>
       );
     };
   },

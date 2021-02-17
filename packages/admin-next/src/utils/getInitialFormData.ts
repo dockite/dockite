@@ -1,6 +1,9 @@
-import { Document, Schema } from '@dockite/database';
+import { Document, Schema, Singleton } from '@dockite/database';
 
-export const getInitialFormData = (document: Document, schema: Schema): Record<string, any> => {
+export const getInitialFormData = (
+  document: Document | Singleton,
+  schema: Schema | Singleton,
+): Record<string, any> => {
   const data: Record<string, any> = {};
 
   schema.fields.forEach(field => {

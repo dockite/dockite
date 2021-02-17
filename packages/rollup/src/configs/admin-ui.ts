@@ -1,4 +1,5 @@
 /* eslint-disable no-param-reassign */
+import fs from 'fs';
 import path from 'path';
 
 import { DEFAULT_EXTENSIONS } from '@babel/core';
@@ -6,10 +7,9 @@ import alias from '@rollup/plugin-alias';
 import html from '@rollup/plugin-html';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import replace from '@rollup/plugin-replace';
-import compress from 'koa-compress';
 import { OutputOptions, RollupOptions } from 'rollup';
 import copy from 'rollup-plugin-copy';
-import dev from 'rollup-plugin-dev';
+import serve from 'rollup-plugin-serve';
 import { terser } from 'rollup-plugin-terser';
 
 import { getAdminHtmlTemplate, isDevelopmentMode } from '../utils';
@@ -93,13 +93,17 @@ export const getAdminUiRollupConfiguration = (
 
   if (isDevelopmentMode() && config.plugins) {
     config.plugins.unshift(
-      dev({
-        dirs: [path.resolve(cwd, './lib/es')],
-        spa: true,
+      serve({
+        contentBase: [path.resolve(cwd, './lib/es')],
+        historyApiFallback: true,
+        host: process.env.HOST || 'localhost',
         port: Number(process.env.PORT) || 4000,
-        extend: (app: any) => {
-          app.use(compress());
-        },
+        https: !process.env.HTTPS
+          ? undefined
+          : {
+              key: fs.readFileSync(path.resolve(__dirname, '../certs/localhost.key')),
+              cert: fs.readFileSync(path.resolve(__dirname, '../certs/localhost.crt')),
+            },
       }),
     );
   }

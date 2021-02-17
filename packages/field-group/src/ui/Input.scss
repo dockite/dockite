@@ -71,4 +71,22 @@
       opacity: 1;
     }
   }
+
+  .dockite-field-group--movement-buttons {
+    font-size: 1.1rem;
+
+    > .dockite-field-group--movement-button {
+      font-size: 1.1rem;
+
+      transition: 300ms;
+
+      &:hover {
+        opacity: .75;
+      }
+    }
+
+    .el-button + .el-button {
+      margin-left: 0;
+    }
+  }
 }

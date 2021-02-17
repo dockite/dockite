@@ -1,26 +1,30 @@
 import { defineComponent } from 'vue';
 import { useRouter } from 'vue-router';
 
-import notAuthorizedSvg from '~/assets/images/not-authorized.svg';
+import notAuthorizedSvg from '../assets/images/not-authorized.svg';
 
 type NotAuthorizedPageProps = never;
 
-export const NotAuthorizedPage = defineComponent<NotAuthorizedPageProps>(() => {
-  const router = useRouter();
+export const NotAuthorizedPage = defineComponent({
+  name: 'NotAuthorizedPageComponent',
 
-  router.replace({ path: '/403' });
+  setup: () => {
+    const router = useRouter();
 
-  return () => (
-    <div class="flex-1 h-full flex flex-col justify-center items-center">
-      <img style="max-width: 175px" src={notAuthorizedSvg} />
+    router.replace({ path: '/403' });
 
-      <h1 class="text-2xl font-semibold pt-5">403: Not Authorized</h1>
+    return () => (
+      <div class="flex-1 h-full flex flex-col justify-center items-center py-12">
+        <img style="max-width: 175px" src={notAuthorizedSvg} />
 
-      <p class="pt-3">You are not authorized to view the requested page.</p>
+        <h1 class="text-2xl font-semibold pt-5">403: Not Authorized</h1>
 
-      <router-link to="/">Return Home?</router-link>
-    </div>
-  );
+        <p class="pt-3">You are not authorized to view the requested page.</p>
+
+        <router-link to="/">Return Home?</router-link>
+      </div>
+    );
+  },
 });
 
 export default NotAuthorizedPage;

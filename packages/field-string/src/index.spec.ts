@@ -67,7 +67,7 @@ describe('DockiteFieldString', () => {
     expect(maxLenResult.code).toBe('STR_MAX_LEN');
   });
 
-  it('validate url safety of input', async () => {
+  it('validates url safety of input', async () => {
     const DockiteFieldWithUrlSafe: DockiteFieldStringEntity = {
       ...BaseDockiteFieldString,
       settings: {

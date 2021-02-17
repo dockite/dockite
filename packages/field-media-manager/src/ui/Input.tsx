@@ -23,38 +23,46 @@ export type InputComponentProps = DockiteFieldInputComponentProps<
 
 export const InputComponent = defineComponent({
   name: 'DockiteFieldMediaManagerInput',
+
   props: {
     name: {
       type: String as PropType<InputComponentProps['name']>,
       required: true,
     },
+
     modelValue: {
       type: (null as any) as PropType<InputComponentProps['value']>,
       required: true,
     },
+
     formData: {
       type: Object as PropType<InputComponentProps['formData']>,
       required: true,
     },
+
     schema: {
       type: Object as PropType<InputComponentProps['schema']>,
       required: true,
     },
+
     fieldConfig: {
       type: Object as PropType<InputComponentProps['fieldConfig']>,
       required: true,
     },
+
     errors: {
       type: Object as PropType<InputComponentProps['errors']>,
       required: true,
     },
+
     bulkEditMode: {
       type: Boolean as PropType<InputComponentProps['bulkEditMode']>,
       required: true,
     },
   },
+
   setup: (props, ctx) => {
-    const modelValue = computed({
+    const fieldData = computed({
       get: () => props.modelValue,
       set: value => ctx.emit('update:modelValue', value),
     });
@@ -90,8 +98,8 @@ export const InputComponent = defineComponent({
       return null;
     });
 
-    if (!modelValue.value) {
-      modelValue.value = {
+    if (!fieldData.value) {
+      fieldData.value = {
         items: [],
         uid: Date.now()
           .toString(36)
@@ -111,7 +119,7 @@ export const InputComponent = defineComponent({
       try {
         loading.value += 1;
 
-        if (!modelValue.value || !s3Settings.value) {
+        if (!fieldData.value || !s3Settings.value) {
           throw new Error('Attempt to upload file before field has loaded or S3 settings provided');
         }
 
@@ -119,7 +127,7 @@ export const InputComponent = defineComponent({
 
         const pathSegments = [
           settings.value.pathPrefix || props.schema.name,
-          modelValue.value.uid,
+          fieldData.value.uid,
           file.name,
         ];
 
@@ -144,7 +152,7 @@ export const InputComponent = defineComponent({
 
         const fileUrl = presignedUrl.substring(0, presignedUrl.indexOf('?'));
 
-        modelValue.value.items.push({
+        fieldData.value.items.push({
           filename: file.name,
           path,
           type: file.type,
@@ -165,7 +173,10 @@ export const InputComponent = defineComponent({
 
       const fileExtension = file.name.split('.').pop();
 
-      if (!settings.value.acceptedExtensions.includes(`.${fileExtension.toLowerCase()}`)) {
+      if (
+        !fileExtension ||
+        !settings.value.acceptedExtensions.includes(`.${fileExtension.toLowerCase()}`)
+      ) {
         addLocalError(`The file "${file.name}" has an invalid extension.`);
 
         error = true;
@@ -190,11 +201,11 @@ export const InputComponent = defineComponent({
       try {
         loading.value += 1;
 
-        if (!modelValue.value || modelValue.value.items.length < index) {
+        if (!fieldData.value || fieldData.value.items.length < index) {
           return;
         }
 
-        const fileToDelete = modelValue.value.items[index];
+        const fileToDelete = fieldData.value.items[index];
 
         await $graphql.executeMutation({
           query: DELETE_S3_OBJECT_MUTATION,
@@ -204,7 +215,7 @@ export const InputComponent = defineComponent({
           },
         });
 
-        modelValue.value.items.splice(index, 1);
+        fieldData.value.items.splice(index, 1);
       } catch (_err) {
         $message.error('An error occurred while attempting to delete the uploaded file.');
       } finally {
@@ -266,7 +277,7 @@ export const InputComponent = defineComponent({
     };
 
     return () => {
-      if (!modelValue.value) {
+      if (!fieldData.value) {
         return <div>Field loading...</div>;
       }
 
@@ -286,7 +297,7 @@ export const InputComponent = defineComponent({
 
       if (!s3Settings.value) {
         return (
-          <el-alert title="No S3 settings found" type="error" show-icon>
+          <el-alert title="No S3 settings found" type="error" showIcon closable={false}>
             No available S3 settings were found on either the field or schema, please check to make
             sure they are configured
           </el-alert>
@@ -304,8 +315,7 @@ export const InputComponent = defineComponent({
             limit={settings.value.max !== 0 ? settings.value.max : Infinity}
             show-file-list={false}
             class={{
-              hidden:
-                settings.value.max === 0 || modelValue.value.items.length < settings.value.max,
+              hidden: settings.value.max !== 0 && fieldData.value.items.length < settings.value.max,
             }}
           >
             {{
@@ -326,7 +336,7 @@ export const InputComponent = defineComponent({
           </el-upload>
 
           <ul class="el-upload-list el-upload-list--picture">
-            {modelValue.value.items.map((item, index) => (
+            {fieldData.value.items.map((item, index) => (
               <li tabindex={0} class="el-upload-list__item is-success">
                 {isImage(item.url) && <img src={item.url} class="el-upload-list__item-thumbnail" />}
 

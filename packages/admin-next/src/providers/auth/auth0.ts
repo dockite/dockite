@@ -5,10 +5,9 @@ import { Auth0AuthConfiguration } from '@dockite/types';
 
 import { AuthenticationError, AuthenticationErrorCode } from '~/common/errors';
 import { logE } from '~/common/logger';
-import { REGISTER_FIRST_USER_MUTATION, RegisterFirstUserMutationResponse } from '~/graphql';
+import { RegisterFirstUserMutationResponse, REGISTER_FIRST_USER_MUTATION } from '~/graphql';
 import { RegisterPayload } from '~/hooks/useAuth/types';
 import { useConfig } from '~/hooks/useConfig';
-import { useGraphQL } from '~/hooks/useGraphQL';
 
 interface Auth0State {
   client: Auth0Client | null;
@@ -71,7 +70,7 @@ export const register = (...args: any): string => {
 };
 
 export const registerFirstUser = async (payload: RegisterPayload): Promise<string> => {
-  const graphql = useGraphQL();
+  const graphql = await import('~/hooks/useGraphQL').then(mod => mod.useGraphQL());
 
   try {
     const result = await graphql.executeMutation<

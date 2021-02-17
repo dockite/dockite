@@ -1,0 +1,50 @@
+.dockite-field-variant {
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  padding: 1rem;
+
+  legend {
+    padding: 0 0.5rem;
+  }
+}
+
+.dockite-field-variant--item {
+  position: relative;
+  // margin-top: -1.2rem;
+
+  .el-form-item {
+    margin-bottom: 22px !important;
+  }
+}
+
+.dockite-field-variant--remove-item {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: #f56c6c;
+  z-index: 200;
+
+  &:hover {
+    color: #f56c6c;
+    opacity: 0.75;
+  }
+
+  i {
+    font-weight: bold;
+  }
+}
+
+.dockite-field-variant--option {
+  height: 100%;
+  width: 100%;
+  white-space: initial;
+}
+
+.dockite-field-variant--prompt {
+  border-left: 2px solid #dcdfe6;
+  background: lighten(#dcdfe6, 7%);
+  color: rgba(0, 0, 0, 0.66);
+  margin: 0;
+  padding: 0.5rem 1rem;
+  margin-bottom: 1rem;
+}

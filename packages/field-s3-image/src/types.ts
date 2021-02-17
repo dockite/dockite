@@ -1,5 +1,29 @@
 import { BaseField } from '@dockite/database';
 
+export const FIELD_TYPE = 's3-image';
+
+export const defaultOptions: S3ImageFieldSettings = {
+  required: false,
+  acceptedExtensions: [],
+  maxSizeKB: 10000,
+  imageValidation: false,
+  minHeight: null,
+  maxHeight: null,
+  minWidth: null,
+  maxWidth: null,
+  ratio: null,
+  multiple: false,
+  min: 0,
+  max: 0,
+  useSchemaS3Settings: false,
+  accessKey: '',
+  secretAccessKey: '',
+  endpoint: 's3.amazonaws.com',
+  bucket: '',
+  pathPrefix: null,
+  public: false,
+};
+
 export interface S3ImageType {
   name: string;
   url: string;

@@ -16,8 +16,6 @@ import { useConfig } from './hooks';
 
 import { useAuth } from '~/hooks/useAuth';
 
-type AppProps = never;
-
 const tokenRefresh = async (): Promise<void> => {
   const { state, handleRefreshToken, token } = useAuth();
 
@@ -44,96 +42,100 @@ const Layout = reactive({
  * Setup the Application with the routes registered layout default to "Default"
  * if it hasn't been set.
  */
-export const App = defineComponent<AppProps>(() => {
-  const config = useConfig();
+export const App = defineComponent({
+  name: 'AppComponent',
 
-  const route = useRoute();
+  setup: () => {
+    const config = useConfig();
 
-  const { state, handleRefreshUser } = useAuth();
+    const route = useRoute();
 
-  const meta = computed(() => {
-    return route.meta;
-  });
+    const { state, handleRefreshUser } = useAuth();
 
-  const { loading } = usePromise(() =>
-    tokenRefresh().then(() => {
-      if (state.authenticated) {
-        return handleRefreshUser();
+    const meta = computed(() => {
+      return route.meta;
+    });
+
+    const { loading } = usePromise(() =>
+      tokenRefresh().then(() => {
+        if (state.authenticated) {
+          return handleRefreshUser();
+        }
+
+        return Promise.resolve(null);
+      }),
+    );
+
+    // Derrive the layout value from the current routes meta info
+    const layout = ref('Default');
+
+    onBeforeRouteLeave((to, _from, next) => {
+      if (to.meta && to.meta.layout) {
+        layout.value = to.meta.layout;
       }
 
-      return Promise.resolve(null);
-    }),
-  );
+      next();
+    });
 
-  // Derrive the layout value from the current routes meta info
-  const layout = ref('Default');
+    onBeforeRouteLeave(tokenRefresh);
 
-  onBeforeRouteLeave((to, _from, next) => {
-    if (to.meta && to.meta.layout) {
-      layout.value = to.meta.layout;
-    }
-
-    next();
-  });
-
-  onBeforeRouteLeave(tokenRefresh);
-
-  watchEffect(() => {
-    if (meta.value.layout) {
-      layout.value = meta.value.layout;
-    }
-  });
-
-  watch(layout, (newValue, oldValue) => {
-    if (newValue !== oldValue) {
-      switch (newValue) {
-        case 'Guest':
-          Layout.Component = defineAsyncComponent({
-            loader: () => import(`./layouts/Guest`),
-          });
-
-          break;
-
-        case 'Dashboard':
-          Layout.Component = defineAsyncComponent({
-            loader: () => import(`./layouts/Dashboard`),
-          });
-
-          break;
-
-        default:
-          Layout.Component = defineAsyncComponent({
-            loader: () => import(`./layouts/Default`),
-          });
-
-          break;
+    watchEffect(() => {
+      if (meta.value.layout) {
+        layout.value = meta.value.layout;
       }
-    }
-  });
+    });
 
-  return () => {
-    if (loading.value) {
+    watch(layout, (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        switch (newValue) {
+          case 'Guest':
+            Layout.Component = defineAsyncComponent({
+              loader: () => import(`./layouts/Guest`),
+            });
+
+            break;
+
+          case 'Dashboard':
+            Layout.Component = defineAsyncComponent({
+              loader: () => import(`./layouts/Dashboard`),
+            });
+
+            break;
+
+          default:
+            Layout.Component = defineAsyncComponent({
+              loader: () => import(`./layouts/Default`),
+            });
+
+            break;
+        }
+      }
+    });
+
+    return () => {
+      if (loading.value) {
+        return (
+          <>
+            <Teleport to="head">
+              <title>{config.app.title} | Loading...</title>
+            </Teleport>
+
+            <div>Loading...</div>
+          </>
+        );
+      }
+
       return (
         <>
           <Teleport to="head">
-            <title>{config.app.title} | Loading...</title>
+            <title>{config.app.title}</title>
           </Teleport>
 
-          <div>Loading...</div>
+          <Layout.Component />
         </>
       );
-    }
-
-    return (
-      <>
-        <Teleport to="head">
-          <title>{config.app.title}</title>
-        </Teleport>
-
-        <Layout.Component />
-      </>
-    );
-  };
+    };
+  },
 });
 
 export default App;

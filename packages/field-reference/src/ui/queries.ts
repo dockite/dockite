@@ -49,11 +49,22 @@ export const SEARCH_DOCUMENTS_QUERY = gql`
     ) {
       results {
         id
+        locale
         data
+        publishedAt
+        createdAt
         updatedAt
+        releaseId
+        schemaId
         schema {
           id
           name
+          title
+          type
+          groups
+          settings
+          createdAt
+          updatedAt
         }
       }
       totalItems
@@ -78,6 +89,16 @@ export const GET_DOCUMENT_BY_ID_QUERY = gql`
       updatedAt
       releaseId
       schemaId
+      schema {
+        id
+        name
+        title
+        type
+        groups
+        settings
+        createdAt
+        updatedAt
+      }
     }
   }
 `;

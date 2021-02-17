@@ -11,9 +11,9 @@ import { createHttpLink } from 'apollo-link-http';
 import { reactive } from 'vue';
 
 import { exceptionHandler } from './exceptionHandler';
-import { authLink, refreshTokenLink } from './links';
 
 import { useConfig } from '~/hooks/useConfig';
+import { authLink, refreshTokenLink } from '~/hooks/useGraphQL/links';
 
 interface UseGraphQLState {
   client: ApolloClient<NormalizedCacheObject> | null;

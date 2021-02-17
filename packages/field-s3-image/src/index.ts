@@ -9,7 +9,7 @@ import {
   GraphQLInputObjectType,
 } from 'graphql';
 
-import { S3ImageFieldSettings } from './types';
+import { S3ImageFieldSettings, defaultOptions, FIELD_TYPE } from './types';
 
 export interface S3ImageType {
   name: string;
@@ -50,33 +50,13 @@ const MultipleDockiteFieldS3ImageType = new GraphQLList(DockiteFieldS3ImageType)
 const MultipleDockiteFieldS3ImageInputType = new GraphQLList(DockiteFieldS3ImageInputType);
 
 export class DockiteFieldS3Image extends DockiteField {
-  public static type = 's3-image';
+  public static type = FIELD_TYPE;
 
   public static title = 'S3 Image';
 
   public static description = 'An image field that uploads files to an S3 compatible storage.';
 
-  public static defaultOptions: S3ImageFieldSettings = {
-    required: false,
-    acceptedExtensions: [],
-    maxSizeKB: 10000,
-    imageValidation: false,
-    minHeight: null,
-    maxHeight: null,
-    minWidth: null,
-    maxWidth: null,
-    ratio: null,
-    multiple: false,
-    min: 0,
-    max: 0,
-    useSchemaS3Settings: false,
-    accessKey: '',
-    secretAccessKey: '',
-    endpoint: 's3.amazonaws.com',
-    bucket: '',
-    pathPrefix: null,
-    public: false,
-  };
+  public static defaultOptions: S3ImageFieldSettings = defaultOptions;
 
   public async inputType(): Promise<GraphQLInputType> {
     if ((this.schemaField.settings as S3ImageFieldSettings).multiple) {

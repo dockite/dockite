@@ -1,7 +1,7 @@
+import { Schema, Document, Field, Singleton } from '@dockite/database';
 import { cloneDeep } from 'lodash';
-import { defineComponent, computed, PropType, reactive } from 'vue';
-
-import { Schema, Document, Field } from '@dockite/database';
+import { defineComponent, computed, PropType, reactive, ref, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
 import { getFieldsByGroup, getFieldComponent } from './util';
 
@@ -9,18 +9,18 @@ import { useDockite } from '~/dockite';
 import { getInitialFormData } from '~/utils';
 
 export interface DocumentFormComponentProps {
-  formData: Record<string, any>;
-  document: Document;
-  schema: Schema;
+  modelValue: Record<string, any>;
+  document: Document | Singleton;
+  schema: Schema | Singleton;
   errors: Record<string, string>;
 }
 
 export const DocumentFormComponent = defineComponent({
   name: 'DocumentFormComponent',
+
   props: {
     modelValue: {
-      type: Object as PropType<DocumentFormComponentProps['formData']>,
-      required: true,
+      type: Object as PropType<DocumentFormComponentProps['modelValue']>,
     },
 
     document: {
@@ -38,23 +38,60 @@ export const DocumentFormComponent = defineComponent({
       required: true,
     },
   },
+
   setup: (props, ctx) => {
-    const formData = computed<Record<string, any>>({
-      get: () => props.modelValue,
+    const formData = computed({
+      get: () => props.modelValue as DocumentFormComponentProps['modelValue'],
       set: value => ctx.emit('update:modelValue', value),
     });
 
-    Object.assign(formData.value, getInitialFormData(props.document, props.schema));
+    const selectedTab = ref<string | null>(null);
 
-    const groups = props.schema.groups as Record<string, string[]>;
+    const route = useRoute();
 
-    const groupsModel = reactive({ ...cloneDeep(groups) });
-
-    const mappedGroups: Record<string, Field[]> = Object.keys(groups).reduce((acc, curr) => {
-      return { ...acc, [curr]: getFieldsByGroup(curr, props.schema) };
-    }, {});
+    const router = useRouter();
 
     const { hasLoadedFields } = useDockite();
+
+    const reactiveGroups = reactive<Record<string, string[]>>({
+      ...cloneDeep(props.schema.groups),
+    });
+
+    const groupsWithFields = computed<Record<string, Field[]>>(() =>
+      Object.keys(reactiveGroups).reduce((acc, curr) => {
+        return {
+          ...acc,
+          [curr]: getFieldsByGroup(curr, props.schema),
+        };
+      }, {}),
+    );
+
+    const availableTabSelections = computed(() =>
+      Object.keys(reactiveGroups).map(group => group.toLowerCase()),
+    );
+
+    Object.assign(formData.value, getInitialFormData(props.document, props.schema));
+
+    if (route.query.tab && typeof route.query.tab === 'string') {
+      const tab = route.query.tab.toLowerCase();
+
+      if (availableTabSelections.value.includes(tab)) {
+        selectedTab.value = tab;
+      }
+    }
+
+    if (selectedTab.value === null) {
+      [selectedTab.value] = availableTabSelections.value;
+    }
+
+    watch(selectedTab, value => {
+      router.replace({
+        query: {
+          ...route.query,
+          tab: value,
+        },
+      });
+    });
 
     return () => {
       if (!hasLoadedFields.value) {
@@ -65,12 +102,18 @@ export const DocumentFormComponent = defineComponent({
         return <div>Schema or Document not provided</div>;
       }
 
-      const fields = Object.entries(mappedGroups).map(
+      const fields = Object.entries(groupsWithFields.value).map(
         ([name, fields]): JSX.Element => (
-          <el-tab-pane label={name}>
+          <el-tab-pane name={name.toLowerCase()} label={name}>
             <div>
               {fields.map(field =>
-                getFieldComponent(field, props.schema, formData.value, groupsModel, props.errors),
+                getFieldComponent(
+                  field,
+                  props.schema,
+                  formData.value,
+                  reactiveGroups,
+                  props.errors,
+                ),
               )}
             </div>
           </el-tab-pane>
@@ -78,8 +121,8 @@ export const DocumentFormComponent = defineComponent({
       );
 
       return (
-        <el-form model={formData.value}>
-          <el-tabs>{fields}</el-tabs>
+        <el-form label-position="top" model={formData.value}>
+          <el-tabs v-model={selectedTab.value}>{fields}</el-tabs>
         </el-form>
       );
     };

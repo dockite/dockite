@@ -1,0 +1,49 @@
+.dockite-field-s3-image--item {
+  display: flex;
+  height: 100%;
+  width: 100%;
+
+  flex-direction: column;
+  justify-content: center;
+}
+
+.dockite-field-s3-image--item-name {
+  line-height: 1.2 !important;
+  padding-bottom: 7px;
+}
+
+.dockite-field-s3-image--error {
+  color: #f56c6c;
+  font-size: 12px;
+  line-height: 1;
+  padding-top: 4px;
+}
+
+.dockite-field-s3-image {
+  .el-upload-list__item {
+    padding: 10px;
+  }
+
+  .el-upload-list__item-thumbnail {
+    object-fit: contain;
+  }
+
+  .el-upload-list--picture .el-upload-list__item-thumbnail {
+    margin: 0;
+  }
+
+  .dockite-s3-image--constraints {
+    transition: all 300ms;
+  }
+
+  .dockite-s3-image--constraints-list {
+    max-height: 0;
+    transition: all 300ms;
+    overflow: hidden;
+  }
+
+  .dockite-s3-image--constraints:hover .dockite-s3-image--constraints-list {
+    max-height: 400px;
+    transition: all 300ms;
+  }
+}

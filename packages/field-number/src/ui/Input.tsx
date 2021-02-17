@@ -1,5 +1,5 @@
-import { computed, defineComponent, PropType, ref, toRefs } from 'vue';
 import { DockiteFieldInputComponentProps } from '@dockite/types';
+import { computed, defineComponent, PropType, ref, toRefs } from 'vue';
 
 import { DockiteFieldNumberEntity } from '../types';
 
@@ -50,7 +50,7 @@ export const InputComponent = defineComponent({
     if (!fieldConfig.value.settings.float) {
       rules.value.push({
         type: 'integer',
-        message: `${this.fieldConfig.title} must be a whole number`,
+        message: `${fieldConfig.value.title} must be a whole number`,
         trigger: 'blur',
       });
     }
@@ -58,7 +58,7 @@ export const InputComponent = defineComponent({
     if (fieldConfig.value.settings.float) {
       rules.value.push({
         type: 'number',
-        message: `${this.fieldConfig.title} must be a floating point number`,
+        message: `${fieldConfig.value.title} must be a floating point number`,
         trigger: 'blur',
       });
     }

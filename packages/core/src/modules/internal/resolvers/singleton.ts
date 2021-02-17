@@ -79,11 +79,6 @@ export class SingletonResolver {
 
     const document = await documentRepository.findOneOrFail({ where: { schemaId: schema.id } });
 
-    schema.groups = schema.groups.reduce(
-      (acc: Record<string, string[]>, curr: Record<string, string[]>) => ({ ...acc, ...curr }),
-      {},
-    );
-
     return { ...schema, data: document.data };
   }
 
@@ -96,14 +91,6 @@ export class SingletonResolver {
     const [results, totalItems] = await repository.findAndCount({
       where: { deletedAt: null, type: SchemaType.SINGLETON },
       relations: ['fields', 'documents'],
-    });
-
-    results.forEach(schema => {
-      // eslint-disable-next-line no-param-reassign
-      schema.groups = schema.groups.reduce(
-        (acc: Record<string, string[]>, curr: Record<string, string[]>) => ({ ...acc, ...curr }),
-        {},
-      );
     });
 
     return {

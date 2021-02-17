@@ -1,72 +1,86 @@
-import { defineComponent, ref, watchEffect } from 'vue';
+import { defineComponent, ref, watchEffect, reactive } from 'vue';
 import { usePromise } from 'vue-composable';
 import { useRoute, useRouter } from 'vue-router';
 
 import { getSingletonById } from '~/common/api';
-import { DASHBOARD_HEADER_PORTAL } from '~/common/constants';
+import { DASHBOARD_HEADER_PORTAL_TITLE } from '~/common/constants';
+import { DocumentFormComponent } from '~/components/Common/Documents/Form';
 import { useGraphQL, usePortal } from '~/hooks';
 
-export const SingletonFormPage = defineComponent(() => {
-  const route = useRoute();
+export const SingletonFormPage = defineComponent({
+  name: 'SingletonFormPage',
 
-  const router = useRouter();
+  setup: () => {
+    const route = useRoute();
 
-  const { exceptionHandler } = useGraphQL();
+    const router = useRouter();
 
-  const { setPortal } = usePortal();
+    const { exceptionHandler } = useGraphQL();
 
-  const error = ref<Error | null>(null);
+    const { setPortal } = usePortal();
 
-  const singletonId = ref(route.params.singletonId as string);
+    const formData = reactive<Record<string, any>>({});
 
-  const singleton = usePromise(() => getSingletonById(singletonId.value));
+    const formErrors: Record<string, string> = reactive({});
 
-  watchEffect(() => {
-    if (route.params.singletonId !== singletonId.value) {
-      singletonId.value = route.params.singletonId as string;
+    const error = ref<Error | null>(null);
 
-      /* Reset our current state stores on route changes */
+    const singletonId = ref(route.params.singletonId as string);
 
-      singleton.exec();
-    }
-  });
+    const singleton = usePromise(() => getSingletonById(singletonId.value));
 
-  watchEffect(() => {
-    if (singleton.loading.value) {
-      setPortal(DASHBOARD_HEADER_PORTAL, <span>Fetching Singleton...</span>);
-    }
+    watchEffect(() => {
+      if (route.params.singletonId && route.params.singletonId !== singletonId.value) {
+        singletonId.value = route.params.singletonId as string;
 
-    if (singleton.error.value) {
-      setPortal(DASHBOARD_HEADER_PORTAL, <span>Error fetching Singleton!</span>);
+        singleton.exec();
+      }
+    });
 
-      error.value = exceptionHandler(singleton.error.value, router);
-    }
+    watchEffect(() => {
+      if (singleton.loading.value) {
+        setPortal(DASHBOARD_HEADER_PORTAL_TITLE, <span>Fetching Singleton...</span>);
+      }
 
-    if (singleton.result.value) {
-      setPortal(DASHBOARD_HEADER_PORTAL, <span>{singleton.result.value.title}</span>);
-    }
-  });
+      if (singleton.error.value) {
+        setPortal(DASHBOARD_HEADER_PORTAL_TITLE, <span>Error fetching Singleton!</span>);
 
-  return () => {
-    if (singleton.loading.value) {
-      return <div>Loading...</div>;
-    }
+        error.value = exceptionHandler(singleton.error.value, router);
+      }
 
-    if (singleton.error.value) {
+      if (singleton.result.value) {
+        setPortal(DASHBOARD_HEADER_PORTAL_TITLE, <span>{singleton.result.value.title}</span>);
+      }
+    });
+
+    return () => {
+      if (singleton.loading.value) {
+        return <div>Loading...</div>;
+      }
+
+      if (singleton.error.value) {
+        return (
+          <div>
+            An error occurred while fetching the Singleton
+            <pre>{JSON.stringify(error.value, null, 2)}</pre>
+          </div>
+        );
+      }
+
+      if (!singleton.result.value) {
+        return <div>An unknown error is ocurring</div>;
+      }
+
       return (
-        <div>
-          An error occurred while fetching the Singleton
-          <pre>{JSON.stringify(error.value, null, 2)}</pre>
-        </div>
+        <DocumentFormComponent
+          v-model={formData}
+          document={singleton.result.value}
+          schema={singleton.result.value}
+          errors={formErrors}
+        />
       );
-    }
-
-    if (!singleton.result.value) {
-      return <div>An unknown error is ocurring</div>;
-    }
-
-    return <div>Henlo Singleton</div>;
-  };
+    };
+  },
 });
 
 export default SingletonFormPage;

@@ -139,7 +139,7 @@ export default class DockiteSchema {
 
         if (!field.dockiteField) {
           throw new DockiteSchemaError(
-            `Unable to map DockiteField for "${field.name}" of ${this.schema.name}`,
+            `Unable to map DockiteField for "${field.name}" of ${this.schema.name}. Field Type: ${field.type}`,
           );
         }
 

@@ -1,7 +1,9 @@
+import { Document, DocumentEntityProperties } from '@dockite/database';
 import { DockiteField } from '@dockite/field';
 import { FieldContext, FieldIOContext } from '@dockite/types';
-import { Document } from '@dockite/database';
+import { WhereBuilder, WhereBuilderInputType } from '@dockite/where-builder';
 import {
+  GraphQLBoolean,
   GraphQLEnumType,
   GraphQLFieldConfigArgumentMap,
   GraphQLInputType,
@@ -10,34 +12,27 @@ import {
   GraphQLObjectType,
   GraphQLOutputType,
   GraphQLString,
-  GraphQLBoolean,
 } from 'graphql';
 
-import { ReferenceOfFieldSettings } from './types';
+import { defaultOptions, FIELD_TYPE } from './types';
 
 export class DockiteFieldReferenceOf extends DockiteField {
-  public static type = 'reference_of';
+  public static type = FIELD_TYPE;
 
   public static title = 'Reference Of';
 
   public static description =
     'A reference of field. Returns a list of documents that refernence this document.';
 
-  public static defaultOptions: ReferenceOfFieldSettings = {
-    required: false,
-    schemaId: null,
-    fieldName: null,
-  };
+  public static defaultOptions = defaultOptions;
 
-  private updateSchemaIdPointer() {
+  private updateSchemaIdPointer(): void {
     if (this.schemaField.settings.schemaId && this.schemaField.settings.schemaId === 'self') {
       this.schemaField.settings.schemaId = this.schemaField.schemaId;
     }
   }
 
   public async inputType(): Promise<GraphQLInputType> {
-    // A dirty hack but we don't want this field to allow input.
-    // Why?
     return (null as any) as GraphQLInputType;
   }
 
@@ -84,6 +79,7 @@ export class DockiteFieldReferenceOf extends DockiteField {
 
   public async outputArgs(): Promise<GraphQLFieldConfigArgumentMap> {
     return {
+      where: { type: WhereBuilderInputType },
       page: { type: GraphQLInt, defaultValue: 1 },
       perPage: { type: GraphQLInt, defaultValue: 5 },
       orderBy: { type: GraphQLString, defaultValue: 'updatedAt' },
@@ -104,7 +100,7 @@ export class DockiteFieldReferenceOf extends DockiteField {
     }
 
     const { schemaId, fieldName } = this.schemaField.settings;
-    const { page, perPage } = args;
+    const { page, perPage, orderBy, orderDirection, where } = args;
 
     const qb = this.orm
       .getRepository(Document)
@@ -118,10 +114,14 @@ export class DockiteFieldReferenceOf extends DockiteField {
       .take(perPage)
       .offset((page - 1) * perPage);
 
-    if (args.orderBy !== 'id' && Object.keys(data).includes(args.orderBy)) {
-      qb.addOrderBy(`document.data->>'${args.orderBy}'`, args.orderDirection);
+    if (orderBy.startsWith('data') || !DocumentEntityProperties.includes(orderBy)) {
+      qb.addOrderBy(`document.data->>'${orderBy.replace('data.', '')}'`, orderDirection);
     } else {
-      qb.addOrderBy(`document.${args.orderBy}`, args.orderDirection);
+      qb.addOrderBy(`document.${orderBy}`, orderDirection);
+    }
+
+    if (where) {
+      WhereBuilder.Build(qb, where);
     }
 
     const [documents, totalItems] = await qb.getManyAndCount();

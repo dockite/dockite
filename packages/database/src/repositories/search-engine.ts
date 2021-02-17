@@ -9,7 +9,15 @@ export class SearchEngineRepository extends Repository<SearchEngine> {
 
     if (term !== '') {
       qb.where(
-        `(fts @@ plainto_tsquery('pg_catalog.simple', :term) OR (document.id)::text LIKE :like)`,
+        `
+        (
+          fts @@ plainto_tsquery('pg_catalog.simple', :term)
+          OR (document.id)::text LIKE :like
+          OR (document.data ->> 'name')::text LIKE :like
+          OR (document.data ->> 'title')::text LIKE :like
+          OR (document.data ->> 'identifier')::text LIKE :like
+        )
+        `,
         { term, like: `%${term}%` },
       );
     } else {

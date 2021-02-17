@@ -1,5 +1,5 @@
-import { getCurrentInstance, DefineComponent } from 'vue';
 import { DockiteFieldInputComponentProps } from '@dockite/types';
+import { getCurrentInstance, DefineComponent, toRaw } from 'vue';
 
 import { ChildField } from '../types';
 
@@ -43,7 +43,7 @@ export const getForm = (
       );
     }
 
-    const InputComponent = $dockite.fieldManager[field.type].input as Nullable<
+    let InputComponent = $dockite.fieldManager[field.type].input as Nullable<
       DefineComponent<DockiteFieldInputComponentProps<any, any>>
     >;
 
@@ -51,12 +51,15 @@ export const getForm = (
       return null;
     }
 
+    InputComponent = toRaw(InputComponent);
+
     if (index !== undefined) {
       if (Array.isArray(fieldData)) {
         return (
           <InputComponent
             name={`${props.name}.${index}.${field.name}`}
             bulkEditMode={props.bulkEditMode}
+            groups={props.groups}
             errors={props.errors}
             v-model={fieldData[index][field.name]}
             fieldConfig={field}
@@ -78,6 +81,7 @@ export const getForm = (
         name={`${props.name}.${field.name}`}
         bulkEditMode={props.bulkEditMode}
         errors={props.errors}
+        groups={props.groups}
         v-model={fieldData[field.name]}
         fieldConfig={field}
         formData={props.formData}

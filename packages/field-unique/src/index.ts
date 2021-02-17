@@ -1,9 +1,9 @@
+import { Document } from '@dockite/database';
 import { DockiteField } from '@dockite/field';
-import { GraphQLInputType, GraphQLOutputType } from 'graphql';
 import { HookContextWithOldData, HookContext, DockiteFieldValidationError } from '@dockite/types';
+import { GraphQLInputType, GraphQLOutputType } from 'graphql';
 import { get } from 'lodash';
 import format from 'pg-format';
-import { Document } from '@dockite/database';
 
 import { UniqueFieldSettings, Constraint } from './types';
 
@@ -40,7 +40,9 @@ export class DockiteFieldUnique extends DockiteField {
     await Promise.all(
       settings.validationGroups.map(async group => {
         const schemaFields = this.schemaField.schema?.fields ?? [];
+
         const concat = group.map(g => this.getValueFromPath(ctx.data, g));
+
         const fieldTitles = group.map(g => schemaFields.find(f => f.name === g) ?? g);
 
         const constraints = settings.constraints ?? [];
@@ -66,7 +68,9 @@ export class DockiteFieldUnique extends DockiteField {
     await Promise.all(
       settings.validationGroups.map(async group => {
         const schemaFields = this.schemaField.schema?.fields ?? [];
+
         const concat = group.map(g => this.getValueFromPath(ctx.data, g));
+
         const fieldTitles = group.map(g => schemaFields.find(f => f.name === g) ?? g);
 
         const constraints = settings.constraints ?? [];

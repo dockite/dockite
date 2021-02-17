@@ -1,7 +1,7 @@
 import { DockiteField } from '@dockite/field';
 import { GraphQLInputType, GraphQLOutputType, GraphQLScalarType, GraphQLString } from 'graphql';
 
-import { WysiwygFieldSettings } from './types';
+import { defaultOptions, FIELD_TYPE } from './types';
 
 const DockiteFieldWysiwygType = new GraphQLScalarType({
   ...GraphQLString.toConfig(),
@@ -9,18 +9,13 @@ const DockiteFieldWysiwygType = new GraphQLScalarType({
 });
 
 export class DockiteFieldWysiwyg extends DockiteField {
-  public static type = 'wysiwyg';
+  public static type = FIELD_TYPE;
 
   public static title = 'Wysiwyg';
 
   public static description = 'A wysiwyg field';
 
-  public static defaultOptions: WysiwygFieldSettings = {
-    required: false,
-    extensions: [],
-    minLen: 0,
-    maxLen: 0,
-  };
+  public static defaultOptions = defaultOptions;
 
   public async inputType(): Promise<GraphQLInputType> {
     return DockiteFieldWysiwygType;

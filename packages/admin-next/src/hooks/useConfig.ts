@@ -2,8 +2,7 @@ import { reactive } from 'vue';
 
 import { DockiteConfiguration } from '@dockite/types';
 
-// @ts-expect-error DOCKITE_CONFIG is injected via webpack
-const dockiteConfig: DockiteConfiguration = DOCKITE_CONFIG;
+const dockiteConfig: DockiteConfiguration = DOCKITE_CONFIG as any;
 
 const config = reactive({
   ...dockiteConfig,

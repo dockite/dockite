@@ -1,5 +1,5 @@
-import { computed, defineComponent, PropType, ref, toRefs } from 'vue';
 import { DockiteFieldInputComponentProps } from '@dockite/types';
+import { computed, defineComponent, PropType, ref, toRefs } from 'vue';
 
 import { DockiteFieldDateTimeEntity } from '../types';
 
@@ -10,28 +10,34 @@ export type InputComponentProps = DockiteFieldInputComponentProps<
 
 export const InputComponent = defineComponent({
   name: 'DockiteFieldDateTimeInput',
+
   props: {
     name: {
       type: String as PropType<InputComponentProps['name']>,
       required: true,
     },
+
     modelValue: {
       type: (null as any) as PropType<InputComponentProps['value']>,
       required: true,
     },
+
     formData: {
       type: Object as PropType<InputComponentProps['formData']>,
       required: true,
     },
+
     fieldConfig: {
       type: Object as PropType<InputComponentProps['fieldConfig']>,
       required: true,
     },
+
     errors: {
       type: Object as PropType<InputComponentProps['errors']>,
       required: true,
     },
   },
+
   setup: (props, ctx) => {
     const { errors, fieldConfig, modelValue, name } = toRefs(props);
 
@@ -47,7 +53,7 @@ export const InputComponent = defineComponent({
         return (
           <el-date-picker
             v-model={fieldData.value}
-            format={fieldConfig.value.settings.format}
+            format={fieldConfig.value.settings.format ?? 'YYYY-MM-DD'}
             value-format="yyyy-MM-dd"
             editable
             clearable
@@ -59,8 +65,8 @@ export const InputComponent = defineComponent({
       if (fieldConfig.value.settings.time) {
         return (
           <el-time-picker
-            v-model={fieldData}
-            format={fieldConfig.value.settings.format}
+            v-model={fieldData.value}
+            format={fieldConfig.value.settings.format ?? 'HH:mm:ss'}
             editable
             clearable
           />
@@ -69,8 +75,8 @@ export const InputComponent = defineComponent({
 
       return (
         <el-date-picker
-          v-model={fieldData}
-          format={fieldConfig.value.settings.format}
+          v-model={fieldData.value}
+          format={fieldConfig.value.settings.format ?? 'YYYY-MM-DD HH:mm:ss'}
           editable
           clearable
           type="datetime"

@@ -18,13 +18,14 @@
     "apollo-link-error": "^1.1.13",
     "apollo-link-http": "^1.5.17",
     "cosmiconfig": "^6.0.0",
-    "element-plus": "^1.0.1-beta.10",
+    "element-plus": "^1.0.2-beta.32",
     "graphql-tag": "^2.10.3",
     "jwt-decode": "^3.1.2",
     "lodash": "^4.17.15",
     "tailwindcss": "^1.9.6",
-    "vue": "^3.0.4",
-    "vue-composable": "^1.0.0-beta.12",
+    "vue": "^3.0.5",
+    "vuedraggable": "^4.0.1",
+    "vue-composable": "^1.0.0-beta.16",
     "vue-router": "^4.0.0"
   },
   "peerDependencies": {

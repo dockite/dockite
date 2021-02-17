@@ -24,7 +24,7 @@ export const getAdminHtmlTemplate = ({
     .map(file => `<script type="module" src="${publicPath}${file.fileName}" async defer></script>`);
 
   const chunks = (files.js || []).map(
-    file => `<link rel="preload" href="${publicPath}${file.fileName}" as="script">`,
+    file => `<link rel="prefetch" href="${publicPath}${file.fileName}" as="script">`,
   );
 
   const links = (files.css || []).map(({ fileName }) => {

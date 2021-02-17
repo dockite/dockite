@@ -1,5 +1,6 @@
 import { DockiteField } from '@dockite/field';
 import { Field, FieldIOContext, HookContextWithOldData, HookContext, Schema } from '@dockite/types';
+import GraphQLUnionInputType from '@dockite/union-input';
 import {
   GraphQLInputObjectType,
   GraphQLInputType,
@@ -7,48 +8,19 @@ import {
   GraphQLOutputType,
   GraphQLUnionType,
 } from 'graphql';
-import GraphQLUnionInputType from '@dockite/union-input';
+
+import { defaultOptions, FIELD_TYPE } from './types';
 
 type ChildField = Omit<Field, 'id' | 'schema' | 'schemaId' | 'dockiteField'>;
 
 export class DockiteFieldVariant extends DockiteField {
-  public static type = 'variant';
+  public static type = FIELD_TYPE;
 
   public static title = 'Variant';
 
   public static description = 'A variant field';
 
-  public static defaultOptions = {};
-
-  private getMappedChildFields(): Omit<Field, 'id'>[] {
-    const staticFields = Object.values(this.fieldManager);
-
-    return (this.schemaField.settings.children ?? []).map(
-      (child: ChildField): Omit<Field, 'id'> => {
-        const mappedChild: Omit<Field, 'id'> = {
-          ...child,
-          schemaId: this.schemaField.id,
-          schema: {
-            ...(this.schemaField.schema as Schema),
-            name: `${this.schemaField.schema?.name}_${this.schemaField.name}`,
-          },
-        };
-
-        const FieldClass = staticFields.find(staticField => staticField.type === child.type);
-
-        if (FieldClass) {
-          mappedChild.dockiteField = new FieldClass(
-            mappedChild as Field,
-            this.orm,
-            this.fieldManager,
-            this.graphqlSchemas,
-          );
-        }
-
-        return mappedChild;
-      },
-    );
-  }
+  public static defaultOptions = defaultOptions;
 
   public async inputType(ctx: FieldIOContext): Promise<GraphQLInputType> {
     // Then map each child to corresponding field type
@@ -390,6 +362,36 @@ export class DockiteFieldVariant extends DockiteField {
 
         await child.dockiteField.onFieldUpdate();
       }),
+    );
+  }
+
+  private getMappedChildFields(): Omit<Field, 'id'>[] {
+    const staticFields = Object.values(this.fieldManager);
+
+    return (this.schemaField.settings.children ?? []).map(
+      (child: ChildField): Omit<Field, 'id'> => {
+        const mappedChild: Omit<Field, 'id'> = {
+          ...child,
+          schemaId: this.schemaField.id,
+          schema: {
+            ...(this.schemaField.schema as Schema),
+            name: `${this.schemaField.schema?.name}_${this.schemaField.name}`,
+          },
+        };
+
+        const FieldClass = staticFields.find(staticField => staticField.type === child.type);
+
+        if (FieldClass) {
+          mappedChild.dockiteField = new FieldClass(
+            mappedChild as Field,
+            this.orm,
+            this.fieldManager,
+            this.graphqlSchemas,
+          );
+        }
+
+        return mappedChild;
+      },
     );
   }
 }

@@ -8,8 +8,6 @@ import graphql from '@rollup/plugin-graphql';
 import json from '@rollup/plugin-json';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import replace from '@rollup/plugin-replace';
-import dynamicImportVars from '@rollup/plugin-dynamic-import-vars';
-import strip from '@rollup/plugin-strip';
 import url from '@rollup/plugin-url';
 import { RollupOptions } from 'rollup';
 import postcss from 'rollup-plugin-postcss';
@@ -47,8 +45,8 @@ export const getBaseRollupConfiguration = (): RollupOptions => {
       replace({
         'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
         DOCKITE_APP_ENV: JSON.stringify(process.env.NODE_ENV || 'development'),
-        __VUE_OPTIONS_API__: 'true',
-        __VUE_PROD_DEVTOOLS__: 'true',
+        __VUE_OPTIONS_API__: JSON.stringify(true),
+        __VUE_PROD_DEVTOOLS__: JSON.stringify(true),
       }),
       visualizer(),
       postcss({

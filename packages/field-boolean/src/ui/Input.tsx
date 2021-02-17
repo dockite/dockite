@@ -1,5 +1,5 @@
-import { computed, defineComponent, PropType, ref, toRefs } from 'vue';
 import { DockiteFieldInputComponentProps } from '@dockite/types';
+import { computed, defineComponent, PropType, ref, toRefs } from 'vue';
 
 import { DockiteFieldBooleanEntity } from '../types';
 
@@ -10,28 +10,34 @@ export type InputComponentProps = DockiteFieldInputComponentProps<
 
 export const InputComponent = defineComponent({
   name: 'DockiteFieldBooleanInput',
+
   props: {
     name: {
       type: String as PropType<InputComponentProps['name']>,
       required: true,
     },
+
     modelValue: {
       type: (null as any) as PropType<InputComponentProps['value']>,
       required: true,
     },
+
     formData: {
       type: Object as PropType<InputComponentProps['formData']>,
       required: true,
     },
+
     fieldConfig: {
       type: Object as PropType<InputComponentProps['fieldConfig']>,
       required: true,
     },
+
     errors: {
       type: Object as PropType<InputComponentProps['errors']>,
       required: true,
     },
   },
+
   setup: (props, ctx) => {
     const { errors, fieldConfig, modelValue, name } = toRefs(props);
 

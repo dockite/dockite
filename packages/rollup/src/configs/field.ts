@@ -73,6 +73,7 @@ export const getDockiteFieldRollupConfiguration = (): RollupOptions => {
       }),
       typescript({
         tsconfigOverride: {
+          exclude: ['lib', 'node_modules', 'src/**/*.spec.ts'],
           compilerOptions: {
             module: 'ESNext',
             target: 'ESNext',
@@ -94,7 +95,7 @@ export const getDockiteFieldRollupConfiguration = (): RollupOptions => {
       }),
     ],
 
-    external: ['vue', /lodash/, 'graphql-tag'],
+    external: ['vue', 'vue-router', /lodash/, 'graphql-tag'],
   };
 
   if (config.plugins) {

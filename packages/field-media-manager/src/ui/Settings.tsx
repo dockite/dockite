@@ -7,12 +7,15 @@ interface SettingsComponentProps {
 }
 
 export const SettingsComponent = defineComponent({
+  name: 'DockiteFieldMediaManagerSettings',
+
   props: {
     modelValue: {
       type: Object as PropType<SettingsComponentProps['value']>,
       required: true,
     },
   },
+
   setup: (props, ctx) => {
     const settings = computed({
       get: () => props.modelValue,

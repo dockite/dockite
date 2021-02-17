@@ -14,11 +14,13 @@ import {
   Arg,
   Ctx,
   Field as GraphQLField,
+  FieldResolver,
   Int,
   Mutation,
   ObjectType,
   Query,
   Resolver,
+  Root,
 } from 'type-graphql';
 import { getCustomRepository, getRepository } from 'typeorm';
 
@@ -73,11 +75,6 @@ export class SchemaResolver {
       return null;
     }
 
-    schema.groups = schema.groups.reduce(
-      (acc: Record<string, string[]>, curr: Record<string, string[]>) => ({ ...acc, ...curr }),
-      {},
-    );
-
     return schema;
   }
 
@@ -90,14 +87,6 @@ export class SchemaResolver {
     const [results, totalItems] = await repository.findAndCount({
       where: { deletedAt: null, type: SchemaType.DEFAULT },
       relations: ['fields'],
-    });
-
-    results.forEach(schema => {
-      // eslint-disable-next-line no-param-reassign
-      schema.groups = schema.groups.reduce(
-        (acc: Record<string, string[]>, curr: Record<string, string[]>) => ({ ...acc, ...curr }),
-        {},
-      );
     });
 
     return {
@@ -284,6 +273,16 @@ export class SchemaResolver {
     } catch {
       return false;
     }
+  }
+
+  @FieldResolver()
+  protected groups(@Root() schema: Schema): Record<string, string[]> {
+    return schema.groups.reduce((acc: Record<string, string[]>, curr: Record<string, string[]>) => {
+      return {
+        ...acc,
+        ...curr,
+      };
+    }, {});
   }
 
   private async createRevision(id: string, userId: string): Promise<void> {

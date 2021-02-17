@@ -1,5 +1,7 @@
 import { registerField } from '@dockite/field';
 
-import Settings from './Settings.vue';
+import { FIELD_TYPE } from '../types';
 
-export default registerField('unique', null, Settings);
+import { SettingsComponent } from './Settings';
+
+export default registerField(FIELD_TYPE, null, SettingsComponent);

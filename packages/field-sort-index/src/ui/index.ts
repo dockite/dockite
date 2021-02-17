@@ -1,7 +1,5 @@
-/* eslint-disable */
-
 import { registerField } from '@dockite/field';
 
-import Settings from './Settings.vue';
+import { SettingsComponent } from './Settings';
 
-export default registerField('sort-index', null, Settings);
+export default registerField('sort-index', null, SettingsComponent);

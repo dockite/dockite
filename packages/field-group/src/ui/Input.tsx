@@ -1,11 +1,11 @@
-import { computed, defineComponent, PropType, ref, toRefs, toRef, Ref } from 'vue';
 import { DockiteFieldInputComponentProps } from '@dockite/types';
 import cloneDeep from 'lodash/cloneDeep';
+import { computed, defineComponent, PropType, ref, Ref, toRef, toRefs, watch } from 'vue';
 import VueDraggable from 'vuedraggable';
 
-import { DockiteFieldGroupEntity, ChildField } from '../types';
+import { ChildField, DockiteFieldGroupEntity } from '../types';
 
-import { getInitialFieldData, MaybeArray, getForm } from './util';
+import { getForm, getInitialFieldData, MaybeArray } from './util';
 
 import './Input.scss';
 
@@ -16,44 +16,53 @@ export type InputComponentProps = DockiteFieldInputComponentProps<
 
 export const InputComponent = defineComponent({
   name: 'DockiteFieldGroupInput',
+
   props: {
     name: {
       type: String as PropType<InputComponentProps['name']>,
       required: true,
     },
+
     modelValue: {
       type: (null as any) as PropType<InputComponentProps['value']>,
       required: true,
     },
+
     formData: {
       type: Object as PropType<InputComponentProps['formData']>,
       required: true,
     },
+
     fieldConfig: {
       type: Object as PropType<InputComponentProps['fieldConfig']>,
       required: true,
     },
+
     errors: {
       type: Object as PropType<InputComponentProps['errors']>,
       required: true,
     },
+
     groups: {
       type: Object as PropType<InputComponentProps['groups']>,
       required: true,
     },
+
     schema: {
       type: Object as PropType<InputComponentProps['schema']>,
       required: true,
     },
+
     bulkEditMode: {
       type: Boolean as PropType<InputComponentProps['bulkEditMode']>,
       default: false,
     },
   },
+
   setup: (props, ctx) => {
     const { fieldConfig, name } = toRefs(props);
 
-    const modelValue = toRef(props, 'modelValue') as Ref<MaybeArray<Record<string, any>>>;
+    const modelValue = toRef(props, 'modelValue') as Ref<InputComponentProps['value']>;
 
     const rules = ref<Array<Record<string, any>>>([]);
 
@@ -61,6 +70,8 @@ export const InputComponent = defineComponent({
       get: () => modelValue.value,
       set: newValue => ctx.emit('update:modelValue', newValue),
     });
+
+    const settings = computed(() => fieldConfig.value.settings);
 
     const fields = computed<ChildField[]>(() => fieldConfig.value.settings.children);
 
@@ -108,6 +119,24 @@ export const InputComponent = defineComponent({
       // Otherwise we just perform a map and merge
       fieldData.value = { ...cloneDeep(initialFieldData), ...fieldData.value };
     }
+
+    watch(
+      fieldData,
+      () => {
+        if (Array.isArray(fieldData.value)) {
+          fieldData.value.forEach(item => {
+            // eslint-disable-next-line
+            if (!item.__sortable_item_key && fieldData.value) {
+              // eslint-disable-next-line
+              item.__sortable_item_key = Math.random()
+                .toString(36)
+                .slice(2);
+            }
+          });
+        }
+      },
+      { immediate: true },
+    );
 
     const handleAddFieldBefore = (): void => {
       if (Array.isArray(fieldData.value)) {
@@ -175,49 +204,112 @@ export const InputComponent = defineComponent({
 
     return (): JSX.Element => {
       return (
-        <el-form-item prop={name} rules={rules} class="dockite-field-group">
-          <el-collapse value={expanded} class="border">
-            <el-collapse-item name={name}>
+        <el-form-item prop={name.value} rules={rules} class="dockite-field-group">
+          <el-collapse value={expanded.value} class="border">
+            <el-collapse-item name={name.value}>
               {{
                 title: () => (
                   <div class="w-full px-3">
-                    <span class="font-semibold">Group: {fieldConfig.value.title}</span>
+                    <span class="font-semibold">{fieldConfig.value.title}</span>
                   </div>
                 ),
                 default: () => {
+                  if (!fieldData.value) {
+                    return (
+                      <el-alert title="No field data found" type="error" show-icon>
+                        There is currently no field data for "{fieldConfig.value.title}", if this
+                        error persists please file an issue.
+                      </el-alert>
+                    );
+                  }
+
                   if (fieldConfig.value.settings.repeatable && Array.isArray(fieldData.value)) {
                     return (
-                      <>
-                        <el-button circle size="small" onClick={handleAddFieldBefore}>
-                          <i class="el-icon-plus" />
-                        </el-button>
-
-                        <VueDraggable
-                          v-model={fieldData.value}
-                          animation={300}
-                          easing="cubic-bezier(0.37, 0, 0.63, 1)"
-                          style={{ minHeight: '30px' }}
-                          handle=".dockite-field-group__item-handle"
-                        >
-                          {{
-                            item: (_: never, index: number) => (
-                              <div class="flex-1 clearfix">
-                                <i class="dockite-field-group__item-handle">HANDLE</i>
-                                {getForm(fieldData.value, fields.value, props, index)}
-                              </div>
-                            ),
+                      <div class="pt-3 px-3">
+                        <div
+                          class={{
+                            hidden: fieldData.value.length === 0,
+                            'text-center': true,
+                            'py-3': true,
                           }}
-                        </VueDraggable>
+                        >
+                          <el-button circle size="small" onClick={handleAddFieldBefore}>
+                            <i class="el-icon-plus" />
+                          </el-button>
+                        </div>
 
-                        <el-button circle size="small" onClick={handleAddFieldAfter}>
-                          <i class="el-icon-plus" />
-                        </el-button>
-                      </>
+                        <div class="-my-3">
+                          <VueDraggable
+                            v-model={fieldData.value}
+                            itemKey="__sortable_item_key"
+                            animation={300}
+                            easing="cubic-bezier(0.37, 0, 0.63, 1)"
+                            style={{ minHeight: '30px' }}
+                            handle=".dockite-field-group__item-handle"
+                          >
+                            {{
+                              item: ({ index }: { index: number }) => (
+                                <div class="py-3 flex items-center">
+                                  <div class="pr-3 flex flex-col items-center justify-center text-center dockite-field-group--movement-buttons">
+                                    <el-button
+                                      class="dockite-field-group--movement-button"
+                                      type="text"
+                                      icon="el-icon-top"
+                                      // length = 2, index = 1
+                                      disabled={index === 0}
+                                      onClick={() => handleShiftFieldUp(index)}
+                                    />
+
+                                    {/* Draggable Handle */}
+                                    <i class="dockite-field-group__item-handle dockite-field-group--movement-button py-1 cursor-pointer el-icon-rank" />
+
+                                    <el-button
+                                      class="dockite-field-group--movement-button"
+                                      type="text"
+                                      icon="el-icon-bottom"
+                                      disabled={index === fieldData.value!.length - 1}
+                                      onClick={() => handleShiftFieldDown(index)}
+                                    />
+
+                                    <el-button
+                                      class="dockite-field-group--movement-button"
+                                      type="text"
+                                      icon="el-icon-delete"
+                                      disabled={
+                                        fieldData.value!.length <= (settings.value.minRows ?? 0) ||
+                                        fieldData.value!.length >=
+                                          (settings.value.maxRows ?? Infinity)
+                                      }
+                                      style={{ color: '#F56C6C' }}
+                                      onClick={() => handleRemoveField(index)}
+                                    />
+                                  </div>
+
+                                  <div class="flex-1 clearfix border border-dashed p-3">
+                                    {getForm(
+                                      fieldData.value as Record<string, any>[],
+                                      fields.value,
+                                      props,
+                                      index,
+                                    )}
+                                  </div>
+                                </div>
+                              ),
+                            }}
+                          </VueDraggable>
+                        </div>
+
+                        <div class="text-center py-3">
+                          <el-button circle size="small" onClick={handleAddFieldAfter}>
+                            <i class="el-icon-plus" />
+                          </el-button>
+                        </div>
+                      </div>
                     );
                   }
 
                   return (
-                    <div class="dockite-field-group--item items-center mb-3">
+                    <div class="dockite-field-group--item items-center mb-3 pt-3 px-3">
                       <div class="flex-1">{getForm(fieldData.value, fields.value, props)}</div>
                     </div>
                   );

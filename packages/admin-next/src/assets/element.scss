@@ -58,3 +58,18 @@ a {
     display: inline-block;
   }
 }
+
+.el-form-item__content {
+  line-height: 1.5;
+}
+
+.el-form-item__description {
+  color: rgba(0,0,0,.66);
+  font-size: 12px;
+  line-height: 1;
+  padding-top: 7px;
+}
+
+.el-switch {
+  margin-bottom: 7px;
+}
