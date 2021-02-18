@@ -61,10 +61,10 @@ export const SchemaCreateNameStepComponent = defineComponent({
 
           {modelValue.value.type === SchemaType.DEFAULT && (
             <blockquote class="border-l-4 rounded text-sm p-3 bg-gray-200 mb-5">
-              The Schema name should be reflective of the type of content it that it will hold.
+              The Schema name should be reflective of the type of content that it will hold.
               <span class="block pb-2" />
-              An example of a good Schema name would be <strong>BlogPosts</strong> for a Schema that
-              was designed to contain all of the blog posts for a particular backend.
+              An example of a good Schema name would be <u>BlogPosts</u> for a Schema that was
+              designed to contain all of the blog posts for a particular backend.
             </blockquote>
           )}
 
@@ -72,8 +72,8 @@ export const SchemaCreateNameStepComponent = defineComponent({
             <blockquote class="border-l-4 rounded text-sm p-3 bg-gray-200 mb-5">
               The Singleton name should be reflective of the type of content it that it will hold.
               <span class="block pb-2" />
-              An example of a good Singleton name would be <strong>Settings</strong> for a Singleton
-              that is responsible for the management of settings for a particular backend.
+              An example of a good Singleton name would be <u>Settings</u> for a Singleton that is
+              responsible for the management of settings for a particular backend.
             </blockquote>
           )}
 

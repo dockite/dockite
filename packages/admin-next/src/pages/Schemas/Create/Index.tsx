@@ -17,13 +17,13 @@ export const SchemaCreatePage = defineComponent({
   setup: () => {
     const { setPortal } = usePortal();
 
-    const activeStep = ref(0);
+    const activeStep = ref(1);
 
     const schema = reactive<BaseSchema>({
       name: '',
       title: '',
       type: SchemaType.DEFAULT,
-      groups: [],
+      groups: {},
       fields: [],
       settings: {},
     });

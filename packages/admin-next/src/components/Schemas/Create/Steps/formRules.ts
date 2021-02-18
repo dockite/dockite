@@ -33,6 +33,19 @@ export const nameStepFormRules = {
   ],
 };
 
-export const fieldsStepFormRules = {};
+export const fieldsStepFormRules = {
+  fields: [
+    {
+      required: true,
+      message: 'Fields are required',
+      trigger: 'blur',
+    },
+    {
+      min: 1,
+      message: 'There must be at least 1 field',
+      trigger: 'blur',
+    },
+  ],
+};
 
 export const settingsStepFormRules = {};

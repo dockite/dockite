@@ -1,0 +1,15 @@
+.dockite-schema--field-tree {
+  .el-tabs__new-tab {
+    margin-right: 10px;
+
+    transition: 300ms;
+
+    color: #c0c4cc;
+    border-color: #c0c4cc;
+
+    &:hover {
+      background: #c0c4cc;
+      color: #909399;
+    }
+  }
+}
