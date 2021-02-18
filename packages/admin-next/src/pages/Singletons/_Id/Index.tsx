@@ -4,7 +4,7 @@ import { useRoute, useRouter } from 'vue-router';
 
 import { getSingletonById } from '~/common/api';
 import { DASHBOARD_HEADER_PORTAL_TITLE } from '~/common/constants';
-import { DocumentFormComponent } from '~/components/Common/Documents/Form';
+import { DocumentFormComponent } from '~/components/Common/Document/Form';
 import { useGraphQL, usePortal } from '~/hooks';
 
 export const SingletonFormPage = defineComponent({

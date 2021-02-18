@@ -111,8 +111,9 @@ export const getFilterComponent = (
               <el-input
                 ref={input}
                 v-model={state.value}
-                // I would use withModifiers here if it worked
-                onKeyDown={(e: KeyboardEvent) => e.keyCode === 13 && handleApplyFilter()}
+                onKeyUp={(e: KeyboardEvent) =>
+                  e.key.toLowerCase() === 'enter' && handleApplyFilter()
+                }
                 placeholder="Value"
                 size="small"
                 type="text"

@@ -9,8 +9,8 @@ import { getActions } from './util';
 import { fetchAllDocumentsWithPagination } from '~/common/api/documents';
 import { DASHBOARD_HEADER_PORTAL_TITLE, DOCKITE_ITEMS_PER_PAGE } from '~/common/constants';
 import { Maybe } from '~/common/types';
-import { DocumentTableColumn, DocumentTableComponent } from '~/components/Common/Documents/Table';
-import { DocumentTableState } from '~/components/Common/Documents/Table/types';
+import { DocumentTableColumn, DocumentTableComponent } from '~/components/Common/Document/Table';
+import { DocumentTableState } from '~/components/Common/Document/Table/types';
 import { FetchAllDocumentsQueryVariables } from '~/graphql/queries/fetchAllDocuments';
 import { useGraphQL, usePortal } from '~/hooks';
 import {

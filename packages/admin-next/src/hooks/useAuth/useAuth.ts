@@ -11,12 +11,13 @@ import { useConfig } from '~/hooks/useConfig';
 import { internal } from '~/providers/auth';
 
 const state: UseAuthState = reactive({
+  initialised: false,
   authenticated: false,
   type: 'internal',
   user: null,
 });
 
-const { storage: tokenStorage } = useLocalStorage(AUTH_TOKEN_STORAGE_KEY, '');
+const { storage: storedToken } = useLocalStorage(AUTH_TOKEN_STORAGE_KEY, '');
 
 export const useAuth = (): UseAuthHook => {
   const config = useConfig();
@@ -28,9 +29,13 @@ export const useAuth = (): UseAuthHook => {
   const now = Date.now() / 1000;
 
   if (!state.authenticated) {
-    if (tokenStorage.value && jwtDecode<{ exp: number }>(tokenStorage.value).exp > now) {
+    if (storedToken.value && jwtDecode<{ exp: number }>(storedToken.value).exp > now) {
       state.authenticated = true;
     }
+  }
+
+  if (!state.initialised) {
+    state.initialised = true;
   }
 
   // eslint-disable-next-line consistent-return
@@ -41,7 +46,7 @@ export const useAuth = (): UseAuthHook => {
           .then(mod =>
             mod.init().then(() => {
               if (mod.state.isAuthenticated && mod.state.token) {
-                tokenStorage.value = mod.state.token;
+                storedToken.value = mod.state.token;
 
                 state.authenticated = true;
               }
@@ -76,7 +81,7 @@ export const useAuth = (): UseAuthHook => {
     return internal
       .login(payload)
       .then(token => {
-        tokenStorage.value = token;
+        storedToken.value = token;
 
         state.authenticated = true;
 
@@ -111,7 +116,7 @@ export const useAuth = (): UseAuthHook => {
     return internal
       .register(payload)
       .then(token => {
-        tokenStorage.value = token;
+        storedToken.value = token;
 
         state.authenticated = true;
 
@@ -138,7 +143,7 @@ export const useAuth = (): UseAuthHook => {
     return internal
       .registerFirstUser(payload)
       .then(token => {
-        tokenStorage.value = token;
+        storedToken.value = token;
 
         state.authenticated = true;
 
@@ -156,7 +161,7 @@ export const useAuth = (): UseAuthHook => {
         return import('~/providers/auth/auth0').then(mod =>
           mod.refresh().then(() => {
             if (mod.state.token) {
-              tokenStorage.value = mod.state.token;
+              storedToken.value = mod.state.token;
 
               state.authenticated = true;
             }
@@ -198,7 +203,7 @@ export const useAuth = (): UseAuthHook => {
 
   return {
     state,
-    token: tokenStorage,
+    token: storedToken,
     handleInitProvider,
     handleLogin,
     handleRegister,

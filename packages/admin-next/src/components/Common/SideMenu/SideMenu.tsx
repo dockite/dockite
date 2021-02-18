@@ -2,6 +2,8 @@ import { defineComponent } from 'vue';
 import { usePromise } from 'vue-composable';
 import { useRoute } from 'vue-router';
 
+import Logo from '../Logo';
+
 import { fetchAllSchemas, fetchAllSingletons } from '~/common/api';
 import { useCan } from '~/hooks/useCan';
 import { useConfig } from '~/hooks/useConfig';
@@ -209,6 +211,8 @@ export const SideMenu = defineComponent({
         uniqueOpened
         style="height: 100vh;"
       >
+        <Logo class="mt-3 mx-auto" style={{ maxWidth: '80%', maxHeight: '60px' }} />
+
         <el-menu-item index="/">
           <i class="el-icon-s-home" />
           <router-link to="/">Home</router-link>

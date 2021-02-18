@@ -1,5 +1,5 @@
 import ElForm from 'element-plus/lib/el-form';
-import { defineComponent, onMounted, reactive, ref } from 'vue';
+import { defineComponent, onMounted, reactive, ref, withModifiers } from 'vue';
 import { usePromiseLazy } from 'vue-composable';
 
 import { loginFormRules, registerFormRules } from './formRules';
@@ -9,8 +9,6 @@ import { Logo } from '~/components/Common/Logo';
 import { useAuth } from '~/hooks';
 
 import './Login.scss';
-
-type LoginPageProps = never;
 
 export const LoginPage = defineComponent({
   name: 'LoginPageComponent',
@@ -94,11 +92,7 @@ export const LoginPage = defineComponent({
                 <div class="flex items-center justify-between">
                   <span />
 
-                  <el-button
-                    native-type="submit"
-                    type="primary"
-                    onClick={() => handleFormSubmission()}
-                  >
+                  <el-button native-type="submit" type="primary">
                     Start using Dockite
                   </el-button>
                 </div>
@@ -115,6 +109,7 @@ export const LoginPage = defineComponent({
           model={loginState}
           rules={loginFormRules}
           onSubmit={() => handleFormSubmission()}
+          onKeyUp={(e: KeyboardEvent) => e.key.toLowerCase() === 'enter' && handleFormSubmission()}
         >
           <el-form-item label="Email">
             <el-input v-model={loginState.email} placeholder="username@example.com" />
@@ -128,7 +123,7 @@ export const LoginPage = defineComponent({
             <div class="flex justify-between items-center w-full pt-2">
               <router-link to="/forgotten-password">Forgotten Password?</router-link>
 
-              <el-button type="primary" onClick={() => handleFormSubmission()}>
+              <el-button nativeType="submit" type="primary" onClick={() => handleFormSubmission()}>
                 Login
               </el-button>
             </div>

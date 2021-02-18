@@ -4,11 +4,9 @@ import { useRoute, useRouter } from 'vue-router';
 
 import { getDocumentById, getSchemaById, getSingletonById } from '~/common/api';
 import { DASHBOARD_HEADER_PORTAL_TITLE } from '~/common/constants';
-import { DocumentFormComponent } from '~/components/Common/Documents/Form';
+import { DocumentFormComponent } from '~/components/Common/Document/Form';
 import { useGraphQL, usePortal } from '~/hooks';
 import { getDocumentIdentifier } from '~/utils';
-
-export type DocumentFormPageProps = never;
 
 export const DocumentFormPage = defineComponent({
   name: 'DocumentFormPageComponent',
@@ -131,3 +129,5 @@ export const DocumentFormPage = defineComponent({
     };
   },
 });
+
+export default DocumentFormPage;

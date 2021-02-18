@@ -11,7 +11,13 @@ interface UsePortalHook {
 
 export const usePortal = (): UsePortalHook => {
   const getPortal = (name: string): MaybeArray<JSX.Element> | null => {
-    return portals[name] ?? null;
+    const target = portals[name];
+
+    if (typeof target === 'function') {
+      return target();
+    }
+
+    return target ?? null;
   };
 
   const setPortal = (name: string, content: MaybeArray<JSX.Element>): void => {

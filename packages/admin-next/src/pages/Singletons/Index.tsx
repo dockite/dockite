@@ -15,8 +15,6 @@ export interface SingletonTableColumnDefaultScopedSlot {
   column: any;
 }
 
-export type SingletonsIndexPageProps = never;
-
 export const SingletonsIndexPage = defineComponent({
   name: 'SingletonsIndexPageComponent',
 

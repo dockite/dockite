@@ -3,8 +3,6 @@ import { useRouter } from 'vue-router';
 
 import notAuthorizedSvg from '../assets/images/not-authorized.svg';
 
-type NotAuthorizedPageProps = never;
-
 export const NotAuthorizedPage = defineComponent({
   name: 'NotAuthorizedPageComponent',
 

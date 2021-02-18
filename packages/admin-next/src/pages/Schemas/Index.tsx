@@ -3,10 +3,14 @@ import { defineComponent, ref, watchEffect } from 'vue';
 import { usePromise } from 'vue-composable';
 import { useRouter } from 'vue-router';
 
-import { getActions } from './util';
+import { getHeaderActions, getTableActions } from './util';
 
 import { fetchAllSchemas } from '~/common/api';
-import { DASHBOARD_HEADER_PORTAL_TITLE, MAX_32_BIT_INT } from '~/common/constants';
+import {
+  DASHBOARD_HEADER_PORTAL_ACTIONS,
+  DASHBOARD_HEADER_PORTAL_TITLE,
+  MAX_32_BIT_INT,
+} from '~/common/constants';
 import { useGraphQL, usePortal } from '~/hooks';
 
 export interface SchemaTableColumnDefaultScopedSlot {
@@ -14,8 +18,6 @@ export interface SchemaTableColumnDefaultScopedSlot {
   row: Schema;
   column: any;
 }
-
-export type SchemasIndexPageProps = never;
 
 export const SchemasIndexPage = defineComponent({
   name: 'SchemasIndexPageComponent',
@@ -48,6 +50,8 @@ export const SchemasIndexPage = defineComponent({
         setPortal(DASHBOARD_HEADER_PORTAL_TITLE, <span>All Schemas</span>);
       }
     });
+
+    setPortal(DASHBOARD_HEADER_PORTAL_ACTIONS, getHeaderActions());
 
     return () => {
       if (schemas.loading.value) {
@@ -103,7 +107,7 @@ export const SchemasIndexPage = defineComponent({
 
             <el-table-column label="Actions" width="120">
               {{
-                default: ({ row }: SchemaTableColumnDefaultScopedSlot) => getActions(row),
+                default: ({ row }: SchemaTableColumnDefaultScopedSlot) => getTableActions(row),
               }}
             </el-table-column>
           </el-table>

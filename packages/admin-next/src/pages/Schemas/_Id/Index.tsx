@@ -16,8 +16,8 @@ import {
 import { DASHBOARD_HEADER_PORTAL_TITLE, DOCKITE_ITEMS_PER_PAGE } from '~/common/constants';
 import { ApplicationError, ApplicationErrorCode } from '~/common/errors';
 import { Maybe } from '~/common/types';
-import { DocumentTableColumn, DocumentTableComponent } from '~/components/Common/Documents/Table';
-import { DocumentTableState } from '~/components/Common/Documents/Table/types';
+import { DocumentTableColumn, DocumentTableComponent } from '~/components/Common/Document/Table';
+import { DocumentTableState } from '~/components/Common/Document/Table/types';
 import { useGraphQL, usePortal } from '~/hooks';
 import {
   getPaginationString,

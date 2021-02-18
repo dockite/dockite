@@ -1,7 +1,7 @@
 import { Schema } from '@dockite/database';
 import { RouteLocation } from 'vue-router';
 
-import { DocumentTableColumn } from '~/components/Common/Documents/Table';
+import { DocumentTableColumn } from '~/components/Common/Document/Table';
 
 export const getColumnsFromQueryParams = (
   route: RouteLocation,

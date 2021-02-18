@@ -1,22 +1,27 @@
 import jwtDecode from 'jwt-decode';
 import {
+  Component,
   computed,
   defineAsyncComponent,
   defineComponent,
+  onBeforeMount,
   reactive,
   ref,
   Teleport,
+  toRaw,
   watch,
   watchEffect,
 } from 'vue';
 import { usePromise } from 'vue-composable';
-import { onBeforeRouteLeave, useRoute } from 'vue-router';
+import { NavigationGuard, onBeforeRouteLeave, onBeforeRouteUpdate, useRoute } from 'vue-router';
 
+import Logo from './components/Common/Logo';
 import { useConfig } from './hooks';
 
 import { useAuth } from '~/hooks/useAuth';
+import { DefaultLayout } from '~/layouts/Default';
 
-const tokenRefresh = async (): Promise<void> => {
+const handleRefreshSession = async (): Promise<void> => {
   const { state, handleRefreshToken, token } = useAuth();
 
   if (!token.value) {
@@ -32,12 +37,6 @@ const tokenRefresh = async (): Promise<void> => {
   }
 };
 
-const Layout = reactive({
-  Component: defineAsyncComponent({
-    loader: () => import(`./layouts/Default`),
-  }),
-});
-
 /**
  * Setup the Application with the routes registered layout default to "Default"
  * if it hasn't been set.
@@ -52,62 +51,89 @@ export const App = defineComponent({
 
     const { state, handleRefreshUser } = useAuth();
 
-    const meta = computed(() => {
-      return route.meta;
+    const hasResolvedInitialLayout = ref(false);
+
+    const Layout = reactive({
+      name: 'Default',
+      loading: false,
+      Component: DefaultLayout,
     });
 
-    const { loading } = usePromise(() =>
-      tokenRefresh().then(() => {
-        if (state.authenticated) {
-          return handleRefreshUser();
-        }
+    const meta = computed(() => route.meta);
 
-        return Promise.resolve(null);
-      }),
+    const refreshSession = usePromise(async () => {
+      await handleRefreshSession();
+
+      if (state.authenticated && !state.user) {
+        await handleRefreshUser();
+      }
+    });
+
+    const loading = computed(
+      () =>
+        Layout.loading ||
+        refreshSession.loading.value ||
+        !hasResolvedInitialLayout.value ||
+        !state.initialised,
     );
 
-    // Derrive the layout value from the current routes meta info
-    const layout = ref('Default');
+    const handleUpdateLayout = async (layout: string): Promise<void> => {
+      let component: any | null = null;
 
-    onBeforeRouteLeave((to, _from, next) => {
-      if (to.meta && to.meta.layout) {
-        layout.value = to.meta.layout;
+      Layout.loading = true;
+
+      switch (layout) {
+        case 'Guest':
+          component = await import('./layouts/Guest').then(mod => mod.GuestLayout);
+          break;
+
+        case 'Dashboard':
+          component = await import('./layouts/Dashboard').then(mod => mod.DashboardLayout);
+          break;
+
+        default:
+          component = DefaultLayout;
+          break;
       }
 
-      next();
-    });
-
-    onBeforeRouteLeave(tokenRefresh);
-
-    watchEffect(() => {
-      if (meta.value.layout) {
-        layout.value = meta.value.layout;
+      if (component !== null) {
+        Layout.name = layout;
+        Layout.Component = component;
       }
+
+      if (!hasResolvedInitialLayout.value) {
+        hasResolvedInitialLayout.value = true;
+      }
+
+      Layout.loading = false;
+    };
+
+    const guard: NavigationGuard = (to, _from, next) => {
+      if (!to.meta || !to.meta.layout) {
+        next();
+      }
+
+      if (to.meta.layout === Layout.name) {
+        next();
+      }
+
+      if (to.meta.layout !== Layout.name) {
+        handleUpdateLayout(to.meta.layout).then(next);
+      }
+    };
+
+    onBeforeRouteLeave(guard);
+
+    onBeforeRouteUpdate(guard);
+
+    onBeforeRouteLeave((_to, _from, next) => {
+      refreshSession.exec().then(next);
     });
 
-    watch(layout, (newValue, oldValue) => {
-      if (newValue !== oldValue) {
-        switch (newValue) {
-          case 'Guest':
-            Layout.Component = defineAsyncComponent({
-              loader: () => import(`./layouts/Guest`),
-            });
-
-            break;
-
-          case 'Dashboard':
-            Layout.Component = defineAsyncComponent({
-              loader: () => import(`./layouts/Dashboard`),
-            });
-
-            break;
-
-          default:
-            Layout.Component = defineAsyncComponent({
-              loader: () => import(`./layouts/Default`),
-            });
-
-            break;
+    watch(meta, value => {
+      if (value && value.layout) {
+        if (value.layout !== Layout.name) {
+          handleUpdateLayout(value.layout);
         }
       }
     });
@@ -120,7 +146,13 @@ export const App = defineComponent({
               <title>{config.app.title} | Loading...</title>
             </Teleport>
 
-            <div>Loading...</div>
+            <div class="w-screen h-screen flex flex-col items-center justify-center">
+              <div class="mb-5 animate-groovy" style={{ width: '400px', height: '100px' }}>
+                <Logo class="block" style={{ maxWidth: '400px', maxHeight: '100px' }} />
+              </div>
+
+              <span>We're getting everything ready, please wait...</span>
+            </div>
           </>
         );
       }

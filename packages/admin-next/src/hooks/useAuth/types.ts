@@ -7,6 +7,7 @@ export type AuthType = 'internal' | 'third-party';
 
 export interface UseAuthState {
   authenticated: boolean;
+  initialised: boolean;
   user: User | null;
   type: AuthType;
 }
