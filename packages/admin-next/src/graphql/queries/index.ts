@@ -1,3 +1,4 @@
+export * from './availableFields';
 export * from './fetchAllSchemas';
 export * from './fetchAllSingletons';
 export * from './getDocumentById';

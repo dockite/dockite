@@ -1,6 +1,5 @@
-import gql from 'graphql-tag';
-
 import { User } from '@dockite/database';
+import gql from 'graphql-tag';
 
 export interface MeQueryResponse {
   me: User;

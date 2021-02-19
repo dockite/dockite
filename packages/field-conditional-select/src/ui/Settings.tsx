@@ -1,5 +1,5 @@
 import { Field } from '@dockite/database';
-import { cloneDeep } from 'lodash';
+import { cloneDeep, flatten } from 'lodash';
 import { computed, defineComponent, PropType, reactive, ref } from 'vue';
 
 import {
@@ -65,10 +65,7 @@ export const SettingsComponent = defineComponent({
     };
 
     const allFields = computed(() => {
-      const allFieldNames = Object.values(props.groups).reduce(
-        (acc: string[], curr) => [...acc, ...curr],
-        [],
-      );
+      const allFieldNames = flatten(Object.values(props.groups));
 
       return props.fields.filter(field => allFieldNames.includes(field.name));
     });
@@ -117,7 +114,8 @@ export const SettingsComponent = defineComponent({
         </el-form-item>
 
         <el-form-item label="Options" class={error ? 'is-error' : ''}>
-          <el-table
+          {/* TODO: Investigate why this causes a recursion issue. */}
+          {/* <el-table
             style="border: 1px solid #dcdfe6; border-radius: 4px; margin-bottom: 0.5rem;"
             data={settings.value.options}
           >
@@ -138,7 +136,7 @@ export const SettingsComponent = defineComponent({
                 ),
               }}
             </el-table-column>
-          </el-table>
+          </el-table> */}
 
           <el-input v-model={optionItem.label} class="mb-2" placeholder="Label" />
 
@@ -167,11 +165,11 @@ export const SettingsComponent = defineComponent({
           <el-button class="mb-2" onClick={handleAddOption}>
             Add Option
           </el-button>
+
+          <div class="el-form-item__description">The options to display in the select field.</div>
+
+          {error && <div class="el-form-item__error">{{ error }}</div>}
         </el-form-item>
-
-        <div class="el-form-item__description">The options to display in the select field.</div>
-
-        {error && <div class="el-form-item__error">{{ error }}</div>}
       </>
     );
   },

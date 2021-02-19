@@ -1,4 +1,4 @@
-import { defineComponent, watchEffect } from 'vue';
+import { defineComponent, watch, watchEffect } from 'vue';
 import { onBeforeRouteUpdate, RouterView, useRoute, useRouter } from 'vue-router';
 
 import { SideMenu } from '../components/Common/SideMenu';
@@ -18,18 +18,21 @@ export const DashboardLayout = defineComponent({
 
     const { state } = useAuth();
 
-    if (!state.authenticated) {
-      router.push({ path: '/login', query: { redirectTo: encodeURIComponent(route.fullPath) } });
-    }
-
-    watchEffect(() => {
-      if (!state.authenticated) {
-        router.push({ path: '/login', query: { redirectTo: encodeURIComponent(route.fullPath) } });
-      }
-    });
+    watch(
+      state,
+      () => {
+        if (state.initialised && !state.authenticated) {
+          router.push({
+            path: '/login',
+            query: { redirectTo: encodeURIComponent(route.fullPath) },
+          });
+        }
+      },
+      { immediate: true },
+    );
 
     onBeforeRouteUpdate(() => {
-      if (!state.authenticated) {
+      if (state.initialised && !state.authenticated) {
         router.push({ path: '/login', query: { redirectTo: encodeURIComponent(route.fullPath) } });
       }
     });

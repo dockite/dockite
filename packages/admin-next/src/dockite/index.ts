@@ -1,13 +1,16 @@
-import { Field, Schema } from '@dockite/database';
+import { BaseField, Field, Schema } from '@dockite/database';
 import { ElMessage, ElNotification } from 'element-plus';
 import { DefineComponent, Plugin, reactive, ref, Ref } from 'vue';
 
-import { DockiteFieldInputComponentProps } from '@dockite/types';
+import {
+  DockiteFieldInputComponentProps,
+  DockiteFieldSettingsComponentProps,
+} from '@dockite/types';
 
 import { importDockiteFields } from './fields';
 
 import { ApplicationError, ApplicationErrorCode } from '~/common/errors';
-import { Nullable } from '~/common/types';
+import { BaseSchema, Nullable } from '~/common/types';
 import { useGraphQL } from '~/hooks';
 
 const w = window as any;
@@ -22,7 +25,7 @@ interface FieldComponentProps {
 
 interface FieldManagerItem {
   input: Nullable<DefineComponent<DockiteFieldInputComponentProps<any, any>>>;
-  settings: Nullable<DefineComponent<FieldComponentProps>>;
+  settings: Nullable<DefineComponent<DockiteFieldSettingsComponentProps<BaseField, BaseSchema>>>;
   view: Nullable<DefineComponent<FieldComponentProps>>;
 }
 
@@ -32,8 +35,8 @@ const hasLoadedFields = ref(false);
 
 const registerField = (
   name: string,
-  input: Nullable<DefineComponent<DockiteFieldInputComponentProps<any, any>>>,
-  settings: Nullable<DefineComponent<FieldComponentProps>>,
+  input: FieldManagerItem['input'],
+  settings: FieldManagerItem['settings'],
   view: Nullable<DefineComponent<FieldComponentProps>> = null,
 ): void => {
   if (fieldManager[name]) {

@@ -1,6 +1,6 @@
-import { computed, defineComponent, PropType, ref, toRefs, watch, onMounted } from 'vue';
 import { DockiteFieldInputComponentProps } from '@dockite/types';
 import cloneDeep from 'lodash/cloneDeep';
+import { computed, defineComponent, PropType, ref, toRefs, watch, onMounted } from 'vue';
 
 import { DockiteFieldConditionalBooleanEntity } from '../types';
 

@@ -2,6 +2,14 @@
 
 @import '~element-plus/packages/theme-chalk/src/index';
 
+.el-button--dashed {
+  border-style: dashed;
+}
+
+.el-loading-text {
+  padding-top: 7px;
+}
+
 .el-form--label-top .el-form-item__label {
   line-height: 1.2;
 }
@@ -99,4 +107,12 @@ a {
   80% {
     transform: scale(0.95);
   }
+}
+
+.el-drawer__body {
+  position: relative;
+
+  overflow-y: auto;
+
+  padding-bottom: 1rem;
 }

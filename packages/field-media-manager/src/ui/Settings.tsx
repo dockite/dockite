@@ -49,9 +49,10 @@ export const SettingsComponent = defineComponent({
             allow-create
             class="w-full"
           >
-            {settings.value.acceptedExtensions.map(extension => (
-              <el-option value={extension} label={extension} />
-            ))}
+            {settings.value.acceptedExtensions &&
+              settings.value.acceptedExtensions.map(extension => (
+                <el-option value={extension} label={extension} />
+              ))}
           </el-select>
         </el-form-item>
 

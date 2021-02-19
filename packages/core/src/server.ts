@@ -58,8 +58,8 @@ export const loadFields = async (fields: string[]): Promise<void> => {
   const importedFields = await Promise.all(fields.map(entry => import(entry)));
 
   importedFields.forEach(field => {
-    Object.entries<DockiteFieldStatic>(field).forEach(([key, val]) => {
-      registerField(key, val);
+    Object.entries<DockiteFieldStatic>(field).forEach(([_, val]) => {
+      registerField(val.type, val);
     });
   });
 };
