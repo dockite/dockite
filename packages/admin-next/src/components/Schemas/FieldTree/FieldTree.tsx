@@ -1,8 +1,9 @@
+import { BaseField, Field } from '@dockite/database';
 import { computed, defineComponent, PropType, ref } from 'vue';
 
 import { SchemaFieldDrawerComponent } from '../FieldDrawer';
 
-import { handleAddGroup, handleRemoveGroup } from './util';
+import { getFieldTreeForGroup, handleAddGroup, handleRemoveGroup } from './util';
 
 import { BaseSchema } from '~/common/types';
 
@@ -29,12 +30,12 @@ export const SchemaFieldTreeComponent = defineComponent({
 
     const fieldDrawerVisible = ref(true);
 
-    const groups = computed<Record<string, string[]>>(() => modelValue.value.groups);
+    const groups = computed<Record<string, string[]>>(() => props.modelValue!.groups);
 
     const groupNames = computed(() => Object.keys(groups.value));
 
     if (groupNames.value.length > 0) {
-      activeTab.value = groupNames.value[0].toLowerCase();
+      [activeTab.value] = groupNames.value;
     }
 
     if (groupNames.value.length === 0) {
@@ -42,14 +43,48 @@ export const SchemaFieldTreeComponent = defineComponent({
         General: [],
       };
 
-      activeTab.value = 'general';
+      activeTab.value = 'General';
     }
 
     const handleShowFieldDrawer = (): void => {
       fieldDrawerVisible.value = true;
     };
 
+    const handleAddField = (field: BaseField): void => {
+      // If the group exists
+      if (modelValue.value.groups[activeTab.value]) {
+        // Add the field to the schema's fields
+        modelValue.value.fields = [...modelValue.value.fields, field as Field];
+
+        // Add the new field to the group
+        modelValue.value.groups[activeTab.value] = [
+          ...modelValue.value.groups[activeTab.value],
+          field.name,
+        ];
+      }
+    };
+
     return () => {
+      const panes = Object.keys(groups.value).map(key => (
+        <el-tab-pane name={key} label={key}>
+          <el-tree
+            data={getFieldTreeForGroup(groups.value[key], modelValue.value.fields)}
+            empty-text="There's currently no fields"
+            node-key="id"
+            default-expand-all
+            draggable
+            props={{ label: 'title', children: (d: BaseField) => d.settings.children }}
+          />
+
+          <div class="flex justify-center">
+            <el-button class="el-button--dashed" onClick={handleShowFieldDrawer}>
+              Add Field
+              <i class="el-icon-plus el-icon--right" />
+            </el-button>
+          </div>
+        </el-tab-pane>
+      ));
+
       return (
         <div class="dockite-schema--field-tree">
           <el-tabs
@@ -61,23 +96,13 @@ export const SchemaFieldTreeComponent = defineComponent({
               handleRemoveGroup(groupName, modelValue, activeTab, groups.value)
             }
           >
-            {Object.entries(groups.value).map(([key, value]) => (
-              <el-tab-pane name={key.toLowerCase()} label={key}>
-                {value}
-
-                <div class="flex justify-center">
-                  <el-button type="dashed" onClick={handleShowFieldDrawer}>
-                    Add Field
-                    <i class="el-icon-plus el-icon--right" />
-                  </el-button>
-                </div>
-              </el-tab-pane>
-            ))}
+            {panes}
           </el-tabs>
 
           <SchemaFieldDrawerComponent
             v-model={fieldDrawerVisible.value}
             schema={modelValue.value}
+            {...{ 'onAction:confirmField': handleAddField }}
           />
         </div>
       );

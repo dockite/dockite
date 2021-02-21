@@ -1,5 +1,8 @@
 import { BaseField, Schema } from '@dockite/database';
-import { computed, defineComponent, markRaw, PropType, toRaw, toRefs } from 'vue';
+import { ElMessage } from 'element-plus';
+import { computed, defineComponent, PropType, ref, toRaw, toRefs } from 'vue';
+
+import { fieldSettingsFormRules, getIdentifierUniqueFormRule } from './formRules';
 
 import { BaseSchema } from '~/common/types';
 import { useDockite } from '~/dockite';
@@ -38,6 +41,8 @@ export const SchemaFieldSettingsFormComponent = defineComponent({
       set: value => ctx.emit('update:modelValue', value),
     });
 
+    const form = ref<any>(null);
+
     const { staticField } = toRefs(props);
 
     const { fieldManager } = useDockite();
@@ -52,19 +57,58 @@ export const SchemaFieldSettingsFormComponent = defineComponent({
       SettingsComponent = toRaw(SettingsComponent);
     }
 
+    const handleConfirmField = (): void => {
+      if (form.value) {
+        form.value
+          .validate()
+          .then(() => {
+            ctx.emit('action:confirmField', modelValue.value);
+          })
+          .catch((err: any) => {
+            console.log(err);
+            ElMessage.warning('Unable to confirm field due to errors with its configuration');
+          });
+      }
+    };
+
     const handleCancelField = (): void => {
       ctx.emit('action:cancelField');
     };
 
     return () => (
       <div class="dockite-field-settings--form px-3">
-        <el-form model={modelValue.value} labelPosition="top">
-          <el-form-item label="Title" prop="title">
+        <el-form ref={form} model={modelValue.value} labelPosition="top">
+          <el-form-item label="Title" prop="title" rules={fieldSettingsFormRules.title}>
             <el-input v-model={modelValue.value.title} />
+
+            <div class="el-form-item__description">
+              The cosmetic title for the field. This will be used for display throughout the Admin
+              UI.
+            </div>
           </el-form-item>
 
-          <el-form-item label="Identifier" prop="name">
+          <el-form-item
+            label="Identifier"
+            prop="name"
+            rules={[...fieldSettingsFormRules.name, getIdentifierUniqueFormRule(props.schema)]}
+          >
             <el-input v-model={modelValue.value.name} />
+
+            <div class="el-form-item__description">
+              The API identifier for the field. Must only contain letters, numbers, and underscores.
+            </div>
+          </el-form-item>
+
+          <el-form-item label="Description" prop="description">
+            <el-input
+              type="textarea"
+              autosize={{ minRows: 3, maxRows: 10 }}
+              v-model={modelValue.value.description}
+            />
+
+            <div class="el-form-item__description">
+              The description for the field. This will be displayed underneath the field on forms.
+            </div>
           </el-form-item>
 
           {SettingsComponent && (
@@ -82,7 +126,9 @@ export const SchemaFieldSettingsFormComponent = defineComponent({
                 Cancel
               </el-button>
 
-              <el-button type="primary">Confirm</el-button>
+              <el-button type="primary" onClick={() => handleConfirmField()}>
+                Confirm
+              </el-button>
             </div>
           </el-form-item>
         </el-form>

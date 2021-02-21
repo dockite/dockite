@@ -7,7 +7,7 @@ import { SchemaAvailableFieldsListComponent } from './FieldList';
 
 import { getAvailableFields } from '~/common/api';
 import { BaseSchema } from '~/common/types';
-import SpinnerComponent from '~/components/Common/Spinner';
+import { SpinnerComponent } from '~/components/Common/Spinner';
 import { AvailableFieldItem } from '~/graphql';
 
 export interface SchemaFieldDrawerComponentProps {
@@ -37,11 +37,17 @@ export const SchemaFieldDrawerComponent = defineComponent({
 
     const availableFields = usePromise(() => getAvailableFields());
 
-    const hasFieldBeenSelected = ref(false);
-
     const field = ref<Omit<BaseField, 'id' | 'schemaId'> | null>(null);
 
     const staticField = ref<AvailableFieldItem | null>(null);
+
+    const handleConfirmField = (payload: BaseField): void => {
+      ctx.emit('action:confirmField', payload);
+
+      field.value = null;
+
+      staticField.value = null;
+    };
 
     const handleCancelField = (): void => {
       field.value = null;
@@ -119,6 +125,7 @@ export const SchemaFieldDrawerComponent = defineComponent({
                   staticField={staticField.value}
                   schema={props.schema}
                   {...{
+                    'onAction:confirmField': handleConfirmField,
                     'onAction:cancelField': handleCancelField,
                   }}
                 />

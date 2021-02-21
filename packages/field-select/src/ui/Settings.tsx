@@ -94,38 +94,50 @@ export const SettingsComponent = defineComponent({
           </div>
         </el-form-item>
 
-        <el-form-item label="Options" class={error ? 'is-error' : ''}>
-          <el-table
-            style="border: 1px solid #dcdfe6; border-radius: 4px; margin-bottom: 0.5rem;"
-            data={settings.value.options}
-          >
-            <el-table-column prop="label" label="Label" />
+        <el-form-item label="Options" class={error.value ? 'is-error' : ''}>
+          {settings.value.options && (
+            <el-table
+              style="border: 1px solid #dcdfe6; border-radius: 4px; margin-bottom: 0.5rem;"
+              data={settings.value.options}
+            >
+              <el-table-column prop="label" label="Label" />
 
-            <el-table-column prop="value" label="Value" />
+              <el-table-column prop="value" label="Value" />
 
-            <el-table-column label="Action">
-              {{
-                default: (scope: OptionsTableScopedSlot): JSX.Element => (
-                  <el-button type="text" size="small" onClick={handleRemoveOption(scope.row.label)}>
-                    <i class="el-icon-delete" />
-                  </el-button>
-                ),
-              }}
-            </el-table-column>
-          </el-table>
+              <el-table-column label="Action">
+                {{
+                  default: (scope: OptionsTableScopedSlot): JSX.Element => (
+                    <el-button
+                      type="text"
+                      size="small"
+                      onClick={() => handleRemoveOption(scope.row.label)}
+                    >
+                      <i class="el-icon-delete" />
+                    </el-button>
+                  ),
+                }}
+              </el-table-column>
+            </el-table>
+          )}
 
-          <el-input v-model={optionItem.label} class="mb-2" placeholder="Label" />
+          <el-form model={optionItem} class="pt-3">
+            <el-form-item label="Label" prop="label">
+              <el-input v-model={optionItem.label} />
+            </el-form-item>
 
-          <el-input v-model={optionItem.value} class="mb-2" placeholder="Value" />
+            <el-form-item label="Value" prop="value">
+              <el-input v-model={optionItem.value} />
+            </el-form-item>
 
-          <el-button class="mb-2" onClick={handleAddOption}>
-            Add Option
-          </el-button>
+            <el-form-item>
+              <el-button onClick={handleAddOption}>Add Option</el-button>
+            </el-form-item>
+          </el-form>
         </el-form-item>
 
         <div class="el-form-item__description">The options to display in the select field.</div>
 
-        {error && <div class="el-form-item__error">{{ error }}</div>}
+        {error.value && <div class="el-form-item__error">{error.value}</div>}
       </>
     );
   },

@@ -34,5 +34,6 @@
     { "directory": "packages/union-input", "changeProcessCWD": true },
     { "directory": "packages/webpack", "changeProcessCWD": true },
     { "directory": "packages/where-builder", "changeProcessCWD": true },
-  ]
+  ],
+  "typescript.tsdk": "node_modules/typescript/lib"
 }
