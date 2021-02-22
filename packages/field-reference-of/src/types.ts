@@ -1,5 +1,18 @@
 import { BaseField } from '@dockite/database';
 
+export const DocumentEntityProperties = [
+  'id',
+  'locale',
+  'data',
+  'createdAt',
+  'updatedAt',
+  'schemaId',
+  'schema',
+  'release',
+  'revisions',
+  'user',
+];
+
 export interface ReferenceOfFieldSettings {
   required: boolean;
   schemaId: string | null;
