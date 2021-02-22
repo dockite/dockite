@@ -1,3 +1,4 @@
+import { Field } from '@dockite/database';
 import { SchemaType } from '@dockite/database/lib/types';
 import { Component, defineComponent, reactive, ref } from 'vue';
 
@@ -19,12 +20,42 @@ export const SchemaCreatePage = defineComponent({
 
     const activeStep = ref(1);
 
+    // const schema = reactive<BaseSchema>({
+    //   name: '',
+    //   title: '',
+    //   type: SchemaType.DEFAULT,
+    //   groups: {},
+    //   fields: [],
+    //   settings: {},
+    // });
     const schema = reactive<BaseSchema>({
       name: '',
       title: '',
       type: SchemaType.DEFAULT,
-      groups: {},
-      fields: [],
+      groups: { General: ['asdf', 'sdfv', 'erwt'] },
+      fields: ([
+        {
+          name: 'asdf',
+          title: 'asdf',
+          type: 'boolean',
+          description: '',
+          settings: { required: false },
+        },
+        {
+          name: 'sdfv',
+          title: 'vsdfv',
+          type: 'group',
+          description: '',
+          settings: { required: false, repeatable: false, children: [], minRows: 0, maxRows: 0 },
+        },
+        {
+          name: 'erwt',
+          title: 'erbewr',
+          type: 'colorpicker',
+          description: '',
+          settings: { required: false },
+        },
+      ] as any) as Field[],
       settings: {},
     });
 

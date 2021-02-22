@@ -4,12 +4,17 @@ import { ElMessage, ElMessageBox } from 'element-plus';
 import { omit } from 'lodash';
 import { Ref } from 'vue';
 
-import { BaseSchema } from '~/common/types';
+import { FieldTreeItem } from './types';
 
+/**
+ * Handles the addition of a group to the current schema field tree with validation of input.
+ *
+ * @param schemaFieldTreeRef The schema field tree reference
+ * @param activeTabRef The active tab reference
+ */
 export const handleAddGroup = async (
-  schemaRef: Ref<BaseSchema>,
+  schemaFieldTreeRef: Ref<Record<string, FieldTreeItem[]>>,
   activeTabRef: Ref<string>,
-  groups: Record<string, string[]>,
 ): Promise<void> => {
   const result = await ElMessageBox.prompt('Group Name', 'Add a Group', {
     confirmButtonText: 'OK',
@@ -26,7 +31,11 @@ export const handleAddGroup = async (
       }
 
       // Check if the group name has already been used
-      if (Object.keys(groups).some(group => group.toLowerCase() === value.toLowerCase())) {
+      if (
+        Object.keys(schemaFieldTreeRef.value).some(
+          group => group.toLowerCase() === value.toLowerCase(),
+        )
+      ) {
         return 'Group name has already been used';
       }
 
@@ -40,7 +49,7 @@ export const handleAddGroup = async (
   }).catch(() => undefined);
 
   if (result && result.value) {
-    Object.assign(schemaRef.value.groups, {
+    Object.assign(schemaFieldTreeRef.value, {
       [result.value]: [],
     });
 
@@ -48,26 +57,33 @@ export const handleAddGroup = async (
   }
 };
 
+/**
+ * Handle the removal of a group from the schema field tree.
+ * Additionally prompts for confirmation to avoid misclicks causing massive loss of data.
+ *
+ * @param groupName The group to be removed
+ * @param schemaFieldTreeRef The schema field tree reference
+ * @param activeTabRef The active tab reference
+ */
 export const handleRemoveGroup = async (
   groupName: string,
-  schemaRef: Ref<BaseSchema>,
+  schemaFieldTreeRef: Ref<Record<string, FieldTreeItem[]>>,
   activeTabRef: Ref<string>,
-  groups: Record<string, string[]>,
 ): Promise<void> => {
-  if (Object.keys(groups).length <= 1) {
+  if (Object.keys(schemaFieldTreeRef.value).length <= 1) {
     ElMessage.warning('There must be at least one group');
 
     return;
   }
 
-  if (!groups[groupName]) {
+  if (!schemaFieldTreeRef.value[groupName]) {
     ElMessage.error('Group to be removed does not exist');
 
     return;
   }
 
   const result = await ElMessageBox.confirm(
-    `This will also remove ${groups[groupName].length} fields. Are you sure you want to continue?`,
+    `This will also remove ${schemaFieldTreeRef.value[groupName].length} fields. Are you sure you want to continue?`,
     'Confirm Group Deletion',
     {
       confirmButtonText: 'Confirm',
@@ -77,27 +93,45 @@ export const handleRemoveGroup = async (
   ).catch(() => undefined);
 
   if (result) {
-    // Shallow clone the field names for removal
-    const fieldNames = [...groups[groupName]];
-
-    // Omit the group to removed from the current groups object
-    schemaRef.value.groups = omit(groups, groupName);
-
-    // Omit any fields that belonged to the group from the schema
-    schemaRef.value.fields = schemaRef.value.fields.filter(
-      field => !fieldNames.includes(field.name),
-    );
+    // Omit the group from the current field tree
+    schemaFieldTreeRef.value = omit(schemaFieldTreeRef.value, groupName);
 
     // If we're currently on the tab for the group, change to the first available tab
     if (activeTabRef.value === groupName) {
-      [activeTabRef.value] = Object.keys(schemaRef.value.groups);
+      [activeTabRef.value] = Object.keys(schemaFieldTreeRef.value.groups);
     }
   }
 };
 
-// TODO: Annotate the type for this one.
-export const getFieldTreeForGroup = (groupFields: string[], fields: BaseField[]): any => {
-  const filteredFields = fields.filter(field => groupFields.includes(field.name));
+/**
+ * Walks the current schemas fields to build a tree structure for use with the ElTree component.
+ *
+ * @param fields The current schemas fields
+ */
+export const buildSchemaFieldTree = (fields: BaseField[]): FieldTreeItem[] => {
+  return fields.map(field => {
+    const item: FieldTreeItem = {
+      title: field.title,
+      type: field.type,
+      _field: field,
+    };
 
-  return filteredFields;
+    if ('children' in field.settings && Array.isArray(field.settings.children)) {
+      item.children = buildSchemaFieldTree(field.settings.children);
+    }
+
+    return item;
+  });
+};
+
+export const getFieldsFromSchemaFieldTree = (schemaFieldTree: FieldTreeItem[]): BaseField[] => {
+  return schemaFieldTree.map(treeItem => {
+    const { _field: field } = treeItem;
+
+    if (treeItem.children) {
+      field.settings.children = getFieldsFromSchemaFieldTree(treeItem.children);
+    }
+
+    return field;
+  });
 };

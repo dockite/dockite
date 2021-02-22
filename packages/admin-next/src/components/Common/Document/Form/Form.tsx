@@ -3,10 +3,10 @@ import { cloneDeep } from 'lodash';
 import { defineComponent, computed, PropType, reactive, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
-import { getFieldsByGroup, getFieldComponent } from './util';
+import { getFieldComponent } from './util';
 
 import { useDockite } from '~/dockite';
-import { getInitialFormData } from '~/utils';
+import { getInitialFormData, getFieldsByGroup } from '~/utils';
 
 export interface DocumentFormComponentProps {
   modelValue: Record<string, any>;

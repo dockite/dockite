@@ -76,7 +76,11 @@ export const SchemaFieldDrawerComponent = defineComponent({
           onClose={handleCancelField}
         >
           {{
-            title: () => <span class="text-lg">Add a Field</span>,
+            title: () => (
+              <span class="text-lg">
+                {staticField.value ? `${staticField.value.title} Field Settings` : 'Add a Field'}
+              </span>
+            ),
             default: () => {
               if (availableFields.loading.value) {
                 return (

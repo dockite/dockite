@@ -1,11 +1,18 @@
 import { BaseField, Field } from '@dockite/database';
-import { computed, defineComponent, PropType, ref } from 'vue';
+import { computed, defineComponent, onBeforeMount, PropType, ref } from 'vue';
 
 import { SchemaFieldDrawerComponent } from '../FieldDrawer';
 
-import { getFieldTreeForGroup, handleAddGroup, handleRemoveGroup } from './util';
+import { FieldTreeItem } from './types';
+import {
+  buildSchemaFieldTree,
+  getFieldsFromSchemaFieldTree,
+  handleAddGroup,
+  handleRemoveGroup,
+} from './util';
 
 import { BaseSchema } from '~/common/types';
+import { getFieldsByGroup } from '~/utils';
 
 import './FieldTree.scss';
 
@@ -30,6 +37,8 @@ export const SchemaFieldTreeComponent = defineComponent({
 
     const fieldDrawerVisible = ref(true);
 
+    const schemaFieldTree = ref<Record<string, FieldTreeItem[]>>({});
+
     const groups = computed<Record<string, string[]>>(() => props.modelValue!.groups);
 
     const groupNames = computed(() => Object.keys(groups.value));
@@ -46,37 +55,95 @@ export const SchemaFieldTreeComponent = defineComponent({
       activeTab.value = 'General';
     }
 
+    onBeforeMount(() => {
+      Object.keys(modelValue.value.groups).forEach(group => {
+        schemaFieldTree.value[group] = buildSchemaFieldTree(
+          getFieldsByGroup(group, modelValue.value),
+        );
+      });
+    });
+
+    /**
+     * Watch the schema field tree for changes which will then be applied to the parent
+     * schema.
+     */
+    const updateSchemaToReflectSchemaFieldTree = (): void => {
+      const fields: BaseField[] = [];
+
+      const groups: Record<string, string[]> = {};
+
+      Object.entries(schemaFieldTree.value).forEach(([group, fieldTree]) => {
+        const fieldsFromFieldTree = getFieldsFromSchemaFieldTree(fieldTree);
+
+        groups[group] = fieldsFromFieldTree.map(field => field.name);
+
+        fields.push(...fieldsFromFieldTree);
+      });
+
+      modelValue.value.groups = groups;
+
+      modelValue.value.fields = fields as Field[];
+    };
+
     const handleShowFieldDrawer = (): void => {
       fieldDrawerVisible.value = true;
     };
 
     const handleAddField = (field: BaseField): void => {
-      // If the group exists
-      if (modelValue.value.groups[activeTab.value]) {
-        // Add the field to the schema's fields
-        modelValue.value.fields = [...modelValue.value.fields, field as Field];
-
-        // Add the new field to the group
-        modelValue.value.groups[activeTab.value] = [
-          ...modelValue.value.groups[activeTab.value],
-          field.name,
+      // If the group exists within the field tree
+      if (schemaFieldTree.value[activeTab.value]) {
+        // Add the new field to the groups tree
+        schemaFieldTree.value[activeTab.value] = [
+          ...schemaFieldTree.value[activeTab.value],
+          {
+            _field: field,
+            title: field.title,
+            type: field.type,
+            // We should never encounter a situation where children isn't an empty array
+            // but we will still run it through the tree building method for safety.
+            children: field.settings.children
+              ? buildSchemaFieldTree(field.settings.children)
+              : undefined,
+          },
         ];
+
+        updateSchemaToReflectSchemaFieldTree();
       }
     };
 
+    const getFieldNodeComponent = (
+      _: never,
+      { data: treeItem }: { data: FieldTreeItem },
+    ): JSX.Element => {
+      return (
+        // We don't need pl-3 since there is already padding applied
+        <div
+          class="dockite-schema--field-tree__node w-full border-b py-2 pr-3 flex items-center justify-between"
+          // The width of the dropdown icon
+          style={{ marginLeft: '-24px', paddingLeft: '24px' }}
+        >
+          <span>{treeItem.title}</span>
+
+          <el-tag size="mini">{treeItem.type}</el-tag>
+        </div>
+      );
+    };
+
     return () => {
-      const panes = Object.keys(groups.value).map(key => (
+      const panes = Object.keys(schemaFieldTree.value).map(key => (
         <el-tab-pane name={key} label={key}>
           <el-tree
-            data={getFieldTreeForGroup(groups.value[key], modelValue.value.fields)}
-            empty-text="There's currently no fields"
-            node-key="id"
-            default-expand-all
+            data={schemaFieldTree.value[key]}
+            emptyText="There's currently no fields"
+            nodeKey="id"
+            defaultExpandAll
             draggable
-            props={{ label: 'title', children: (d: BaseField) => d.settings.children }}
+            renderContent={getFieldNodeComponent}
+            onNodeDrop={() => updateSchemaToReflectSchemaFieldTree()}
+            props={{ label: 'title', children: 'children' }}
           />
 
-          <div class="flex justify-center">
+          <div class="flex justify-center pt-3">
             <el-button class="el-button--dashed" onClick={handleShowFieldDrawer}>
               Add Field
               <i class="el-icon-plus el-icon--right" />
@@ -91,9 +158,9 @@ export const SchemaFieldTreeComponent = defineComponent({
             v-model={activeTab.value}
             type="border-card"
             editable
-            onTabAdd={() => handleAddGroup(modelValue, activeTab, groups.value)}
+            onTabAdd={() => handleAddGroup(schemaFieldTree, activeTab)}
             onTabRemove={(groupName: string) =>
-              handleRemoveGroup(groupName, modelValue, activeTab, groups.value)
+              handleRemoveGroup(groupName, schemaFieldTree, activeTab)
             }
           >
             {panes}

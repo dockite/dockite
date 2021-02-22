@@ -21,4 +21,32 @@
       transform: scale(1);
     }
   }
+
+  .el-tree-node {
+    transition: 300ms;
+
+    &.is-drop-inner {
+      .dockite-schema--field-tree__node {
+        // Taken from element ui
+        background: #f5f7fa;
+      }
+    }
+  }
+
+  .dockite-schema--field-tree__node:hover {
+    // Taken from element ui
+    background: #f5f7fa;
+  }
+
+  .el-tree__drop-indicator {
+    height: 3px;
+  }
+
+  .el-tree-node__content {
+    height: auto;
+
+    &:hover, &:focus {
+      background: none;
+    }
+  }
 }
