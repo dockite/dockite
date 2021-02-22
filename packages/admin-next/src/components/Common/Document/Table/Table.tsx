@@ -1,6 +1,6 @@
 import { Document, Schema } from '@dockite/database';
 import { get, fromPairs } from 'lodash';
-import { computed, defineComponent, PropType, WritableComputedRef } from 'vue';
+import { computed, defineComponent, PropType, toRaw, WritableComputedRef } from 'vue';
 
 import { Constraint } from '@dockite/where-builder/lib/types';
 
@@ -12,6 +12,7 @@ import {
 import { getFilterComponent, getIdentifierColumn } from './util';
 
 import { Maybe } from '~/common/types';
+import { useDockite } from '~/dockite';
 
 export interface DocumentTableComponentProps {
   schema?: Schema;
@@ -101,6 +102,8 @@ export const DocumentTableComponent = defineComponent({
       }),
     ) as ComputedDocumentTableComponentProps;
 
+    const { fieldManager } = useDockite();
+
     // Stores a computed list of the selected item ids
     const selectedItemIds = computed(() => (props.selectedItems ?? []).map(x => x.id));
 
@@ -117,7 +120,6 @@ export const DocumentTableComponent = defineComponent({
 
     // Handles the changing of a column via the column dropdown.
     const handleColumnChange = (value: boolean, column: DocumentTableColumn): void => {
-      console.log('getting called');
       if (props.updatableColumns && props.columns) {
         if (value && !vmodel.columns.value.find(col => col.name === column.name)) {
           vmodel.columns.value = [...vmodel.columns.value, column];
@@ -137,12 +139,47 @@ export const DocumentTableComponent = defineComponent({
       delete vmodel.state.value.filters[column.name];
     };
 
-    const getColumnData = (document: Document, column: string): any => {
+    const getRawColumnData = (document: Document, column: string): any => {
       if (column in document) {
         return get(document, column);
       }
 
       return get(document.data, column, '');
+    };
+
+    /**
+     * Given a document and column path, retrieve the associated data and format it as
+     * best as possible provided the lack of dedicated field view.
+     *
+     * @param document The document to retrieve data from
+     * @param column The path to the column
+     */
+    const getColumnData = (document: Document, column: string): string => {
+      const columnData = getRawColumnData(document, column);
+
+      if (columnData === null) {
+        return '';
+      }
+
+      const columnAsDate = new Date(columnData);
+
+      if (!Number.isNaN(columnAsDate.getTime())) {
+        return columnAsDate.toLocaleString();
+      }
+
+      if (typeof columnData === 'boolean') {
+        return columnData ? 'True' : 'False';
+      }
+
+      if (Array.isArray(columnData)) {
+        return '[ArrayData]';
+      }
+
+      if (typeof columnData === 'object') {
+        return '{ObjectData}';
+      }
+
+      return String(columnData);
     };
 
     const getSelectableColumnView = (): JSX.Element | null => {
@@ -201,9 +238,28 @@ export const DocumentTableComponent = defineComponent({
                 );
               },
 
-              default: ({ row }: DocumentTableColumnDefaultScopedSlot) => (
-                <div class="el-table__column">{getColumnData(row, column.name)}</div>
-              ),
+              default: ({ row }: DocumentTableColumnDefaultScopedSlot) => {
+                if (props.schema) {
+                  const field = props.schema.fields.find(field => field.name === column.name);
+
+                  if (field && fieldManager[field.type] && fieldManager[field.type].view) {
+                    const ViewComponent = toRaw(fieldManager[field.type].view);
+
+                    if (ViewComponent) {
+                      return (
+                        <div class="el-table__column">
+                          <ViewComponent
+                            modelValue={getRawColumnData(row, column.name)}
+                            field={field}
+                          />
+                        </div>
+                      );
+                    }
+                  }
+                }
+
+                return <div class="el-table__column">{getColumnData(row, column.name)}</div>;
+              },
             }}
           </el-table-column>
         ));

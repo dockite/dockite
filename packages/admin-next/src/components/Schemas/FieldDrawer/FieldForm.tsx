@@ -1,6 +1,7 @@
 import { BaseField, Schema } from '@dockite/database';
 import { ElMessage } from 'element-plus';
-import { computed, defineComponent, PropType, ref, toRaw, toRefs } from 'vue';
+import { camelCase } from 'lodash';
+import { computed, defineComponent, PropType, ref, toRaw, toRefs, watch } from 'vue';
 
 import { fieldSettingsFormRules, getIdentifierUniqueFormRule } from './formRules';
 
@@ -43,6 +44,8 @@ export const SchemaFieldSettingsFormComponent = defineComponent({
 
     const form = ref<any>(null);
 
+    const isManuallyEditingIdentifier = ref(false);
+
     const { staticField } = toRefs(props);
 
     const { fieldManager } = useDockite();
@@ -56,6 +59,25 @@ export const SchemaFieldSettingsFormComponent = defineComponent({
     if (SettingsComponent) {
       SettingsComponent = toRaw(SettingsComponent);
     }
+
+    watch(
+      () => modelValue.value.title,
+      () => {
+        if (!isManuallyEditingIdentifier.value) {
+          modelValue.value.name = camelCase(modelValue.value.title);
+        }
+      },
+    );
+
+    const handleEditIdentifier = (): void => {
+      isManuallyEditingIdentifier.value = true;
+    };
+
+    const handleIdentifierBlur = (): void => {
+      if (isManuallyEditingIdentifier.value) {
+        isManuallyEditingIdentifier.value = false;
+      }
+    };
 
     const handleConfirmField = (): void => {
       if (form.value) {
@@ -92,10 +114,23 @@ export const SchemaFieldSettingsFormComponent = defineComponent({
             prop="name"
             rules={[...fieldSettingsFormRules.name, getIdentifierUniqueFormRule(props.schema)]}
           >
-            <el-input v-model={modelValue.value.name} />
+            <el-input
+              v-model={modelValue.value.name}
+              disabled={!isManuallyEditingIdentifier.value}
+              onBlur={handleIdentifierBlur}
+            />
 
-            <div class="el-form-item__description">
-              The API identifier for the field. Must only contain letters, numbers, and underscores.
+            <div class="flex justify-between items-start -mx-2">
+              <div class="el-form-item__description flex-1 px-2">
+                The API identifier for the field. Must only contain letters, numbers, and
+                underscores.
+              </div>
+
+              <div class="px-2">
+                <el-button type="text" size="mini" onClick={handleEditIdentifier}>
+                  Edit Identifier
+                </el-button>
+              </div>
             </div>
           </el-form-item>
 

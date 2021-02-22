@@ -3,7 +3,7 @@ import { Schema } from '../entities';
 export interface DockiteFieldInputComponentProps<TValue, TEntity> {
   name: string;
   value?: TValue;
-  formData: object;
+  formData: Record<string, any>;
   fieldConfig: TEntity;
   errors: Record<string, string[]>;
   groups: Record<string, string[]>;
@@ -18,7 +18,7 @@ export interface DockiteFieldSettingsComponentProps<TField, TSchema> {
   schema: TSchema;
 }
 
-export interface DockiteFieldSettingComponentProps<TValue> {
-  modelValue: TValue;
-  rules: Record<string, any>;
+export interface DockiteFieldViewComponentProps<TField> {
+  modelValue?: any;
+  field: TField;
 }

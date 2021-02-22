@@ -5,6 +5,7 @@ import { DefineComponent, Plugin, reactive, ref, Ref } from 'vue';
 import {
   DockiteFieldInputComponentProps,
   DockiteFieldSettingsComponentProps,
+  DockiteFieldViewComponentProps,
 } from '@dockite/types';
 
 import { importDockiteFields } from './fields';
@@ -26,7 +27,7 @@ interface FieldComponentProps {
 interface FieldManagerItem {
   input: Nullable<DefineComponent<DockiteFieldInputComponentProps<any, any>>>;
   settings: Nullable<DefineComponent<DockiteFieldSettingsComponentProps<BaseField, BaseSchema>>>;
-  view: Nullable<DefineComponent<FieldComponentProps>>;
+  view: Nullable<DefineComponent<DockiteFieldViewComponentProps<BaseField>>>;
 }
 
 const fieldManager: Record<string, FieldManagerItem> = reactive({});
@@ -37,7 +38,7 @@ const registerField = (
   name: string,
   input: FieldManagerItem['input'],
   settings: FieldManagerItem['settings'],
-  view: Nullable<DefineComponent<FieldComponentProps>> = null,
+  view: FieldManagerItem['view'] = null,
 ): void => {
   if (fieldManager[name]) {
     throw new ApplicationError(

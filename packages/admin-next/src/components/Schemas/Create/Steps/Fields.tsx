@@ -42,11 +42,10 @@ export const SchemaCreateFieldsStepComponent = defineComponent({
           </h3>
 
           <blockquote class="border-l-4 rounded text-sm p-3 bg-gray-200 mb-5">
-            Fields define the content that a {schemaType.value} can hold. You may add <u>string</u>{' '}
-            fields for names and descriptions, <u>number</u> fields for prices, ratings, and so
-            forth.
-            <span class="block pb-2" />A {schemaType.value} can have as many fields as you desire
-            however the more you add the harder it may be to manage later on.
+            Fields define the content that a {schemaType.value} can hold. You may add string fields
+            for names and descriptions, number fields for prices, ratings, and so forth.
+            <span class="block pb-2" />A {schemaType.value} can have as many fields as you desire;
+            however, the more you add, the harder it may be to manage later.
           </blockquote>
 
           <el-form

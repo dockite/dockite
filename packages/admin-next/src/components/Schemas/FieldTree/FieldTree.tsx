@@ -111,6 +111,23 @@ export const SchemaFieldTreeComponent = defineComponent({
       }
     };
 
+    const handleCanDropNode = (
+      _: never,
+      node: { data: FieldTreeItem },
+      type: 'prev' | 'inner' | 'next',
+    ): boolean => {
+      const { _field: field } = node.data;
+
+      // If we're attempting to drop a field within a field.
+      if (type === 'inner') {
+        // The field must have a children setting that is an Array as this is the defacto method of
+        // containing sub-fields.
+        return field.settings.children && Array.isArray(field.settings.children);
+      }
+
+      return true;
+    };
+
     const getFieldNodeComponent = (
       _: never,
       { data: treeItem }: { data: FieldTreeItem },
@@ -118,13 +135,31 @@ export const SchemaFieldTreeComponent = defineComponent({
       return (
         // We don't need pl-3 since there is already padding applied
         <div
-          class="dockite-schema--field-tree__node w-full border-b py-2 pr-3 flex items-center justify-between"
+          class="dockite-schema--field-tree__node w-full border-b pr-3 flex items-center justify-between"
           // The width of the dropdown icon
-          style={{ marginLeft: '-24px', paddingLeft: '24px' }}
+          style={{ height: '40px', marginLeft: '-24px', paddingLeft: '24px' }}
         >
           <span>{treeItem.title}</span>
 
-          <el-tag size="mini">{treeItem.type}</el-tag>
+          <div class="flex items-center -mx-1">
+            <span class="px-1">
+              <el-tag title="Field Type" size="mini">
+                {treeItem.type}
+              </el-tag>
+            </span>
+
+            <span class="px-1">
+              <el-button title="Edit Field" type="text" size="small">
+                <i class="el-icon-edit-outline" />
+              </el-button>
+            </span>
+
+            <span class="px-1">
+              <el-button title="Delete Field" type="text" size="small">
+                <i class="el-icon-delete" />
+              </el-button>
+            </span>
+          </div>
         </div>
       );
     };
@@ -140,6 +175,7 @@ export const SchemaFieldTreeComponent = defineComponent({
             draggable
             renderContent={getFieldNodeComponent}
             onNodeDrop={() => updateSchemaToReflectSchemaFieldTree()}
+            allowDrop={handleCanDropNode}
             props={{ label: 'title', children: 'children' }}
           />
 

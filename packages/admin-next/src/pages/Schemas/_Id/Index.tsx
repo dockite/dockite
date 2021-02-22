@@ -25,8 +25,8 @@ import {
   getAppliedSort,
   getFiltersFromTableState,
   transformFiltersToQueryParam,
+  getColumnsFromQueryParams,
 } from '~/utils';
-import getColumnsFromQueryParams from '~/utils/getColumnsFromQueryParams';
 
 export const SchemaDocumentsPage = defineComponent({
   name: 'SchemaDocumentsPageComponent',
