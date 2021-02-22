@@ -426,7 +426,7 @@ export default class S3ImageFieldInputComponent extends Vue {
       hasError = true;
     }
 
-    if (this.settings.imageValidation) {
+    if (this.settings.imageValidation && fileExtension.toLowerCase() !== 'svg') {
       const image = new Image();
 
       const imgPromise = new Promise((resolve, reject) => {
