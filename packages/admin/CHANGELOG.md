@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.5.0-alpha.6](https://github.com/dockite/dockite/compare/@dockite/admin@0.5.0-alpha.5...@dockite/admin@0.5.0-alpha.6) (2021-02-22)
+
+
+### Bug Fixes
+
+* **admin:** avoid indexing on undefined query param ([37887d5](https://github.com/dockite/dockite/commit/37887d52ffa57b8432d0d4bc7ea4a9cc0411dea1))
+
+
+
+
+
 # [0.5.0-alpha.5](https://github.com/dockite/dockite/compare/@dockite/admin@0.5.0-alpha.4...@dockite/admin@0.5.0-alpha.5) (2021-02-11)
 
 **Note:** Version bump only for package @dockite/admin
