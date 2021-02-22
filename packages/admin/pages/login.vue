@@ -124,11 +124,14 @@ export default class LoginPage extends Vue {
   public async login(): Promise<void> {
     try {
       this.loading += 1;
-      const redirectRoute = encodeURIComponent(this.$route.query.redirectTo.toString());
+
+      let redirectRoute: string | null = null;
+
+      if (this.$route.query.redirectTo && typeof this.$route.query.redirectTo === 'string') {
+        redirectRoute = encodeURIComponent(this.$route.query.redirectTo.toString());
+      }
 
       const valid = await (this.$refs.form as Form).validate();
-
-      console.log({ valid });
 
       if (!valid) {
         return;
