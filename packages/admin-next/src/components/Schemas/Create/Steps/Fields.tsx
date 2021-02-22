@@ -2,7 +2,7 @@ import { computed, defineComponent, PropType, ref } from 'vue';
 
 import { SchemaType } from '@dockite/types';
 
-import SchemaFieldTreeComponent from '../../FieldTree/FieldTree';
+import { SchemaFieldTreeComponent } from '../../FieldTree/FieldTree';
 
 import { fieldsStepFormRules } from './formRules';
 import { StepComponentProps } from './types';
@@ -56,6 +56,11 @@ export const SchemaCreateFieldsStepComponent = defineComponent({
           >
             <el-form-item prop="fields">
               <SchemaFieldTreeComponent v-model={modelValue.value} />
+            </el-form-item>
+
+            {/* This dirty little trick lets us validate the groups for a Schema with async-validator */}
+            <el-form-item prop="groups" style={{ marginBottom: 0, marginTop: '-22px' }}>
+              <input type="hidden" v-model={modelValue.value.groups} />
             </el-form-item>
 
             <el-form-item>

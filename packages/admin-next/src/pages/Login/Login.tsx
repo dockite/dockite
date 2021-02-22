@@ -109,7 +109,6 @@ export const LoginPage = defineComponent({
           model={loginState}
           rules={loginFormRules}
           onSubmit={() => handleFormSubmission()}
-          onKeyUp={(e: KeyboardEvent) => e.key.toLowerCase() === 'enter' && handleFormSubmission()}
         >
           <el-form-item label="Email">
             <el-input v-model={loginState.email} placeholder="username@example.com" />

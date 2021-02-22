@@ -26,7 +26,7 @@ export const handleAddGroup = async (
       const re = /^[A-Za-z][A-Za-z0-9_-\s]*$/;
 
       // Check if the group name has been provided
-      if (value.length === 0) {
+      if (!value || value.length === 0) {
         return 'Group name is required';
       }
 
@@ -110,7 +110,13 @@ export const handleRemoveGroup = async (
  */
 export const buildSchemaFieldTree = (fields: BaseField[]): FieldTreeItem[] => {
   return fields.map(field => {
+    // A pseudo-random ID for identifying tree nodes
+    const id = Math.random()
+      .toString(36)
+      .slice(2);
+
     const item: FieldTreeItem = {
+      id,
       title: field.title,
       type: field.type,
       _field: field,

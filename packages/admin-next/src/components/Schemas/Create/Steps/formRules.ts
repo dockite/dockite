@@ -36,14 +36,25 @@ export const nameStepFormRules = {
 export const fieldsStepFormRules = {
   fields: [
     {
+      type: 'array',
       required: true,
       message: 'Fields are required',
       trigger: 'blur',
     },
+  ],
+  groups: [
     {
-      min: 1,
-      message: 'There must be at least 1 field',
+      type: 'object',
+      required: true,
+      message: 'Groups are required',
       trigger: 'blur',
+
+      defaultField: {
+        type: 'array',
+        required: true,
+        message: 'Every group must have at least 1 field',
+        trigger: 'blur',
+      },
     },
   ],
 };

@@ -36,6 +36,8 @@ export const SchemaFieldSettingsFormComponent = defineComponent({
     },
   },
 
+  emits: ['update:modelValue', 'action:confirmField', 'action:cancelField'],
+
   setup: (props, ctx) => {
     const modelValue = computed({
       get: () => props.modelValue as SchemaFieldSettingsFormComponentProps['modelValue'],

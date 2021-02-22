@@ -117,6 +117,16 @@ a {
   padding-bottom: 1rem;
 }
 
+.el-popconfirm__main {
+  padding-bottom: 0.75rem;
+}
+
+button, input, select, a {
+  &:focus {
+    outline: none;
+  }
+}
+
 :focus {
   outline: none;
 }

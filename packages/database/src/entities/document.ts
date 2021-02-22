@@ -16,19 +16,6 @@ import { Schema } from './schema';
 import { User } from './user';
 import { DocumentRevision } from './document-revision';
 
-export const DocumentEntityProperties: Array<keyof Document> = [
-  'id',
-  'locale',
-  'data',
-  'createdAt',
-  'updatedAt',
-  'schemaId',
-  'schema',
-  'release',
-  'revisions',
-  'user',
-];
-
 @Entity()
 @ObjectType()
 export class Document {
@@ -107,3 +94,16 @@ export class Document {
   @GraphQLField(_type => User, { nullable: true })
   public user!: User;
 }
+
+export const DocumentEntityProperties: Array<keyof Document> = [
+  'id',
+  'locale',
+  'data',
+  'createdAt',
+  'updatedAt',
+  'schemaId',
+  'schema',
+  'release',
+  'revisions',
+  'user',
+];

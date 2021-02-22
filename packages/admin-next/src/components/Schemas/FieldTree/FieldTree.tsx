@@ -33,9 +33,20 @@ export const SchemaFieldTreeComponent = defineComponent({
       set: value => ctx.emit('update:modelValue', value),
     });
 
+    const treeEl = ref<any>(null);
+
     const activeTab = ref('');
 
     const fieldDrawerVisible = ref(true);
+
+    const fieldTreeItemToBeEdited = ref<FieldTreeItem | null>(null);
+
+    const fieldToBeEdited = computed(() => {
+      if (fieldTreeItemToBeEdited.value) {
+        // eslint-disable-next-line no-underscore-dangle
+        return fieldTreeItemToBeEdited.value._field;
+      }
+    });
 
     const schemaFieldTree = ref<Record<string, FieldTreeItem[]>>({});
 
@@ -92,13 +103,19 @@ export const SchemaFieldTreeComponent = defineComponent({
     const handleAddField = (field: BaseField): void => {
       // If the group exists within the field tree
       if (schemaFieldTree.value[activeTab.value]) {
+        // A pseudo-random ID for identifying tree nodes
+        const id = Math.random()
+          .toString(36)
+          .slice(2);
+
         // Add the new field to the groups tree
         schemaFieldTree.value[activeTab.value] = [
           ...schemaFieldTree.value[activeTab.value],
           {
-            _field: field,
+            id,
             title: field.title,
             type: field.type,
+            _field: field,
             // We should never encounter a situation where children isn't an empty array
             // but we will still run it through the tree building method for safety.
             children: field.settings.children
@@ -109,6 +126,41 @@ export const SchemaFieldTreeComponent = defineComponent({
 
         updateSchemaToReflectSchemaFieldTree();
       }
+    };
+
+    const handleSelectFieldForEditing = (fieldTreeItem: FieldTreeItem): void => {
+      fieldTreeItemToBeEdited.value = fieldTreeItem;
+
+      fieldDrawerVisible.value = true;
+    };
+
+    const handleRemoveField = (fieldTreeItem: FieldTreeItem): void => {
+      if (treeEl.value) {
+        treeEl.value.remove(fieldTreeItem);
+
+        updateSchemaToReflectSchemaFieldTree();
+      }
+    };
+
+    const handleUpdateField = (field: BaseField): void => {
+      if (fieldTreeItemToBeEdited.value) {
+        fieldTreeItemToBeEdited.value.title = field.title;
+
+        // eslint-disable-next-line no-underscore-dangle
+        fieldTreeItemToBeEdited.value._field = field;
+      }
+
+      fieldTreeItemToBeEdited.value = null;
+
+      fieldDrawerVisible.value = false;
+
+      updateSchemaToReflectSchemaFieldTree();
+    };
+
+    const handleCancelUpdateField = (): void => {
+      fieldTreeItemToBeEdited.value = null;
+
+      fieldDrawerVisible.value = false;
     };
 
     const handleCanDropNode = (
@@ -149,15 +201,31 @@ export const SchemaFieldTreeComponent = defineComponent({
             </span>
 
             <span class="px-1">
-              <el-button title="Edit Field" type="text" size="small">
+              <el-button
+                title="Edit Field"
+                type="text"
+                size="small"
+                onClick={() => handleSelectFieldForEditing(treeItem)}
+              >
                 <i class="el-icon-edit-outline" />
               </el-button>
             </span>
 
             <span class="px-1">
-              <el-button title="Delete Field" type="text" size="small">
-                <i class="el-icon-delete" />
-              </el-button>
+              <el-popconfirm
+                title="Are you sure you want to delete this field?"
+                confirmButtonText="Confirm"
+                cancelButtonText="Cancel"
+                onConfirm={() => handleRemoveField(treeItem)}
+              >
+                {{
+                  reference: () => (
+                    <el-button title="Delete Field" type="text" size="small">
+                      <i class="el-icon-delete" />
+                    </el-button>
+                  ),
+                }}
+              </el-popconfirm>
             </span>
           </div>
         </div>
@@ -168,6 +236,7 @@ export const SchemaFieldTreeComponent = defineComponent({
       const panes = Object.keys(schemaFieldTree.value).map(key => (
         <el-tab-pane name={key} label={key}>
           <el-tree
+            ref={treeEl}
             data={schemaFieldTree.value[key]}
             emptyText="There's currently no fields"
             nodeKey="id"
@@ -189,14 +258,20 @@ export const SchemaFieldTreeComponent = defineComponent({
       ));
 
       return (
-        <div class="dockite-schema--field-tree">
+        <div class="dockite-schema--field-tree pb-3">
           <el-tabs
             v-model={activeTab.value}
             type="border-card"
             editable
-            onTabAdd={() => handleAddGroup(schemaFieldTree, activeTab)}
+            onTabAdd={() =>
+              handleAddGroup(schemaFieldTree, activeTab).then(() =>
+                updateSchemaToReflectSchemaFieldTree(),
+              )
+            }
             onTabRemove={(groupName: string) =>
-              handleRemoveGroup(groupName, schemaFieldTree, activeTab)
+              handleRemoveGroup(groupName, schemaFieldTree, activeTab).then(() =>
+                updateSchemaToReflectSchemaFieldTree(),
+              )
             }
           >
             {panes}
@@ -205,7 +280,12 @@ export const SchemaFieldTreeComponent = defineComponent({
           <SchemaFieldDrawerComponent
             v-model={fieldDrawerVisible.value}
             schema={modelValue.value}
-            {...{ 'onAction:confirmField': handleAddField }}
+            fieldToBeEdited={fieldToBeEdited.value}
+            {...{
+              'onAction:confirmField': handleAddField,
+              'onAction:cancelFieldToBeEdited': handleCancelUpdateField,
+              'onUpdate:fieldToBeEdited': handleUpdateField,
+            }}
           />
         </div>
       );

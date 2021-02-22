@@ -1,5 +1,6 @@
 import { BaseField } from '@dockite/database';
-import { computed, defineComponent, PropType, ref, withModifiers } from 'vue';
+import { cloneDeep } from 'lodash';
+import { computed, defineComponent, PropType, ref, watch, withModifiers } from 'vue';
 import { usePromise } from 'vue-composable';
 
 import { SchemaFieldSettingsFormComponent } from './FieldForm';
@@ -12,6 +13,7 @@ import { AvailableFieldItem } from '~/graphql';
 
 export interface SchemaFieldDrawerComponentProps {
   modelValue: boolean;
+  fieldToBeEdited: BaseField | null;
   schema: BaseSchema;
 }
 
@@ -23,11 +25,22 @@ export const SchemaFieldDrawerComponent = defineComponent({
       type: Boolean as PropType<SchemaFieldDrawerComponentProps['modelValue']>,
     },
 
+    fieldToBeEdited: {
+      type: (null as any) as PropType<SchemaFieldDrawerComponentProps['fieldToBeEdited']>,
+    },
+
     schema: {
       type: Object as PropType<SchemaFieldDrawerComponentProps['schema']>,
       required: true,
     },
   },
+
+  emits: [
+    'update:modelValue',
+    'update:fieldToBeEdited',
+    'action:confirmField',
+    'action:cancelFieldToBeEdited',
+  ],
 
   setup: (props, ctx) => {
     const modelValue = computed({
@@ -42,7 +55,13 @@ export const SchemaFieldDrawerComponent = defineComponent({
     const staticField = ref<AvailableFieldItem | null>(null);
 
     const handleConfirmField = (payload: BaseField): void => {
-      ctx.emit('action:confirmField', payload);
+      // Emit a v-model compatible event if we're editing a field, otherwise emit the
+      // general field addition event.
+      if (props.fieldToBeEdited) {
+        ctx.emit('update:fieldToBeEdited', payload);
+      } else {
+        ctx.emit('action:confirmField', payload);
+      }
 
       field.value = null;
 
@@ -50,6 +69,10 @@ export const SchemaFieldDrawerComponent = defineComponent({
     };
 
     const handleCancelField = (): void => {
+      if (props.fieldToBeEdited) {
+        ctx.emit('action:cancelFieldToBeEdited');
+      }
+
       field.value = null;
 
       staticField.value = null;
@@ -66,6 +89,24 @@ export const SchemaFieldDrawerComponent = defineComponent({
 
       staticField.value = selectedField;
     };
+
+    watch([props, availableFields.result], () => {
+      if (props.fieldToBeEdited && availableFields.result.value) {
+        const { fieldToBeEdited } = props;
+
+        const staticFieldForField = availableFields.result.value.find(
+          availableField => availableField.type === fieldToBeEdited.type,
+        );
+
+        if (!staticFieldForField) {
+          return;
+        }
+
+        field.value = cloneDeep(fieldToBeEdited);
+
+        staticField.value = staticFieldForField;
+      }
+    });
 
     return () => {
       return (
