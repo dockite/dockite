@@ -13,7 +13,21 @@
       @node-drop="handleNodeDrop"
     >
       <div slot-scope="{ node, data }" class="dockite-tree--node">
-        <span class="dockite-tree--node-label">{{ node.label }}</span>
+        <component
+          :is="$dockiteFieldManager[labelField.type].view"
+          v-if="
+            labelField &&
+              $dockiteFieldManager[labelField.type] &&
+              $dockiteFieldManager[labelField.type].view
+          "
+          :data="node.label"
+          :field="labelField"
+        />
+
+        <span v-else class="dockite-tree--node-label">
+          {{ node.label }}
+        </span>
+
         <span>
           <el-tag size="mini" style="margin-right: 0.25rem">id:{{ data.id }}</el-tag>
 
@@ -34,14 +48,14 @@
 </template>
 
 <script lang="ts">
-import { Schema } from '@dockite/database';
+import { Field, Schema } from '@dockite/database';
 import { Tree } from 'element-ui';
 import { TreeData, TreeNode } from 'element-ui/types/tree';
-import { cloneDeep, sortBy, chunk } from 'lodash';
-import { Component, Vue, Watch, Ref } from 'nuxt-property-decorator';
+import { chunk, cloneDeep, sortBy } from 'lodash';
+import { Component, Ref, Vue, Watch } from 'nuxt-property-decorator';
 import { Fragment } from 'vue-fragment';
 
-import { ManyResultSet, FindDocumentResultItem } from '../../../common/types';
+import { FindDocumentResultItem, ManyResultSet } from '../../../common/types';
 
 import * as data from '~/store/data';
 import * as document from '~/store/document';
@@ -88,6 +102,22 @@ export default class TreeViewComponent extends Vue {
     }
 
     return 0;
+  }
+
+  get labelField(): Field | null {
+    if (!this.schema || !this.schema.settings.treeViewLabelField) {
+      return null;
+    }
+
+    const field = this.schema.fields.find(
+      field => field.name === this.schema.settings.treeViewLabelField,
+    );
+
+    if (!field) {
+      return null;
+    }
+
+    return field;
   }
 
   public async fetchFindDocumentsBySchemaId(page = 1): Promise<void> {
