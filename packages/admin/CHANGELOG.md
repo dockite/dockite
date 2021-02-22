@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.5.0-alpha.7](https://github.com/dockite/dockite/compare/@dockite/admin@0.5.0-alpha.6...@dockite/admin@0.5.0-alpha.7) (2021-02-22)
+
+
+### Features
+
+* **admin:** allow field level views within tree-view ([b538854](https://github.com/dockite/dockite/commit/b5388540908d17f699e657388bf331384e077ad3))
+
+
+
+
+
 # [0.5.0-alpha.6](https://github.com/dockite/dockite/compare/@dockite/admin@0.5.0-alpha.5...@dockite/admin@0.5.0-alpha.6) (2021-02-22)
 
 
