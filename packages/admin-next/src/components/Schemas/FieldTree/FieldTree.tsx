@@ -37,7 +37,7 @@ export const SchemaFieldTreeComponent = defineComponent({
 
     const activeTab = ref('');
 
-    const fieldDrawerVisible = ref(true);
+    const fieldDrawerVisible = ref(false);
 
     const fieldTreeItemToBeEdited = ref<FieldTreeItem | null>(null);
 

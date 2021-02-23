@@ -7,6 +7,7 @@ import { BaseSchema } from '~/common/types';
 import {
   SchemaCreateFieldsStepComponent,
   SchemaCreateNameStepComponent,
+  SchemaCreateSettingsStepComponent,
 } from '~/components/Schemas/Create/Steps';
 import { usePortal } from '~/hooks';
 
@@ -18,7 +19,7 @@ export const SchemaCreatePage = defineComponent({
   setup: () => {
     const { setPortal } = usePortal();
 
-    const activeStep = ref(1);
+    const activeStep = ref(2);
 
     // const schema = reactive<BaseSchema>({
     //   name: '',
@@ -29,8 +30,8 @@ export const SchemaCreatePage = defineComponent({
     //   settings: {},
     // });
     const schema = reactive<BaseSchema>({
-      name: '',
-      title: '',
+      name: 'MySchema',
+      title: 'MySchema',
       type: SchemaType.DEFAULT,
       groups: { General: ['asdf', 'sdfv', 'erwt'] },
       fields: ([
@@ -97,6 +98,17 @@ export const SchemaCreatePage = defineComponent({
             />
           );
 
+        case 2:
+          return (
+            <SchemaCreateSettingsStepComponent
+              v-model={schema}
+              {...{
+                'onProgress:nextStep': () => handleIncrementStep(),
+                'onProgress:previousStep': () => handleDecrementStep(),
+              }}
+            />
+          );
+
         default:
           return (
             <SchemaCreateNameStepComponent
@@ -115,10 +127,10 @@ export const SchemaCreatePage = defineComponent({
         <div>
           <div class="py-5 -mx-5">
             <el-steps active={activeStep.value} finishStatus="success" alignCenter>
-              <el-step title="Name" description="Name your Schema"></el-step>
-              <el-step title="Fields" description="Add the Fields"></el-step>
-              <el-step title="Settings" description="Apply additional Settings"></el-step>
-              <el-step title="Review" description="Review the Schema"></el-step>
+              <el-step title="Name" description="Name your Schema" />
+              <el-step title="Fields" description="Add the Fields" />
+              <el-step title="Settings" description="Apply additional Settings" />
+              <el-step title="Review" description="Review the Schema" />
             </el-steps>
           </div>
 

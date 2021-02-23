@@ -55,7 +55,7 @@ export const SchemaCreateNameStepComponent = defineComponent({
     return () => {
       return (
         <div>
-          <h3 class="text-lg font-semibold pb-3">
+          <h3 class="text-xl font-semibold pb-3">
             First, lets give the {schemaType.value} a name!
           </h3>
 

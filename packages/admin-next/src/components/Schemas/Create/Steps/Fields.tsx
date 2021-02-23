@@ -34,10 +34,18 @@ export const SchemaCreateFieldsStepComponent = defineComponent({
       }
     };
 
+    const handlePreviousStep = (): void => {
+      if (form.value) {
+        form.value.validate().then(() => {
+          ctx.emit('progress:previousStep');
+        });
+      }
+    };
+
     return () => {
       return (
         <div>
-          <h3 class="text-lg font-semibold pb-3">
+          <h3 class="text-xl font-semibold pb-3">
             Next, lets add fields to our {schemaType.value}!
           </h3>
 
@@ -65,7 +73,9 @@ export const SchemaCreateFieldsStepComponent = defineComponent({
 
             <el-form-item>
               <div class="flex justify-between items-center pt-5">
-                <span />
+                <el-button type="text" onClick={() => handlePreviousStep()}>
+                  Previous Step
+                </el-button>
 
                 <el-button type="primary" onClick={() => handleProgressStep()}>
                   Next Step
