@@ -21,7 +21,7 @@ export class SearchEngine {
   public locale!: string;
 
   @ViewColumn()
-  public data!: Record<string, any>; // eslint-disable-line
+  public data!: Record<string, any>;
 
   @ViewColumn()
   public publishedAt?: Date | null;

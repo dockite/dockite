@@ -1,4 +1,5 @@
-import { computed, defineComponent, PropType, ref, Transition, TransitionGroup, watch } from 'vue';
+import { cloneDeep } from 'lodash';
+import { computed, defineComponent, PropType, ref, Transition, watch } from 'vue';
 
 import { SchemaType } from '@dockite/types';
 
@@ -18,6 +19,8 @@ export const SchemaCreateSettingsStepComponent = defineComponent({
       set: value => ctx.emit('update:modelValue', value),
     });
 
+    const settings = computed(() => modelValue.value.settings);
+
     const form = ref<any | null>(null);
 
     const schemaType = computed(() =>
@@ -25,18 +28,14 @@ export const SchemaCreateSettingsStepComponent = defineComponent({
     );
 
     watch(
-      () => modelValue.value.settings,
-      (oldValue, newValue) => {
-        // If we've recently enabled mutations and it wasn't previously enabled
-        if (!oldValue.enableMutations && newValue.enableMutations) {
-          // Enable the per mutation type settings.
-          modelValue.value.settings = {
-            ...modelValue.value.settings,
-            enableCreateMutation: true,
-            enableUpdateMutation: true,
-            enableDeleteMutation: true,
-          };
-        }
+      () => settings.value.enableMutations,
+      value => {
+        // Update the specific mutation settings to match value
+        Object.assign(modelValue.value.settings, {
+          enableCreateMutation: !!value,
+          enableUpdateMutation: !!value,
+          enableDeleteMutation: !!value,
+        });
       },
     );
 
@@ -88,44 +87,47 @@ export const SchemaCreateSettingsStepComponent = defineComponent({
                 </div>
               </el-form-item>
 
-              {/* I am not enjoying applying transitions in this matter */}
-              <Transition name="el-fade-in-linear">
-                {modelValue.value.settings.enableMutations ? (
-                  <div>
-                    <el-form-item label="Enable Create Muatation?" prop="settings.enableMutations">
-                      <el-switch v-model={modelValue.value.settings.enableCreateMutation} />
+              <el-form-item
+                label="Enable Create Muatation?"
+                prop="settings.enableMutations"
+                class={{ hidden: !settings.value.enableMutations }}
+              >
+                <el-switch v-model={modelValue.value.settings.enableCreateMutation} />
 
-                      <div class="el-form-item__description">
-                        Controls whether the document creation API method is enabled for the{' '}
-                        {schemaType.value}. By enabling this you will be able to create{' '}
-                        {modelValue.value.title} documents using the GraphQL API.
-                      </div>
-                    </el-form-item>
+                <div class="el-form-item__description">
+                  Controls whether the document creation API method is enabled for the{' '}
+                  {schemaType.value}. By enabling this you will be able to create{' '}
+                  {modelValue.value.title} documents using the GraphQL API.
+                </div>
+              </el-form-item>
 
-                    <el-form-item label="Enable Update Muatation?" prop="settings.enableMutations">
-                      <el-switch v-model={modelValue.value.settings.enableUpdateMutation} />
+              <el-form-item
+                label="Enable Update Muatation?"
+                prop="settings.enableMutations"
+                class={{ hidden: !settings.value.enableMutations }}
+              >
+                <el-switch v-model={modelValue.value.settings.enableUpdateMutation} />
 
-                      <div class="el-form-item__description">
-                        Controls whether the document update API method is enabled for the{' '}
-                        {schemaType.value}. By enabling this you will be able to update{' '}
-                        {modelValue.value.title} documents using the GraphQL API.
-                      </div>
-                    </el-form-item>
+                <div class="el-form-item__description">
+                  Controls whether the document update API method is enabled for the{' '}
+                  {schemaType.value}. By enabling this you will be able to update{' '}
+                  {modelValue.value.title} documents using the GraphQL API.
+                </div>
+              </el-form-item>
 
-                    <el-form-item label="Enable Delete Muatation?" prop="settings.enableMutations">
-                      <el-switch v-model={modelValue.value.settings.enableDeleteMutation} />
+              <el-form-item
+                label="Enable Delete Muatation?"
+                prop="settings.enableMutations"
+                class={{ hidden: !settings.value.enableMutations }}
+              >
+                <el-switch v-model={modelValue.value.settings.enableDeleteMutation} />
 
-                      <div class="el-form-item__description">
-                        Controls whether the document deletion API method is enabled for the{' '}
-                        {schemaType.value}. By enabling this you will be able to delete{' '}
-                        {modelValue.value.title} documents using the GraphQL API.
-                      </div>
-                    </el-form-item>
-                  </div>
-                ) : (
-                  <span></span>
-                )}
-              </Transition>
+                <div class="el-form-item__description">
+                  Controls whether the document deletion API method is enabled for the{' '}
+                  {schemaType.value}. By enabling this you will be able to delete{' '}
+                  {modelValue.value.title} documents using the GraphQL API.
+                </div>
+              </el-form-item>
             </fieldset>
 
             <fieldset

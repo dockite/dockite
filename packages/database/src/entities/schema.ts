@@ -22,17 +22,53 @@ import { SchemaRevision } from './schema-revision';
 // Register the enum for type-graphql
 registerEnumType(SchemaType, { name: 'SchemaType' });
 
-interface SchemaSettings extends Record<string, any> {
-  fieldsToDisplay?: string[];
-  enableTreeView?: boolean;
-  treeViewField?: string;
-  treeViewLabelField?: string;
-  treeViewSortField?: string;
-  enableMutations?: boolean;
+export interface SchemaTableViewSettings {
+  fieldsToDisplay: string[];
+  defaultOrderBy: {
+    column: string;
+    direction: 'ASC' | 'DESC';
+  };
+}
+
+export interface SchemaTreeViewSettings {
+  parentField: string;
+  labelField?: string;
+  sortField?: string;
+}
+
+export interface SchemaGridViewSettings {
+  labelField?: string;
+
+  imageField?: string;
+
+  defaultOrderBy: {
+    column: string;
+    direction: 'ASC' | 'DESC';
+  };
+
+  fieldsToDisplay: [];
+}
+
+export interface SchemaConfigurableView<TConstraints> {
+  name: string;
+  type: 'table' | 'tree' | 'grid';
+  settings: SchemaTableViewSettings | SchemaTreeViewSettings | SchemaGridViewSettings;
+  constraints: TConstraints;
+}
+
+export interface SchemaSettings<TConstraint = any> extends Record<string, any> {
+  // Mutations
+  enableMutations: boolean;
   enableCreateMutation?: boolean;
   enableUpdateMutation?: boolean;
   enableDeleteMutation?: boolean;
+
+  // Views
+  defaultView?: string;
+  fieldsToDisplay: string[];
+  views: SchemaConfigurableView<TConstraint>[];
 }
+
 @Entity()
 @ObjectType()
 export class Schema {
@@ -54,11 +90,11 @@ export class Schema {
 
   @Column({ type: 'jsonb' })
   @GraphQLField(_type => GraphQLJSON)
-  public groups!: any; // eslint-disable-line
+  public groups!: any;
 
   @Column({ type: 'jsonb' })
   @GraphQLField(_type => GraphQLJSON)
-  public settings!: SchemaSettings; // eslint-disable-line
+  public settings!: SchemaSettings;
 
   @OneToMany(
     _type => Document,

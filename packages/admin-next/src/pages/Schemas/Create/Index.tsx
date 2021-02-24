@@ -57,7 +57,11 @@ export const SchemaCreatePage = defineComponent({
           settings: { required: false },
         },
       ] as any) as Field[],
-      settings: {},
+      settings: {
+        enableMutations: false,
+        fieldsToDisplay: [],
+        views: [],
+      },
     });
 
     setPortal(DASHBOARD_HEADER_PORTAL_TITLE, <span>Create a new Schema</span>);
