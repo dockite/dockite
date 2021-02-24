@@ -1,6 +1,6 @@
 {
   "name": "@dockite/field",
-  "version": "0.4.0-alpha.0",
+  "version": "1.0.0",
   "main": "lib/index.js",
   "module": "lib/index.esm.js",
   "module": "lib/index.esm.js",
@@ -13,14 +13,14 @@
     "lib"
   ],
   "dependencies": {
-    "@dockite/types": "^0.3.0",
+    "@dockite/types": "^1.0.0",
     "graphql": "^15.1.0",
     "type-graphql": "1.0.0-rc.2",
     "typeorm": "^0.2.25",
     "vue": "^3.0.5"
   },
   "devDependencies": {
-    "@dockite/rollup": "^0.1.0",
+    "@dockite/rollup": "^1.0.0",
     "typescript": "^4.1.3"
   }
 }

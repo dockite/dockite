@@ -1,6 +1,6 @@
 {
   "name": "@dockite/types",
-  "version": "0.3.0",
+  "version": "1.0.0",
   "main": "lib/index.js",
   "module": "lib/index.esm.js",
   "license": "MIT",
@@ -20,7 +20,7 @@
     "vue": "^3.0.5"
   },
   "devDependencies": {
-    "@dockite/rollup": "^0.1.0",
+    "@dockite/rollup": "^1.0.0",
     "typescript": "^4.1.3"
   }
 }

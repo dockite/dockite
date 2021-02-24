@@ -1,6 +1,6 @@
 {
   "name": "@dockite/field-code",
-  "version": "0.3.1-alpha.0",
+  "version": "1.0.0",
   "main": "lib/index.js",
   "module": "lib/index.esm.js",
   "license": "MIT",
@@ -16,9 +16,9 @@
     "lib"
   ],
   "dependencies": {
-    "@dockite/database": "^0.4.1-alpha.0",
-    "@dockite/field": "^0.4.0-alpha.0",
-    "@dockite/types": "^0.3.0",
+    "@dockite/database": "^1.0.0",
+    "@dockite/field": "^1.0.0",
+    "@dockite/types": "^1.0.0",
     "codemirror": "^5.52.2",
     "codemirror-graphql": "^0.11.6",
     "diff-match-patch": "^1.0.4",
@@ -33,7 +33,7 @@
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.10.1",
     "@babel/plugin-proposal-decorators": "^7.10.1",
-    "@dockite/rollup": "^0.1.0",
+    "@dockite/rollup": "^1.0.0",
     "@types/codemirror": "0.0.56",
     "@types/graphql-type-json": "^0.3.2",
     "@typescript-eslint/eslint-plugin": "^2.20.0",

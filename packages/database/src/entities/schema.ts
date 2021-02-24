@@ -24,7 +24,7 @@ registerEnumType(SchemaType, { name: 'SchemaType' });
 
 export interface SchemaTableViewSettings {
   fieldsToDisplay: string[];
-  defaultOrderBy: {
+  defaultOrderBy?: {
     column: string;
     direction: 'ASC' | 'DESC';
   };
@@ -41,7 +41,7 @@ export interface SchemaGridViewSettings {
 
   imageField?: string;
 
-  defaultOrderBy: {
+  defaultOrderBy?: {
     column: string;
     direction: 'ASC' | 'DESC';
   };
@@ -49,14 +49,14 @@ export interface SchemaGridViewSettings {
   fieldsToDisplay: [];
 }
 
-export interface SchemaConfigurableView<TConstraints> {
+export interface SchemaConfigurableView<TConstraints = any[]> {
   name: string;
-  type: 'table' | 'tree' | 'grid';
-  settings: SchemaTableViewSettings | SchemaTreeViewSettings | SchemaGridViewSettings;
-  constraints: TConstraints;
+  type: 'table' | 'tree' | 'grid' | null;
+  settings: SchemaTableViewSettings | SchemaTreeViewSettings | SchemaGridViewSettings | null;
+  constraints: TConstraints | null;
 }
 
-export interface SchemaSettings<TConstraint = any> extends Record<string, any> {
+export interface SchemaSettings extends Record<string, any> {
   // Mutations
   enableMutations: boolean;
   enableCreateMutation?: boolean;
@@ -66,7 +66,7 @@ export interface SchemaSettings<TConstraint = any> extends Record<string, any> {
   // Views
   defaultView?: string;
   fieldsToDisplay: string[];
-  views: SchemaConfigurableView<TConstraint>[];
+  views: SchemaConfigurableView[];
 }
 
 @Entity()

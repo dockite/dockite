@@ -1,6 +1,6 @@
 {
   "name": "@dockite/field-media-manager",
-  "version": "0.1.1-alpha.0",
+  "version": "1.0.0",
   "main": "lib/index.js",
   "module": "lib/index.esm.js",
   "license": "MIT",
@@ -13,9 +13,9 @@
     "lib"
   ],
   "dependencies": {
-    "@dockite/database": "^0.4.1-alpha.0",
-    "@dockite/field": "^0.4.0-alpha.0",
-    "@dockite/types": "^0.3.0",
+    "@dockite/database": "^1.0.0",
+    "@dockite/field": "^1.0.0",
+    "@dockite/types": "^1.0.0",
     "apollo-client": "^2.6.10",
     "axios": "^0.19.2",
     "graphql": "^15.1.0",
@@ -29,12 +29,12 @@
 
   },
   "peerDependencies": {
-    "@dockite/module-s3-presign": "^0.3.0-alpha.9"
+    "@dockite/module-s3-presign": "^1.0.0"
   },
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.10.1",
     "@babel/plugin-proposal-decorators": "^7.10.1",
-    "@dockite/rollup": "^0.1.0",
+    "@dockite/rollup": "^1.0.0",
     "@typescript-eslint/eslint-plugin": "^2.20.0",
     "@typescript-eslint/parser": "^2.20.0",
     "eslint": "^6.8.0",

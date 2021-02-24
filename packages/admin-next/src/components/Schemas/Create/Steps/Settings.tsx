@@ -1,7 +1,8 @@
-import { cloneDeep } from 'lodash';
-import { computed, defineComponent, PropType, ref, Transition, watch } from 'vue';
+import { computed, defineComponent, PropType, ref, watch } from 'vue';
 
 import { SchemaType } from '@dockite/types';
+
+import { SchemaViewConfigurationComponent } from '../../ViewConfiguration';
 
 import { fieldsStepFormRules } from './formRules';
 import { StepComponentProps } from './types';
@@ -38,6 +39,25 @@ export const SchemaCreateSettingsStepComponent = defineComponent({
         });
       },
     );
+
+    const handleAddView = (): void => {
+      modelValue.value.settings.views = [
+        ...modelValue.value.settings.views,
+        {
+          name: '',
+          type: null,
+          settings: null,
+          constraints: null,
+        },
+      ];
+    };
+
+    const handleRemoveView = (index: number): void => {
+      // Remove the view by filtering for views that aren't at the index position
+      modelValue.value.settings.views = modelValue.value.settings.views.filter(
+        (_, i) => i !== index,
+      );
+    };
 
     const handleProgressStep = (): void => {
       if (form.value) {
@@ -134,6 +154,51 @@ export const SchemaCreateSettingsStepComponent = defineComponent({
               class={{ 'mt-5 pb-3 border-b': true, hidden: schemaType.value === 'Singleton' }}
             >
               <legend class="text-lg font-semibold pb-3">Document Views</legend>
+              <el-form-item label="Fields to Display" prop="settings.fieldsToDisplay">
+                <el-select v-model={modelValue.value.settings.fieldsToDisplay} multiple>
+                  {modelValue.value.fields.map(field => {
+                    return <el-option label={field.title} value={field.name} />;
+                  })}
+                </el-select>
+
+                <div class="el-form-item__description">
+                  The fields to be displayed in the default table view. This is only relevant if you
+                  have not already defined a specific default view for the {schemaType.value}.
+                </div>
+              </el-form-item>
+
+              <el-form-item label="Configured Views" prop="settings.views">
+                <div class="p-3 border rounded border-dashed">
+                  <p
+                    class={{
+                      'text-sm text-center opacity-50 py-3': true,
+                      hidden: settings.value.views.length > 0,
+                    }}
+                  >
+                    There are currently no configured views. You can add one using the button below!
+                  </p>
+
+                  {settings.value.views.map((_, index) => {
+                    return (
+                      <SchemaViewConfigurationComponent
+                        v-model={modelValue.value.settings.views[index]}
+                        {...{ 'onAction:removeView': () => handleRemoveView(index) }}
+                      />
+                    );
+                  })}
+
+                  <div class="flex justify-center pt-3">
+                    <el-button onClick={() => handleAddView()}>
+                      Add View <i class="el-icon-plus el-icon--right" />
+                    </el-button>
+                  </div>
+                </div>
+
+                <div class="el-form-item__description">
+                  The available views for the {schemaType.value}. These will be displayed as
+                  dropdown options when viewing the {schemaType.value}’s documents.
+                </div>
+              </el-form-item>
             </fieldset>
 
             <el-form-item>

@@ -1,6 +1,6 @@
 {
   "name": "@dockite/admin-next",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
   "scripts": {
@@ -8,7 +8,7 @@
     "dev": "HTTPS=true NODE_ENV=development EXTRACT_CSS=true rollup -c -w"
   },
   "dependencies": {
-    "@dockite/database": "^0.4.0",
+    "@dockite/database": "^1.0.0",
     "@sentry/browser": "^5.29.2",
     "@sentry/tracing": "^5.29.2",
     "apollo-cache-inmemory": "^1.6.6",
@@ -34,7 +34,7 @@
   },
   "devDependencies": {
     "@auth0/auth0-spa-js": "^1.13.5",
-    "@dockite/rollup": "^0.1.0",
+    "@dockite/rollup": "^1.0.0",
     "@types/lodash": "^4.14.149",
     "@typescript-eslint/eslint-plugin": "^4.10.0",
     "@typescript-eslint/parser": "^4.10.0",

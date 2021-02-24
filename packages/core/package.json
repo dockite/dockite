@@ -1,6 +1,6 @@
 {
   "name": "@dockite/core",
-  "version": "0.5.0-alpha.1",
+  "version": "1.0.0",
   "main": "lib/index.js",
   "module": "lib/index.esm.js",
   "license": "MIT",
@@ -15,13 +15,13 @@
     "lib"
   ],
   "dependencies": {
-    "@dockite/ability": "^0.2.2-alpha.0",
-    "@dockite/database": "^0.4.1-alpha.0",
-    "@dockite/field": "^0.4.0-alpha.0",
-    "@dockite/manager": "^0.2.2-alpha.0",
-    "@dockite/transformer": "^0.4.0-alpha.1",
-    "@dockite/types": "^0.3.0",
-    "@dockite/where-builder": "^0.2.1-alpha.1",
+    "@dockite/ability": "^1.0.0",
+    "@dockite/database": "^1.0.0",
+    "@dockite/field": "^1.0.0",
+    "@dockite/manager": "^1.0.0",
+    "@dockite/transformer": "^1.0.0",
+    "@dockite/types": "^1.0.0",
+    "@dockite/where-builder": "^1.0.0",
     "@graphql-modules/core": "^0.7.14",
     "@types/uuid": "^8.0.0",
     "ajv": "^6.12.2",

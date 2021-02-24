@@ -2498,46 +2498,6 @@
   resolved "https://registry.yarnpkg.com/@discoveryjs%2fjson-ext/-/json-ext-0.5.2.tgz#8f03a22a04de437254e8ce8cc84ba39689288752"
   integrity sha512-HyYEUDeIj5rRQU2Hk5HTB2uHsbRQpF70nvMhVzi+VJR0X+xNEhjPui4/kBf3VeH/wqD28PT4sVOm8qqLjBrSZg==
 
-"@dockite/database@^0.4.0":
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/@dockite%2fdatabase/-/database-0.4.0.tgz#52a93b8f9f61e8a6d6d441aa36d23c2af9111035"
-  integrity sha512-vyEeLcH2MwBKqtqX2OADDGTm5+kHLvLyq3O4JTu0E6FCv4PCkXnNz68FwLkb/CnmM5e6d3MVrR/beIrpMIwvrA==
-  dependencies:
-    "@dockite/field" "^0.3.0"
-    "@dockite/manager" "^0.2.1"
-    "@dockite/types" "^0.3.0"
-    debug "^4.1.1"
-    graphql "^15.1.0"
-    graphql-type-json "^0.3.1"
-    lodash "^4.17.15"
-    reflect-metadata "^0.1.13"
-    type-graphql "1.0.0-rc.2"
-    typeorm "^0.2.25"
-
-"@dockite/field@^0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@dockite%2ffield/-/field-0.3.0.tgz#a054847048f1eea0efa2ebc31708a005f98724fd"
-  integrity sha512-OLwyp3zkBz8b6rP2UN6BjLodZvOQIxOyX7p5GeiZTXaVoKyPy6Qswezzq9LSshRIGgF2yYDsvrdudgVRvzS0rQ==
-  dependencies:
-    "@dockite/types" "^0.3.0"
-    graphql "^15.1.0"
-    type-graphql "1.0.0-rc.2"
-    typeorm "^0.2.25"
-    vue "^2.6.11"
-
-"@dockite/manager@^0.2.1":
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/@dockite%2fmanager/-/manager-0.2.1.tgz#0077abad9ddb2ee0c3e09e09c0418f7ec3697d4c"
-  integrity sha512-2+deDUGZcGjtGWJMVVFbmuWYjFxeRrd9hg46k7YuTASRv46shXv3AKPBVch+/1CmOs/i4xBWDaiaW+PLEyk3kw==
-  dependencies:
-    "@dockite/field" "^0.3.0"
-    "@dockite/types" "^0.3.0"
-    debug "^4.1.1"
-    graphql "^15.1.0"
-    lodash "^4.17.15"
-    type-graphql "1.0.0-rc.2"
-    typeorm "^0.2.25"
-
 "@eslint/eslintrc@^0.2.2":
   version "0.2.2"
   resolved "https://registry.yarnpkg.com/@eslint%2feslintrc/-/eslintrc-0.2.2.tgz#d01fc791e2fc33e88a29d6f3dc7e93d0cd784b76"
@@ -18132,7 +18092,7 @@ source-list-map@^2.0.0:
   resolved "https://registry.yarnpkg.com/source-list-map/-/source-list-map-2.0.1.tgz#3993bd873bfc48479cca9ea3a547835c7c154b34"
   integrity sha512-qnQ7gVMxGNxsiL4lEuJwe/To8UnK7fAnmbGEEH8RpLouuKbeEm0lhbQVFIrNSuB+G7tVrAlVsZgETT5nljf+Iw==
 
-"source-map-fast@npm:source-map@0.7.3":
+"source-map-fast@npm:source-map@0.7.3", source-map@^0.7.3, source-map@~0.7.2:
   version "0.7.3"
   resolved "https://registry.yarnpkg.com/source-map/-/source-map-0.7.3.tgz#5302f8169031735226544092e64981f751750383"
   integrity sha512-CkCj6giN3S+n9qrYiBTX5gystlENnRW5jZeNLHpe6aue+SrHcG5VYwujhW9s4dY31mEGsxBDrHR6oI69fTXsaQ==
@@ -18175,11 +18135,6 @@ source-map@^0.6.0, source-map@^0.6.1, source-map@~0.6.0, source-map@~0.6.1:
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/source-map/-/source-map-0.6.1.tgz#74722af32e9614e9c287a8d0bbde48b5e2f1a263"
   integrity sha512-UjgapumWlbMhkBgzT7Ykc5YXUT46F0iKu8SGXq0bcwP5dz/h0Plj6enJqjz1Zbq2l5WaqYnrVbwWOWMyF3F47g==
-
-source-map@^0.7.3, source-map@~0.7.2:
-  version "0.7.3"
-  resolved "https://registry.yarnpkg.com/source-map/-/source-map-0.7.3.tgz#5302f8169031735226544092e64981f751750383"
-  integrity sha512-CkCj6giN3S+n9qrYiBTX5gystlENnRW5jZeNLHpe6aue+SrHcG5VYwujhW9s4dY31mEGsxBDrHR6oI69fTXsaQ==
 
 sourcemap-codec@^1.4.4:
   version "1.4.8"
