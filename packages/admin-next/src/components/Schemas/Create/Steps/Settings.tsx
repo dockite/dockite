@@ -155,7 +155,11 @@ export const SchemaCreateSettingsStepComponent = defineComponent({
             >
               <legend class="text-lg font-semibold pb-3">Document Views</legend>
               <el-form-item label="Fields to Display" prop="settings.fieldsToDisplay">
-                <el-select v-model={modelValue.value.settings.fieldsToDisplay} multiple>
+                <el-select
+                  v-model={modelValue.value.settings.fieldsToDisplay}
+                  class="w-full"
+                  multiple
+                >
                   {modelValue.value.fields.map(field => {
                     return <el-option label={field.title} value={field.name} />;
                   })}

@@ -2,6 +2,10 @@ import { computed, defineComponent, PropType, ref } from 'vue';
 
 import { SchemaConfigurableView } from '@dockite/database';
 
+import { CollapsableComponent } from '~/components/Common/Collapsable';
+
+import './ViewConfiguration.scss';
+
 export interface SchemaViewConfigurationComponentProps {
   modelValue: SchemaConfigurableView;
 }
@@ -23,22 +27,33 @@ export const SchemaViewConfigurationComponent = defineComponent({
       set: value => ctx.emit('update:modelValue', value),
     });
 
-    const expanded = ref<string[]>([]);
+    const expanded = ref(false);
 
     if (!modelValue.value.name) {
-      expanded.value = ['expanded'];
+      expanded.value = true;
     }
 
     return () => {
       return (
-        <el-collapse v-model={expanded.value}>
-          <el-collapse-item
-            name="expanded"
-            title={modelValue.value.name || 'Schema View Configuration Item'}
-          >
-            Hullo
-          </el-collapse-item>
-        </el-collapse>
+        <CollapsableComponent
+          class="view-configuration--item"
+          v-model={expanded.value}
+          title={modelValue.value.name || 'Schema View Configuration Item'}
+        >
+          <el-form model={modelValue.value}>
+            <el-form-item label="Name" prop="name" required>
+              <el-input v-model={modelValue.value.name} />
+            </el-form-item>
+
+            <el-form-item label="Type" prop="type" required>
+              <el-select v-model={modelValue.value.type} class="w-full">
+                <el-option label="Table View" value="table" />
+                <el-option label="Tree View" value="tree" />
+                <el-option label="Grid View" value="grid" />
+              </el-select>
+            </el-form-item>
+          </el-form>
+        </CollapsableComponent>
       );
     };
   },

@@ -2,6 +2,14 @@
 
 @import '~element-plus/packages/theme-chalk/src/index';
 
+.bg-primary {
+  background: $--color-primary;
+}
+
+.text-primary {
+  color: $--color-primary;
+}
+
 .el-button--dashed {
   border-style: dashed;
 }
