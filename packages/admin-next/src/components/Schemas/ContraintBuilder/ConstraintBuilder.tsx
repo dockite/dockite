@@ -1,11 +1,7 @@
 import { computed, defineComponent, PropType } from 'vue';
 
 import {
-  AndQuery,
-  OrQuery,
   Constraint,
-  ConstraintArray,
-  ConstraintOperator,
   PossibleConstraints,
   SupportedOperators,
 } from '@dockite/where-builder/lib/types';
@@ -44,7 +40,7 @@ export const SchemaConstraintBuilderComponent = defineComponent({
     },
   },
 
-  emits: ['update:modelValue'],
+  emits: ['update:modelValue', 'action:removeConstraintGroup'],
 
   setup: (props, ctx) => {
     const modelValue = computed({
@@ -90,7 +86,7 @@ export const SchemaConstraintBuilderComponent = defineComponent({
 
     const borderClass = computed(() => DEPTH_CLASSES[props.depth % DEPTH_CLASSES.length]);
 
-    const handleAddAndConstraint = (): void => {
+    const handleAddAndConstraintGroup = (): void => {
       if (!modelValue.value) {
         modelValue.value = {
           AND: [],
@@ -104,7 +100,7 @@ export const SchemaConstraintBuilderComponent = defineComponent({
       }
     };
 
-    const handleAddOrConstraint = (): void => {
+    const handleAddOrConstraintGroup = (): void => {
       if (!modelValue.value) {
         modelValue.value = {
           OR: [],
@@ -116,6 +112,24 @@ export const SchemaConstraintBuilderComponent = defineComponent({
           OR: [],
         });
       }
+    };
+
+    const handleRemoveConstraintGroup = (index?: number): void => {
+      if (index !== undefined) {
+        if (modelValueConstraintArray.value) {
+          modelValueConstraintArray.value.splice(index, 1);
+        }
+
+        return;
+      }
+
+      if (props.depth === 1) {
+        modelValue.value = null;
+
+        return;
+      }
+
+      ctx.emit('action:removeConstraintGroup');
     };
 
     const handleAddConstraintItem = (index?: number): void => {
@@ -135,6 +149,12 @@ export const SchemaConstraintBuilderComponent = defineComponent({
             value: '',
           });
         }
+      }
+    };
+
+    const handleRemoveConstraintItem = (index: number): void => {
+      if (modelValueConstraintArray.value && modelValueConstraintArray.value[index]) {
+        modelValueConstraintArray.value.splice(index, 1);
       }
     };
 
@@ -165,6 +185,7 @@ export const SchemaConstraintBuilderComponent = defineComponent({
                 v-model={modelValueConstraintArray.value[index]}
                 schema={props.schema}
                 depth={props.depth + 1}
+                {...{ 'onAction:removeConstraintGroup': () => handleRemoveConstraintGroup(index) }}
               />
             </div>
           );
@@ -188,12 +209,21 @@ export const SchemaConstraintBuilderComponent = defineComponent({
               />
             </div>
 
-            <div class="flex items-center -mx-2 px-2">
+            <div class="flex flex-1 items-center -mx-2 px-2">
               <div class="px-2" style={{ width: '40%' }}>
-                <el-input
+                <el-select
                   v-model={(modelValueConstraintArray.value[index] as Constraint).name}
+                  class="w-full"
                   placeholder="Name"
-                />
+                >
+                  <el-option label="Document Created Date" value="createdAt" />
+
+                  <el-option label="Document Updated Date" value="createdAt" />
+
+                  {props.schema.fields.map(field => (
+                    <el-option label={field.title} value={field.name} />
+                  ))}
+                </el-select>
               </div>
 
               <div class="px-2" style={{ width: '20%' }}>
@@ -208,11 +238,32 @@ export const SchemaConstraintBuilderComponent = defineComponent({
               </div>
 
               <div class="px-2" style={{ width: '40%' }}>
-                <el-input
-                  v-model={(modelValueConstraintArray.value[index] as Constraint).value}
-                  placeholder="Value"
-                />
+                {modelValueConstraintArray.value[index] &&
+                (modelValueConstraintArray.value[index] as Constraint).operator.includes('date') ? (
+                  <el-date-picker
+                    type="datetime"
+                    v-model={(modelValueConstraintArray.value[index] as Constraint).value}
+                    placeholder="Value"
+                  />
+                ) : (
+                  <el-input
+                    v-model={(modelValueConstraintArray.value[index] as Constraint).value}
+                    placeholder="Value"
+                  />
+                )}
               </div>
+            </div>
+
+            <div class="px-2">
+              <el-button
+                size="mini"
+                type="text"
+                class="hover:opacity-75"
+                title="Remove Constraint"
+                onClick={() => handleRemoveConstraintItem(index)}
+              >
+                <i class="el-icon-delete text-red-600" />
+              </el-button>
             </div>
           </div>
         );
@@ -227,7 +278,7 @@ export const SchemaConstraintBuilderComponent = defineComponent({
           class={{
             'p-3 relative border-l-4': true,
             [borderClass.value]: true,
-            'mt-3': props.depth > 1,
+            'mt-3 border-b-4': props.depth > 1,
           }}
         >
           {constraintType.value && (
@@ -236,7 +287,17 @@ export const SchemaConstraintBuilderComponent = defineComponent({
             </div>
           )}
 
-          <div class="pl-3">
+          {/* Constraint item view */}
+          <div class="pl-5">
+            {/* Show help text when there are no currently applied constraints */}
+            {!modelValue.value && (
+              <p class="opacity-50">
+                There are currently no applied constraints. You can add a constraint using the
+                buttons below
+              </p>
+            )}
+
+            {/* Add constraint item when there are none */}
             {modelValueConstraintArray.value && (
               <div>
                 <div class={{ 'pb-3': true, hidden: modelValueConstraintArray.value.length > 0 }}>
@@ -255,13 +316,27 @@ export const SchemaConstraintBuilderComponent = defineComponent({
               </div>
             )}
 
-            {props.depth < 5 && (
-              <div class="pt-3">
-                <el-button onClick={() => handleAddAndConstraint()}>AND</el-button>
+            <div class="pt-3 flex items-center justify-between">
+              {props.depth <= 5 && (
+                <div>
+                  <el-button onClick={() => handleAddAndConstraintGroup()}>AND</el-button>
 
-                <el-button onClick={() => handleAddOrConstraint()}>OR</el-button>
-              </div>
-            )}
+                  <el-button onClick={() => handleAddOrConstraintGroup()}>OR</el-button>
+                </div>
+              )}
+
+              {modelValue.value && (
+                <el-button
+                  size="mini"
+                  type="text"
+                  class="hover:opacity-75"
+                  title="Remove Constraint"
+                  onClick={() => handleRemoveConstraintGroup()}
+                >
+                  <span class="text-red-600">Remove Constraint Group</span>
+                </el-button>
+              )}
+            </div>
           </div>
         </div>
       );

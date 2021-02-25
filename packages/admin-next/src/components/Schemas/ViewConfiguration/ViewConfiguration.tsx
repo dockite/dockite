@@ -57,8 +57,14 @@ export const SchemaViewConfigurationComponent = defineComponent({
 
     const expanded = ref(false);
 
+    const advancedMode = ref(false);
+
     if (!modelValue.value.name) {
       expanded.value = true;
+    }
+
+    if (modelValue.value.constraints) {
+      advancedMode.value = true;
     }
 
     const uniqueViewNameRule = {
@@ -79,6 +85,10 @@ export const SchemaViewConfigurationComponent = defineComponent({
 
     const handleRemoveView = (): void => {
       ctx.emit('action:removeView');
+    };
+
+    const handleToggleAdvancedMode = (): void => {
+      advancedMode.value = !advancedMode.value;
     };
 
     return () => {
@@ -164,12 +174,20 @@ export const SchemaViewConfigurationComponent = defineComponent({
 
             {getViewSettingsForm(modelValue, props.schema, schemaType.value)}
 
-            <el-form-item label="Constraints" prop="constraints">
-              <SchemaConstraintBuilderComponent
-                v-model={modelValue.value.constraints}
-                schema={props.schema}
-              />
-            </el-form-item>
+            <div class="pb-3">
+              <el-button type="text" size="mini" onClick={() => handleToggleAdvancedMode()}>
+                {advancedMode.value ? 'Hide' : 'Show'} Advanced Options
+              </el-button>
+            </div>
+
+            {advancedMode.value && modelValue.value.type !== 'tree' && (
+              <el-form-item label="Constraints" prop="constraints">
+                <SchemaConstraintBuilderComponent
+                  v-model={modelValue.value.constraints}
+                  schema={props.schema}
+                />
+              </el-form-item>
+            )}
 
             <div class="flex justify-between flex-row-reverse">
               <el-button

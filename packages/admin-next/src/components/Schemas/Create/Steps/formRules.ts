@@ -102,6 +102,25 @@ export const settingsStepFormRules = {
               trigger: 'blur',
             },
           ],
+
+          constraints: [
+            {
+              type: 'object',
+              message: 'Constraints must be of type object',
+              fields: {
+                AND: {
+                  type: 'array',
+                  min: 1,
+                  message: 'AND query must contain at least 1 constraint',
+                },
+                OR: {
+                  type: 'array',
+                  min: 1,
+                  message: 'OR query must contain at least 1 constraint',
+                },
+              },
+            },
+          ],
         },
       },
     },

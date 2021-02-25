@@ -1,4 +1,6 @@
-import { computed, defineComponent, PropType, ref } from 'vue';
+import { computed, defineComponent, PropType } from 'vue';
+
+import './Collapsable.scss';
 
 export interface CollapsableComponentProps {
   modelValue: boolean;
@@ -33,18 +35,8 @@ export const CollapsableComponent = defineComponent({
       set: value => ctx.emit('update:modelValue', value),
     });
 
-    const container = ref<HTMLElement | null>(null);
-
     const handleToggleExpansion = (): void => {
       modelValue.value = !modelValue.value;
-    };
-
-    const getContainerHeight = (): string => {
-      if (container.value) {
-        return `${container.value.getBoundingClientRect().height}px`;
-      }
-
-      return '100%';
     };
 
     return () => {
@@ -73,17 +65,13 @@ export const CollapsableComponent = defineComponent({
 
           <div
             class={{
-              'overflow-hidden transition-all duration-300': true,
+              'dockite-collapsable overflow-hidden': true,
+              'dockite-collapsable--active': modelValue.value,
               'rounded-b border-b border-l border-r': modelValue.value,
               'border-0': !modelValue.value,
             }}
-            style={{
-              height: modelValue.value ? getContainerHeight() : '0',
-            }}
           >
-            <div ref={container} class="p-3">
-              {ctx.slots.default && ctx.slots.default()}
-            </div>
+            <div class="p-3">{ctx.slots.default && ctx.slots.default()}</div>
           </div>
         </div>
       );

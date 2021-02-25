@@ -1,0 +1,11 @@
+.dockite-collapsable {
+  transition: opacity 1s linear;
+  opacity: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+.dockite-collapsable.dockite-collapsable--active {
+  opacity: 1;
+  height: auto;
+}
