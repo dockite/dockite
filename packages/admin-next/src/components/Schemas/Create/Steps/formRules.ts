@@ -59,4 +59,51 @@ export const fieldsStepFormRules = {
   ],
 };
 
-export const settingsStepFormRules = {};
+export const settingsStepFormRules = {
+  enableMutations: [
+    {
+      required: true,
+      message: 'Enable API Mutations is required',
+      trigger: 'blur',
+    },
+  ],
+
+  fieldsToDisplay: [
+    {
+      type: 'array',
+      message: 'Fields to Display must be of type Array.',
+      trigger: 'blur',
+    },
+  ],
+
+  views: [
+    {
+      type: 'array',
+      message: 'Configured Views must be of type Array.',
+      trigger: 'blur',
+
+      defaultField: {
+        type: 'object',
+        required: true,
+        fields: {
+          name: [
+            {
+              required: true,
+              message: 'View Item Name is required',
+              trigger: 'blur',
+            },
+          ],
+
+          settings: [
+            {
+              type: 'object',
+              required: true,
+              message: 'View Item Settings is required',
+              trigger: 'blur',
+            },
+          ],
+        },
+      },
+    },
+  ],
+};

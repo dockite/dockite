@@ -4,7 +4,7 @@ import { SchemaType } from '@dockite/types';
 
 import { SchemaViewConfigurationComponent } from '../../ViewConfiguration';
 
-import { fieldsStepFormRules } from './formRules';
+import { settingsStepFormRules } from './formRules';
 import { StepComponentProps } from './types';
 
 export const SchemaCreateSettingsStepComponent = defineComponent({
@@ -21,6 +21,14 @@ export const SchemaCreateSettingsStepComponent = defineComponent({
     });
 
     const settings = computed(() => modelValue.value.settings);
+
+    const views = computed(() => {
+      if (settings.value && settings.value.views) {
+        return settings.value.views;
+      }
+
+      return [];
+    });
 
     const form = ref<any | null>(null);
 
@@ -89,14 +97,14 @@ export const SchemaCreateSettingsStepComponent = defineComponent({
 
           <el-form
             ref={form}
-            model={modelValue.value}
-            rules={fieldsStepFormRules}
+            model={modelValue.value.settings}
+            rules={settingsStepFormRules}
             labelPosition="top"
           >
             <fieldset class="pb-3 border-b">
               <legend class="text-lg font-semibold pb-3">API Methods</legend>
 
-              <el-form-item label="Enable Muatations?" prop="settings.enableMutations">
+              <el-form-item label="Enable GraphQL Muatations" prop="enableMutations">
                 <el-switch v-model={modelValue.value.settings.enableMutations} />
 
                 <div class="el-form-item__description">
@@ -108,8 +116,8 @@ export const SchemaCreateSettingsStepComponent = defineComponent({
               </el-form-item>
 
               <el-form-item
-                label="Enable Create Muatation?"
-                prop="settings.enableMutations"
+                label="Enable Create Muatation"
+                prop="enableCreateMutation"
                 class={{ hidden: !settings.value.enableMutations }}
               >
                 <el-switch v-model={modelValue.value.settings.enableCreateMutation} />
@@ -122,8 +130,8 @@ export const SchemaCreateSettingsStepComponent = defineComponent({
               </el-form-item>
 
               <el-form-item
-                label="Enable Update Muatation?"
-                prop="settings.enableMutations"
+                label="Enable Update Muatation"
+                prop="enableUpdateMutation"
                 class={{ hidden: !settings.value.enableMutations }}
               >
                 <el-switch v-model={modelValue.value.settings.enableUpdateMutation} />
@@ -136,8 +144,8 @@ export const SchemaCreateSettingsStepComponent = defineComponent({
               </el-form-item>
 
               <el-form-item
-                label="Enable Delete Muatation?"
-                prop="settings.enableMutations"
+                label="Enable Delete Muatation"
+                prop="enableDeleteMutation"
                 class={{ hidden: !settings.value.enableMutations }}
               >
                 <el-switch v-model={modelValue.value.settings.enableDeleteMutation} />
@@ -150,11 +158,32 @@ export const SchemaCreateSettingsStepComponent = defineComponent({
               </el-form-item>
             </fieldset>
 
+            {/* Schema View Configuration */}
             <fieldset
               class={{ 'mt-5 pb-3 border-b': true, hidden: schemaType.value === 'Singleton' }}
             >
-              <legend class="text-lg font-semibold pb-3">Document Views</legend>
-              <el-form-item label="Fields to Display" prop="settings.fieldsToDisplay">
+              <legend class="text-lg font-semibold pb-3">{schemaType.value} Views</legend>
+              <el-form-item label="Default View" prop="defaultView">
+                <el-select
+                  v-model={modelValue.value.settings.defaultView}
+                  class="w-full"
+                  clearable
+                  filterable
+                >
+                  {views.value
+                    .filter(view => !!view.name)
+                    .map(view => {
+                      return <el-option label={view.name} value={view.name} />;
+                    })}
+                </el-select>
+
+                <div class="el-form-item__description">
+                  The fields to be displayed in the default table view. This is only relevant if you
+                  have not already defined a specific default view for the {schemaType.value}.
+                </div>
+              </el-form-item>
+
+              <el-form-item label="Fields to Display" prop="fieldsToDisplay">
                 <el-select
                   v-model={modelValue.value.settings.fieldsToDisplay}
                   class="w-full"
@@ -171,11 +200,11 @@ export const SchemaCreateSettingsStepComponent = defineComponent({
                 </div>
               </el-form-item>
 
-              <el-form-item label="Configured Views" prop="settings.views">
+              <el-form-item label="Configured Views" prop="views">
                 <div class="p-3 border rounded border-dashed">
                   <p
                     class={{
-                      'text-sm text-center opacity-50 py-3': true,
+                      'text-sm text-center opacity-50 pt-3 pb-5': true,
                       hidden: settings.value.views.length > 0,
                     }}
                   >
@@ -186,12 +215,14 @@ export const SchemaCreateSettingsStepComponent = defineComponent({
                     return (
                       <SchemaViewConfigurationComponent
                         v-model={modelValue.value.settings.views[index]}
+                        schema={modelValue.value}
+                        class="mb-5"
                         {...{ 'onAction:removeView': () => handleRemoveView(index) }}
                       />
                     );
                   })}
 
-                  <div class="flex justify-center pt-3">
+                  <div class="flex justify-center">
                     <el-button onClick={() => handleAddView()}>
                       Add View <i class="el-icon-plus el-icon--right" />
                     </el-button>

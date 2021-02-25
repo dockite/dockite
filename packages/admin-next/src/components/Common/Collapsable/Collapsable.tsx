@@ -3,6 +3,7 @@ import { computed, defineComponent, PropType, ref } from 'vue';
 export interface CollapsableComponentProps {
   modelValue: boolean;
   title: string;
+  extra: string;
 }
 
 export const CollapsableComponent = defineComponent({
@@ -10,12 +11,17 @@ export const CollapsableComponent = defineComponent({
 
   props: {
     modelValue: {
-      type: Object as PropType<CollapsableComponentProps['modelValue']>,
+      type: Boolean as PropType<CollapsableComponentProps['modelValue']>,
     },
 
     title: {
       type: String as PropType<CollapsableComponentProps['title']>,
       required: true,
+    },
+
+    extra: {
+      type: String as PropType<CollapsableComponentProps['extra']>,
+      default: '',
     },
   },
 
@@ -47,18 +53,22 @@ export const CollapsableComponent = defineComponent({
           <div
             class={{
               'flex justify-between items-center': true,
-              'bg-primary rounded-t p-3 text-white cursor-pointer transition-all duration-300': true,
+              'bg-primary font-semibold rounded-t p-3 text-white cursor-pointer transition-all duration-300': true,
               'rounded-b border': !modelValue.value,
             }}
             role="button"
             onClick={() => handleToggleExpansion()}
           >
-            <span class="font-semibold">{props.title || 'Schema View Configuration Item'}</span>
+            <span>{props.title || 'Schema View Configuration Item'}</span>
 
-            <i
-              class="el-icon-arrow-down transition-all duration-300"
-              style={{ transform: modelValue.value ? 'rotate(-180deg)' : 'rotate(0deg)' }}
-            />
+            <div>
+              <span class="pr-5">{props.extra}</span>
+
+              <i
+                class="el-icon-arrow-down transition-all duration-300"
+                style={{ transform: modelValue.value ? 'rotate(-180deg)' : 'rotate(0deg)' }}
+              />
+            </div>
           </div>
 
           <div

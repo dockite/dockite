@@ -1,5 +1,5 @@
 import { CollapsableComponent } from './Collapsable';
 
-export { CollapsableComponent };
+export default CollapsableComponent;
 
 export * from './Collapsable';
