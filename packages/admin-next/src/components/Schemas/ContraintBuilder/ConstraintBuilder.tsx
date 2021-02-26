@@ -210,7 +210,7 @@ export const SchemaConstraintBuilderComponent = defineComponent({
             </div>
 
             <div class="flex flex-1 items-center -mx-2 px-2">
-              <div class="px-2" style={{ width: '40%' }}>
+              <div class="px-2 w-2/5">
                 <el-select
                   v-model={(modelValueConstraintArray.value[index] as Constraint).name}
                   class="w-full"
@@ -226,7 +226,7 @@ export const SchemaConstraintBuilderComponent = defineComponent({
                 </el-select>
               </div>
 
-              <div class="px-2" style={{ width: '20%' }}>
+              <div class="px-2 w-1/5">
                 <el-select
                   v-model={(modelValueConstraintArray.value[index] as Constraint).operator}
                   placeholder="Operator"
@@ -237,17 +237,21 @@ export const SchemaConstraintBuilderComponent = defineComponent({
                 </el-select>
               </div>
 
-              <div class="px-2" style={{ width: '40%' }}>
+              <div class="px-2 w-2/5">
                 {modelValueConstraintArray.value[index] &&
                 (modelValueConstraintArray.value[index] as Constraint).operator.includes('date') ? (
                   <el-date-picker
                     type="datetime"
+                    style={{ width: '100%' }}
                     v-model={(modelValueConstraintArray.value[index] as Constraint).value}
                     placeholder="Value"
                   />
                 ) : (
                   <el-input
                     v-model={(modelValueConstraintArray.value[index] as Constraint).value}
+                    disabled={(modelValueConstraintArray.value[
+                      index
+                    ] as Constraint).operator.includes('null')}
                     placeholder="Value"
                   />
                 )}

@@ -35,11 +35,7 @@ export const SchemaCreateFieldsStepComponent = defineComponent({
     };
 
     const handlePreviousStep = (): void => {
-      if (form.value) {
-        form.value.validate().then(() => {
-          ctx.emit('progress:previousStep');
-        });
-      }
+      ctx.emit('progress:previousStep');
     };
 
     return () => {

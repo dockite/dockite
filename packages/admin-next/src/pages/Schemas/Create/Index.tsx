@@ -1,6 +1,7 @@
+import { Component, defineComponent, reactive, ref } from 'vue';
+
 import { Field } from '@dockite/database';
 import { SchemaType } from '@dockite/database/lib/types';
-import { Component, defineComponent, reactive, ref } from 'vue';
 
 import { DASHBOARD_HEADER_PORTAL_TITLE } from '~/common/constants';
 import { BaseSchema } from '~/common/types';
@@ -8,10 +9,11 @@ import {
   SchemaCreateFieldsStepComponent,
   SchemaCreateNameStepComponent,
   SchemaCreateSettingsStepComponent,
+  SchemaCreatReviewStepComponent,
 } from '~/components/Schemas/Create/Steps';
 import { usePortal } from '~/hooks';
 
-export const MAXIMUM_STEP = 4;
+export const MAXIMUM_STEP = 3;
 
 export const SchemaCreatePage = defineComponent({
   name: 'SchemaCreatePage',
@@ -19,7 +21,7 @@ export const SchemaCreatePage = defineComponent({
   setup: () => {
     const { setPortal } = usePortal();
 
-    const activeStep = ref(2);
+    const activeStep = ref(3);
 
     // const schema = reactive<BaseSchema>({
     //   name: '',
@@ -105,6 +107,17 @@ export const SchemaCreatePage = defineComponent({
         case 2:
           return (
             <SchemaCreateSettingsStepComponent
+              v-model={schema}
+              {...{
+                'onProgress:nextStep': () => handleIncrementStep(),
+                'onProgress:previousStep': () => handleDecrementStep(),
+              }}
+            />
+          );
+
+        case 3:
+          return (
+            <SchemaCreatReviewStepComponent
               v-model={schema}
               {...{
                 'onProgress:nextStep': () => handleIncrementStep(),
