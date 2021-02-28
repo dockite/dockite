@@ -1,5 +1,6 @@
-import { Document } from '@dockite/database';
 import gql from 'graphql-tag';
+
+import { Document } from '@dockite/database';
 
 export interface GetDocumentByIdQueryResponse {
   getDocument: Document;

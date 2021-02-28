@@ -1,6 +1,6 @@
-import { Singleton } from '@dockite/database';
 import gql from 'graphql-tag';
 
+import { Singleton } from '@dockite/database';
 import { FindManyResult } from '@dockite/types';
 
 export interface FetchAllSingletonsQueryResponse {

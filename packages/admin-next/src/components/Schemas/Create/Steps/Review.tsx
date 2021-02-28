@@ -1,9 +1,7 @@
-import { startCase } from 'lodash';
-import { computed, defineComponent, PropType, ref, watch } from 'vue';
+import { computed, defineComponent, PropType } from 'vue';
 
 import { SchemaType } from '@dockite/types';
 
-import { nameStepFormRules } from './formRules';
 import { StepComponentProps } from './types';
 
 export const SchemaCreatReviewStepComponent = defineComponent({
@@ -23,8 +21,8 @@ export const SchemaCreatReviewStepComponent = defineComponent({
       modelValue.value.type === SchemaType.DEFAULT ? 'Schema' : 'Singleton',
     );
 
-    const handleProgressStep = (): void => {
-      ctx.emit('progress:nextStep');
+    const handleCreateSchema = (): void => {
+      ctx.emit('action:createSchema');
     };
 
     const handlePreviousStep = (): void => {
@@ -42,38 +40,50 @@ export const SchemaCreatReviewStepComponent = defineComponent({
             go back to the previous steps and update items where needed.
           </blockquote>
 
-          <div class="text-lg">
-            <h2 class="text-2xl font-semibold py-5">
-              We're creating a {schemaType.value} called {modelValue.value.title}, using the API
-              identifier {modelValue.value.name}
-            </h2>
+          <h4 class="font-semibold text-lg pb-3">Summary</h4>
 
-            <p class="pb-3">
-              {modelValue.value.title} has{' '}
-              <strong>{Object.keys(modelValue.value.groups).length} group(s)</strong> and a total of{' '}
-              <strong>{modelValue.value.fields.length} field(s)</strong>.
-            </p>
+          <div class="bg-gray-200 border rounded text-sm py-3 px-5">
+            <div class="flex -mx-3">
+              <div class="w-1/2 px-3 flex">
+                <ul class="font-semibold text-right pr-5">
+                  <li class="pb-1 last:pb-0">Name</li>
+                  <li class="pb-1 last:pb-0">Identifier</li>
+                  <li class="pb-1 last:pb-0">Groups</li>
+                  <li class="pb-1 last:pb-0">Fields</li>
+                  <li class="pb-1 last:pb-0">Configured Views</li>
+                </ul>
+                <ul class="flex-1">
+                  <li class="pb-1 last:pb-0">{modelValue.value.title}</li>
+                  <li class="pb-1 last:pb-0">{modelValue.value.name}</li>
+                  <li class="pb-1 last:pb-0">{Object.keys(modelValue.value.groups).length}</li>
+                  <li class="pb-1 last:pb-0">{modelValue.value.fields.length}</li>
+                  <li class="pb-1 last:pb-0">{modelValue.value.settings.views.length || 'None'}</li>
+                </ul>
+              </div>
 
-            <p class="pb-3">
-              {modelValue.value.title} has{' '}
-              <strong>{modelValue.value.settings.views.length} view(s)</strong> and{' '}
-              <span class={{ hidden: modelValue.value.settings.enableMutations }}>
-                will not allow the API to perform create, update, or delete actions.
-              </span>
-              <span class={{ hidden: !modelValue.value.settings.enableMutations }}>
-                will allow the API to perform the following mutating actions:
-              </span>
-              <ul
-                class={{
-                  'pt-2 list-disc list-inside': true,
-                  hidden: !modelValue.value.settings.enableMutations,
-                }}
-              >
-                <li>Create a {modelValue.value.title}</li>
-                <li>Update a {modelValue.value.title}</li>
-                <li>Delete a {modelValue.value.title}</li>
-              </ul>
-            </p>
+              <div class="w-1/2 px-3 flex">
+                <ul class="font-semibold text-right pr-5">
+                  <li class="pb-1 last:pb-0">Mutations Enabled</li>
+                  <li class="pb-1 last:pb-0">Create Mutation Enabled</li>
+                  <li class="pb-1 last:pb-0">Update Mutation Enabled</li>
+                  <li class="pb-1 last:pb-0">Delete Mutation Enabled</li>
+                </ul>
+                <ul>
+                  <li class="pb-1 last:pb-0">
+                    {modelValue.value.settings.enableMutations ? 'Yes' : 'No'}
+                  </li>
+                  <li class="pb-1 last:pb-0">
+                    {modelValue.value.settings.enableCreateMutation ? 'Yes' : 'No'}
+                  </li>
+                  <li class="pb-1 last:pb-0">
+                    {modelValue.value.settings.enableUpdateMutation ? 'Yes' : 'No'}
+                  </li>
+                  <li class="pb-1 last:pb-0">
+                    {modelValue.value.settings.enableDeleteMutation ? 'Yes' : 'No'}
+                  </li>
+                </ul>
+              </div>
+            </div>
           </div>
 
           <div class="flex justify-between items-center pt-5">
@@ -81,8 +91,8 @@ export const SchemaCreatReviewStepComponent = defineComponent({
               Previous Step
             </el-button>
 
-            <el-button type="primary" onClick={() => handleProgressStep()}>
-              Next Step
+            <el-button type="primary" onClick={() => handleCreateSchema()}>
+              Create Schema
             </el-button>
           </div>
         </div>

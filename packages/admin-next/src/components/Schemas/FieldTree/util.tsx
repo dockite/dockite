@@ -1,8 +1,9 @@
 /* eslint-disable no-param-reassign */
-import { BaseField } from '@dockite/database';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { omit } from 'lodash';
 import { Ref } from 'vue';
+
+import { BaseField } from '@dockite/database';
 
 import { FieldTreeItem } from './types';
 

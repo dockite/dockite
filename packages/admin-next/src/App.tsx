@@ -32,6 +32,7 @@ const handleRefreshSession = async (): Promise<void> => {
     const now = Date.now() / 1000;
 
     if (claims && now > claims.exp) {
+      console.info('expired session, handling refresh');
       await handleRefreshToken();
     }
   }

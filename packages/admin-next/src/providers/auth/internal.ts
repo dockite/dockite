@@ -30,7 +30,7 @@ export const login = async (payload: LoginPayload): Promise<string> => {
 
     if (!result.data || !result.data.login) {
       throw new AuthenticationError(
-        'Unknown authentication error occurred',
+        'Unknown authentication error occurred.',
         AuthenticationErrorCode.UKNOWN_ERROR,
       );
     }
@@ -40,14 +40,14 @@ export const login = async (payload: LoginPayload): Promise<string> => {
     logE(e);
 
     throw new AuthenticationError(
-      'The username or password provided were incorrect',
-      AuthenticationErrorCode.UKNOWN_CREDENTIALS,
+      'The username or password provided were incorrect.',
+      AuthenticationErrorCode.BAD_CREDENTIALS,
     );
   }
 };
 
 export const register = async (...args: any): Promise<string> => {
-  throw new Error('Registration is not implemented for internal authentication');
+  throw new Error('Registration is not implemented for internal authentication.');
 };
 
 export const registerFirstUser = async (payload: RegisterPayload): Promise<string> => {
@@ -64,7 +64,7 @@ export const registerFirstUser = async (payload: RegisterPayload): Promise<strin
 
     if (!result.data || !result.data.registerFirstUser) {
       throw new AuthenticationError(
-        'Unknown error occurred during registration',
+        'Unknown error occurred during registration.',
         AuthenticationErrorCode.UKNOWN_ERROR,
       );
     }
@@ -74,7 +74,7 @@ export const registerFirstUser = async (payload: RegisterPayload): Promise<strin
     logE(e);
 
     throw new AuthenticationError(
-      'Unable to register first user for application',
+      'Unable to register first user for application.',
       AuthenticationErrorCode.NO_FIRST_USER,
     );
   }
@@ -91,7 +91,7 @@ export const logout = async (): Promise<void> => {
     logE(e);
 
     throw new AuthenticationError(
-      'An unknown error occurred during logout',
+      'An unknown error occurred during logout.',
       AuthenticationErrorCode.UKNOWN_ERROR,
     );
   }

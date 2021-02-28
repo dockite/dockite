@@ -9,6 +9,7 @@ import { Logo } from '~/components/Common/Logo';
 import { useAuth } from '~/hooks';
 
 import './Login.scss';
+import { AuthenticationError } from '~/common/errors';
 
 export const LoginPage = defineComponent({
   name: 'LoginPageComponent',
@@ -17,6 +18,8 @@ export const LoginPage = defineComponent({
     const { handleLogin, handleRegisterFirstUser, handleInitProvider, state } = useAuth();
 
     const form = ref<typeof ElForm | null>(null);
+
+    const error = ref('');
 
     const isNewInstallation = usePromiseLazy(() => {
       return getNewInstallation();
@@ -44,17 +47,36 @@ export const LoginPage = defineComponent({
       password: '',
     });
 
-    const handleFormSubmission = (): void => {
-      if (form.value) {
-        form.value.validate().then(() => {
-          if (isNewInstallation.result.value) {
-            handleRegisterFirstUser(registerState);
-          } else {
-            handleLogin(loginState);
+    const handleFormSubmission = usePromiseLazy(
+      async (): Promise<void> => {
+        error.value = '';
+
+        if (form.value) {
+          try {
+            // Validate the form
+            const valid = await form.value.validate().catch(() => false);
+
+            // If it's not valid return early
+            if (!valid) {
+              return;
+            }
+
+            // Otherwise handle the auth flow
+            if (isNewInstallation.result.value) {
+              await handleRegisterFirstUser(registerState);
+            } else {
+              await handleLogin(loginState);
+            }
+          } catch (err) {
+            if (err instanceof AuthenticationError) {
+              error.value = err.message;
+            } else {
+              error.value = 'An unknown error occurred, please try again later.';
+            }
           }
-        });
-      }
-    };
+        }
+      },
+    );
 
     const getFormContent = (): JSX.Element => {
       if (isNewInstallation.result.value) {
@@ -70,7 +92,7 @@ export const LoginPage = defineComponent({
               model={registerState}
               rules={registerFormRules}
               label-position="top"
-              onSubmit={() => handleFormSubmission()}
+              onSubmit={() => handleFormSubmission.exec()}
             >
               <el-form-item label="Email" prop="email">
                 <el-input ref="email" v-model={registerState.email} type="email" />
@@ -92,7 +114,11 @@ export const LoginPage = defineComponent({
                 <div class="flex items-center justify-between">
                   <span />
 
-                  <el-button native-type="submit" type="primary">
+                  <el-button
+                    loading={handleFormSubmission.loading.value}
+                    nativeType="submit"
+                    type="primary"
+                  >
                     Start using Dockite
                   </el-button>
                 </div>
@@ -108,13 +134,13 @@ export const LoginPage = defineComponent({
           label-position="top"
           model={loginState}
           rules={loginFormRules}
-          onSubmit={() => handleFormSubmission()}
+          onSubmit={() => handleFormSubmission.exec()}
         >
-          <el-form-item label="Email">
+          <el-form-item label="Email" prop="email">
             <el-input v-model={loginState.email} placeholder="username@example.com" />
           </el-form-item>
 
-          <el-form-item label="Password">
+          <el-form-item label="Password" prop="password">
             <el-input v-model={loginState.password} type="password" placeholder="Password" />
           </el-form-item>
 
@@ -122,7 +148,11 @@ export const LoginPage = defineComponent({
             <div class="flex justify-between items-center w-full pt-2">
               <router-link to="/forgotten-password">Forgotten Password?</router-link>
 
-              <el-button nativeType="submit" type="primary" onClick={() => handleFormSubmission()}>
+              <el-button
+                loading={handleFormSubmission.loading.value}
+                nativeType="submit"
+                type="primary"
+              >
                 Login
               </el-button>
             </div>
@@ -136,7 +166,15 @@ export const LoginPage = defineComponent({
         <div class="dockite-login--page flex flex-col w-full h-screen justify-center items-center">
           <Logo />
 
-          <el-card v-loading={!isNewInstallation.loading}>{getFormContent()}</el-card>
+          <el-card v-loading={!isNewInstallation.loading}>
+            {error.value && (
+              <div class="mb-3">
+                <el-alert title={error.value} type="error" showIcon={true} closable={false} />
+              </div>
+            )}
+
+            {getFormContent()}
+          </el-card>
         </div>
       );
     };

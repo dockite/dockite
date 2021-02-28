@@ -1,12 +1,17 @@
 /* eslint-disable import/prefer-default-export */
-import { Schema } from '@dockite/database';
-import { sortBy } from 'lodash';
+import { sortBy, create } from 'lodash';
 
+import { Schema } from '@dockite/database';
 import { FindManyResult } from '@dockite/types';
 
 import { DOCKITE_ITEMS_PER_PAGE } from '~/common/constants';
 import { ApplicationError, ApplicationErrorCode } from '~/common/errors';
+import { logE } from '~/common/logger';
+import { BaseSchema } from '~/common/types';
 import {
+  CreateSchemaMutationResponse,
+  CreateSchemaMutationVariables,
+  CREATE_SCHEMA_MUTATION,
   FetchAllSchemasQueryResponse,
   FetchAllSchemasQueryVariables,
   FETCH_ALL_SCHEMAS_QUERY,
@@ -65,4 +70,52 @@ export const fetchAllSchemas = async (
   const result = await fetchAllSchemasWithPagination(perPage);
 
   return sortBy(result.results, 'name');
+};
+
+export const createSchema = async (payload: BaseSchema): Promise<Schema> => {
+  const graphql = useGraphQL();
+
+  try {
+    const result = await graphql.executeMutation<
+      CreateSchemaMutationResponse,
+      CreateSchemaMutationVariables
+    >({
+      mutation: CREATE_SCHEMA_MUTATION,
+      variables: {
+        payload,
+      },
+      // On Update we will also append the schema to our allSchemas query
+      update: (store, { data: createSchemaData }) => {
+        if (createSchemaData) {
+          const { createSchema: schema } = createSchemaData;
+
+          const data = store.readQuery<FetchAllSchemasQueryResponse>({
+            query: FETCH_ALL_SCHEMAS_QUERY,
+          });
+
+          if (data) {
+            data.allSchemas.results.push(schema);
+
+            store.writeQuery({ query: FETCH_ALL_SCHEMAS_QUERY, data });
+          }
+        }
+      },
+    });
+
+    if (!result.data) {
+      throw new ApplicationError(
+        'An unknown error occurred, please try again later.',
+        ApplicationErrorCode.UNKNOWN_ERROR,
+      );
+    }
+
+    return result.data.createSchema;
+  } catch (err) {
+    logE(err);
+
+    throw new ApplicationError(
+      'An error occurred while attempting to create the Schema.',
+      ApplicationErrorCode.CANT_CREATE_SCHEMA,
+    );
+  }
 };

@@ -1,5 +1,6 @@
-import { User } from '@dockite/database';
 import gql from 'graphql-tag';
+
+import { User } from '@dockite/database';
 
 export interface LoginMutationResponse {
   login: {

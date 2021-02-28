@@ -1,6 +1,6 @@
-import { Document } from '@dockite/database';
 import gql from 'graphql-tag';
 
+import { Document } from '@dockite/database';
 import { DockiteGraphQLSortInput, FindManyResult } from '@dockite/types';
 import { QueryBuilder } from '@dockite/where-builder/lib/types';
 

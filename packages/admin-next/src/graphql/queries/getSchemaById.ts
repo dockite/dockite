@@ -1,5 +1,6 @@
-import { Schema } from '@dockite/database';
 import gql from 'graphql-tag';
+
+import { Schema } from '@dockite/database';
 
 export interface GetSchemaByIdQueryResponse {
   getSchema: Schema;

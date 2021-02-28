@@ -1,9 +1,13 @@
+import { ElMessage } from 'element-plus';
 import { Component, defineComponent, reactive, ref } from 'vue';
+import { usePromiseLazy } from 'vue-composable';
+import { useRouter } from 'vue-router';
 
-import { Field } from '@dockite/database';
 import { SchemaType } from '@dockite/database/lib/types';
 
+import { createSchema } from '~/common/api';
 import { DASHBOARD_HEADER_PORTAL_TITLE } from '~/common/constants';
+import { ApplicationError } from '~/common/errors';
 import { BaseSchema } from '~/common/types';
 import {
   SchemaCreateFieldsStepComponent,
@@ -21,44 +25,16 @@ export const SchemaCreatePage = defineComponent({
   setup: () => {
     const { setPortal } = usePortal();
 
-    const activeStep = ref(3);
+    const router = useRouter();
 
-    // const schema = reactive<BaseSchema>({
-    //   name: '',
-    //   title: '',
-    //   type: SchemaType.DEFAULT,
-    //   groups: {},
-    //   fields: [],
-    //   settings: {},
-    // });
+    const activeStep = ref(0);
+
     const schema = reactive<BaseSchema>({
-      name: 'MySchema',
-      title: 'MySchema',
+      name: '',
+      title: '',
       type: SchemaType.DEFAULT,
-      groups: { General: ['asdf', 'sdfv', 'erwt'] },
-      fields: ([
-        {
-          name: 'asdf',
-          title: 'asdf',
-          type: 'boolean',
-          description: '',
-          settings: { required: false },
-        },
-        {
-          name: 'sdfv',
-          title: 'vsdfv',
-          type: 'group',
-          description: '',
-          settings: { required: false, repeatable: false, children: [], minRows: 0, maxRows: 0 },
-        },
-        {
-          name: 'erwt',
-          title: 'erbewr',
-          type: 'colorpicker',
-          description: '',
-          settings: { required: false },
-        },
-      ] as any) as Field[],
+      groups: {},
+      fields: [],
       settings: {
         enableMutations: false,
         fieldsToDisplay: [],
@@ -67,6 +43,22 @@ export const SchemaCreatePage = defineComponent({
     });
 
     setPortal(DASHBOARD_HEADER_PORTAL_TITLE, <span>Create a new Schema</span>);
+
+    const handleCreateSchema = usePromiseLazy(
+      async (): Promise<void> => {
+        try {
+          const createdSchema = await createSchema(schema);
+
+          ElMessage.success('Successfully created Schema!');
+
+          router.push(`/schemas/${createdSchema.id}`);
+        } catch (err) {
+          if (err instanceof ApplicationError) {
+            ElMessage.error(err.message);
+          }
+        }
+      },
+    );
 
     const handleIncrementStep = (): void => {
       if (activeStep.value < MAXIMUM_STEP) {
@@ -122,6 +114,7 @@ export const SchemaCreatePage = defineComponent({
               {...{
                 'onProgress:nextStep': () => handleIncrementStep(),
                 'onProgress:previousStep': () => handleDecrementStep(),
+                'onAction:createSchema': () => handleCreateSchema.exec(),
               }}
             />
           );
@@ -141,7 +134,7 @@ export const SchemaCreatePage = defineComponent({
 
     return () => {
       return (
-        <div>
+        <div v-loading={handleCreateSchema.loading.value}>
           <div class="py-5 -mx-5">
             <el-steps active={activeStep.value} finishStatus="success" alignCenter>
               <el-step title="Name" description="Name your Schema" />

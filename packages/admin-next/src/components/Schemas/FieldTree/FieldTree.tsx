@@ -1,5 +1,6 @@
-import { BaseField, Field } from '@dockite/database';
 import { computed, defineComponent, onBeforeMount, PropType, ref } from 'vue';
+
+import { BaseField, Field } from '@dockite/database';
 
 import { SchemaFieldDrawerComponent } from '../FieldDrawer';
 
