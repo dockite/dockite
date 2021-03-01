@@ -1,7 +1,8 @@
-import { Schema } from '@dockite/database';
 import { defineComponent, ref, watchEffect } from 'vue';
 import { usePromise } from 'vue-composable';
 import { useRouter } from 'vue-router';
+
+import { Schema } from '@dockite/database';
 
 import { getHeaderActions, getTableActions } from './util';
 

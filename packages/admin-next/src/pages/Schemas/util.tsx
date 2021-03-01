@@ -50,6 +50,10 @@ export const getTableActions = (schema: Schema): JSX.Element => {
         <router-link title="View Revisions" class="px-2" to={`/schemas/${schema.id}/revisions`}>
           <i class="el-icon-folder-opened" />
         </router-link>
+
+        <router-link title="Delete Schema" class="px-2" to={`/schemas/${schema.id}/delete`}>
+          <i class="el-icon-folder-delete" />
+        </router-link>
       </div>
     </div>
   );

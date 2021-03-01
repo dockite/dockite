@@ -53,9 +53,18 @@ export const Router = createRouter({
     //   component: () => import('../pages/Schemas/Deleted'),
     //   meta: { layout: 'Dashboard' },
     // },
+
+    /**
+     * Single Schema
+     */
     {
       path: '/schemas/:schemaId',
       component: () => import('../pages/Schemas/_Id'),
+      meta: { layout: 'Dashboard' },
+    },
+    {
+      path: '/schemas/:schemaId/delete',
+      component: () => import('../pages/Schemas/_Id/Delete'),
       meta: { layout: 'Dashboard' },
     },
 

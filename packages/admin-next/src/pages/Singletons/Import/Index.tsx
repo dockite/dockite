@@ -10,7 +10,7 @@ import { createSingleton, fetchAllSingletons } from '~/common/api';
 import { DASHBOARD_HEADER_PORTAL_TITLE } from '~/common/constants';
 import { logE } from '~/common/logger';
 import { BaseSchema, MaybePersisted } from '~/common/types';
-import JsonEditorComponent from '~/components/JsonEditor';
+import { JsonEditorComponent } from '~/components/JsonEditor';
 import { usePortal } from '~/hooks';
 
 export const SingletonImportPage = defineComponent({
@@ -88,7 +88,7 @@ export const SingletonImportPage = defineComponent({
 
     return () => {
       return (
-        <div class="relative">
+        <div class="relative" v-loading={handleImportSingleton.loading.value}>
           <h3 class="text-lg font-semibold pb-5">Import a Singleton via JSON</h3>
 
           <blockquote class="p-3 border-l-4 border-gray-400 rounded text-sm bg-gray-200 mb-5">

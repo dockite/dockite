@@ -6,7 +6,7 @@ import { FindManyResult } from '@dockite/types';
 
 import { DOCKITE_ITEMS_PER_PAGE } from '~/common/constants';
 import { ApplicationError, ApplicationErrorCode } from '~/common/errors';
-import { CREATE_SCHEMA_EVENT } from '~/common/events';
+import { CREATE_SCHEMA_EVENT, DELETE_SCHEMA_EVENT } from '~/common/events';
 import { logE } from '~/common/logger';
 import { BaseSchema } from '~/common/types';
 import {
@@ -19,6 +19,9 @@ import {
   GetSchemaByIdQueryResponse,
   GetSchemaByIdQueryVariables,
   GET_SCHEMA_BY_ID_QUERY,
+  DELETE_SCHEMA_MUTATION,
+  DeleteSchemaMutationVariables,
+  DeleteSchemaMutationResponse,
 } from '~/graphql';
 import { useEvent } from '~/hooks';
 import { useGraphQL } from '~/hooks/useGraphQL';
@@ -85,6 +88,7 @@ export const createSchema = async (payload: BaseSchema): Promise<Schema> => {
       variables: {
         payload,
       },
+
       // On Update we will also append the schema to our allSchemas query
       update: (store, { data: createSchemaData }) => {
         if (createSchemaData) {
@@ -116,9 +120,73 @@ export const createSchema = async (payload: BaseSchema): Promise<Schema> => {
   } catch (err) {
     logE(err);
 
+    if (err instanceof ApplicationError) {
+      throw err;
+    }
+
     throw new ApplicationError(
       'An error occurred while attempting to create the Schema.',
       ApplicationErrorCode.CANT_CREATE_SCHEMA,
+    );
+  }
+};
+
+export const deleteSchema = async (payload: Schema): Promise<boolean> => {
+  const graphql = useGraphQL();
+  const { emit } = useEvent();
+
+  try {
+    const result = await graphql.executeMutation<
+      DeleteSchemaMutationResponse,
+      DeleteSchemaMutationVariables
+    >({
+      mutation: DELETE_SCHEMA_MUTATION,
+      variables: {
+        id: payload.id,
+      },
+
+      // On Update we will also append the schema to our allSchemas query
+      update: (store, { data: createSchemaData }) => {
+        if (createSchemaData) {
+          const { deleteSchema: success } = createSchemaData;
+
+          if (success) {
+            const data = store.readQuery<FetchAllSchemasQueryResponse>({
+              query: FETCH_ALL_SCHEMAS_QUERY,
+            });
+
+            if (data) {
+              data.allSchemas.results = data.allSchemas.results.filter(
+                schema => schema.id !== payload.id,
+              );
+
+              store.writeQuery({ query: FETCH_ALL_SCHEMAS_QUERY, data });
+            }
+          }
+        }
+      },
+    });
+
+    if (!result.data) {
+      throw new ApplicationError(
+        'An unknown error occurred, please try again later.',
+        ApplicationErrorCode.UNKNOWN_ERROR,
+      );
+    }
+
+    emit(DELETE_SCHEMA_EVENT);
+
+    return result.data.deleteSchema;
+  } catch (err) {
+    logE(err);
+
+    if (err instanceof ApplicationError) {
+      throw err;
+    }
+
+    throw new ApplicationError(
+      'An error occurred while attempting to delete the Schema.',
+      ApplicationErrorCode.CANT_DELETE_SCHEMA,
     );
   }
 };

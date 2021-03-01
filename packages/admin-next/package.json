@@ -5,7 +5,8 @@
   "license": "MIT",
   "scripts": {
     "build": "NODE_ENV=production EXTRACT_CSS=true rollup -c",
-    "dev": "HTTPS=true NODE_ENV=development EXTRACT_CSS=true rollup -c -w"
+    "dev:https": "HTTPS=true NODE_ENV=development EXTRACT_CSS=true rollup -c -w",
+    "dev": "NODE_ENV=development EXTRACT_CSS=true rollup -c -w"
   },
   "dependencies": {
     "@dockite/database": "^1.0.0",
