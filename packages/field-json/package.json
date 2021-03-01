@@ -28,8 +28,7 @@
     "type-graphql": "1.0.0-rc.2",
     "typeorm": "^0.2.25",
     "validator": "^13.0.0",
-    "vue": "^3.0.5",
-    "vue-codemirror": "^4.0.6"
+    "vue": "^3.0.5"
   },
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.10.1",

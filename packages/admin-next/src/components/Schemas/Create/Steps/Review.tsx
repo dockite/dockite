@@ -4,8 +4,8 @@ import { SchemaType } from '@dockite/types';
 
 import { StepComponentProps } from './types';
 
-export const SchemaCreatReviewStepComponent = defineComponent({
-  name: 'SchemaCreatReviewStepComponent',
+export const SchemaCreateReviewStepComponent = defineComponent({
+  name: 'SchemaCreateReviewStepComponent',
 
   props: {
     modelValue: Object as PropType<StepComponentProps['modelValue']>,
@@ -92,7 +92,7 @@ export const SchemaCreatReviewStepComponent = defineComponent({
             </el-button>
 
             <el-button type="primary" onClick={() => handleCreateSchema()}>
-              Create Schema
+              Create {schemaType.value}
             </el-button>
           </div>
         </div>
@@ -101,4 +101,4 @@ export const SchemaCreatReviewStepComponent = defineComponent({
   },
 });
 
-export default SchemaCreatReviewStepComponent;
+export default SchemaCreateReviewStepComponent;

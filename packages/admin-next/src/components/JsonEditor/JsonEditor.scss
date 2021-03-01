@@ -1,0 +1,12 @@
+.dockite-json-editor {
+  .CodeMirror {
+    flex: 1 1 auto;
+    border-radius: 4px;
+    padding: 1rem 0;
+  }
+
+  .CodeMirror-scroll {
+    height: 100%;
+    overflow: auto;
+  }
+}

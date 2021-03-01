@@ -9,8 +9,8 @@
   },
   "ui": {
     "backgroundColor": "#2b6cb0",
-    "textColor": "#ffffff",
-    "activeTextColour": "#eeeeee",
+    "textColor": "#bfd3e7",
+    "activeTextColour": "#ffffff",
   },
   "auth": {
     "secret": "secret"

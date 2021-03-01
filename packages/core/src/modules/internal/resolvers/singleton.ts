@@ -248,7 +248,7 @@ export class SingletonResolver {
     @Arg('schemaId', _type => String, { nullable: true })
     schemaId: string | null,
     @Arg('payload', _type => GraphQLJSON)
-    payload: string,
+    payload: Schema,
     @Ctx()
     ctx: GlobalContext,
   ): Promise<Singleton | null> {
@@ -262,11 +262,21 @@ export class SingletonResolver {
     const documentRepository = getRepository(Document);
     const schemaRepository = getRepository(Schema);
 
-    const parsedPayload: Schema = JSON.parse(payload);
+    const clonedPayload: Schema = cloneDeep(payload);
 
-    parsedPayload.type = SchemaType.SINGLETON;
+    clonedPayload.type = SchemaType.SINGLETON;
 
-    const valid = schemaImportValidator(parsedPayload);
+    // If we're provided an Object comprising of the groups and fields then we will map them back to
+    // an array of objects
+    if (!Array.isArray(clonedPayload.groups) && typeof clonedPayload.groups === 'object') {
+      clonedPayload.groups = Object.entries(clonedPayload.groups).map(([groupName, fields]) => {
+        return {
+          [groupName]: fields,
+        };
+      });
+    }
+
+    const valid = schemaImportValidator(clonedPayload);
 
     if (!valid) {
       console.log(schemaImportValidator.errors);
@@ -279,7 +289,7 @@ export class SingletonResolver {
 
     const importedSingleton = await schemaImportRepository.importSchema(
       schemaId,
-      parsedPayload,
+      clonedPayload,
       ctx.user.id,
     );
 

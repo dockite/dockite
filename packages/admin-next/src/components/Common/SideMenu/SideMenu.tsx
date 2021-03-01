@@ -1,10 +1,19 @@
-import { defineComponent } from 'vue';
+import { computed, defineComponent, onUnmounted } from 'vue';
 import { usePromise } from 'vue-composable';
 import { useRoute } from 'vue-router';
 
-import Logo from '../Logo';
+import { Logo } from '../Logo';
 
 import { fetchAllSchemas, fetchAllSingletons } from '~/common/api';
+import {
+  CREATE_SCHEMA_EVENT,
+  UPDATE_SCHEMA_EVENT,
+  DELETE_SCHEMA_EVENT,
+  CREATE_SINGLETON_EVENT,
+  UPDATE_SINGLETON_EVENT,
+  DELETE_SINGLETON_EVENT,
+} from '~/common/events';
+import { useEvent } from '~/hooks';
 import { useCan } from '~/hooks/useCan';
 import { useConfig } from '~/hooks/useConfig';
 
@@ -14,9 +23,37 @@ export const SideMenu = defineComponent({
   setup: () => {
     const config = useConfig();
     const can = useCan();
+    const { onAll, offAll } = useEvent();
+    const route = useRoute();
 
-    const schemaPromise = usePromise(() => fetchAllSchemas());
-    const singletonPromise = usePromise(() => fetchAllSingletons());
+    const schemas = usePromise(() => fetchAllSchemas());
+    const singletons = usePromise(() => fetchAllSingletons());
+
+    const handleSchemasChanged = (): void => {
+      schemas.exec();
+    };
+
+    const handleSingletonsChanged = (): void => {
+      singletons.exec();
+    };
+
+    // Register Schema change listeners
+    onAll([CREATE_SCHEMA_EVENT, UPDATE_SCHEMA_EVENT, DELETE_SCHEMA_EVENT], handleSchemasChanged);
+
+    // Register Singleton change listeners
+    onAll(
+      [CREATE_SINGLETON_EVENT, UPDATE_SINGLETON_EVENT, DELETE_SINGLETON_EVENT],
+      handleSingletonsChanged,
+    );
+
+    onUnmounted(() => {
+      offAll([CREATE_SCHEMA_EVENT, UPDATE_SCHEMA_EVENT, DELETE_SCHEMA_EVENT], handleSchemasChanged);
+
+      offAll(
+        [CREATE_SINGLETON_EVENT, UPDATE_SINGLETON_EVENT, DELETE_SINGLETON_EVENT],
+        handleSingletonsChanged,
+      );
+    });
 
     const getSingletonMenuItem = (): JSX.Element | null => {
       if (can('internal:singleton:read')) {
@@ -30,7 +67,7 @@ export const SideMenu = defineComponent({
                 </>
               ),
               default: () => {
-                if (singletonPromise.loading.value) {
+                if (singletons.loading.value) {
                   return (
                     <el-menu-item-group>
                       <el-menu-item>
@@ -40,11 +77,11 @@ export const SideMenu = defineComponent({
                   );
                 }
 
-                if (singletonPromise.result.value === null || singletonPromise.error.value) {
+                if (singletons.result.value === null || singletons.error.value) {
                   return (
                     <div>
                       Error occurred whilst fetching Singletons{' '}
-                      <a class="font-bold" onClick={singletonPromise.exec}>
+                      <a class="font-bold" onClick={singletons.exec}>
                         Retry?
                       </a>
                       ...
@@ -54,7 +91,7 @@ export const SideMenu = defineComponent({
 
                 return (
                   <el-menu-item-group>
-                    {singletonPromise.result.value.map(singleton => (
+                    {singletons.result.value.map(singleton => (
                       <el-menu-item index={`/singletons/${singleton.id}`}>
                         <i class="el-icon-invalid"></i>
                         <router-link to={`/singletons/${singleton.id}`}>
@@ -63,7 +100,7 @@ export const SideMenu = defineComponent({
                       </el-menu-item>
                     ))}
 
-                    <el-menu-item class="font-semibold" index="/singletons/management">
+                    <el-menu-item class="font-semibold" index="/singletons">
                       <i class="el-icon-setting" />
                       <router-link to="/singletons">Management</router-link>
                     </el-menu-item>
@@ -90,7 +127,7 @@ export const SideMenu = defineComponent({
                 </>
               ),
               default: () => {
-                if (schemaPromise.loading.value) {
+                if (schemas.loading.value) {
                   return (
                     <el-menu-item-group>
                       <el-menu-item>
@@ -100,11 +137,11 @@ export const SideMenu = defineComponent({
                   );
                 }
 
-                if (schemaPromise.result.value === null || schemaPromise.error.value) {
+                if (schemas.result.value === null || schemas.error.value) {
                   return (
                     <div>
                       Error occurred whilst fetching Schemas{' '}
-                      <a class="font-bold" onClick={schemaPromise.exec}>
+                      <a class="font-bold" onClick={schemas.exec}>
                         Retry?
                       </a>
                       ...
@@ -114,14 +151,14 @@ export const SideMenu = defineComponent({
 
                 return (
                   <el-menu-item-group>
-                    {schemaPromise.result.value.map(schema => (
+                    {schemas.result.value.map(schema => (
                       <el-menu-item index={`/schemas/${schema.id}`}>
                         <i class="el-icon-invalid"></i>
                         <router-link to={`/schemas/${schema.id}`}>{schema.title}</router-link>
                       </el-menu-item>
                     ))}
 
-                    <el-menu-item class="font-semibold" index="/schemas/management">
+                    <el-menu-item class="font-semibold" index="/schemas">
                       <i class="el-icon-setting" />
                       <router-link to="/schemas">Management</router-link>
                     </el-menu-item>
@@ -156,7 +193,7 @@ export const SideMenu = defineComponent({
               </>
             ),
             default: () => {
-              if (schemaPromise.loading.value) {
+              if (schemas.loading.value) {
                 return (
                   <el-menu-item-group>
                     <el-menu-item>
@@ -166,11 +203,11 @@ export const SideMenu = defineComponent({
                 );
               }
 
-              if (schemaPromise.result.value === null || schemaPromise.error.value) {
+              if (schemas.result.value === null || schemas.error.value) {
                 return (
                   <div>
                     Error occurred whilst fetching Schemas{' '}
-                    <a class="font-bold" onClick={schemaPromise.exec}>
+                    <a class="font-bold" onClick={schemas.exec}>
                       Retry?
                     </a>
                     ...
@@ -180,7 +217,7 @@ export const SideMenu = defineComponent({
 
               return (
                 <el-menu-item-group>
-                  {schemaPromise.result.value.map(schema => (
+                  {schemas.result.value.map(schema => (
                     <el-menu-item index={`/schemas/${schema.id}`}>
                       <router-link to={`/schemas/${schema.id}`}>{schema.title}</router-link>
                     </el-menu-item>
@@ -193,22 +230,16 @@ export const SideMenu = defineComponent({
       );
     };
 
-    const getDefaultActive = (): string => {
-      const route = useRoute();
-
-      const active = route.path;
-
-      return active;
-    };
+    const activeItem = computed((): string => {
+      return route.path;
+    });
 
     return () => (
       <el-menu
         backgroundColor={config.ui.backgroundColor}
         textColor={config.ui.textColor}
         activeTextColor={config.ui.activeTextColour}
-        defaultActive={getDefaultActive()}
-        defaultOpeneds={[getDefaultActive()]}
-        uniqueOpened
+        defaultActive={activeItem}
         style="height: 100vh;"
       >
         <Logo class="mt-3 mx-auto" style={{ maxWidth: '80%', maxHeight: '60px' }} />

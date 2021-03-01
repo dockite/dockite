@@ -1,7 +1,8 @@
-import { BaseField } from '@dockite/database';
 import { cloneDeep } from 'lodash';
 import { computed, defineComponent, PropType, ref, watch, withModifiers } from 'vue';
 import { usePromise } from 'vue-composable';
+
+import { BaseField } from '@dockite/database';
 
 import { SchemaFieldSettingsFormComponent } from './FieldForm';
 import { SchemaAvailableFieldsListComponent } from './FieldList';

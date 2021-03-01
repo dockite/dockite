@@ -5,7 +5,7 @@ import { useRouter } from 'vue-router';
 
 import { SchemaType } from '@dockite/database/lib/types';
 
-import { createSchema } from '~/common/api';
+import { createSingleton } from '~/common/api';
 import { DASHBOARD_HEADER_PORTAL_TITLE } from '~/common/constants';
 import { ApplicationError } from '~/common/errors';
 import { BaseSchema } from '~/common/types';
@@ -19,8 +19,8 @@ import { usePortal } from '~/hooks';
 
 export const MAXIMUM_STEP = 3;
 
-export const SchemaCreatePage = defineComponent({
-  name: 'SchemaCreatePage',
+export const SingletonCreatePage = defineComponent({
+  name: 'SingletonCreatePage',
 
   setup: () => {
     const { setPortal } = usePortal();
@@ -29,10 +29,10 @@ export const SchemaCreatePage = defineComponent({
 
     const activeStep = ref(0);
 
-    const schema = reactive<BaseSchema>({
+    const singleton = reactive<BaseSchema>({
       name: '',
       title: '',
-      type: SchemaType.DEFAULT,
+      type: SchemaType.SINGLETON,
       groups: {},
       fields: [],
       settings: {
@@ -42,16 +42,16 @@ export const SchemaCreatePage = defineComponent({
       },
     });
 
-    setPortal(DASHBOARD_HEADER_PORTAL_TITLE, <span>Create a new Schema</span>);
+    setPortal(DASHBOARD_HEADER_PORTAL_TITLE, <span>Create a new Singleton</span>);
 
-    const handleCreateSchema = usePromiseLazy(
+    const handleCreateSingleton = usePromiseLazy(
       async (): Promise<void> => {
         try {
-          const createdSchema = await createSchema(schema);
+          const createdSchema = await createSingleton(singleton);
 
-          ElMessage.success('Successfully created Schema!');
+          ElMessage.success('Successfully created Singleton!');
 
-          router.push(`/schemas/${createdSchema.id}`);
+          router.push(`/singletons/${createdSchema.id}`);
         } catch (err) {
           if (err instanceof ApplicationError) {
             ElMessage.error(err.message);
@@ -77,7 +77,7 @@ export const SchemaCreatePage = defineComponent({
         case 0:
           return (
             <SchemaCreateNameStepComponent
-              v-model={schema}
+              v-model={singleton}
               {...{
                 'onProgress:nextStep': () => handleIncrementStep(),
                 'onProgress:previousStep': () => handleDecrementStep(),
@@ -88,7 +88,7 @@ export const SchemaCreatePage = defineComponent({
         case 1:
           return (
             <SchemaCreateFieldsStepComponent
-              v-model={schema}
+              v-model={singleton}
               {...{
                 'onProgress:nextStep': () => handleIncrementStep(),
                 'onProgress:previousStep': () => handleDecrementStep(),
@@ -99,7 +99,7 @@ export const SchemaCreatePage = defineComponent({
         case 2:
           return (
             <SchemaCreateSettingsStepComponent
-              v-model={schema}
+              v-model={singleton}
               {...{
                 'onProgress:nextStep': () => handleIncrementStep(),
                 'onProgress:previousStep': () => handleDecrementStep(),
@@ -110,11 +110,11 @@ export const SchemaCreatePage = defineComponent({
         case 3:
           return (
             <SchemaCreateReviewStepComponent
-              v-model={schema}
+              v-model={singleton}
               {...{
                 'onProgress:nextStep': () => handleIncrementStep(),
                 'onProgress:previousStep': () => handleDecrementStep(),
-                'onAction:createSchema': () => handleCreateSchema.exec(),
+                'onAction:createSchema': () => handleCreateSingleton.exec(),
               }}
             />
           );
@@ -122,7 +122,7 @@ export const SchemaCreatePage = defineComponent({
         default:
           return (
             <SchemaCreateNameStepComponent
-              v-model={schema}
+              v-model={singleton}
               {...{
                 'onProgress:nextStep': () => handleIncrementStep(),
                 'onProgress:previousStep': () => handleDecrementStep(),
@@ -134,13 +134,13 @@ export const SchemaCreatePage = defineComponent({
 
     return () => {
       return (
-        <div v-loading={handleCreateSchema.loading.value}>
+        <div v-loading={handleCreateSingleton.loading.value}>
           <div class="py-5 -mx-5">
             <el-steps active={activeStep.value} finishStatus="success" alignCenter>
-              <el-step title="Name" description="Name your Schema" />
+              <el-step title="Name" description="Name your Singleton" />
               <el-step title="Fields" description="Add the Fields" />
               <el-step title="Settings" description="Apply additional Settings" />
-              <el-step title="Review" description="Review the Schema" />
+              <el-step title="Review" description="Review the Singleton" />
             </el-steps>
           </div>
 
@@ -151,4 +151,4 @@ export const SchemaCreatePage = defineComponent({
   },
 });
 
-export default SchemaCreatePage;
+export default SingletonCreatePage;

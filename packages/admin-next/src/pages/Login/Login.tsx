@@ -1,15 +1,15 @@
 import ElForm from 'element-plus/lib/el-form';
-import { defineComponent, onMounted, reactive, ref, withModifiers } from 'vue';
+import { defineComponent, onMounted, reactive, ref } from 'vue';
 import { usePromiseLazy } from 'vue-composable';
 
 import { loginFormRules, registerFormRules } from './formRules';
 
 import { getNewInstallation } from '~/common/api';
+import { AuthenticationError } from '~/common/errors';
 import { Logo } from '~/components/Common/Logo';
 import { useAuth } from '~/hooks';
 
 import './Login.scss';
-import { AuthenticationError } from '~/common/errors';
 
 export const LoginPage = defineComponent({
   name: 'LoginPageComponent',

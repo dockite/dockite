@@ -1,5 +1,5 @@
 import { noop, sortBy } from 'lodash';
-import { computed, defineComponent, PropType, ref, toRefs, withModifiers } from 'vue';
+import { computed, defineComponent, PropType, ref, toRefs, withKeys, withModifiers } from 'vue';
 
 import { AvailableFieldItem } from '~/graphql';
 
@@ -41,6 +41,12 @@ export const SchemaAvailableFieldsListComponent = defineComponent({
       ctx.emit('selected:field', field);
     };
 
+    const handleEnterPressed = (): void => {
+      if (filteredFields.value.length > 0) {
+        handleSelectField(filteredFields.value[0]);
+      }
+    };
+
     return () => (
       <div class="h-full flex flex-col px-3">
         <div class="py-2">
@@ -48,6 +54,7 @@ export const SchemaAvailableFieldsListComponent = defineComponent({
             v-model={filter.value}
             placeholder="Filter"
             onBlur={withModifiers(noop, ['self'])}
+            onKeyup={(e: KeyboardEvent) => e.key.toLowerCase() === 'enter' && handleEnterPressed()}
             clearable
           />
         </div>

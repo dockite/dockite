@@ -1,21 +1,5 @@
 import { Schema } from '@dockite/database';
 
-export const getTableActions = (schema: Schema): JSX.Element => {
-  return (
-    <div style="margin: 0 -10px">
-      <div class="flex items-center -mx-2">
-        <router-link title="Edit Schema" class="px-2" to={`/schemas/${schema.id}`}>
-          <i class="el-icon-edit-outline" />
-        </router-link>
-
-        <router-link title="View Revisions" class="px-2" to={`/schemas/${schema.id}/revisions`}>
-          <i class="el-icon-folder-opened" />
-        </router-link>
-      </div>
-    </div>
-  );
-};
-
 export const getHeaderActions = (): JSX.Element => (
   <el-dropdown>
     {{
@@ -34,7 +18,7 @@ export const getHeaderActions = (): JSX.Element => (
             </router-link>
           </el-dropdown-item>
 
-          {/* Deleted Schmeas */}
+          {/* Deleted Singletons */}
           <el-dropdown-item>
             <router-link class="block" to="/schemas/deleted">
               <i class="el-icon-folder-delete" />
@@ -55,4 +39,18 @@ export const getHeaderActions = (): JSX.Element => (
   </el-dropdown>
 );
 
-export default getTableActions;
+export const getTableActions = (schema: Schema): JSX.Element => {
+  return (
+    <div style="margin: 0 -10px">
+      <div class="flex items-center -mx-2">
+        <router-link title="Edit Schema" class="px-2" to={`/schemas/${schema.id}/edit`}>
+          <i class="el-icon-edit-outline" />
+        </router-link>
+
+        <router-link title="View Revisions" class="px-2" to={`/schemas/${schema.id}/revisions`}>
+          <i class="el-icon-folder-opened" />
+        </router-link>
+      </div>
+    </div>
+  );
+};

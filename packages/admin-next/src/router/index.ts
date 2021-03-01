@@ -13,6 +13,11 @@ export const Router = createRouter({
       component: () => import('../pages/Login'),
       meta: { layout: 'Guest' },
     },
+
+    /**
+     * Documents
+     */
+
     {
       path: '/documents',
       component: () => import('../pages/Documents'),
@@ -23,6 +28,11 @@ export const Router = createRouter({
       component: () => import('../pages/Documents/_Id'),
       meta: { layout: 'Dashboard' },
     },
+
+    /**
+     * Schemas
+     */
+
     {
       path: '/schemas',
       component: () => import('../pages/Schemas'),
@@ -33,11 +43,11 @@ export const Router = createRouter({
       component: () => import('../pages/Schemas/Create'),
       meta: { layout: 'Dashboard' },
     },
-    // {
-    //   path: '/schemas/import',
-    //   component: () => import('../pages/Schemas/Import'),
-    //   meta: { layout: 'Dashboard' },
-    // },
+    {
+      path: '/schemas/import',
+      component: () => import('../pages/Schemas/Import'),
+      meta: { layout: 'Dashboard' },
+    },
     // {
     //   path: '/schemas/deleted',
     //   component: () => import('../pages/Schemas/Deleted'),
@@ -48,16 +58,41 @@ export const Router = createRouter({
       component: () => import('../pages/Schemas/_Id'),
       meta: { layout: 'Dashboard' },
     },
+
+    /**
+     * Singletons
+     */
+
     {
       path: '/singletons',
       component: () => import('../pages/Singletons'),
       meta: { layout: 'Dashboard' },
     },
     {
+      path: '/singletons/create',
+      component: () => import('../pages/Singletons/Create'),
+      meta: { layout: 'Dashboard' },
+    },
+    // {
+    //   path: '/singletons/import',
+    //   component: () => import('../pages/Singletons/Import'),
+    //   meta: { layout: 'Dashboard' },
+    // },
+    // {
+    //   path: '/singletons/deleted',
+    //   component: () => import('../pages/Singletons/Deleted'),
+    //   meta: { layout: 'Dashboard' },
+    // },
+    {
       path: '/singletons/:singletonId',
       component: () => import('../pages/Singletons/_Id'),
       meta: { layout: 'Dashboard' },
     },
+
+    /**
+     * Errors
+     */
+
     {
       path: '/403',
       name: 'NotAuthorized',

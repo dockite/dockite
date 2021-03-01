@@ -1,12 +1,17 @@
-import { Singleton } from '@dockite/database';
 import { defineComponent, ref, watchEffect } from 'vue';
 import { usePromise } from 'vue-composable';
 import { useRouter } from 'vue-router';
 
-import { getActions } from './util';
+import { Singleton } from '@dockite/database';
+
+import { getHeaderActions, getTableActions } from './util';
 
 import { fetchAllSingletons } from '~/common/api';
-import { DASHBOARD_HEADER_PORTAL_TITLE, MAX_32_BIT_INT } from '~/common/constants';
+import {
+  DASHBOARD_HEADER_PORTAL_ACTIONS,
+  DASHBOARD_HEADER_PORTAL_TITLE,
+  MAX_32_BIT_INT,
+} from '~/common/constants';
 import { useGraphQL, usePortal } from '~/hooks';
 
 export interface SingletonTableColumnDefaultScopedSlot {
@@ -46,6 +51,8 @@ export const SingletonsIndexPage = defineComponent({
         setPortal(DASHBOARD_HEADER_PORTAL_TITLE, <span>All Singletons</span>);
       }
     });
+
+    setPortal(DASHBOARD_HEADER_PORTAL_ACTIONS, getHeaderActions());
 
     return () => {
       if (singletons.loading.value) {
@@ -101,7 +108,7 @@ export const SingletonsIndexPage = defineComponent({
 
             <el-table-column label="Actions" width="120">
               {{
-                default: ({ row }: SingletonTableColumnDefaultScopedSlot) => getActions(row),
+                default: ({ row }: SingletonTableColumnDefaultScopedSlot) => getTableActions(row),
               }}
             </el-table-column>
           </el-table>

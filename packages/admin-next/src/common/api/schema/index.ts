@@ -6,6 +6,7 @@ import { FindManyResult } from '@dockite/types';
 
 import { DOCKITE_ITEMS_PER_PAGE } from '~/common/constants';
 import { ApplicationError, ApplicationErrorCode } from '~/common/errors';
+import { CREATE_SCHEMA_EVENT } from '~/common/events';
 import { logE } from '~/common/logger';
 import { BaseSchema } from '~/common/types';
 import {
@@ -19,12 +20,11 @@ import {
   GetSchemaByIdQueryVariables,
   GET_SCHEMA_BY_ID_QUERY,
 } from '~/graphql';
+import { useEvent } from '~/hooks';
 import { useGraphQL } from '~/hooks/useGraphQL';
 
 export const getSchemaById = async (id: string): Promise<Schema> => {
   const graphql = useGraphQL();
-
-  console.log(`getSchemaById(${id})`);
 
   const result = await graphql.executeQuery<
     GetSchemaByIdQueryResponse,
@@ -74,6 +74,7 @@ export const fetchAllSchemas = async (
 
 export const createSchema = async (payload: BaseSchema): Promise<Schema> => {
   const graphql = useGraphQL();
+  const { emit } = useEvent();
 
   try {
     const result = await graphql.executeMutation<
@@ -108,6 +109,8 @@ export const createSchema = async (payload: BaseSchema): Promise<Schema> => {
         ApplicationErrorCode.UNKNOWN_ERROR,
       );
     }
+
+    emit(CREATE_SCHEMA_EVENT);
 
     return result.data.createSchema;
   } catch (err) {

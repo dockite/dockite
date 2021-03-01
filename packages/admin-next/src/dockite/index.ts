@@ -16,14 +16,6 @@ import { useGraphQL } from '~/hooks';
 
 const w = window as any;
 
-interface FieldComponentProps {
-  name: string;
-  formData: Record<string, any>;
-  schema?: Schema;
-  fieldConfig: Field;
-  errors: any;
-}
-
 interface FieldManagerItem {
   input: Nullable<DefineComponent<DockiteFieldInputComponentProps<any, any>>>;
   settings: Nullable<DefineComponent<DockiteFieldSettingsComponentProps<BaseField, BaseSchema>>>;

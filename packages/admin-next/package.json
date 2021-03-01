@@ -17,16 +17,19 @@
     "apollo-link-context": "^1.0.20",
     "apollo-link-error": "^1.1.13",
     "apollo-link-http": "^1.5.17",
+    "codemirror": "^5.59.4",
     "cosmiconfig": "^6.0.0",
     "element-plus": "^1.0.2-beta.32",
     "graphql-tag": "^2.10.3",
+    "jsonlint-mod": "^1.7.6",
     "jwt-decode": "^3.1.2",
     "lodash": "^4.17.15",
+    "mitt": "^2.1.0",
     "tailwindcss": "^1.9.6",
     "vue": "^3.0.5",
-    "vuedraggable": "^4.0.1",
     "vue-composable": "^1.0.0-beta.16",
-    "vue-router": "^4.0.0"
+    "vue-router": "^4.0.0",
+    "vuedraggable": "^4.0.1"
   },
   "peerDependencies": {
     "@auth0/auth0-spa-js": "^1.13.5",
@@ -35,6 +38,7 @@
   "devDependencies": {
     "@auth0/auth0-spa-js": "^1.13.5",
     "@dockite/rollup": "^1.0.0",
+    "@types/codemirror": "^0.0.108",
     "@types/lodash": "^4.14.149",
     "@typescript-eslint/eslint-plugin": "^4.10.0",
     "@typescript-eslint/parser": "^4.10.0",
