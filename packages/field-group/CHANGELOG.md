@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.4.1-alpha.2](https://github.com/dockite/dockite/compare/@dockite/field-group@0.4.1-alpha.1...@dockite/field-group@0.4.1-alpha.2) (2021-03-02)
+
+
+### Bug Fixes
+
+* **field-group:** assign value during array normalization ([e9a07ed](https://github.com/dockite/dockite/commit/e9a07edda0bcdecb4595a8123d9e1599987e7de0))
+
+
+
+
+
 ## [0.4.1-alpha.1](https://github.com/dockite/dockite/compare/@dockite/field-group@0.4.1-alpha.0...@dockite/field-group@0.4.1-alpha.1) (2021-02-11)
 
 **Note:** Version bump only for package @dockite/field-group
