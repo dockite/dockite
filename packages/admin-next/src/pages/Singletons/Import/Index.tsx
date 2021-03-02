@@ -84,7 +84,7 @@ export const SingletonImportPage = defineComponent({
       return allSingletons.result.value.some(s => s.title === singleton.title);
     });
 
-    setPortal(DASHBOARD_HEADER_PORTAL_TITLE, 'Import Singleton');
+    setPortal(DASHBOARD_HEADER_PORTAL_TITLE, <span>Import Singleton</span>);
 
     return () => {
       return (

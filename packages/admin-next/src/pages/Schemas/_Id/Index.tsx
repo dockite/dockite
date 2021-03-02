@@ -1,9 +1,9 @@
-import { Document } from '@dockite/database';
 import { cloneDeep } from 'lodash';
 import { defineComponent, reactive, ref, toRaw, watch, watchEffect } from 'vue';
 import { usePromise, usePromiseLazy } from 'vue-composable';
 import { useRoute, useRouter } from 'vue-router';
 
+import { Document } from '@dockite/database';
 import { AndQuery } from '@dockite/where-builder/lib/types';
 
 import { getActions } from './util';
@@ -140,28 +140,30 @@ export const SchemaDocumentsPage = defineComponent({
 
     watch(
       schema.result,
-      () => {
-        if (schema.result.value) {
+      value => {
+        if (value) {
           documents.exec();
 
-          const fieldsToDisplay = schema.result.value.settings.fieldsToDisplay ?? [];
+          const fieldsToDisplay = value.settings.fieldsToDisplay ?? [];
+
+          tableColumns.value = [];
 
           if (route.query.columns) {
-            tableColumns.value = getColumnsFromQueryParams(route, schema.result.value);
+            tableColumns.value = getColumnsFromQueryParams(route, value);
           }
 
           if (tableColumns.value.length === 0) {
             tableColumns.value = fieldsToDisplay
               .map(f => {
-                const field = schema.result.value!.fields.find(x => x.name === f);
+                const field = value.fields.find(x => x.name === f);
 
                 if (!field) {
                   return undefined;
                 }
 
                 return {
-                  label: field?.title,
-                  name: field?.name,
+                  label: field.title,
+                  name: field.name,
                   filterable: true,
                 };
               })

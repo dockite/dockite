@@ -48,7 +48,7 @@ export const DocumentFormPage = defineComponent({
       }
 
       if (singleton.result.value) {
-        router.push(`/singletons/${singleton.result.value.id}`);
+        router.replace(`/singletons/${singleton.result.value.id}`);
 
         return;
       }

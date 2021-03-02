@@ -80,7 +80,7 @@ export const SchemaImportPage = defineComponent({
       return allSchemas.result.value.some(s => s.title === schema.title);
     });
 
-    setPortal(DASHBOARD_HEADER_PORTAL_TITLE, 'Import Schema');
+    setPortal(DASHBOARD_HEADER_PORTAL_TITLE, <span>Import Schema</span>);
 
     return () => {
       return (
