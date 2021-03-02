@@ -291,7 +291,7 @@ export default class GroupFieldInputComponent extends Vue {
       }
 
       if (Array.isArray(this.value)) {
-        this.value.map(v => ({ ...cloneDeep(this.initialFieldData), ...v }));
+        this.fieldData = this.value.map(v => ({ ...cloneDeep(this.initialFieldData), ...v }));
       }
     } else {
       this.fieldData = { ...cloneDeep(this.initialFieldData), ...this.value };
