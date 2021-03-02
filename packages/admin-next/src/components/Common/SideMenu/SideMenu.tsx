@@ -1,3 +1,4 @@
+import { noop } from 'lodash';
 import { computed, defineComponent, onUnmounted } from 'vue';
 import { usePromise } from 'vue-composable';
 import { useRoute } from 'vue-router';
@@ -230,8 +231,9 @@ export const SideMenu = defineComponent({
       );
     };
 
-    const activeItem = computed((): string => {
-      return route.path;
+    const activeItem = computed({
+      get: () => route.path,
+      set: noop,
     });
 
     return () => (

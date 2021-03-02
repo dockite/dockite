@@ -1,5 +1,5 @@
 /* eslint-disable import/prefer-default-export */
-import { sortBy, create } from 'lodash';
+import { sortBy, create, cloneDeep } from 'lodash';
 
 import { Schema } from '@dockite/database';
 import { FindManyResult } from '@dockite/types';
@@ -23,6 +23,9 @@ import {
   DeleteSchemaMutationVariables,
   DeleteSchemaMutationResponse,
 } from '~/graphql';
+import FETCH_ALL_DOCUMENTS_QUERY, {
+  FetchAllDocumentsQueryResponse,
+} from '~/graphql/queries/fetchAllDocuments';
 import { useEvent } from '~/hooks';
 import { useGraphQL } from '~/hooks/useGraphQL';
 
@@ -151,16 +154,30 @@ export const deleteSchema = async (payload: Schema): Promise<boolean> => {
           const { deleteSchema: success } = createSchemaData;
 
           if (success) {
-            const data = store.readQuery<FetchAllSchemasQueryResponse>({
+            const allSchemaData = store.readQuery<FetchAllSchemasQueryResponse>({
               query: FETCH_ALL_SCHEMAS_QUERY,
             });
 
-            if (data) {
-              data.allSchemas.results = data.allSchemas.results.filter(
+            const allDocumentData = store.readQuery<FetchAllDocumentsQueryResponse>({
+              query: FETCH_ALL_DOCUMENTS_QUERY,
+            });
+
+            if (allSchemaData) {
+              allSchemaData.allSchemas.results = allSchemaData.allSchemas.results.filter(
                 schema => schema.id !== payload.id,
               );
 
-              store.writeQuery({ query: FETCH_ALL_SCHEMAS_QUERY, data });
+              store.writeQuery({ query: FETCH_ALL_SCHEMAS_QUERY, data: allSchemaData });
+            }
+
+            if (allDocumentData) {
+              console.log(cloneDeep(allDocumentData));
+
+              allDocumentData.allDocuments.results = allDocumentData.allDocuments.results.filter(
+                document => document.schemaId !== payload.id,
+              );
+
+              store.writeQuery({ query: FETCH_ALL_DOCUMENTS_QUERY, data: allDocumentData });
             }
           }
         }

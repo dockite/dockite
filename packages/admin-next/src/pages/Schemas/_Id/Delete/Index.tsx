@@ -1,11 +1,13 @@
-import { defineComponent, computed, watch, watchEffect } from 'vue';
-import { usePromiseLazy, usePromise } from 'vue-composable';
-import { useRoute } from 'vue-router';
+import { ElMessage } from 'element-plus';
+import { computed, defineComponent, watchEffect, ref, onMounted, watch } from 'vue';
+import { usePromiseLazy } from 'vue-composable';
+import { useRoute, useRouter } from 'vue-router';
 
-import { getSchemaById, deleteSchema, fetchAllSchemasWithPagination } from '~/common/api';
+import { deleteSchema, fetchDocumentsBySchemaIdWithPagination, getSchemaById } from '~/common/api';
 import { DASHBOARD_HEADER_PORTAL_TITLE } from '~/common/constants';
 import { ApplicationError, ApplicationErrorCode } from '~/common/errors';
 import { logE } from '~/common/logger';
+import RenderIfComponent from '~/components/Common/RenderIf';
 import { SpinnerComponent } from '~/components/Common/Spinner';
 import { usePortal } from '~/hooks';
 
@@ -14,7 +16,10 @@ export const DeleteSchemaPage = defineComponent({
 
   setup: () => {
     const route = useRoute();
+    const router = useRouter();
     const { setPortal } = usePortal();
+
+    const delay = ref(3);
 
     const schemaId = computed(() => {
       if (route.params.schemaId && typeof route.params.schemaId === 'string') {
@@ -24,7 +29,13 @@ export const DeleteSchemaPage = defineComponent({
       return null;
     });
 
-    const allSchemas = usePromise(() => fetchAllSchemasWithPagination(1));
+    const allDocumentsForSchema = usePromiseLazy(() => {
+      if (schemaId.value) {
+        return fetchDocumentsBySchemaIdWithPagination({ schemaId: schemaId.value });
+      }
+
+      return Promise.reject(new Error('A valid schemaId is required'));
+    });
 
     const schema = usePromiseLazy(() => {
       if (schemaId.value) {
@@ -33,6 +44,16 @@ export const DeleteSchemaPage = defineComponent({
 
       return Promise.reject(new Error('A valid schemaId is required'));
     });
+
+    const handleDecrementDelay = (): void => {
+      if (delay.value > 0) {
+        setTimeout(() => {
+          delay.value -= 1;
+
+          handleDecrementDelay();
+        }, 1000);
+      }
+    };
 
     const handleDeleteSchema = usePromiseLazy(async () => {
       try {
@@ -45,6 +66,10 @@ export const DeleteSchemaPage = defineComponent({
               ApplicationErrorCode.CANT_DELETE_SCHEMA,
             );
           }
+
+          ElMessage.success('Schema deleted successfully!');
+
+          router.push('/schemas');
         }
       } catch (err) {
         logE(err);
@@ -65,11 +90,13 @@ export const DeleteSchemaPage = defineComponent({
         // If the schema isn't already loading and we don't already have a value for it
         if (!schema.loading.value && !schema.result.value) {
           schema.exec();
+          allDocumentsForSchema.exec();
         }
 
         // If we have a value for the schema but it's not the same as the route param
         if (schema.result.value && schema.result.value.id !== schemaId.value) {
           schema.exec();
+          allDocumentsForSchema.exec();
         }
       }
     });
@@ -87,39 +114,71 @@ export const DeleteSchemaPage = defineComponent({
         setPortal(
           DASHBOARD_HEADER_PORTAL_TITLE,
           <span>
-            Delete Schema: <strong class="font-semibold">{schema.result.value.title}</strong>
+            Confirmation of <u>{schema.result.value.title}</u> Deletion
           </span>,
         );
       }
     });
 
-    return () => {
-      if (!schemaId || schema.loading.value || allSchemas.loading.value) {
-        return (
-          <div style={{ minHeight: '40vh' }}>
-            <div class="el-loading-mask">
-              <div class="el-loading-spinner">
-                <SpinnerComponent />
+    watch(
+      () => schema.result.value,
+      value => {
+        if (value) {
+          handleDecrementDelay();
+        }
+      },
+    );
 
-                <p class="el-loading-text">Schema is still loading, please wait...</p>
+    return () => {
+      return (
+        <div v-loading={handleDeleteSchema.loading.value} class="relative">
+          <RenderIfComponent condition={!schemaId.value || schema.loading.value}>
+            <div style={{ minHeight: '40vh' }}>
+              <div class="el-loading-mask">
+                <div class="el-loading-spinner">
+                  <SpinnerComponent />
+
+                  <p class="el-loading-text">Schema is still loading, please wait...</p>
+                </div>
               </div>
             </div>
-          </div>
-        );
-      }
+          </RenderIfComponent>
 
-      if (!schema.result.value) {
-        return (
-          <div>
-            An unknown error has occurred.
-            <pre>{schema.error.value || '?'}</pre>
-          </div>
-        );
-      }
+          <RenderIfComponent condition={!!schema.error.value}>
+            <div>An error occurred while fetching the Schema, please try again later.</div>
+          </RenderIfComponent>
 
-      return (
-        <div v-loading={handleDeleteSchema.loading.value}>
-          <h3>Deleting Schema: {schema.result.value.title}</h3>
+          <RenderIfComponent
+            condition={schema.result.value !== null && allDocumentsForSchema.result.value !== null}
+          >
+            <div>
+              <h2 class="text-xl font-semibold pb-5">
+                Are you sure you want to delete {schema.result.value?.title}?
+              </h2>
+
+              <p class="pb-5">
+                If you delete {schema.result.value?.title}, the{' '}
+                {allDocumentsForSchema.result.value?.totalItems} document(s) associated with the
+                Schema will also be deleted!
+              </p>
+
+              <div class="flex justify-between items-center">
+                <el-button type="text" onClick={() => router.back()}>
+                  Go Back
+                </el-button>
+
+                <el-button
+                  type="danger"
+                  loading={delay.value > 0 || handleDeleteSchema.loading.value}
+                  onClick={() => handleDeleteSchema.exec()}
+                >
+                  {delay.value > 0
+                    ? `Available in ${delay.value} seconds...`
+                    : `Delete ${schema.result.value?.title}`}
+                </el-button>
+              </div>
+            </div>
+          </RenderIfComponent>
         </div>
       );
     };
