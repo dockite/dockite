@@ -1,13 +1,15 @@
-import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory';
 import {
   ApolloClient,
   ApolloQueryResult,
   MutationOptions,
   OperationVariables,
   QueryOptions,
-} from 'apollo-client';
-import { ApolloLink, FetchResult } from 'apollo-link';
-import { createHttpLink } from 'apollo-link-http';
+  InMemoryCache,
+  NormalizedCacheObject,
+  ApolloLink,
+  FetchResult,
+  HttpLink,
+} from '@apollo/client/core';
 import { reactive } from 'vue';
 
 import { exceptionHandler } from './exceptionHandler';
@@ -66,10 +68,12 @@ export const useGraphQL = (): UseGraphQLHook => {
 
       cache: new InMemoryCache(),
 
+      connectToDevTools: (process.env.NODE_ENV as string) !== 'production',
+
       link: ApolloLink.from([
         authLink,
         refreshTokenLink,
-        createHttpLink({
+        new HttpLink({
           uri: config.app.graphqlEndpoint,
           credentials: 'include',
         }),

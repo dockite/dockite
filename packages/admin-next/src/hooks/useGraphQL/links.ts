@@ -1,4 +1,4 @@
-import { ApolloLink } from 'apollo-link';
+import { ApolloLink } from '@apollo/client/core';
 import { useLocalStorage } from 'vue-composable';
 
 import { AUTH_TOKEN_STORAGE_KEY } from '~/common/constants';

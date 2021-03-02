@@ -1,3 +1,4 @@
+import { cloneDeep } from '@apollo/client/utilities';
 import { sortBy } from 'lodash';
 
 import { Singleton } from '@dockite/database';
@@ -51,9 +52,12 @@ export const fetchAllSingletonsWithPagination = async (
     },
   });
 
-  result.data.allSingletons.results = sortBy(result.data.allSingletons.results, 'name');
+  // We clone the result due to it pointing at a read-only cache item.
+  const clone = cloneDeep(result);
 
-  return result.data.allSingletons;
+  clone.data.allSingletons.results = sortBy(clone.data.allSingletons.results, 'name');
+
+  return clone.data.allSingletons;
 };
 
 export const fetchAllSingletons = async (

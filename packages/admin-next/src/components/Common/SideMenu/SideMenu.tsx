@@ -1,5 +1,5 @@
 import { noop } from 'lodash';
-import { computed, defineComponent, onUnmounted } from 'vue';
+import { computed, defineComponent, onUnmounted, withModifiers } from 'vue';
 import { usePromise } from 'vue-composable';
 import { useRoute } from 'vue-router';
 
@@ -29,6 +29,8 @@ export const SideMenu = defineComponent({
 
     const schemas = usePromise(() => fetchAllSchemas());
     const singletons = usePromise(() => fetchAllSingletons());
+
+    console.log({ schemas, singletons });
 
     const handleSchemasChanged = (): void => {
       schemas.exec();
@@ -81,11 +83,15 @@ export const SideMenu = defineComponent({
                 if (singletons.result.value === null || singletons.error.value) {
                   return (
                     <div>
-                      Error occurred whilst fetching Singletons{' '}
-                      <a class="font-bold" onClick={singletons.exec}>
-                        Retry?
-                      </a>
-                      ...
+                      <el-menu-item index="/singletons/error">
+                        Error occurred while fetching Singletons
+                        <a
+                          class="block underline font-bold"
+                          onClick={withModifiers(singletons.exec, ['prevent'])}
+                        >
+                          Retry?
+                        </a>
+                      </el-menu-item>
                     </div>
                   );
                 }
@@ -140,13 +146,15 @@ export const SideMenu = defineComponent({
 
                 if (schemas.result.value === null || schemas.error.value) {
                   return (
-                    <div>
-                      Error occurred whilst fetching Schemas{' '}
-                      <a class="font-bold" onClick={schemas.exec}>
+                    <el-menu-item index="/schemas/error">
+                      Error occurred while fetching Schemas
+                      <a
+                        class="block font-bold underline"
+                        onClick={withModifiers(schemas.exec, ['prevent'])}
+                      >
                         Retry?
                       </a>
-                      ...
-                    </div>
+                    </el-menu-item>
                   );
                 }
 
@@ -206,13 +214,15 @@ export const SideMenu = defineComponent({
 
               if (schemas.result.value === null || schemas.error.value) {
                 return (
-                  <div>
-                    Error occurred whilst fetching Schemas{' '}
-                    <a class="font-bold" onClick={schemas.exec}>
+                  <el-menu-item index="/schemas/error">
+                    Error occurred while fetching Schemas
+                    <a
+                      class="block font-bold underline"
+                      onClick={withModifiers(schemas.exec, ['prevent'])}
+                    >
                       Retry?
                     </a>
-                    ...
-                  </div>
+                  </el-menu-item>
                 );
               }
 

@@ -1,4 +1,4 @@
-import { ApolloError } from 'apollo-client';
+import { ApolloError } from '@apollo/client/core';
 import { Router } from 'vue-router';
 
 import { ApplicationError, ApplicationErrorCode, ApplicationErrorGroup } from '~/common/errors';

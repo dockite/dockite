@@ -1,7 +1,8 @@
 /* eslint-disable import/prefer-default-export */
+import { StoreObject } from '@apollo/client/core';
 import { sortBy, create, cloneDeep } from 'lodash';
 
-import { Schema } from '@dockite/database';
+import { Document, Schema } from '@dockite/database';
 import { FindManyResult } from '@dockite/types';
 
 import { DOCKITE_ITEMS_PER_PAGE } from '~/common/constants';
@@ -65,9 +66,12 @@ export const fetchAllSchemasWithPagination = async (
     },
   });
 
-  result.data.allSchemas.results = sortBy(result.data.allSchemas.results, 'name');
+  // We clone the result due to it pointing at a read-only cache item.
+  const clone = cloneDeep(result);
 
-  return result.data.allSchemas;
+  clone.data.allSchemas.results = sortBy(clone.data.allSchemas.results, 'name');
+
+  return clone.data.allSchemas;
 };
 
 export const fetchAllSchemas = async (
@@ -154,31 +158,34 @@ export const deleteSchema = async (payload: Schema): Promise<boolean> => {
           const { deleteSchema: success } = createSchemaData;
 
           if (success) {
-            const allSchemaData = store.readQuery<FetchAllSchemasQueryResponse>({
-              query: FETCH_ALL_SCHEMAS_QUERY,
+            // Evict the current entry for the Schema from all known cache entries.
+            store.evict({
+              id: store.identify((payload as unknown) as StoreObject),
+              broadcast: false,
             });
 
-            const allDocumentData = store.readQuery<FetchAllDocumentsQueryResponse>({
-              query: FETCH_ALL_DOCUMENTS_QUERY,
+            // Remove any documents containing the schema from the cache
+            store.modify({
+              id: 'ROOT_QUERY',
+              fields: {
+                findDocuments: (documents: FindManyResult<Document>): FindManyResult<Document> => {
+                  return {
+                    ...documents,
+                    results: documents.results.filter(document => document.schemaId !== payload.id),
+                  };
+                },
+                searchDocuments: (
+                  documents: FindManyResult<Document>,
+                ): FindManyResult<Document> => {
+                  return {
+                    ...documents,
+                    results: documents.results.filter(document => document.schemaId !== payload.id),
+                  };
+                },
+              },
             });
 
-            if (allSchemaData) {
-              allSchemaData.allSchemas.results = allSchemaData.allSchemas.results.filter(
-                schema => schema.id !== payload.id,
-              );
-
-              store.writeQuery({ query: FETCH_ALL_SCHEMAS_QUERY, data: allSchemaData });
-            }
-
-            if (allDocumentData) {
-              console.log(cloneDeep(allDocumentData));
-
-              allDocumentData.allDocuments.results = allDocumentData.allDocuments.results.filter(
-                document => document.schemaId !== payload.id,
-              );
-
-              store.writeQuery({ query: FETCH_ALL_DOCUMENTS_QUERY, data: allDocumentData });
-            }
+            store.gc();
           }
         }
       },

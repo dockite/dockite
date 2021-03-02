@@ -1,5 +1,5 @@
 import { ElMessage } from 'element-plus';
-import { computed, defineComponent, watchEffect, ref, onMounted, watch } from 'vue';
+import { computed, defineComponent, ref, watch, watchEffect } from 'vue';
 import { usePromiseLazy } from 'vue-composable';
 import { useRoute, useRouter } from 'vue-router';
 
@@ -7,7 +7,7 @@ import { deleteSchema, fetchDocumentsBySchemaIdWithPagination, getSchemaById } f
 import { DASHBOARD_HEADER_PORTAL_TITLE } from '~/common/constants';
 import { ApplicationError, ApplicationErrorCode } from '~/common/errors';
 import { logE } from '~/common/logger';
-import RenderIfComponent from '~/components/Common/RenderIf';
+import { RenderIfComponent } from '~/components/Common/RenderIf';
 import { SpinnerComponent } from '~/components/Common/Spinner';
 import { usePortal } from '~/hooks';
 
