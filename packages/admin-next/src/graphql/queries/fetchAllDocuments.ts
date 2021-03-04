@@ -1,4 +1,4 @@
-import gql from 'graphql-tag';
+import { gql } from '@apollo/client/core';
 
 import { Document } from '@dockite/database';
 import { DockiteGraphQLSortInput, FindManyResult } from '@dockite/types';

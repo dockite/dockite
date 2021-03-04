@@ -82,11 +82,11 @@ export const Router = createRouter({
       component: () => import('../pages/Singletons/Create'),
       meta: { layout: 'Dashboard' },
     },
-    // {
-    //   path: '/singletons/import',
-    //   component: () => import('../pages/Singletons/Import'),
-    //   meta: { layout: 'Dashboard' },
-    // },
+    {
+      path: '/singletons/import',
+      component: () => import('../pages/Singletons/Import'),
+      meta: { layout: 'Dashboard' },
+    },
     // {
     //   path: '/singletons/deleted',
     //   component: () => import('../pages/Singletons/Deleted'),

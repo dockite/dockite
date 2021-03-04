@@ -1,4 +1,4 @@
-import gql from 'graphql-tag';
+import { gql } from '@apollo/client/core';
 
 import { Schema } from '@dockite/database';
 import { FindManyResult } from '@dockite/types';

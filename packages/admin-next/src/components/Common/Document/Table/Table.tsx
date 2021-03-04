@@ -1,7 +1,8 @@
-import { Document, Schema } from '@dockite/database';
 import { get, fromPairs } from 'lodash';
 import { computed, defineComponent, PropType, toRaw, WritableComputedRef } from 'vue';
 
+import { Document, Schema } from '@dockite/database';
+import { SchemaType } from '@dockite/types';
 import { Constraint } from '@dockite/where-builder/lib/types';
 
 import {
@@ -286,11 +287,24 @@ export const DocumentTableComponent = defineComponent({
               {props.showSchemaColumn && (
                 <el-table-column label="Schema">
                   {{
-                    default: ({ row }: DocumentTableColumnDefaultScopedSlot) => (
-                      <router-link class="overflow-ellipsis" to={`/schemas/${row.schema?.id}`}>
-                        {row.schema?.name}
-                      </router-link>
-                    ),
+                    default: ({ row }: DocumentTableColumnDefaultScopedSlot) => {
+                      if (row.schema?.type === SchemaType.SINGLETON) {
+                        return (
+                          <router-link
+                            class="overflow-ellipsis"
+                            to={`/singletons/${row.schema?.id}`}
+                          >
+                            {row.schema?.name}
+                          </router-link>
+                        );
+                      }
+
+                      return (
+                        <router-link class="overflow-ellipsis" to={`/schemas/${row.schema?.id}`}>
+                          {row.schema?.name}
+                        </router-link>
+                      );
+                    },
                   }}
                 </el-table-column>
               )}

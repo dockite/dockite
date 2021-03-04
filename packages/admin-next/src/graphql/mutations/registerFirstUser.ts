@@ -1,5 +1,5 @@
 import { User } from '@dockite/database';
-import gql from 'graphql-tag';
+import { gql } from '@apollo/client/core';
 
 export interface RegisterFirstUserMutationResponse {
   registerFirstUser: {

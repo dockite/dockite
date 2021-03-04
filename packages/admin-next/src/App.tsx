@@ -1,21 +1,9 @@
 import jwtDecode from 'jwt-decode';
-import {
-  Component,
-  computed,
-  defineAsyncComponent,
-  defineComponent,
-  onBeforeMount,
-  reactive,
-  ref,
-  Teleport,
-  toRaw,
-  watch,
-  watchEffect,
-} from 'vue';
+import { computed, defineComponent, reactive, ref, Teleport, watch } from 'vue';
 import { usePromise } from 'vue-composable';
 import { NavigationGuard, onBeforeRouteLeave, onBeforeRouteUpdate, useRoute } from 'vue-router';
 
-import Logo from './components/Common/Logo';
+import { Logo } from './components/Common/Logo';
 import { useConfig } from './hooks';
 
 import { useAuth } from '~/hooks/useAuth';

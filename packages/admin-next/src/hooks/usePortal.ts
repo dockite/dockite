@@ -1,33 +1,48 @@
-import { reactive, onUnmounted, getCurrentInstance } from 'vue';
+import { omit } from 'lodash';
+import { computed, getCurrentInstance, onBeforeUnmount, Ref, ref } from 'vue';
 
 type MaybeArray<T> = T | Array<T>;
 
-const portals: Record<string, MaybeArray<JSX.Element>> = reactive({});
+type Fn = () => any;
+
+const portals = ref<Record<string, MaybeArray<JSX.Element>>>({});
 
 interface UsePortalHook {
-  getPortal: (name: string) => MaybeArray<JSX.Element> | null;
-  setPortal: (name: string, content: MaybeArray<JSX.Element>) => void;
+  getPortal: (name: string) => Ref<MaybeArray<JSX.Element> | null>;
+  setPortal: (name: string, content: MaybeArray<JSX.Element> | Fn) => void;
 }
 
 export const usePortal = (): UsePortalHook => {
-  const getPortal = (name: string): MaybeArray<JSX.Element> | null => {
-    const target = portals[name];
+  const getPortal = (name: string): Ref<MaybeArray<JSX.Element> | null> => {
+    return computed(() => {
+      console.log('called', name);
 
-    if (typeof target === 'function') {
-      return target();
-    }
+      if (!portals.value[name]) {
+        return null;
+      }
 
-    return target ?? null;
+      const target = portals.value[name];
+
+      if (typeof target === 'function') {
+        return target();
+      }
+
+      return target;
+    });
   };
 
-  const setPortal = (name: string, content: MaybeArray<JSX.Element>): void => {
-    portals[name] = content;
+  const setPortal = (name: string, content: MaybeArray<JSX.Element> | Fn): void => {
+    console.log('setting', name);
+    portals.value = {
+      ...portals.value,
+      [name]: content,
+    };
 
     const instance = getCurrentInstance();
 
     if (instance) {
-      onUnmounted(() => {
-        delete portals[name];
+      onBeforeUnmount(() => {
+        portals.value = omit(portals.value, name);
       });
     }
   };

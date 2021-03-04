@@ -2,8 +2,10 @@ import { defineComponent, ref, watchEffect, reactive } from 'vue';
 import { usePromise } from 'vue-composable';
 import { useRoute, useRouter } from 'vue-router';
 
+import { getHeaderActions } from './util';
+
 import { getSingletonById } from '~/common/api';
-import { DASHBOARD_HEADER_PORTAL_TITLE } from '~/common/constants';
+import { DASHBOARD_HEADER_PORTAL_ACTIONS, DASHBOARD_HEADER_PORTAL_TITLE } from '~/common/constants';
 import { DocumentFormComponent } from '~/components/Common/Document/Form';
 import { useGraphQL, usePortal } from '~/hooks';
 
@@ -28,6 +30,8 @@ export const SingletonFormPage = defineComponent({
     const singletonId = ref(route.params.singletonId as string);
 
     const singleton = usePromise(() => getSingletonById(singletonId.value));
+
+    setPortal(DASHBOARD_HEADER_PORTAL_ACTIONS, getHeaderActions(singleton.result));
 
     watchEffect(() => {
       if (route.params.singletonId && route.params.singletonId !== singletonId.value) {

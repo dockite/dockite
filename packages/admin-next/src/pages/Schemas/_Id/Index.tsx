@@ -1,4 +1,3 @@
-import { cloneDeep } from 'lodash';
 import { defineComponent, reactive, ref, toRaw, watch, watchEffect } from 'vue';
 import { usePromise, usePromiseLazy } from 'vue-composable';
 import { useRoute, useRouter } from 'vue-router';
@@ -6,26 +5,30 @@ import { useRoute, useRouter } from 'vue-router';
 import { Document } from '@dockite/database';
 import { AndQuery } from '@dockite/where-builder/lib/types';
 
-import { getActions } from './util';
+import { getTableActions, getHeaderActions } from './util';
 
 import { getSchemaById } from '~/common/api';
 import {
   FetchDocumentsBySchemaIdArgs,
   fetchDocumentsBySchemaIdWithPagination,
 } from '~/common/api/documents';
-import { DASHBOARD_HEADER_PORTAL_TITLE, DOCKITE_ITEMS_PER_PAGE } from '~/common/constants';
+import {
+  DASHBOARD_HEADER_PORTAL_ACTIONS,
+  DASHBOARD_HEADER_PORTAL_TITLE,
+  DOCKITE_ITEMS_PER_PAGE,
+} from '~/common/constants';
 import { ApplicationError, ApplicationErrorCode } from '~/common/errors';
 import { Maybe } from '~/common/types';
 import { DocumentTableColumn, DocumentTableComponent } from '~/components/Common/Document/Table';
 import { DocumentTableState } from '~/components/Common/Document/Table/types';
 import { useGraphQL, usePortal } from '~/hooks';
 import {
-  getPaginationString,
   getAppliedFilters,
   getAppliedSort,
-  getFiltersFromTableState,
-  transformFiltersToQueryParam,
   getColumnsFromQueryParams,
+  getFiltersFromTableState,
+  getPaginationString,
+  transformFiltersToQueryParam,
 } from '~/utils';
 
 export const SchemaDocumentsPage = defineComponent({
@@ -78,12 +81,14 @@ export const SchemaDocumentsPage = defineComponent({
       });
     });
 
+    // TODO: Investigate why this dropdown doesn't render after page mount while others do
+    setPortal(DASHBOARD_HEADER_PORTAL_ACTIONS, () => getHeaderActions(schema.result));
+
     watchEffect(() => {
       if (route.params.schemaId && route.params.schemaId !== schemaId.value) {
         schemaId.value = route.params.schemaId as string;
 
         /* Reset our current state stores on route changes */
-
         Object.assign(tableState, {
           term: '',
           filters: getAppliedFilters(route),
@@ -249,7 +254,7 @@ export const SchemaDocumentsPage = defineComponent({
         <DocumentTableComponent
           class="-m-5"
           documents={documents.result.value.results}
-          getActions={getActions}
+          getActions={getTableActions}
           getFooter={getTableFooter}
           schema={schema.result.value}
           showIdentifierColumn={tableColumns.value.length === 0}

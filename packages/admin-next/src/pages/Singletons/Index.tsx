@@ -1,4 +1,4 @@
-import { defineComponent, ref, watchEffect } from 'vue';
+import { defineComponent, onBeforeMount, ref, watchEffect } from 'vue';
 import { usePromise } from 'vue-composable';
 import { useRouter } from 'vue-router';
 
@@ -52,7 +52,9 @@ export const SingletonsIndexPage = defineComponent({
       }
     });
 
-    setPortal(DASHBOARD_HEADER_PORTAL_ACTIONS, getHeaderActions());
+    onBeforeMount(() => {
+      setPortal(DASHBOARD_HEADER_PORTAL_ACTIONS, getHeaderActions());
+    });
 
     return () => {
       if (singletons.loading.value) {

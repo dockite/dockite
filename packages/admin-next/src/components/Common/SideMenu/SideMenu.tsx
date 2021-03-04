@@ -30,7 +30,19 @@ export const SideMenu = defineComponent({
     const schemas = usePromise(() => fetchAllSchemas());
     const singletons = usePromise(() => fetchAllSingletons());
 
-    console.log({ schemas, singletons });
+    const activeItem = computed({
+      get: () => route.path,
+      set: noop,
+    });
+
+    const activeItems = computed({
+      get: () =>
+        route.path
+          .split('/')
+          .slice(1)
+          .map((_, index, original) => original.slice(0, index).join('/')),
+      set: noop,
+    });
 
     const handleSchemasChanged = (): void => {
       schemas.exec();
@@ -241,17 +253,14 @@ export const SideMenu = defineComponent({
       );
     };
 
-    const activeItem = computed({
-      get: () => route.path,
-      set: noop,
-    });
-
     return () => (
       <el-menu
         backgroundColor={config.ui.backgroundColor}
         textColor={config.ui.textColor}
         activeTextColor={config.ui.activeTextColour}
+        // This is undocumented but it actually wants the raw ref
         defaultActive={activeItem}
+        defaultOpened={activeItems}
         style="height: 100vh;"
       >
         <Logo class="mt-3 mx-auto" style={{ maxWidth: '80%', maxHeight: '60px' }} />
