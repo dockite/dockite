@@ -136,8 +136,8 @@ export class Schema {
   public updatedAt!: Date;
 
   @DeleteDateColumn()
-  @GraphQLField()
-  public deletedAt!: Date;
+  @GraphQLField(_type => Date, { nullable: true })
+  public deletedAt?: Date | null;
 }
 
 @ObjectType()

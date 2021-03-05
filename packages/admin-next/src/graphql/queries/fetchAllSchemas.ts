@@ -9,11 +9,12 @@ export interface FetchAllSchemasQueryResponse {
 
 export type FetchAllSchemasQueryVariables = {
   perPage: number;
+  deleted?: boolean;
 };
 
 export const FETCH_ALL_SCHEMAS_QUERY = gql`
-  query FetchAllSchemas {
-    allSchemas {
+  query FetchAllSchemas($deleted: Boolean = false) {
+    allSchemas(deleted: $deleted) {
       results {
         id
         name
@@ -31,6 +32,7 @@ export const FETCH_ALL_SCHEMAS_QUERY = gql`
         }
         createdAt
         updatedAt
+        deletedAt
       }
       totalItems
       totalPages

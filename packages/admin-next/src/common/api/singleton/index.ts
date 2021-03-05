@@ -1,18 +1,21 @@
-import { cloneDeep } from '@apollo/client/utilities';
+import { cloneDeep, StoreObject } from '@apollo/client/utilities';
 import { sortBy } from 'lodash';
 
-import { Singleton } from '@dockite/database';
+import { Document, Singleton } from '@dockite/database';
 import { FindManyResult } from '@dockite/types';
 
 import { DOCKITE_ITEMS_PER_PAGE } from '~/common/constants';
 import { ApplicationError, ApplicationErrorCode } from '~/common/errors';
-import { CREATE_SINGLETON_EVENT } from '~/common/events';
+import { CREATE_SINGLETON_EVENT, DELETE_SINGLETON_EVENT } from '~/common/events';
 import { logE } from '~/common/logger';
 import { BaseSchema } from '~/common/types';
 import {
   CreateSingletonMutationResponse,
   CreateSingletonMutationVariables,
   CREATE_SINGLETON_MUTATION,
+  DeleteSingletonMutationResponse,
+  DeleteSingletonMutationVariables,
+  DELETE_SINGLETON_MUTATION,
   FetchAllSingletonsQueryResponse,
   FetchAllSingletonsQueryVariables,
   FETCH_ALL_SINGLETONS_QUERY,
@@ -39,6 +42,7 @@ export const getSingletonById = async (id: string): Promise<Singleton> => {
 
 export const fetchAllSingletonsWithPagination = async (
   perPage: number = DOCKITE_ITEMS_PER_PAGE,
+  deleted = false,
 ): Promise<FindManyResult<Singleton>> => {
   const graphql = useGraphQL();
 
@@ -49,6 +53,7 @@ export const fetchAllSingletonsWithPagination = async (
     query: FETCH_ALL_SINGLETONS_QUERY,
     variables: {
       perPage,
+      deleted,
     },
   });
 
@@ -62,8 +67,9 @@ export const fetchAllSingletonsWithPagination = async (
 
 export const fetchAllSingletons = async (
   perPage: number = DOCKITE_ITEMS_PER_PAGE,
+  deleted = false,
 ): Promise<Singleton[]> => {
-  const result = await fetchAllSingletonsWithPagination(perPage);
+  const result = await fetchAllSingletonsWithPagination(perPage, deleted);
 
   return sortBy(result.results, 'name');
 };
@@ -117,6 +123,83 @@ export const createSingleton = async (payload: BaseSchema): Promise<Singleton> =
     throw new ApplicationError(
       'An error occurred while attempting to create the Singleton.',
       ApplicationErrorCode.CANT_CREATE_SINGLETON,
+    );
+  }
+};
+
+export const deleteSingleton = async (payload: Singleton): Promise<boolean> => {
+  const graphql = useGraphQL();
+  const { emit } = useEvent();
+
+  try {
+    const result = await graphql.executeMutation<
+      DeleteSingletonMutationResponse,
+      DeleteSingletonMutationVariables
+    >({
+      mutation: DELETE_SINGLETON_MUTATION,
+      variables: {
+        id: payload.id,
+      },
+
+      // On Update we will also append the schema to our allSingletons query
+      update: (store, { data: createSingletonData }) => {
+        if (createSingletonData) {
+          const { deleteSingleton: success } = createSingletonData;
+
+          if (success) {
+            // Evict the current entry for the Singleton from all known cache entries.
+            store.evict({
+              id: store.identify((payload as unknown) as StoreObject),
+              broadcast: false,
+            });
+
+            // Remove any documents containing the schema from the cache
+            store.modify({
+              id: 'ROOT_QUERY',
+              fields: {
+                findDocuments: (documents: FindManyResult<Document>): FindManyResult<Document> => {
+                  return {
+                    ...documents,
+                    results: documents.results.filter(document => document.schemaId !== payload.id),
+                  };
+                },
+                searchDocuments: (
+                  documents: FindManyResult<Document>,
+                ): FindManyResult<Document> => {
+                  return {
+                    ...documents,
+                    results: documents.results.filter(document => document.schemaId !== payload.id),
+                  };
+                },
+              },
+            });
+
+            store.gc();
+          }
+        }
+      },
+    });
+
+    if (!result.data) {
+      throw new ApplicationError(
+        'An unknown error occurred, please try again later.',
+        ApplicationErrorCode.UNKNOWN_ERROR,
+      );
+    }
+
+    emit(DELETE_SINGLETON_EVENT);
+
+    return result.data.deleteSingleton;
+  } catch (err) {
+    logE(err);
+
+    if (err instanceof ApplicationError) {
+      throw err;
+    }
+
+    throw new ApplicationError(
+      'An error occurred while attempting to delete the Singleton.',
+      ApplicationErrorCode.CANT_DELETE_SINGLETON,
     );
   }
 };

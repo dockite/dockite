@@ -22,7 +22,7 @@ import {
   Resolver,
   Root,
 } from 'type-graphql';
-import { getCustomRepository, getRepository } from 'typeorm';
+import { getCustomRepository, getRepository, IsNull, Not } from 'typeorm';
 
 import { Authenticated, Authorized } from '../../../common/decorators';
 import { DockiteEvents } from '../../../events';
@@ -52,8 +52,12 @@ export class SchemaResolver {
   @Authorized('internal:schema:read')
   @Query(_returns => Schema, { nullable: true })
   async getSchema(
-    @Arg('id', _type => String, { nullable: true }) id: string | null,
-    @Arg('name', _type => String, { nullable: true }) name: string | null,
+    @Arg('id', _type => String, { nullable: true })
+    id: string | null,
+    @Arg('name', _type => String, { nullable: true })
+    name: string | null,
+    @Arg('deleted', _type => Boolean, { nullable: true })
+    deleted: boolean | null,
   ): Promise<Schema | null> {
     const repository = getRepository(Schema);
 
@@ -61,13 +65,15 @@ export class SchemaResolver {
 
     if (id) {
       schema = await repository.findOne({
-        where: { id, deletedAt: null, type: SchemaType.DEFAULT },
         relations: ['fields'],
+        where: { id, type: SchemaType.DEFAULT, deletedAt: deleted ? Not(IsNull()) : null },
+        withDeleted: !!deleted,
       });
     } else if (name) {
       schema = await repository.findOne({
         relations: ['fields'],
-        where: { name, deletedAt: null, type: SchemaType.DEFAULT },
+        where: { name, type: SchemaType.DEFAULT, deletedAt: deleted ? Not(IsNull()) : null },
+        withDeleted: !!deleted,
       });
     }
 
@@ -81,12 +87,16 @@ export class SchemaResolver {
   @Authenticated()
   @Authorized('internal:schema:read')
   @Query(_returns => ManySchemas)
-  async allSchemas(): Promise<ManySchemas> {
+  async allSchemas(
+    @Arg('deleted', _type => Boolean, { nullable: true })
+    deleted: boolean,
+  ): Promise<ManySchemas> {
     const repository = getRepository(Schema);
 
     const [results, totalItems] = await repository.findAndCount({
-      where: { deletedAt: null, type: SchemaType.DEFAULT },
+      where: { deletedAt: deleted ? Not(IsNull()) : null, type: SchemaType.DEFAULT },
       relations: ['fields'],
+      withDeleted: !!deleted,
     });
 
     return {

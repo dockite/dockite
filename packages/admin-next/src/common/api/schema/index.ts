@@ -1,6 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 import { StoreObject } from '@apollo/client/core';
-import { sortBy, create, cloneDeep } from 'lodash';
+import { cloneDeep, sortBy } from 'lodash';
 
 import { Document, Schema } from '@dockite/database';
 import { FindManyResult } from '@dockite/types';
@@ -14,19 +14,16 @@ import {
   CreateSchemaMutationResponse,
   CreateSchemaMutationVariables,
   CREATE_SCHEMA_MUTATION,
+  DeleteSchemaMutationResponse,
+  DeleteSchemaMutationVariables,
+  DELETE_SCHEMA_MUTATION,
   FetchAllSchemasQueryResponse,
   FetchAllSchemasQueryVariables,
   FETCH_ALL_SCHEMAS_QUERY,
   GetSchemaByIdQueryResponse,
   GetSchemaByIdQueryVariables,
   GET_SCHEMA_BY_ID_QUERY,
-  DELETE_SCHEMA_MUTATION,
-  DeleteSchemaMutationVariables,
-  DeleteSchemaMutationResponse,
 } from '~/graphql';
-import FETCH_ALL_DOCUMENTS_QUERY, {
-  FetchAllDocumentsQueryResponse,
-} from '~/graphql/queries/fetchAllDocuments';
 import { useEvent } from '~/hooks';
 import { useGraphQL } from '~/hooks/useGraphQL';
 
@@ -53,6 +50,7 @@ export const getSchemaById = async (id: string): Promise<Schema> => {
 
 export const fetchAllSchemasWithPagination = async (
   perPage: number = DOCKITE_ITEMS_PER_PAGE,
+  deleted = false,
 ): Promise<FindManyResult<Schema>> => {
   const graphql = useGraphQL();
 
@@ -63,6 +61,7 @@ export const fetchAllSchemasWithPagination = async (
     query: FETCH_ALL_SCHEMAS_QUERY,
     variables: {
       perPage,
+      deleted,
     },
   });
 
@@ -76,8 +75,9 @@ export const fetchAllSchemasWithPagination = async (
 
 export const fetchAllSchemas = async (
   perPage: number = DOCKITE_ITEMS_PER_PAGE,
+  deleted = false,
 ): Promise<Schema[]> => {
-  const result = await fetchAllSchemasWithPagination(perPage);
+  const result = await fetchAllSchemasWithPagination(perPage, deleted);
 
   return sortBy(result.results, 'name');
 };

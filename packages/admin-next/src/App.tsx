@@ -1,13 +1,13 @@
 import jwtDecode from 'jwt-decode';
-import { computed, defineComponent, reactive, ref, Teleport, watch } from 'vue';
+import { computed, defineComponent } from 'vue';
 import { usePromise } from 'vue-composable';
-import { NavigationGuard, onBeforeRouteLeave, onBeforeRouteUpdate, useRoute } from 'vue-router';
+import { onBeforeRouteLeave, RouterView } from 'vue-router';
 
-import { Logo } from './components/Common/Logo';
-import { useConfig } from './hooks';
+import { RouterViewScopedSlot } from './common/types';
+import { LoadingComponent } from './components/Common/Loading';
+import { LayoutManager } from './layouts/LayoutManager';
 
 import { useAuth } from '~/hooks/useAuth';
-import { DefaultLayout } from '~/layouts/Default';
 
 const handleRefreshSession = async (): Promise<void> => {
   const { state, handleRefreshToken, token } = useAuth();
@@ -34,21 +34,7 @@ export const App = defineComponent({
   name: 'AppComponent',
 
   setup: () => {
-    const config = useConfig();
-
-    const route = useRoute();
-
     const { state, handleRefreshUser } = useAuth();
-
-    const hasResolvedInitialLayout = ref(false);
-
-    const Layout = reactive({
-      name: 'Default',
-      loading: false,
-      Component: DefaultLayout,
-    });
-
-    const meta = computed(() => route.meta);
 
     const refreshSession = usePromise(async () => {
       await handleRefreshSession();
@@ -58,102 +44,25 @@ export const App = defineComponent({
       }
     });
 
-    const loading = computed(
-      () =>
-        Layout.loading ||
-        refreshSession.loading.value ||
-        !hasResolvedInitialLayout.value ||
-        !state.initialised,
-    );
-
-    const handleUpdateLayout = async (layout: string): Promise<void> => {
-      let component: any | null = null;
-
-      Layout.loading = true;
-
-      switch (layout) {
-        case 'Guest':
-          component = await import('./layouts/Guest').then(mod => mod.GuestLayout);
-          break;
-
-        case 'Dashboard':
-          component = await import('./layouts/Dashboard').then(mod => mod.DashboardLayout);
-          break;
-
-        default:
-          component = DefaultLayout;
-          break;
-      }
-
-      if (component !== null) {
-        Layout.name = layout;
-        Layout.Component = component;
-      }
-
-      if (!hasResolvedInitialLayout.value) {
-        hasResolvedInitialLayout.value = true;
-      }
-
-      Layout.loading = false;
-    };
-
-    const guard: NavigationGuard = (to, _from, next) => {
-      if (!to.meta || !to.meta.layout) {
-        next();
-      }
-
-      if (to.meta.layout === Layout.name) {
-        next();
-      }
-
-      if (to.meta.layout !== Layout.name) {
-        handleUpdateLayout(to.meta.layout).then(next);
-      }
-    };
-
-    onBeforeRouteLeave(guard);
-
-    onBeforeRouteUpdate(guard);
+    const loading = computed(() => refreshSession.loading.value || !state.initialised);
 
     onBeforeRouteLeave((_to, _from, next) => {
       refreshSession.exec().then(next);
     });
 
-    watch(meta, value => {
-      if (value && value.layout) {
-        if (value.layout !== Layout.name) {
-          handleUpdateLayout(value.layout);
-        }
-      }
-    });
-
     return () => {
       if (loading.value) {
-        return (
-          <>
-            <Teleport to="head">
-              <title>{config.app.title} | Loading...</title>
-            </Teleport>
-
-            <div class="w-screen h-screen flex flex-col items-center justify-center">
-              <div class="mb-5 animate-groovy" style={{ width: '400px', height: '100px' }}>
-                <Logo class="block" style={{ maxWidth: '400px', maxHeight: '100px' }} />
-              </div>
-
-              <span>We're getting everything ready, please wait...</span>
-            </div>
-          </>
-        );
+        return <LoadingComponent />;
       }
 
       return (
-        <>
-          <Teleport to="head">
-            <title>{config.app.title}</title>
-          </Teleport>
-
-          <Layout.Component />
-        </>
+        <RouterView>
+          {{
+            default: ({ route, Component }: RouterViewScopedSlot) => (
+              <LayoutManager route={route} Component={Component} />
+            ),
+          }}
+        </RouterView>
       );
     };
   },

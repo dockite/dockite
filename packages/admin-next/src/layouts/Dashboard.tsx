@@ -1,15 +1,19 @@
-import { defineComponent, watch, watchEffect } from 'vue';
-import { onBeforeRouteUpdate, RouterView, useRoute, useRouter } from 'vue-router';
+import { defineComponent, watch } from 'vue';
+import { onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router';
 
 import { SideMenu } from '../components/Common/SideMenu';
 
-import { DASHBOARD_HEADER_PORTAL_ACTIONS, DASHBOARD_HEADER_PORTAL_TITLE } from '~/common/constants';
+import {
+  DASHBOARD_HEADER_PORTAL_ACTIONS,
+  DASHBOARD_HEADER_PORTAL_TITLE,
+  DASHBOARD_MAIN_FOOTER_PORTAL,
+} from '~/common/constants';
 import { useAuth, usePortal } from '~/hooks';
 
 export const DashboardLayout = defineComponent({
   name: 'DashboardLayoutComponent',
 
-  setup: () => {
+  setup: (_, ctx) => {
     const { getPortal } = usePortal();
 
     const router = useRouter();
@@ -55,9 +59,11 @@ export const DashboardLayout = defineComponent({
           </el-header>
 
           <el-main class="flex flex-col bg-gray-100">
-            <div class="p-5 bg-white rounded-sm shadow">
-              <RouterView />
+            <div class="p-5 relative bg-white rounded-sm shadow">
+              {ctx.slots.default && ctx.slots.default()}
             </div>
+
+            {getPortal(DASHBOARD_MAIN_FOOTER_PORTAL)}
           </el-main>
         </el-container>
       </el-container>

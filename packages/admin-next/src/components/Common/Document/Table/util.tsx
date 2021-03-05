@@ -1,10 +1,11 @@
-import { reactive, ref, toRaw } from 'vue';
+import { reactive, ref, toRaw, withModifiers } from 'vue';
 
 import { Constraint, Operators, SupportedOperators } from '@dockite/where-builder/lib/types';
 
 import { DocumentTableColumn, DocumentTableColumnDefaultScopedSlot } from './types';
 
 import { Nullable } from '~/common/types';
+import { noop } from 'lodash';
 
 export const getIdentifierColumn = (): JSX.Element => {
   return (
@@ -120,9 +121,9 @@ export const getFilterComponent = (
               >
                 {{
                   append: () => (
-                    <el-select v-model={state.operator} filterable size="small" style="width: 80px">
+                    <el-select v-model={state.operator} filterable size="small" style="width: 80px" onClick={withModifiers(noop, ['stop'])}>
                       {SupportedOperators.map(operator => (
-                        <el-option value={operator} modelValue={operator} />
+                        <el-option value={operator} modelValue={operator} onClick={withModifiers(noop, ['stop'])} />
                       ))}
                     </el-select>
                   ),

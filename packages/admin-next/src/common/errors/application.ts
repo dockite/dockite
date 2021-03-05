@@ -18,6 +18,7 @@ export enum ApplicationErrorCode {
 
   SINGLETON_NOT_FOUND = 'SINGLETON_NOT_FOUND',
   CANT_CREATE_SINGLETON = 'CANT_CREATE_SINGLETON',
+  CANT_DELETE_SINGLETON = 'CANT_DELETE_SINGLETON',
 }
 
 export class ApplicationError extends Error {

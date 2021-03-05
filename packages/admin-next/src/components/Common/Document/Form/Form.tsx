@@ -1,18 +1,21 @@
-import { Schema, Document, Field, Singleton } from '@dockite/database';
 import { cloneDeep } from 'lodash';
-import { defineComponent, computed, PropType, reactive, ref, watch } from 'vue';
+import { computed, defineComponent, PropType, reactive, Ref, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+
+import { Field, Schema, Singleton } from '@dockite/database';
 
 import { getFieldComponent } from './util';
 
+import { BaseDocument } from '~/common/types';
 import { useDockite } from '~/dockite';
-import { getInitialFormData, getFieldsByGroup } from '~/utils';
+import { getFieldsByGroup, getInitialFormData } from '~/utils';
 
 export interface DocumentFormComponentProps {
   modelValue: Record<string, any>;
-  document: Document | Singleton;
+  document: BaseDocument | Singleton;
   schema: Schema | Singleton;
   errors: Record<string, string>;
+  formRef?: Ref<any>;
 }
 
 export const DocumentFormComponent = defineComponent({
@@ -36,6 +39,10 @@ export const DocumentFormComponent = defineComponent({
     errors: {
       type: Object as PropType<DocumentFormComponentProps['errors']>,
       required: true,
+    },
+
+    formRef: {
+      type: (null as any) as PropType<DocumentFormComponentProps['formRef']>,
     },
   },
 
@@ -121,7 +128,7 @@ export const DocumentFormComponent = defineComponent({
       );
 
       return (
-        <el-form label-position="top" model={formData.value}>
+        <el-form label-position="top" model={formData.value} ref={props.formRef}>
           <el-tabs v-model={selectedTab.value}>{fields}</el-tabs>
         </el-form>
       );

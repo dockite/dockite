@@ -1,5 +1,5 @@
-import { computed, defineComponent, PropType, ref, toRefs } from 'vue';
 import { DockiteFieldInputComponentProps } from '@dockite/types';
+import { computed, defineComponent, PropType, ref, toRefs } from 'vue';
 
 import { DockiteFieldColorPickerEntity } from '../types';
 
@@ -17,18 +17,22 @@ export const InputComponent = defineComponent({
       type: String as PropType<InputComponentProps['name']>,
       required: true,
     },
+
     modelValue: {
       type: (null as any) as PropType<InputComponentProps['value']>,
       required: true,
     },
+
     formData: {
       type: Object as PropType<InputComponentProps['formData']>,
       required: true,
     },
+
     fieldConfig: {
       type: Object as PropType<InputComponentProps['fieldConfig']>,
       required: true,
     },
+
     errors: {
       type: Object as PropType<InputComponentProps['errors']>,
       required: true,
@@ -67,7 +71,7 @@ export const InputComponent = defineComponent({
       >
         <el-row type="flex" align="middle">
           <el-color-picker
-            v-model={fieldData}
+            v-model={fieldData.value}
             style="width: 100%;"
             colorFormat="hex"
             predefine={fieldConfig.value.settings.predefinedColors}

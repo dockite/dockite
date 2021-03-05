@@ -1,11 +1,10 @@
 import { defineComponent } from 'vue';
-import { RouterView } from 'vue-router';
 
 export const DefaultLayout = defineComponent({
   name: 'DefaultLayoutComponent',
 
-  setup: () => {
-    return () => <RouterView />;
+  setup: (_, ctx) => {
+    return () => <div>{ctx.slots.default && ctx.slots.default()}</div>;
   },
 });
 

@@ -48,11 +48,11 @@ export const Router = createRouter({
       component: () => import('../pages/Schemas/Import'),
       meta: { layout: 'Dashboard' },
     },
-    // {
-    //   path: '/schemas/deleted',
-    //   component: () => import('../pages/Schemas/Deleted'),
-    //   meta: { layout: 'Dashboard' },
-    // },
+    {
+      path: '/schemas/deleted',
+      component: () => import('../pages/Schemas/Deleted'),
+      meta: { layout: 'Dashboard' },
+    },
 
     /**
      * Single Schema
@@ -60,6 +60,11 @@ export const Router = createRouter({
     {
       path: '/schemas/:schemaId',
       component: () => import('../pages/Schemas/_Id'),
+      meta: { layout: 'Dashboard' },
+    },
+    {
+      path: '/schemas/:schemaId/create',
+      component: () => import('../pages/Schemas/_Id/Create'),
       meta: { layout: 'Dashboard' },
     },
     {
@@ -87,14 +92,24 @@ export const Router = createRouter({
       component: () => import('../pages/Singletons/Import'),
       meta: { layout: 'Dashboard' },
     },
-    // {
-    //   path: '/singletons/deleted',
-    //   component: () => import('../pages/Singletons/Deleted'),
-    //   meta: { layout: 'Dashboard' },
-    // },
+    {
+      path: '/singletons/deleted',
+      component: () => import('../pages/Singletons/Deleted'),
+      meta: { layout: 'Dashboard' },
+    },
+
+    /**
+     * Single Singleton
+     */
+
     {
       path: '/singletons/:singletonId',
       component: () => import('../pages/Singletons/_Id'),
+      meta: { layout: 'Dashboard' },
+    },
+    {
+      path: '/singletons/:singletonId/delete',
+      component: () => import('../pages/Singletons/_Id/Delete'),
       meta: { layout: 'Dashboard' },
     },
 

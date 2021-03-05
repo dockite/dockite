@@ -13,17 +13,9 @@ export const getHeaderActions = (schema: Ref<Singleton | null>): JSX.Element => 
         ),
         dropdown: () => (
           <el-dropdown-menu>
-            {/* Create document for Singleton */}
-            <el-dropdown-item>
-              <router-link class="block" to={`/schemas/${schema.value?.id}/create`}>
-                <i class="el-icon-folder-add" />
-                Create Document
-              </router-link>
-            </el-dropdown-item>
-
             {/* Edit Singleton */}
             <el-dropdown-item>
-              <router-link class="block" to={`/schemas/${schema.value?.id}/edit`}>
+              <router-link class="block" to={`/singletons/${schema.value?.id}/edit`}>
                 <i class="el-icon-folder-add" />
                 Edit Singleton
               </router-link>
@@ -31,7 +23,7 @@ export const getHeaderActions = (schema: Ref<Singleton | null>): JSX.Element => 
 
             {/* Delete  */}
             <el-dropdown-item>
-              <router-link class="block text-red-600" to={`/schemas/${schema.value?.id}/delete`}>
+              <router-link class="block text-red-600" to={`/singletons/${schema.value?.id}/delete`}>
                 <i class="el-icon-folder-delete" />
                 Delete Singleton
               </router-link>
@@ -39,7 +31,7 @@ export const getHeaderActions = (schema: Ref<Singleton | null>): JSX.Element => 
 
             {/* Import Singleton */}
             <el-dropdown-item divided>
-              <router-link class="block" to={`/schemas/${schema.value?.id}/import`}>
+              <router-link class="block" to={`/singletons/${schema.value?.id}/import`}>
                 <i class="el-icon-upload2" />
                 Advanced Singleton Editor (JSON)
               </router-link>
@@ -51,20 +43,4 @@ export const getHeaderActions = (schema: Ref<Singleton | null>): JSX.Element => 
   );
 };
 
-export const getTableActions = (document: Document, _schema: Singleton): JSX.Element => {
-  return (
-    <div style="margin: 0 -10px">
-      <div class="flex items-center -mx-2">
-        <router-link title="Edit Document" class="px-2" to={`/documents/${document.id}`}>
-          <i class="el-icon-edit-outline" />
-        </router-link>
-
-        <router-link title="View Revisions" class="px-2" to={`/documents/${document.id}/revisions`}>
-          <i class="el-icon-folder-opened" />
-        </router-link>
-      </div>
-    </div>
-  );
-};
-
-export default getTableActions;
+export default getHeaderActions;

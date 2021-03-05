@@ -12,18 +12,22 @@ export const InputComponent = defineComponent({
       type: String as PropType<InputComponentProps['name']>,
       required: true,
     },
+
     modelValue: {
       type: (null as any) as PropType<InputComponentProps['value']>,
       required: true,
     },
+
     formData: {
       type: Object as PropType<InputComponentProps['formData']>,
       required: true,
     },
+
     fieldConfig: {
       type: Object as PropType<InputComponentProps['fieldConfig']>,
       required: true,
     },
+
     errors: {
       type: Object as PropType<InputComponentProps['errors']>,
       required: true,
@@ -94,14 +98,13 @@ export const InputComponent = defineComponent({
         prop={name.value}
         rules={rules.value}
       >
-        <el-input
+        <el-input-number
           class="w-full"
           controlsPosition="right"
           max={max}
           min={min}
           precision={precision}
           step={step}
-          type="number"
           v-model={fieldData.value}
         />
 

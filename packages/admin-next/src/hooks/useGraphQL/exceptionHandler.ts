@@ -43,7 +43,7 @@ export const exceptionHandler = (err: ApolloError, router?: Router): Error | nul
     );
   }
 
-  return null;
+  return err;
 };
 
 export default exceptionHandler;

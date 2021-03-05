@@ -31,7 +31,7 @@ export const SingletonFormPage = defineComponent({
 
     const singleton = usePromise(() => getSingletonById(singletonId.value));
 
-    setPortal(DASHBOARD_HEADER_PORTAL_ACTIONS, getHeaderActions(singleton.result));
+    setPortal(DASHBOARD_HEADER_PORTAL_ACTIONS, () => getHeaderActions(singleton.result));
 
     watchEffect(() => {
       if (route.params.singletonId && route.params.singletonId !== singletonId.value) {

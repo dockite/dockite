@@ -9,11 +9,12 @@ export interface FetchAllSingletonsQueryResponse {
 
 export type FetchAllSingletonsQueryVariables = {
   perPage: number;
+  deleted?: boolean;
 };
 
 export const FETCH_ALL_SINGLETONS_QUERY = gql`
-  query FetchAllSingletons {
-    allSingletons {
+  query FetchAllSingletons($deleted: Boolean = false) {
+    allSingletons(deleted: $deleted) {
       results {
         id
         name
@@ -32,6 +33,7 @@ export const FETCH_ALL_SINGLETONS_QUERY = gql`
         }
         createdAt
         updatedAt
+        deletedAt
       }
       totalItems
       totalPages

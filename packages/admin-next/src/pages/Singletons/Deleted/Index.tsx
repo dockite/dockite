@@ -1,17 +1,13 @@
-import { defineComponent, onBeforeMount, ref, watchEffect } from 'vue';
+import { defineComponent, ref, watchEffect } from 'vue';
 import { usePromise } from 'vue-composable';
 import { useRouter } from 'vue-router';
 
 import { Singleton } from '@dockite/database';
 
-import { getHeaderActions, getTableActions } from './util';
+import { getTableActions } from './util';
 
 import { fetchAllSingletons } from '~/common/api';
-import {
-  DASHBOARD_HEADER_PORTAL_ACTIONS,
-  DASHBOARD_HEADER_PORTAL_TITLE,
-  MAX_32_BIT_INT,
-} from '~/common/constants';
+import { DASHBOARD_HEADER_PORTAL_TITLE, MAX_32_BIT_INT } from '~/common/constants';
 import { useGraphQL, usePortal } from '~/hooks';
 
 export interface SingletonTableColumnDefaultScopedSlot {
@@ -20,8 +16,8 @@ export interface SingletonTableColumnDefaultScopedSlot {
   column: any;
 }
 
-export const SingletonsIndexPage = defineComponent({
-  name: 'SingletonsIndexPageComponent',
+export const DeletedSingletonsIndexPage = defineComponent({
+  name: 'DeletedSingletonsIndexPageComponent',
 
   setup: () => {
     const router = useRouter();
@@ -32,57 +28,53 @@ export const SingletonsIndexPage = defineComponent({
 
     const error = ref<Error | null>(null);
 
-    const singletons = usePromise(() => {
-      return fetchAllSingletons(MAX_32_BIT_INT);
+    const deletedSingletons = usePromise(() => {
+      return fetchAllSingletons(MAX_32_BIT_INT, true);
     });
 
     watchEffect(() => {
-      if (singletons.loading.value) {
-        setPortal(DASHBOARD_HEADER_PORTAL_TITLE, <span>Fetching Singletons...</span>);
+      if (deletedSingletons.loading.value) {
+        setPortal(DASHBOARD_HEADER_PORTAL_TITLE, <span>Fetching Deleted Singletons...</span>);
       }
 
-      if (singletons.error.value) {
-        setPortal(DASHBOARD_HEADER_PORTAL_TITLE, <span>Error fetching Singletons!</span>);
+      if (deletedSingletons.error.value) {
+        setPortal(DASHBOARD_HEADER_PORTAL_TITLE, <span>Error fetching Deleted Singletons!</span>);
 
-        error.value = exceptionHandler(singletons.error.value, router);
+        error.value = exceptionHandler(deletedSingletons.error.value, router);
       }
 
-      if (singletons.result.value) {
-        setPortal(DASHBOARD_HEADER_PORTAL_TITLE, <span>All Singletons</span>);
+      if (deletedSingletons.result.value) {
+        setPortal(DASHBOARD_HEADER_PORTAL_TITLE, <span>All Deleted Singletons</span>);
       }
-    });
-
-    onBeforeMount(() => {
-      setPortal(DASHBOARD_HEADER_PORTAL_ACTIONS, () => getHeaderActions());
     });
 
     return () => {
-      if (singletons.loading.value) {
+      if (deletedSingletons.loading.value) {
         return <div>Loading...</div>;
       }
 
-      if (singletons.error.value) {
+      if (deletedSingletons.error.value) {
         return (
           <div>
-            An error occurred while fetching the Singletons
+            An error occurred while fetching the Deleted Singletons
             <pre>{JSON.stringify(error.value, null, 2)}</pre>
           </div>
         );
       }
 
-      if (!singletons.result.value) {
+      if (!deletedSingletons.result.value) {
         return <div>An unknown error is ocurring</div>;
       }
 
       return (
         <div class="-m-5">
-          <el-table style="width: 100%;" class="w-full" data={singletons.result.value}>
+          <el-table style="width: 100%;" class="w-full" data={deletedSingletons.result.value}>
             <el-table-column label="ID" prop="id">
               {{
                 default: ({ row }: SingletonTableColumnDefaultScopedSlot) => (
                   <router-link
                     class="font-mono overflow-ellipsis whitespace-no-wrap break-normal"
-                    to={`/singletons/${row.id}`}
+                    to={`/singletons/deleted/${row.id}/restore`}
                   >
                     {row.id}
                   </router-link>
@@ -108,6 +100,14 @@ export const SingletonsIndexPage = defineComponent({
               }}
             </el-table-column>
 
+            <el-table-column label="Deleted" prop="deletedAt" width="150">
+              {{
+                default: ({ row }: SingletonTableColumnDefaultScopedSlot) => (
+                  <span>{row.deletedAt ? new Date(row.deletedAt).toLocaleString() : 'N/A'}</span>
+                ),
+              }}
+            </el-table-column>
+
             <el-table-column label="Actions" width="120">
               {{
                 default: ({ row }: SingletonTableColumnDefaultScopedSlot) => getTableActions(row),
@@ -120,4 +120,4 @@ export const SingletonsIndexPage = defineComponent({
   },
 });
 
-export default SingletonsIndexPage;
+export default DeletedSingletonsIndexPage;

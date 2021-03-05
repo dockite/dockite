@@ -1,12 +1,12 @@
-import { defineComponent, watch, watchEffect } from 'vue';
-import { RouterView, onBeforeRouteUpdate, useRouter, useRoute } from 'vue-router';
+import { defineComponent, watch } from 'vue';
+import { onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router';
 
 import { useAuth } from '~/hooks';
 
 export const GuestLayout = defineComponent({
   name: 'GuestLayoutComponent',
 
-  setup: () => {
+  setup: (_, ctx) => {
     const { state } = useAuth();
 
     const router = useRouter();
@@ -41,7 +41,7 @@ export const GuestLayout = defineComponent({
       next();
     });
 
-    return () => <RouterView />;
+    return () => <div>{ctx.slots.default && ctx.slots.default()}</div>;
   },
 });
 
