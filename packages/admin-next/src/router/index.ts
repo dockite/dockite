@@ -48,9 +48,18 @@ export const Router = createRouter({
       component: () => import('../pages/Schemas/Import'),
       meta: { layout: 'Dashboard' },
     },
+
+    /**
+     * Deleted Schemas
+     */
     {
       path: '/schemas/deleted',
       component: () => import('../pages/Schemas/Deleted'),
+      meta: { layout: 'Dashboard' },
+    },
+    {
+      path: '/schemas/deleted/:schemaId/permanent-delete',
+      component: () => import('../pages/Schemas/_Id/PermanentDelete'),
       meta: { layout: 'Dashboard' },
     },
 
@@ -92,9 +101,18 @@ export const Router = createRouter({
       component: () => import('../pages/Singletons/Import'),
       meta: { layout: 'Dashboard' },
     },
+
+    /**
+     * Deleted Singletons
+     */
     {
       path: '/singletons/deleted',
       component: () => import('../pages/Singletons/Deleted'),
+      meta: { layout: 'Dashboard' },
+    },
+    {
+      path: '/singletons/deleted/:singletonId/permanent-delete',
+      component: () => import('../pages/Singletons/_Id/PermanentDelete'),
       meta: { layout: 'Dashboard' },
     },
 

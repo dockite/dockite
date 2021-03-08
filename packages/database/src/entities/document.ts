@@ -55,7 +55,7 @@ export class Document {
     _type => Schema,
     schema => schema.documents,
     {
-      onDelete: 'SET NULL',
+      onDelete: 'CASCADE',
       nullable: true,
     },
   )

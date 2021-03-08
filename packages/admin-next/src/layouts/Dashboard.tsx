@@ -1,3 +1,4 @@
+import { PortalTarget } from 'portal-vue';
 import { defineComponent, watch } from 'vue';
 import { onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router';
 
@@ -49,13 +50,13 @@ export const DashboardLayout = defineComponent({
 
         <el-container class="h-screen overflow-y-auto">
           <el-header class="shadow border-b-2 flex items-center justify-between">
-            {getPortal(DASHBOARD_HEADER_PORTAL_TITLE) || (
+            <PortalTarget name={DASHBOARD_HEADER_PORTAL_TITLE}>
               <div>
                 Welcome {state.user?.firstName} {state.user?.lastName}
               </div>
-            )}
+            </PortalTarget>
 
-            {getPortal(DASHBOARD_HEADER_PORTAL_ACTIONS)}
+            <PortalTarget name={DASHBOARD_HEADER_PORTAL_ACTIONS} />
           </el-header>
 
           <el-main class="flex flex-col bg-gray-100">

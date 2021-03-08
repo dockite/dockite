@@ -1,3 +1,4 @@
+import { Portal } from 'portal-vue';
 import { defineComponent, reactive, ref, toRaw, watch, watchEffect } from 'vue';
 import { usePromise, usePromiseLazy } from 'vue-composable';
 import { useRoute, useRouter } from 'vue-router';
@@ -5,7 +6,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { Document } from '@dockite/database';
 import { AndQuery } from '@dockite/where-builder/lib/types';
 
-import { getTableActions, getHeaderActions } from './util';
+import { getHeaderActions, getTableActions } from './util';
 
 import { getSchemaById } from '~/common/api';
 import {
@@ -21,7 +22,7 @@ import { ApplicationError, ApplicationErrorCode } from '~/common/errors';
 import { Maybe } from '~/common/types';
 import { DocumentTableColumn, DocumentTableComponent } from '~/components/Common/Document/Table';
 import { DocumentTableState } from '~/components/Common/Document/Table/types';
-import { useGraphQL, usePortal } from '~/hooks';
+import { useGraphQL } from '~/hooks';
 import {
   getAppliedFilters,
   getAppliedSort,
@@ -40,8 +41,6 @@ export const SchemaDocumentsPage = defineComponent({
     const router = useRouter();
 
     const { exceptionHandler } = useGraphQL();
-
-    const { setPortal } = usePortal();
 
     const error = ref<Error | null>(null);
 
@@ -81,9 +80,6 @@ export const SchemaDocumentsPage = defineComponent({
       });
     });
 
-    // TODO: Investigate why this dropdown doesn't render after page mount while others do
-    setPortal(DASHBOARD_HEADER_PORTAL_ACTIONS, () => getHeaderActions(schema.result));
-
     watchEffect(() => {
       if (route.params.schemaId && route.params.schemaId !== schemaId.value) {
         schemaId.value = route.params.schemaId as string;
@@ -108,28 +104,12 @@ export const SchemaDocumentsPage = defineComponent({
     });
 
     watchEffect(() => {
-      if (schema.loading.value) {
-        setPortal(DASHBOARD_HEADER_PORTAL_TITLE, <span>Fetching Schema...</span>);
-      }
-
       if (schema.error.value) {
-        setPortal(DASHBOARD_HEADER_PORTAL_TITLE, <span>Error fetching Schema!</span>);
-
         error.value = exceptionHandler(schema.error.value, router);
       }
 
-      if (documents.loading.value) {
-        setPortal(DASHBOARD_HEADER_PORTAL_TITLE, <span>Fetching Documents...</span>);
-      }
-
       if (documents.error.value) {
-        setPortal(DASHBOARD_HEADER_PORTAL_TITLE, <span>Error fetching Documents!</span>);
-
         error.value = exceptionHandler(documents.error.value, router);
-      }
-
-      if (schema.result.value) {
-        setPortal(DASHBOARD_HEADER_PORTAL_TITLE, <span>{schema.result.value.title}</span>);
       }
     });
 
@@ -225,47 +205,72 @@ export const SchemaDocumentsPage = defineComponent({
 
     return () => {
       if (schema.loading.value || documents.loading.value) {
-        return <div>Loading...</div>;
+        return (
+          <>
+            <Portal to={DASHBOARD_HEADER_PORTAL_TITLE}>Fetching Schema and Documents...</Portal>
+
+            <div>Loading...</div>
+          </>
+        );
       }
 
       if (schema.error.value) {
         return (
-          <div>
-            An error occurred while fetching the Schema
-            <pre>{JSON.stringify(error.value, null, 2)}</pre>
-          </div>
+          <>
+            <Portal to={DASHBOARD_HEADER_PORTAL_TITLE}>Error fetching Schema!</Portal>
+
+            <div>
+              An error occurred while fetching the Schema
+              <pre>{JSON.stringify(error.value, null, 2)}</pre>
+            </div>
+          </>
         );
       }
 
       if (documents.error.value) {
         return (
-          <div>
-            An error occurred while fetching the Documents
-            <pre>{JSON.stringify(error.value, null, 2)}</pre>
-          </div>
+          <>
+            <Portal to={DASHBOARD_HEADER_PORTAL_TITLE}>Error fetching Documents for Schema!</Portal>
+
+            <div>
+              An error occurred while fetching the Documents
+              <pre>{JSON.stringify(error.value, null, 2)}</pre>
+            </div>
+          </>
         );
       }
 
       if (!schema.result.value || !documents.result.value) {
-        return <div>An unknown error is ocurring</div>;
+        return (
+          <>
+            <Portal to={DASHBOARD_HEADER_PORTAL_TITLE}>An unknown error is occurring!</Portal>
+
+            <div>An unknown error is ocurring</div>
+          </>
+        );
       }
 
       return (
-        <DocumentTableComponent
-          class="-m-5"
-          documents={documents.result.value.results}
-          getActions={getTableActions}
-          getFooter={getTableFooter}
-          schema={schema.result.value}
-          showIdentifierColumn={tableColumns.value.length === 0}
-          state={tableState}
-          selectable
-          updatableColumns
-          v-models={[
-            [selectedItems.value, 'selectedItems'],
-            [tableColumns.value, 'columns'],
-          ]}
-        />
+        <>
+          <Portal to={DASHBOARD_HEADER_PORTAL_TITLE}>{schema.result.value.title}</Portal>
+          <Portal to={DASHBOARD_HEADER_PORTAL_ACTIONS}>{getHeaderActions(schema.result)}</Portal>
+
+          <DocumentTableComponent
+            class="-m-5"
+            documents={documents.result.value.results}
+            getActions={getTableActions}
+            getFooter={getTableFooter}
+            schema={schema.result.value}
+            showIdentifierColumn={tableColumns.value.length === 0}
+            state={tableState}
+            selectable
+            updatableColumns
+            v-models={[
+              [selectedItems.value, 'selectedItems'],
+              [tableColumns.value, 'columns'],
+            ]}
+          />
+        </>
       );
     };
   },

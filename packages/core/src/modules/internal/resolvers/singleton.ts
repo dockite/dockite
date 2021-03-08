@@ -83,7 +83,10 @@ export class SingletonResolver {
       return null;
     }
 
-    const document = await documentRepository.findOneOrFail({ where: { schemaId: schema.id } });
+    const document = await documentRepository.findOneOrFail({
+      where: { schemaId: schema.id },
+      withDeleted: true,
+    });
 
     return { ...schema, data: document.data };
   }
@@ -359,6 +362,47 @@ export class SingletonResolver {
 
       return true;
     } catch {
+      return false;
+    }
+  }
+
+  /**
+   * TODO: Possibly add a check for if the Schema exists and throw
+   */
+  @Authenticated()
+  @Authorized('internal:schema:delete', { derriveAlternativeScopes: false })
+  @Mutation(_returns => Boolean)
+  async permanentlyRemoveSingleton(
+    @Arg('id')
+    id: string,
+  ): Promise<boolean> {
+    const schemaRepository = getRepository(Schema);
+    const documentRepository = getRepository(Document);
+
+    try {
+      const [schema, documents] = await Promise.all([
+        schemaRepository.findOneOrFail({
+          where: {
+            id,
+            type: SchemaType.SINGLETON,
+          },
+          withDeleted: true,
+        }),
+        documentRepository.find({
+          where: {
+            schemaId: id,
+          },
+          withDeleted: true,
+        }),
+      ]);
+
+      await Promise.all([schemaRepository.remove(schema), documentRepository.remove(documents)]);
+
+      DockiteEvents.emit('reload');
+
+      return true;
+    } catch (err) {
+      console.log(err);
       return false;
     }
   }

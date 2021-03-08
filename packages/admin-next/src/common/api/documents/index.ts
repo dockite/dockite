@@ -26,6 +26,7 @@ export type FetchDocumentsBySchemaIdArgs = FetchDocumentsBySchemaIdQueryVariable
 
 export const fetchDocumentsBySchemaIdWithPagination = async (
   payload: FetchDocumentsBySchemaIdArgs,
+  deleted = false,
 ): Promise<FindManyResult<Document>> => {
   const args: FetchDocumentsBySchemaIdArgs = defaultsDeep(
     cloneDeep(payload),
@@ -39,7 +40,10 @@ export const fetchDocumentsBySchemaIdWithPagination = async (
     FetchDocumentsBySchemaIdQueryVariables
   >({
     query: FETCH_DOCUMENTS_BY_SCHEMA_ID_QUERY,
-    variables: args,
+    variables: {
+      ...args,
+      deleted,
+    },
   });
 
   return result.data.findDocuments;
@@ -47,13 +51,14 @@ export const fetchDocumentsBySchemaIdWithPagination = async (
 
 export const fetchDocumentsBySchemaId = async (
   payload: FetchDocumentsBySchemaIdArgs,
+  deleted = false,
 ): Promise<Document[]> => {
   const args: FetchDocumentsBySchemaIdArgs = defaultsDeep(
     cloneDeep(payload),
     FetchDocumentsBySchemaIdDefaultQueryVariables,
   );
 
-  const { results } = await fetchDocumentsBySchemaIdWithPagination(args);
+  const { results } = await fetchDocumentsBySchemaIdWithPagination({ ...args, deleted });
 
   return results;
 };

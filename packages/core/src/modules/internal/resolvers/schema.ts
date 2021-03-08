@@ -295,6 +295,47 @@ export class SchemaResolver {
     }
   }
 
+  /**
+   * TODO: Possibly add a check for if the Schema exists and throw
+   */
+  @Authenticated()
+  @Authorized('internal:schema:delete', { derriveAlternativeScopes: false })
+  @Mutation(_returns => Boolean)
+  async permanentlyRemoveSchema(
+    @Arg('id')
+    id: string,
+  ): Promise<boolean> {
+    const schemaRepository = getRepository(Schema);
+    const documentRepository = getRepository(Document);
+
+    try {
+      const [schema, documents] = await Promise.all([
+        schemaRepository.findOneOrFail({
+          where: {
+            id,
+            type: SchemaType.DEFAULT,
+          },
+          withDeleted: true,
+        }),
+        documentRepository.find({
+          where: {
+            schemaId: id,
+          },
+          withDeleted: true,
+        }),
+      ]);
+
+      await Promise.all([schemaRepository.remove(schema), documentRepository.remove(documents)]);
+
+      DockiteEvents.emit('reload');
+
+      return true;
+    } catch (err) {
+      console.log(err);
+      return false;
+    }
+  }
+
   @FieldResolver()
   protected groups(@Root() schema: Schema): Record<string, string[]> {
     return schema.groups.reduce((acc: Record<string, string[]>, curr: Record<string, string[]>) => {

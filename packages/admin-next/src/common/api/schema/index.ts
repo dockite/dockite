@@ -23,11 +23,14 @@ import {
   GetSchemaByIdQueryResponse,
   GetSchemaByIdQueryVariables,
   GET_SCHEMA_BY_ID_QUERY,
+  PermanentDeleteSchemaMutationResponse,
+  PermanentDeleteSchemaMutationVariables,
+  PERMANENT_DELETE_SCHEMA_MUTATION,
 } from '~/graphql';
 import { useEvent } from '~/hooks';
 import { useGraphQL } from '~/hooks/useGraphQL';
 
-export const getSchemaById = async (id: string): Promise<Schema> => {
+export const getSchemaById = async (id: string, deleted = false): Promise<Schema> => {
   const graphql = useGraphQL();
 
   const result = await graphql.executeQuery<
@@ -35,7 +38,7 @@ export const getSchemaById = async (id: string): Promise<Schema> => {
     GetSchemaByIdQueryVariables
   >({
     query: GET_SCHEMA_BY_ID_QUERY,
-    variables: { id },
+    variables: { id, deleted },
   });
 
   if (result.data.getSchema === null) {
@@ -153,9 +156,9 @@ export const deleteSchema = async (payload: Schema): Promise<boolean> => {
       },
 
       // On Update we will also append the schema to our allSchemas query
-      update: (store, { data: createSchemaData }) => {
-        if (createSchemaData) {
-          const { deleteSchema: success } = createSchemaData;
+      update: (store, { data: deleteSchemaData }) => {
+        if (deleteSchemaData) {
+          const { deleteSchema: success } = deleteSchemaData;
 
           if (success) {
             // Evict the current entry for the Schema from all known cache entries.
@@ -210,6 +213,83 @@ export const deleteSchema = async (payload: Schema): Promise<boolean> => {
 
     throw new ApplicationError(
       'An error occurred while attempting to delete the Schema.',
+      ApplicationErrorCode.CANT_DELETE_SCHEMA,
+    );
+  }
+};
+
+export const permanentDeleteSchema = async (payload: Schema): Promise<boolean> => {
+  const graphql = useGraphQL();
+  const { emit } = useEvent();
+
+  try {
+    const result = await graphql.executeMutation<
+      PermanentDeleteSchemaMutationResponse,
+      PermanentDeleteSchemaMutationVariables
+    >({
+      mutation: PERMANENT_DELETE_SCHEMA_MUTATION,
+      variables: {
+        id: payload.id,
+      },
+
+      // On Update we will also append the schema to our allSchemas query
+      update: (store, { data: permanentDeleteSchemaData }) => {
+        if (permanentDeleteSchemaData) {
+          const { permanentDeleteSchema: success } = permanentDeleteSchemaData;
+
+          if (success) {
+            // Evict the current entry for the Schema from all known cache entries.
+            store.evict({
+              id: store.identify((payload as unknown) as StoreObject),
+              broadcast: false,
+            });
+
+            // Remove any documents containing the schema from the cache
+            store.modify({
+              id: 'ROOT_QUERY',
+              fields: {
+                findDocuments: (documents: FindManyResult<Document>): FindManyResult<Document> => {
+                  return {
+                    ...documents,
+                    results: documents.results.filter(document => document.schemaId !== payload.id),
+                  };
+                },
+                searchDocuments: (
+                  documents: FindManyResult<Document>,
+                ): FindManyResult<Document> => {
+                  return {
+                    ...documents,
+                    results: documents.results.filter(document => document.schemaId !== payload.id),
+                  };
+                },
+              },
+            });
+
+            store.gc();
+          }
+        }
+      },
+    });
+
+    if (!result.data) {
+      throw new ApplicationError(
+        'An unknown error occurred, please try again later.',
+        ApplicationErrorCode.UNKNOWN_ERROR,
+      );
+    }
+
+    emit(DELETE_SCHEMA_EVENT);
+
+    return result.data.permanentDeleteSchema;
+  } catch (err) {
+    logE(err);
+
+    if (err instanceof ApplicationError) {
+      throw err;
+    }
+
+    throw new ApplicationError(
+      'An error occurred while attempting to permanently delete the Schema.',
       ApplicationErrorCode.CANT_DELETE_SCHEMA,
     );
   }

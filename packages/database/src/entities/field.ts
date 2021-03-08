@@ -41,7 +41,10 @@ export class Field {
   @ManyToOne(
     _type => Schema,
     schema => schema.fields,
-    { persistence: true },
+    {
+      persistence: true,
+      onDelete: 'CASCADE',
+    },
   )
   public schema!: Schema;
 

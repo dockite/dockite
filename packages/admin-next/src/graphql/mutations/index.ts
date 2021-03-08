@@ -4,5 +4,7 @@ export * from './registerFirstUser';
 export * from './createDocument';
 export * from './createSchema';
 export * from './deleteSchema';
+export * from './permanentDeleteSchema';
 export * from './createSingleton';
 export * from './deleteSingleton';
+export * from './permanentDeleteSingleton';

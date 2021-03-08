@@ -8,11 +8,12 @@ export interface GetSchemaByIdQueryResponse {
 
 export interface GetSchemaByIdQueryVariables {
   id: string;
+  deleted?: boolean;
 }
 
 export const GET_SCHEMA_BY_ID_QUERY = gql`
-  query GetSchemaById($id: String!) {
-    getSchema(id: $id) {
+  query GetSchemaById($id: String!, $deleted: Boolean = false) {
+    getSchema(id: $id, deleted: $deleted) {
       id
       name
       title

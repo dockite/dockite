@@ -115,6 +115,7 @@ export class Schema {
       nullable: true,
       persistence: false,
       cascade: true,
+      onDelete: 'CASCADE',
     },
   )
   @GraphQLField(_type => [Field], { nullable: true })

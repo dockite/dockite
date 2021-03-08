@@ -12,10 +12,11 @@ import {
   DASHBOARD_HEADER_PORTAL_TITLE,
   DASHBOARD_MAIN_FOOTER_PORTAL,
 } from '~/common/constants';
+import { ApplicationErrorGroup } from '~/common/errors';
 import { BaseDocument, FieldErrorList } from '~/common/types';
 import { DocumentFormComponent } from '~/components/Common/Document/Form';
 import { usePortal } from '~/hooks';
-import { displayClientValidationErrors } from '~/utils';
+import { displayClientValidationErrors, displayServerValidationErrors } from '~/utils';
 
 export const SchemaCreateDocumentPage = defineComponent({
   name: 'SchemaCreateDocumentPage',
@@ -44,21 +45,30 @@ export const SchemaCreateDocumentPage = defineComponent({
     const formErrors: Record<string, string> = reactive({});
 
     const handleCreateDocument = usePromiseLazy(async () => {
-      if (schema.result.value && form.value) {
-        const valid = await form.value.validate().catch((e: FieldErrorList) => e);
+      try {
+        if (schema.result.value && form.value) {
+          const valid = await form.value.validate().catch((e: FieldErrorList) => e);
 
-        if (valid !== true) {
-          displayClientValidationErrors(valid);
+          if (valid !== true) {
+            displayClientValidationErrors(valid);
+
+            return;
+          }
+
+          const doc = await createDocument(document.value, schema.result.value);
+
+          ElMessage.success('Document created successfully!');
+
+          router.push(`/documents/${doc.id}`);
+        }
+      } catch (err) {
+        if (err instanceof ApplicationErrorGroup) {
+          displayServerValidationErrors(err);
 
           return;
         }
 
-        const doc = await createDocument(document.value, schema.result.value);
-
-
-        ElMessage.success('Document created successfully!');
-
-        router.push(`/documents/${doc.id}`);
+        throw err;
       }
     });
 

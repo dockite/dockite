@@ -1,4 +1,5 @@
-import { defineComponent, reactive, ref, toRaw, watch, watchEffect } from 'vue';
+import { useWormhole } from 'portal-vue';
+import { defineComponent, h, reactive, ref, toRaw, watch, watchEffect } from 'vue';
 import { usePromise } from 'vue-composable';
 import { useRoute, useRouter } from 'vue-router';
 
@@ -12,12 +13,12 @@ import { Maybe } from '~/common/types';
 import { DocumentTableColumn, DocumentTableComponent } from '~/components/Common/Document/Table';
 import { DocumentTableState } from '~/components/Common/Document/Table/types';
 import { FetchAllDocumentsQueryVariables } from '~/graphql/queries/fetchAllDocuments';
-import { useGraphQL, usePortal } from '~/hooks';
+import { useGraphQL } from '~/hooks';
 import {
-  getPaginationString,
   getAppliedFilters,
   getAppliedSort,
   getFiltersFromTableState,
+  getPaginationString,
   transformFiltersToQueryParam,
 } from '~/utils';
 
@@ -31,7 +32,7 @@ export const DocumentsIndexPage = defineComponent({
 
     const { exceptionHandler } = useGraphQL();
 
-    const { setPortal } = usePortal();
+    const wormhole = useWormhole();
 
     const error = ref<Error | null>(null);
 
@@ -59,17 +60,29 @@ export const DocumentsIndexPage = defineComponent({
 
     watchEffect(() => {
       if (documents.loading.value) {
-        setPortal(DASHBOARD_HEADER_PORTAL_TITLE, <span>Fetching Documents...</span>);
+        wormhole.open({
+          to: DASHBOARD_HEADER_PORTAL_TITLE,
+          from: 'DocumentsIndexPageComponent',
+          content: () => [h(<span>Fetching Documents...</span>)],
+        });
       }
 
       if (documents.error.value) {
-        setPortal(DASHBOARD_HEADER_PORTAL_TITLE, <span>Error fetching Documents!</span>);
+        wormhole.open({
+          to: DASHBOARD_HEADER_PORTAL_TITLE,
+          from: 'DocumentsIndexPageComponent',
+          content: () => [h(<span>Error Fetching Documents!</span>)],
+        });
 
         error.value = exceptionHandler(documents.error.value, router);
       }
 
       if (documents.result.value) {
-        setPortal(DASHBOARD_HEADER_PORTAL_TITLE, <span>All Documents</span>);
+        wormhole.open({
+          to: DASHBOARD_HEADER_PORTAL_TITLE,
+          from: 'DocumentsIndexPageComponent',
+          content: () => [h(<span>All Documents</span>)],
+        });
       }
     });
 
