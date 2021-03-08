@@ -1,4 +1,5 @@
 import { ElMessage } from 'element-plus';
+import { Portal } from 'portal-vue';
 import { computed, defineComponent, ref, watch, watchEffect } from 'vue';
 import { usePromiseLazy } from 'vue-composable';
 import { useRoute, useRouter } from 'vue-router';
@@ -9,7 +10,6 @@ import { ApplicationError, ApplicationErrorCode } from '~/common/errors';
 import { logE } from '~/common/logger';
 import { RenderIfComponent } from '~/components/Common/RenderIf';
 import { SpinnerComponent } from '~/components/Common/Spinner';
-import { usePortal } from '~/hooks';
 
 export const DeleteSchemaPage = defineComponent({
   name: 'DeleteSchemaPage',
@@ -17,8 +17,6 @@ export const DeleteSchemaPage = defineComponent({
   setup: () => {
     const route = useRoute();
     const router = useRouter();
-    const { setPortal } = usePortal();
-
     const delay = ref(3);
 
     const schemaId = computed(() => {
@@ -101,25 +99,6 @@ export const DeleteSchemaPage = defineComponent({
       }
     });
 
-    watchEffect(() => {
-      if (schema.loading.value) {
-        setPortal(DASHBOARD_HEADER_PORTAL_TITLE, <span>Loading Schema...</span>);
-      }
-
-      if (schema.error.value) {
-        setPortal(DASHBOARD_HEADER_PORTAL_TITLE, <span>Failed to fetch Schema!</span>);
-      }
-
-      if (schema.result.value) {
-        setPortal(
-          DASHBOARD_HEADER_PORTAL_TITLE,
-          <span>
-            Confirmation of <u>{schema.result.value.title}</u> Deletion
-          </span>,
-        );
-      }
-    });
-
     watch(
       () => schema.result.value,
       value => {
@@ -133,6 +112,8 @@ export const DeleteSchemaPage = defineComponent({
       return (
         <div v-loading={handleDeleteSchema.loading.value} class="relative">
           <RenderIfComponent condition={!schemaId.value || schema.loading.value}>
+            <Portal to={DASHBOARD_HEADER_PORTAL_TITLE}>Fetching Schema...</Portal>
+
             <div style={{ minHeight: '40vh' }}>
               <div class="el-loading-mask">
                 <div class="el-loading-spinner">
@@ -145,12 +126,18 @@ export const DeleteSchemaPage = defineComponent({
           </RenderIfComponent>
 
           <RenderIfComponent condition={!!schema.error.value}>
+            <Portal to={DASHBOARD_HEADER_PORTAL_TITLE}>Error fetching Schema!</Portal>
+
             <div>An error occurred while fetching the Schema, please try again later.</div>
           </RenderIfComponent>
 
           <RenderIfComponent
             condition={schema.result.value !== null && allDocumentsForSchema.result.value !== null}
           >
+            <Portal to={DASHBOARD_HEADER_PORTAL_TITLE}>
+              Confirmation of <u>{schema.result.value?.title}</u> Deletion
+            </Portal>
+
             <div>
               <h2 class="text-xl font-semibold pb-5">
                 Are you sure you want to delete {schema.result.value?.title}?

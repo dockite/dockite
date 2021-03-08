@@ -1,4 +1,5 @@
 import { ElMessage } from 'element-plus';
+import { Portal } from 'portal-vue';
 import { computed, defineComponent, ref, watch, watchEffect } from 'vue';
 import { usePromiseLazy } from 'vue-composable';
 import { useRoute, useRouter } from 'vue-router';
@@ -9,7 +10,6 @@ import { ApplicationError, ApplicationErrorCode } from '~/common/errors';
 import { logE } from '~/common/logger';
 import { RenderIfComponent } from '~/components/Common/RenderIf';
 import { SpinnerComponent } from '~/components/Common/Spinner';
-import { usePortal } from '~/hooks';
 
 export const DeleteSingletonPage = defineComponent({
   name: 'DeleteSingletonPage',
@@ -17,7 +17,6 @@ export const DeleteSingletonPage = defineComponent({
   setup: () => {
     const route = useRoute();
     const router = useRouter();
-    const { setPortal } = usePortal();
 
     const delay = ref(3);
 
@@ -91,25 +90,6 @@ export const DeleteSingletonPage = defineComponent({
       }
     });
 
-    watchEffect(() => {
-      if (singleton.loading.value) {
-        setPortal(DASHBOARD_HEADER_PORTAL_TITLE, <span>Loading Singleton...</span>);
-      }
-
-      if (singleton.error.value) {
-        setPortal(DASHBOARD_HEADER_PORTAL_TITLE, <span>Failed to fetch Singleton!</span>);
-      }
-
-      if (singleton.result.value) {
-        setPortal(
-          DASHBOARD_HEADER_PORTAL_TITLE,
-          <span>
-            Confirmation of <u>{singleton.result.value.title}</u> Deletion
-          </span>,
-        );
-      }
-    });
-
     watch(
       () => singleton.result.value,
       value => {
@@ -123,6 +103,8 @@ export const DeleteSingletonPage = defineComponent({
       return (
         <div v-loading={handleDeleteSingleton.loading.value} class="relative">
           <RenderIfComponent condition={!singletonId.value || singleton.loading.value}>
+            <Portal to={DASHBOARD_HEADER_PORTAL_TITLE}>Fetching Singleton...</Portal>
+
             <div style={{ minHeight: '40vh' }}>
               <div class="el-loading-mask">
                 <div class="el-loading-spinner">
@@ -135,10 +117,16 @@ export const DeleteSingletonPage = defineComponent({
           </RenderIfComponent>
 
           <RenderIfComponent condition={!!singleton.error.value}>
+            <Portal to={DASHBOARD_HEADER_PORTAL_TITLE}>Error fetching Singleton!</Portal>
+
             <div>An error occurred while fetching the Singleton, please try again later.</div>
           </RenderIfComponent>
 
           <RenderIfComponent condition={singleton.result.value !== null}>
+            <Portal to={DASHBOARD_HEADER_PORTAL_TITLE}>
+              Confirmation of <u>{singleton.result.value?.title}</u> Deletion
+            </Portal>
+
             <div>
               <h2 class="text-xl font-semibold pb-5">
                 Are you sure you want to delete {singleton.result.value?.title}?

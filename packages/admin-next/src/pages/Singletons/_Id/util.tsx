@@ -1,8 +1,6 @@
-import { Ref } from 'vue';
+import { Singleton } from '@dockite/database';
 
-import { Document, Singleton } from '@dockite/database';
-
-export const getHeaderActions = (schema: Ref<Singleton | null>): JSX.Element => {
+export const getHeaderActions = (singleton: Singleton): JSX.Element => {
   return (
     <el-dropdown>
       {{
@@ -15,7 +13,7 @@ export const getHeaderActions = (schema: Ref<Singleton | null>): JSX.Element => 
           <el-dropdown-menu>
             {/* Edit Singleton */}
             <el-dropdown-item>
-              <router-link class="block" to={`/singletons/${schema.value?.id}/edit`}>
+              <router-link class="block" to={`/singletons/${singleton.id}/edit`}>
                 <i class="el-icon-folder-add" />
                 Edit Singleton
               </router-link>
@@ -23,7 +21,7 @@ export const getHeaderActions = (schema: Ref<Singleton | null>): JSX.Element => 
 
             {/* Delete  */}
             <el-dropdown-item>
-              <router-link class="block text-red-600" to={`/singletons/${schema.value?.id}/delete`}>
+              <router-link class="block text-red-600" to={`/singletons/${singleton.id}/delete`}>
                 <i class="el-icon-folder-delete" />
                 Delete Singleton
               </router-link>
@@ -31,7 +29,7 @@ export const getHeaderActions = (schema: Ref<Singleton | null>): JSX.Element => 
 
             {/* Import Singleton */}
             <el-dropdown-item divided>
-              <router-link class="block" to={`/singletons/${schema.value?.id}/import`}>
+              <router-link class="block" to={`/singletons/${singleton.id}/import`}>
                 <i class="el-icon-upload2" />
                 Advanced Singleton Editor (JSON)
               </router-link>

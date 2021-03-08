@@ -1,5 +1,6 @@
 import { ElMessage } from 'element-plus';
 import { omit } from 'lodash';
+import { Portal } from 'portal-vue';
 import { computed, defineComponent, reactive, ref } from 'vue';
 import { usePromise, usePromiseLazy } from 'vue-composable';
 import { useRouter } from 'vue-router';
@@ -7,16 +8,15 @@ import { useRouter } from 'vue-router';
 import { createSchema, fetchAllSchemas } from '~/common/api';
 import { DASHBOARD_HEADER_PORTAL_TITLE } from '~/common/constants';
 import { logE } from '~/common/logger';
-import { BaseSchema, SchemaType, MaybePersisted } from '~/common/types';
+import { BaseSchema, MaybePersisted, SchemaType } from '~/common/types';
+import { RenderIfComponent } from '~/components/Common/RenderIf';
 import { JsonEditorComponent } from '~/components/JsonEditor';
-import { usePortal } from '~/hooks';
 
 export const SchemaImportPage = defineComponent({
   name: 'SchemaImportPage',
 
   setup: () => {
     const router = useRouter();
-    const { setPortal } = usePortal();
 
     const schema = reactive<MaybePersisted<BaseSchema>>({
       name: 'identifier',
@@ -80,55 +80,57 @@ export const SchemaImportPage = defineComponent({
       return allSchemas.result.value.some(s => s.title === schema.title);
     });
 
-    setPortal(DASHBOARD_HEADER_PORTAL_TITLE, <span>Import Schema</span>);
-
     return () => {
       return (
-        <div class="relative" v-loading={handleImportSchema.loading.value}>
-          <h3 class="text-lg font-semibold pb-5">Import a Schema via JSON</h3>
+        <>
+          <Portal to={DASHBOARD_HEADER_PORTAL_TITLE}>Import a Schema</Portal>
 
-          <blockquote class="p-3 border-l-4 border-gray-400 rounded text-sm bg-gray-200 mb-5">
-            Using the editor below you can import a Schema that has either been exported from a
-            different installation or crafted for usage with the current installation.
-          </blockquote>
+          <div class="relative" v-loading={handleImportSchema.loading.value}>
+            <h3 class="text-lg font-semibold pb-5">Import a Schema via JSON</h3>
 
-          {schemaHasBeenUsed.value && (
-            <div class="pb-5">
-              <el-alert
-                type="error"
-                title="Schema already exists"
-                description="The details provided already in use with an existing Schema. If you wish to update that Schema, please navigate to its import page."
-                closable={false}
-                showIcon
-              />
+            <blockquote class="p-3 border-l-4 border-gray-400 rounded text-sm bg-gray-200 mb-5">
+              Using the editor below you can import a Schema that has either been exported from a
+              different installation or crafted for usage with the current installation.
+            </blockquote>
+
+            <RenderIfComponent condition={!!schemaHasBeenUsed.value}>
+              <div class="pb-5">
+                <el-alert
+                  type="error"
+                  title="Schema already exists"
+                  description="The details provided already in use with an existing Schema. If you wish to update that Schema, please navigate to its import page."
+                  closable={false}
+                  showIcon
+                />
+              </div>
+            </RenderIfComponent>
+
+            <RenderIfComponent condition={!!titleHasBeenUsed.value}>
+              <div class="pb-5">
+                <el-alert
+                  type="warning"
+                  title="Title has already been used"
+                  description="The currently provided title has already been used with another Singleton. This may lead to confusion when navigating through the Admin UI, if this is intentional please ignore this warning."
+                  closable={true}
+                  showIcon
+                />
+              </div>
+            </RenderIfComponent>
+
+            <JsonEditorComponent v-model={schemaAsJSON.value} minHeight="60vh" />
+
+            <div class="flex flex-row-reverse pt-3">
+              <el-button
+                type="primary"
+                title={validJSON.value ? '' : 'Invalid JSON data provided'}
+                disabled={!validJSON.value || schemaHasBeenUsed.value}
+                onClick={() => handleImportSchema.exec()}
+              >
+                Import Schema
+              </el-button>
             </div>
-          )}
-
-          {titleHasBeenUsed.value && (
-            <div class="pb-5">
-              <el-alert
-                type="warning"
-                title="Title has already been used"
-                description="The currently provided title has already been used with another Singleton. This may lead to confusion when navigating through the Admin UI, if this is intentional please ignore this warning."
-                closable={true}
-                showIcon
-              />
-            </div>
-          )}
-
-          <JsonEditorComponent v-model={schemaAsJSON.value} minHeight="60vh" />
-
-          <div class="flex flex-row-reverse pt-3">
-            <el-button
-              type="primary"
-              title={validJSON.value ? '' : 'Invalid JSON data provided'}
-              disabled={!validJSON.value || schemaHasBeenUsed.value}
-              onClick={() => handleImportSchema.exec()}
-            >
-              Import Schema
-            </el-button>
           </div>
-        </div>
+        </>
       );
     };
   },

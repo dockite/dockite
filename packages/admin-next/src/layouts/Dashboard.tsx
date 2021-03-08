@@ -7,16 +7,14 @@ import { SideMenu } from '../components/Common/SideMenu';
 import {
   DASHBOARD_HEADER_PORTAL_ACTIONS,
   DASHBOARD_HEADER_PORTAL_TITLE,
-  DASHBOARD_MAIN_FOOTER_PORTAL,
+  DASHBOARD_MAIN_PORTAL_FOOTER,
 } from '~/common/constants';
-import { useAuth, usePortal } from '~/hooks';
+import { useAuth } from '~/hooks';
 
 export const DashboardLayout = defineComponent({
   name: 'DashboardLayoutComponent',
 
   setup: (_, ctx) => {
-    const { getPortal } = usePortal();
-
     const router = useRouter();
 
     const route = useRoute();
@@ -64,7 +62,7 @@ export const DashboardLayout = defineComponent({
               {ctx.slots.default && ctx.slots.default()}
             </div>
 
-            {getPortal(DASHBOARD_MAIN_FOOTER_PORTAL)}
+            <PortalTarget name={DASHBOARD_MAIN_PORTAL_FOOTER} />
           </el-main>
         </el-container>
       </el-container>

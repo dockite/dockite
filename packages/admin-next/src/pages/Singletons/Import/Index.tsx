@@ -1,5 +1,6 @@
 import { ElMessage } from 'element-plus';
 import { omit } from 'lodash';
+import { Portal } from 'portal-vue';
 import { computed, defineComponent, reactive, ref } from 'vue';
 import { usePromise, usePromiseLazy } from 'vue-composable';
 import { useRouter } from 'vue-router';
@@ -10,15 +11,14 @@ import { createSingleton, fetchAllSingletons } from '~/common/api';
 import { DASHBOARD_HEADER_PORTAL_TITLE } from '~/common/constants';
 import { logE } from '~/common/logger';
 import { BaseSchema, MaybePersisted } from '~/common/types';
+import { RenderIfComponent } from '~/components/Common/RenderIf';
 import { JsonEditorComponent } from '~/components/JsonEditor';
-import { usePortal } from '~/hooks';
 
 export const SingletonImportPage = defineComponent({
   name: 'SingletonImportPage',
 
   setup: () => {
     const router = useRouter();
-    const { setPortal } = usePortal();
 
     const singleton = reactive<MaybePersisted<BaseSchema>>({
       name: 'identifier',
@@ -84,55 +84,57 @@ export const SingletonImportPage = defineComponent({
       return allSingletons.result.value.some(s => s.title === singleton.title);
     });
 
-    setPortal(DASHBOARD_HEADER_PORTAL_TITLE, <span>Import Singleton</span>);
-
     return () => {
       return (
-        <div class="relative" v-loading={handleImportSingleton.loading.value}>
-          <h3 class="text-lg font-semibold pb-5">Import a Singleton via JSON</h3>
+        <>
+          <Portal to={DASHBOARD_HEADER_PORTAL_TITLE}>Import a Singleton</Portal>
 
-          <blockquote class="p-3 border-l-4 border-gray-400 rounded text-sm bg-gray-200 mb-5">
-            Using the editor below you can import a Singleton that has either been exported from a
-            different installation or crafted for usage with the current installation.
-          </blockquote>
+          <div class="relative" v-loading={handleImportSingleton.loading.value}>
+            <h3 class="text-lg font-semibold pb-5">Import a Singleton via JSON</h3>
 
-          {singletonHasBeenUsed.value && (
-            <div class="pb-5">
-              <el-alert
-                type="error"
-                title="Singleton already exists"
-                description="The details provided are already in use with an existing Singleton. If you wish to update that Singleton, please navigate to its import page."
-                closable={false}
-                showIcon
-              />
+            <blockquote class="p-3 border-l-4 border-gray-400 rounded text-sm bg-gray-200 mb-5">
+              Using the editor below you can import a Singleton that has either been exported from a
+              different installation or crafted for usage with the current installation.
+            </blockquote>
+
+            <RenderIfComponent condition={singletonHasBeenUsed.value}>
+              <div class="pb-5">
+                <el-alert
+                  type="error"
+                  title="Singleton already exists"
+                  description="The details provided are already in use with an existing Singleton. If you wish to update that Singleton, please navigate to its import page."
+                  closable={false}
+                  showIcon
+                />
+              </div>
+            </RenderIfComponent>
+
+            <RenderIfComponent condition={titleHasBeenUsed.value}>
+              <div class="pb-5">
+                <el-alert
+                  type="warning"
+                  title="Title has already been used"
+                  description="The currently provided title has already been used with another Singleton. This may lead to confusion when navigating through the Admin UI, if this is intentional please ignore this warning."
+                  closable={true}
+                  showIcon
+                />
+              </div>
+            </RenderIfComponent>
+
+            <JsonEditorComponent v-model={singletonAsJSON.value} minHeight="60vh" />
+
+            <div class="flex flex-row-reverse pt-3">
+              <el-button
+                type="primary"
+                title={validJSON.value ? '' : 'Invalid JSON data provided'}
+                disabled={!validJSON.value || singletonHasBeenUsed.value}
+                onClick={() => handleImportSingleton.exec()}
+              >
+                Import Singleton
+              </el-button>
             </div>
-          )}
-
-          {titleHasBeenUsed.value && (
-            <div class="pb-5">
-              <el-alert
-                type="warning"
-                title="Title has already been used"
-                description="The currently provided title has already been used with another Singleton. This may lead to confusion when navigating through the Admin UI, if this is intentional please ignore this warning."
-                closable={true}
-                showIcon
-              />
-            </div>
-          )}
-
-          <JsonEditorComponent v-model={singletonAsJSON.value} minHeight="60vh" />
-
-          <div class="flex flex-row-reverse pt-3">
-            <el-button
-              type="primary"
-              title={validJSON.value ? '' : 'Invalid JSON data provided'}
-              disabled={!validJSON.value || singletonHasBeenUsed.value}
-              onClick={() => handleImportSingleton.exec()}
-            >
-              Import Singleton
-            </el-button>
           </div>
-        </div>
+        </>
       );
     };
   },

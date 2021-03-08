@@ -1,4 +1,5 @@
 import { ElMessage } from 'element-plus';
+import { Portal } from 'portal-vue';
 import { Component, defineComponent, reactive, ref } from 'vue';
 import { usePromiseLazy } from 'vue-composable';
 import { useRouter } from 'vue-router';
@@ -12,10 +13,9 @@ import { BaseSchema } from '~/common/types';
 import {
   SchemaCreateFieldsStepComponent,
   SchemaCreateNameStepComponent,
-  SchemaCreateSettingsStepComponent,
   SchemaCreateReviewStepComponent,
+  SchemaCreateSettingsStepComponent,
 } from '~/components/Schemas/Create/Steps';
-import { usePortal } from '~/hooks';
 
 export const MAXIMUM_STEP = 3;
 
@@ -23,8 +23,6 @@ export const SchemaCreatePage = defineComponent({
   name: 'SchemaCreatePage',
 
   setup: () => {
-    const { setPortal } = usePortal();
-
     const router = useRouter();
 
     const activeStep = ref(0);
@@ -41,8 +39,6 @@ export const SchemaCreatePage = defineComponent({
         views: [],
       },
     });
-
-    setPortal(DASHBOARD_HEADER_PORTAL_TITLE, <span>Create a new Schema</span>);
 
     const handleCreateSchema = usePromiseLazy(
       async (): Promise<void> => {
@@ -134,18 +130,22 @@ export const SchemaCreatePage = defineComponent({
 
     return () => {
       return (
-        <div v-loading={handleCreateSchema.loading.value}>
-          <div class="py-5 -mx-5">
-            <el-steps active={activeStep.value} finishStatus="success" alignCenter>
-              <el-step title="Name" description="Name your Schema" />
-              <el-step title="Fields" description="Add the Fields" />
-              <el-step title="Settings" description="Apply additional Settings" />
-              <el-step title="Review" description="Review the Schema" />
-            </el-steps>
-          </div>
+        <>
+          <Portal to={DASHBOARD_HEADER_PORTAL_TITLE}>Create a Schema</Portal>
 
-          {getActiveStepComponent()}
-        </div>
+          <div v-loading={handleCreateSchema.loading.value}>
+            <div class="py-5 -mx-5">
+              <el-steps active={activeStep.value} finishStatus="success" alignCenter>
+                <el-step title="Name" description="Name your Schema" />
+                <el-step title="Fields" description="Add the Fields" />
+                <el-step title="Settings" description="Apply additional Settings" />
+                <el-step title="Review" description="Review the Schema" />
+              </el-steps>
+            </div>
+
+            {getActiveStepComponent()}
+          </div>
+        </>
       );
     };
   },

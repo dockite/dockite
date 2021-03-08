@@ -1,3 +1,4 @@
+import { Portal } from 'portal-vue';
 import { defineComponent, reactive, ref, watchEffect } from 'vue';
 import { usePromise, usePromiseLazy } from 'vue-composable';
 import { useRoute, useRouter } from 'vue-router';
@@ -5,7 +6,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { getDocumentById, getSchemaById, getSingletonById } from '~/common/api';
 import { DASHBOARD_HEADER_PORTAL_TITLE } from '~/common/constants';
 import { DocumentFormComponent } from '~/components/Common/Document/Form';
-import { useGraphQL, usePortal } from '~/hooks';
+import { useGraphQL } from '~/hooks';
 import { getDocumentIdentifier } from '~/utils';
 
 export const DocumentFormPage = defineComponent({
@@ -15,8 +16,6 @@ export const DocumentFormPage = defineComponent({
     const route = useRoute();
 
     const router = useRouter();
-
-    const { setPortal } = usePortal();
 
     const formData = reactive<Record<string, any>>({});
 
@@ -33,15 +32,7 @@ export const DocumentFormPage = defineComponent({
     const { exceptionHandler } = useGraphQL();
 
     watchEffect(() => {
-      if (document.loading.value) {
-        setPortal(DASHBOARD_HEADER_PORTAL_TITLE, <span>Fetching Documents...</span>);
-
-        return;
-      }
-
       if (document.error.value) {
-        setPortal(DASHBOARD_HEADER_PORTAL_TITLE, <span>Error fetching Documents!</span>);
-
         error.value = exceptionHandler(document.error.value, router);
 
         return;
@@ -53,15 +44,7 @@ export const DocumentFormPage = defineComponent({
         return;
       }
 
-      if (schema.loading.value) {
-        setPortal(DASHBOARD_HEADER_PORTAL_TITLE, <span>Fetching Document's Schema...</span>);
-
-        return;
-      }
-
       if (schema.error.value) {
-        setPortal(DASHBOARD_HEADER_PORTAL_TITLE, <span>Error fetching Document's Schema!</span>);
-
         error.value = exceptionHandler(schema.error.value, router);
 
         if (!singleton.loading.value && document.result.value) {
@@ -79,49 +62,60 @@ export const DocumentFormPage = defineComponent({
         (!schema.result.value || schema.result.value.id !== document.result.value.schemaId)
       ) {
         schema.exec(document.result.value.schemaId);
-
-        return;
-      }
-
-      if (document.result.value && schema.result.value) {
-        setPortal(
-          DASHBOARD_HEADER_PORTAL_TITLE,
-          <span>{getDocumentIdentifier(document.result.value)}</span>,
-        );
       }
     });
 
     return () => {
       if (schema.loading.value || document.loading.value) {
-        return <div>Loading...</div>;
+        return (
+          <>
+            <Portal to={DASHBOARD_HEADER_PORTAL_TITLE}>Fetching document data...</Portal>
+
+            <div>Loading...</div>
+          </>
+        );
       }
 
       if (document.error.value) {
         return (
-          <div>
-            An error occurred while fetching the Documents
-            <pre>{JSON.stringify(error.value, null, 2)}</pre>
-          </div>
+          <>
+            <Portal to={DASHBOARD_HEADER_PORTAL_TITLE}>Error fetching document!</Portal>
+
+            <div>
+              An error occurred while fetching the Documents
+              <pre>{JSON.stringify(error.value, null, 2)}</pre>
+            </div>
+          </>
         );
       }
 
       if (schema.error.value) {
         return (
-          <div>
-            An error occurred while fetching the Schema
-            <pre>{JSON.stringify(error.value, null, 2)}</pre>
-          </div>
+          <>
+            <Portal to={DASHBOARD_HEADER_PORTAL_TITLE}>Error fetching Schema for Document!</Portal>
+
+            <div>
+              An error occurred while fetching the Schema
+              <pre>{JSON.stringify(error.value, null, 2)}</pre>
+            </div>
+          </>
         );
       }
 
       if (document.result.value && schema.result.value) {
         return (
-          <DocumentFormComponent
-            v-model={formData}
-            schema={schema.result.value}
-            document={document.result.value}
-            errors={formErrors}
-          />
+          <>
+            <Portal to={DASHBOARD_HEADER_PORTAL_TITLE}>
+              {getDocumentIdentifier(document.result.value)}
+            </Portal>
+
+            <DocumentFormComponent
+              v-model={formData}
+              schema={schema.result.value}
+              document={document.result.value}
+              errors={formErrors}
+            />
+          </>
         );
       }
 

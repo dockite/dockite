@@ -1,4 +1,5 @@
-import { defineComponent, ref, watchEffect, reactive } from 'vue';
+import { Portal } from 'portal-vue';
+import { defineComponent, reactive, ref, watchEffect } from 'vue';
 import { usePromise } from 'vue-composable';
 import { useRoute, useRouter } from 'vue-router';
 
@@ -7,7 +8,7 @@ import { getHeaderActions } from './util';
 import { getSingletonById } from '~/common/api';
 import { DASHBOARD_HEADER_PORTAL_ACTIONS, DASHBOARD_HEADER_PORTAL_TITLE } from '~/common/constants';
 import { DocumentFormComponent } from '~/components/Common/Document/Form';
-import { useGraphQL, usePortal } from '~/hooks';
+import { useGraphQL } from '~/hooks';
 
 export const SingletonFormPage = defineComponent({
   name: 'SingletonFormPage',
@@ -19,8 +20,6 @@ export const SingletonFormPage = defineComponent({
 
     const { exceptionHandler } = useGraphQL();
 
-    const { setPortal } = usePortal();
-
     const formData = reactive<Record<string, any>>({});
 
     const formErrors: Record<string, string> = reactive({});
@@ -31,8 +30,6 @@ export const SingletonFormPage = defineComponent({
 
     const singleton = usePromise(() => getSingletonById(singletonId.value));
 
-    setPortal(DASHBOARD_HEADER_PORTAL_ACTIONS, () => getHeaderActions(singleton.result));
-
     watchEffect(() => {
       if (route.params.singletonId && route.params.singletonId !== singletonId.value) {
         singletonId.value = route.params.singletonId as string;
@@ -42,32 +39,32 @@ export const SingletonFormPage = defineComponent({
     });
 
     watchEffect(() => {
-      if (singleton.loading.value) {
-        setPortal(DASHBOARD_HEADER_PORTAL_TITLE, <span>Fetching Singleton...</span>);
-      }
-
       if (singleton.error.value) {
-        setPortal(DASHBOARD_HEADER_PORTAL_TITLE, <span>Error fetching Singleton!</span>);
-
         error.value = exceptionHandler(singleton.error.value, router);
-      }
-
-      if (singleton.result.value) {
-        setPortal(DASHBOARD_HEADER_PORTAL_TITLE, <span>{singleton.result.value.title}</span>);
       }
     });
 
     return () => {
       if (singleton.loading.value) {
-        return <div>Loading...</div>;
+        return (
+          <>
+            <Portal to={DASHBOARD_HEADER_PORTAL_TITLE}>Fetching Singleton...</Portal>
+
+            <div>Loading...</div>
+          </>
+        );
       }
 
       if (singleton.error.value) {
         return (
-          <div>
-            An error occurred while fetching the Singleton
-            <pre>{JSON.stringify(error.value, null, 2)}</pre>
-          </div>
+          <>
+            <Portal to={DASHBOARD_HEADER_PORTAL_TITLE}>Error fetching Singleton!</Portal>
+
+            <div>
+              An error occurred while fetching the Singleton
+              <pre>{JSON.stringify(error.value, null, 2)}</pre>
+            </div>
+          </>
         );
       }
 
@@ -76,12 +73,20 @@ export const SingletonFormPage = defineComponent({
       }
 
       return (
-        <DocumentFormComponent
-          v-model={formData}
-          document={singleton.result.value}
-          schema={singleton.result.value}
-          errors={formErrors}
-        />
+        <>
+          <Portal to={DASHBOARD_HEADER_PORTAL_TITLE}>{singleton.result.value.title}</Portal>
+
+          <Portal to={DASHBOARD_HEADER_PORTAL_ACTIONS}>
+            {getHeaderActions(singleton.result.value)}
+          </Portal>
+
+          <DocumentFormComponent
+            v-model={formData}
+            document={singleton.result.value}
+            schema={singleton.result.value}
+            errors={formErrors}
+          />
+        </>
       );
     };
   },

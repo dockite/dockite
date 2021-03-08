@@ -1,3 +1,4 @@
+import { Portal } from 'portal-vue';
 import { defineComponent, ref, watchEffect } from 'vue';
 import { usePromise } from 'vue-composable';
 import { useRouter } from 'vue-router';
@@ -8,7 +9,7 @@ import { getTableActions } from './util';
 
 import { fetchAllSchemas } from '~/common/api';
 import { DASHBOARD_HEADER_PORTAL_TITLE, MAX_32_BIT_INT } from '~/common/constants';
-import { useGraphQL, usePortal } from '~/hooks';
+import { useGraphQL } from '~/hooks';
 
 export interface SchemaTableColumnDefaultScopedSlot {
   $index: number;
@@ -24,8 +25,6 @@ export const DeletedSchemasIndexPage = defineComponent({
 
     const { exceptionHandler } = useGraphQL();
 
-    const { setPortal } = usePortal();
-
     const error = ref<Error | null>(null);
 
     const deletedSchemas = usePromise(() => {
@@ -33,32 +32,32 @@ export const DeletedSchemasIndexPage = defineComponent({
     });
 
     watchEffect(() => {
-      if (deletedSchemas.loading.value) {
-        setPortal(DASHBOARD_HEADER_PORTAL_TITLE, <span>Fetching Deleted Schemas...</span>);
-      }
-
       if (deletedSchemas.error.value) {
-        setPortal(DASHBOARD_HEADER_PORTAL_TITLE, <span>Error fetching Deleted Schemas!</span>);
-
         error.value = exceptionHandler(deletedSchemas.error.value, router);
-      }
-
-      if (deletedSchemas.result.value) {
-        setPortal(DASHBOARD_HEADER_PORTAL_TITLE, <span>All Deleted Schemas</span>);
       }
     });
 
     return () => {
       if (deletedSchemas.loading.value) {
-        return <div>Loading...</div>;
+        return (
+          <>
+            <Portal to={DASHBOARD_HEADER_PORTAL_TITLE}>Fetching Deleted Schemas...</Portal>
+
+            <div>Loading...</div>
+          </>
+        );
       }
 
       if (deletedSchemas.error.value) {
         return (
-          <div>
-            An error occurred while fetching the Deleted Schemas
-            <pre>{JSON.stringify(error.value, null, 2)}</pre>
-          </div>
+          <>
+            <Portal to={DASHBOARD_HEADER_PORTAL_TITLE}>Error fetching Deleted Schemas!</Portal>
+
+            <div>
+              An error occurred while fetching the Deleted Schemas
+              <pre>{JSON.stringify(error.value, null, 2)}</pre>
+            </div>
+          </>
         );
       }
 
@@ -67,54 +66,58 @@ export const DeletedSchemasIndexPage = defineComponent({
       }
 
       return (
-        <div class="-m-5">
-          <el-table style="width: 100%;" class="w-full" data={deletedSchemas.result.value}>
-            <el-table-column label="ID" prop="id">
-              {{
-                default: ({ row }: SchemaTableColumnDefaultScopedSlot) => (
-                  <router-link
-                    class="font-mono overflow-ellipsis whitespace-no-wrap break-normal"
-                    to={`/schemas/deleted/${row.id}/restore`}
-                  >
-                    {row.id}
-                  </router-link>
-                ),
-              }}
-            </el-table-column>
+        <>
+          <Portal to={DASHBOARD_HEADER_PORTAL_TITLE}>All Deleted Schemas</Portal>
 
-            <el-table-column label="Name" prop="title" />
+          <div class="-m-5">
+            <el-table style="width: 100%;" class="w-full" data={deletedSchemas.result.value}>
+              <el-table-column label="ID" prop="id">
+                {{
+                  default: ({ row }: SchemaTableColumnDefaultScopedSlot) => (
+                    <router-link
+                      class="font-mono overflow-ellipsis whitespace-no-wrap break-normal"
+                      to={`/schemas/deleted/${row.id}/restore`}
+                    >
+                      {row.id}
+                    </router-link>
+                  ),
+                }}
+              </el-table-column>
 
-            <el-table-column label="Created" prop="createdAt" width="150">
-              {{
-                default: ({ row }: SchemaTableColumnDefaultScopedSlot) => (
-                  <span>{new Date(row.createdAt).toLocaleString()}</span>
-                ),
-              }}
-            </el-table-column>
+              <el-table-column label="Name" prop="title" />
 
-            <el-table-column label="Updated" prop="updatedAt" width="150">
-              {{
-                default: ({ row }: SchemaTableColumnDefaultScopedSlot) => (
-                  <span>{new Date(row.updatedAt).toLocaleString()}</span>
-                ),
-              }}
-            </el-table-column>
+              <el-table-column label="Created" prop="createdAt" width="150">
+                {{
+                  default: ({ row }: SchemaTableColumnDefaultScopedSlot) => (
+                    <span>{new Date(row.createdAt).toLocaleString()}</span>
+                  ),
+                }}
+              </el-table-column>
 
-            <el-table-column label="Deleted" prop="deletedAt" width="150">
-              {{
-                default: ({ row }: SchemaTableColumnDefaultScopedSlot) => (
-                  <span>{row.deletedAt ? new Date(row.deletedAt).toLocaleString() : 'N/A'}</span>
-                ),
-              }}
-            </el-table-column>
+              <el-table-column label="Updated" prop="updatedAt" width="150">
+                {{
+                  default: ({ row }: SchemaTableColumnDefaultScopedSlot) => (
+                    <span>{new Date(row.updatedAt).toLocaleString()}</span>
+                  ),
+                }}
+              </el-table-column>
 
-            <el-table-column label="Actions" width="120">
-              {{
-                default: ({ row }: SchemaTableColumnDefaultScopedSlot) => getTableActions(row),
-              }}
-            </el-table-column>
-          </el-table>
-        </div>
+              <el-table-column label="Deleted" prop="deletedAt" width="150">
+                {{
+                  default: ({ row }: SchemaTableColumnDefaultScopedSlot) => (
+                    <span>{row.deletedAt ? new Date(row.deletedAt).toLocaleString() : 'N/A'}</span>
+                  ),
+                }}
+              </el-table-column>
+
+              <el-table-column label="Actions" width="120">
+                {{
+                  default: ({ row }: SchemaTableColumnDefaultScopedSlot) => getTableActions(row),
+                }}
+              </el-table-column>
+            </el-table>
+          </div>
+        </>
       );
     };
   },

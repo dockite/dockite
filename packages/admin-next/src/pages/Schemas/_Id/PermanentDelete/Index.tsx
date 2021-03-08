@@ -1,19 +1,19 @@
 import { ElMessage } from 'element-plus';
+import { Portal } from 'portal-vue';
 import { computed, defineComponent, ref, watch, watchEffect } from 'vue';
 import { usePromiseLazy } from 'vue-composable';
 import { useRoute, useRouter } from 'vue-router';
 
 import {
-  permanentDeleteSchema,
   fetchDocumentsBySchemaIdWithPagination,
   getSchemaById,
+  permanentDeleteSchema,
 } from '~/common/api';
 import { DASHBOARD_HEADER_PORTAL_TITLE } from '~/common/constants';
 import { ApplicationError, ApplicationErrorCode } from '~/common/errors';
 import { logE } from '~/common/logger';
 import { RenderIfComponent } from '~/components/Common/RenderIf';
 import { SpinnerComponent } from '~/components/Common/Spinner';
-import { usePortal } from '~/hooks';
 
 export const PermanentDeleteSchemaPage = defineComponent({
   name: 'PermanentDeleteSchemaPage',
@@ -21,7 +21,6 @@ export const PermanentDeleteSchemaPage = defineComponent({
   setup: () => {
     const route = useRoute();
     const router = useRouter();
-    const { setPortal } = usePortal();
 
     const delay = ref(3);
 
@@ -105,25 +104,6 @@ export const PermanentDeleteSchemaPage = defineComponent({
       }
     });
 
-    watchEffect(() => {
-      if (deletedSchema.loading.value) {
-        setPortal(DASHBOARD_HEADER_PORTAL_TITLE, <span>Loading Schema...</span>);
-      }
-
-      if (deletedSchema.error.value) {
-        setPortal(DASHBOARD_HEADER_PORTAL_TITLE, <span>Failed to fetch Schema!</span>);
-      }
-
-      if (deletedSchema.result.value) {
-        setPortal(
-          DASHBOARD_HEADER_PORTAL_TITLE,
-          <span>
-            Confirmation of <u>{deletedSchema.result.value.title}</u> Permanent Deletion
-          </span>,
-        );
-      }
-    });
-
     watch(
       () => deletedSchema.result.value,
       value => {
@@ -137,6 +117,8 @@ export const PermanentDeleteSchemaPage = defineComponent({
       return (
         <div v-loading={handlePermanentDeleteSchema.loading.value} class="relative">
           <RenderIfComponent condition={!schemaId.value || deletedSchema.loading.value}>
+            <Portal to={DASHBOARD_HEADER_PORTAL_TITLE}>Fetching Schema...</Portal>
+
             <div style={{ minHeight: '40vh' }}>
               <div class="el-loading-mask">
                 <div class="el-loading-spinner">
@@ -149,6 +131,8 @@ export const PermanentDeleteSchemaPage = defineComponent({
           </RenderIfComponent>
 
           <RenderIfComponent condition={!!deletedSchema.error.value}>
+            <Portal to={DASHBOARD_HEADER_PORTAL_TITLE}>Error fetching Schema!</Portal>
+
             <div>An error occurred while fetching the Schema, please try again later.</div>
           </RenderIfComponent>
 
@@ -157,6 +141,10 @@ export const PermanentDeleteSchemaPage = defineComponent({
               deletedSchema.result.value !== null && allDocumentsForSchema.result.value !== null
             }
           >
+            <Portal to={DASHBOARD_HEADER_PORTAL_TITLE}>
+              Confirmation of <u>{deletedSchema.result.value?.title}</u> Permanent Deletion
+            </Portal>
+
             <div>
               <h2 class="text-xl font-semibold pb-5">
                 Are you sure you want to permanently delete {deletedSchema.result.value?.title}?

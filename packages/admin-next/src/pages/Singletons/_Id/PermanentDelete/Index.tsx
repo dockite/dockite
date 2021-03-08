@@ -1,15 +1,15 @@
 import { ElMessage } from 'element-plus';
+import { Portal } from 'portal-vue';
 import { computed, defineComponent, ref, watch, watchEffect } from 'vue';
 import { usePromiseLazy } from 'vue-composable';
 import { useRoute, useRouter } from 'vue-router';
 
-import { permanentDeleteSingleton, getSingletonById } from '~/common/api';
+import { getSingletonById, permanentDeleteSingleton } from '~/common/api';
 import { DASHBOARD_HEADER_PORTAL_TITLE } from '~/common/constants';
 import { ApplicationError, ApplicationErrorCode } from '~/common/errors';
 import { logE } from '~/common/logger';
 import { RenderIfComponent } from '~/components/Common/RenderIf';
 import { SpinnerComponent } from '~/components/Common/Spinner';
-import { usePortal } from '~/hooks';
 
 export const PermanentDeleteSingletonPage = defineComponent({
   name: 'PermanentDeleteSingletonPage',
@@ -17,7 +17,6 @@ export const PermanentDeleteSingletonPage = defineComponent({
   setup: () => {
     const route = useRoute();
     const router = useRouter();
-    const { setPortal } = usePortal();
 
     const delay = ref(3);
 
@@ -94,25 +93,6 @@ export const PermanentDeleteSingletonPage = defineComponent({
       }
     });
 
-    watchEffect(() => {
-      if (deletedSingleton.loading.value) {
-        setPortal(DASHBOARD_HEADER_PORTAL_TITLE, <span>Loading Singleton...</span>);
-      }
-
-      if (deletedSingleton.error.value) {
-        setPortal(DASHBOARD_HEADER_PORTAL_TITLE, <span>Failed to fetch Singleton!</span>);
-      }
-
-      if (deletedSingleton.result.value) {
-        setPortal(
-          DASHBOARD_HEADER_PORTAL_TITLE,
-          <span>
-            Confirmation of <u>{deletedSingleton.result.value.title}</u> Permanent Deletion
-          </span>,
-        );
-      }
-    });
-
     watch(
       () => deletedSingleton.result.value,
       value => {
@@ -126,6 +106,8 @@ export const PermanentDeleteSingletonPage = defineComponent({
       return (
         <div v-loading={handlePermanentDeleteSingleton.loading.value} class="relative">
           <RenderIfComponent condition={!singletonId.value || deletedSingleton.loading.value}>
+            <Portal to={DASHBOARD_HEADER_PORTAL_TITLE}>Fetching Singleton...</Portal>
+
             <div style={{ minHeight: '40vh' }}>
               <div class="el-loading-mask">
                 <div class="el-loading-spinner">
@@ -138,10 +120,16 @@ export const PermanentDeleteSingletonPage = defineComponent({
           </RenderIfComponent>
 
           <RenderIfComponent condition={!!deletedSingleton.error.value}>
+            <Portal to={DASHBOARD_HEADER_PORTAL_TITLE}>Error fetching Singleton!</Portal>
+
             <div>An error occurred while fetching the Singleton, please try again later.</div>
           </RenderIfComponent>
 
           <RenderIfComponent condition={deletedSingleton.result.value !== null}>
+            <Portal to={DASHBOARD_HEADER_PORTAL_TITLE}>
+              Confirmation of <u>{deletedSingleton.result.value?.title}</u> Permanent Deletion
+            </Portal>
+
             <div>
               <h2 class="text-xl font-semibold pb-5">
                 Are you sure you want to permanently delete {deletedSingleton.result.value?.title}?
