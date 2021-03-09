@@ -1,5 +1,5 @@
 import { Portal } from 'portal-vue';
-import { defineComponent, reactive, ref, watchEffect } from 'vue';
+import { computed, defineComponent, reactive, ref, watchEffect } from 'vue';
 import { usePromise, usePromiseLazy } from 'vue-composable';
 import { useRoute, useRouter } from 'vue-router';
 
@@ -59,6 +59,7 @@ export const DocumentFormPage = defineComponent({
         document.result.value.schemaId &&
         !singleton.loading.value &&
         !singleton.result.value &&
+        !schema.loading.value &&
         (!schema.result.value || schema.result.value.id !== document.result.value.schemaId)
       ) {
         schema.exec(document.result.value.schemaId);
@@ -106,7 +107,13 @@ export const DocumentFormPage = defineComponent({
         return (
           <>
             <Portal to={DASHBOARD_HEADER_PORTAL_TITLE}>
-              {getDocumentIdentifier(document.result.value)}
+              <span
+                class="truncate"
+                style={{ maxWidth: '250px' }}
+                title={getDocumentIdentifier(formData, document.result.value)}
+              >
+                {getDocumentIdentifier(formData, document.result.value)}
+              </span>
             </Portal>
 
             <DocumentFormComponent

@@ -26,16 +26,12 @@ export const useAuth = (): UseAuthHook => {
     state.type = 'third-party';
   }
 
-  const now = Date.now() / 1000;
-
   if (!state.authenticated) {
+    const now = Date.now() / 1000;
+
     if (storedToken.value && jwtDecode<{ exp: number }>(storedToken.value).exp > now) {
       state.authenticated = true;
     }
-  }
-
-  if (!state.initialised) {
-    state.initialised = true;
   }
 
   // eslint-disable-next-line consistent-return
@@ -159,13 +155,16 @@ export const useAuth = (): UseAuthHook => {
     if (state.type !== 'internal') {
       if (config.app.authProvider === 'auth0') {
         return import('~/providers/auth/auth0').then(mod =>
-          mod.refresh().then(() => {
-            if (mod.state.token) {
-              storedToken.value = mod.state.token;
+          mod
+            .refresh()
+            .then(() => {
+              if (mod.state.token) {
+                storedToken.value = mod.state.token;
 
-              state.authenticated = true;
-            }
-          }),
+                state.authenticated = true;
+              }
+            })
+            .then(() => handleRefreshUser()),
         );
       }
 
@@ -175,7 +174,7 @@ export const useAuth = (): UseAuthHook => {
       );
     }
 
-    return Promise.resolve();
+    return handleRefreshUser();
   };
 
   const handleLogout = (): MaybePromise<void> => {
@@ -200,6 +199,16 @@ export const useAuth = (): UseAuthHook => {
       state.authenticated = false;
     });
   };
+
+  if (!state.initialised) {
+    if (state.authenticated) {
+      Promise.resolve(handleRefreshUser()).then(() => {
+        state.initialised = true;
+      });
+    } else {
+      state.initialised = true;
+    }
+  }
 
   return {
     state,

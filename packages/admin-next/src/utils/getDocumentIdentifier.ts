@@ -1,20 +1,27 @@
 import { Document } from '@dockite/database';
 
-export const getDocumentIdentifier = (document: Document): string => {
-  if (document.data.name) {
-    return document.data.name;
+export const getDocumentIdentifier = (
+  formData: Record<string, any>,
+  document: Document | null,
+): string => {
+  if (formData.name) {
+    return formData.name;
   }
 
-  if (document.data.title) {
-    return document.data.title;
+  if (formData.title) {
+    return formData.title;
   }
 
-  if (document.data.identifier) {
-    return document.data.identifier;
+  if (formData.identifier) {
+    return formData.identifier;
   }
 
-  if (document.data.id) {
-    return document.data.id;
+  if (formData.id) {
+    return formData.id;
+  }
+
+  if (!document) {
+    return 'N/A';
   }
 
   return document.id;

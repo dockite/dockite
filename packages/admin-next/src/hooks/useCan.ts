@@ -1,8 +1,11 @@
-import { can as canAbility } from '@dockite/ability';
+import { can as canPerformAction } from '@dockite/ability';
 
 import { useAuth } from './useAuth';
 
-export type UseCanHook = (action: string) => boolean;
+export interface UseCanHook {
+  can: (action: string) => boolean;
+  cant: (action: string) => boolean;
+}
 
 export const useCan = (): UseCanHook => {
   const { state } = useAuth();
@@ -12,10 +15,14 @@ export const useCan = (): UseCanHook => {
       return false;
     }
 
-    return canAbility(state.user.normalizedScopes, action);
+    return canPerformAction(state.user.normalizedScopes, action);
   };
 
-  return can;
+  const cant = (action: string): boolean => {
+    return !can(action);
+  };
+
+  return { can, cant };
 };
 
 export default useCan;

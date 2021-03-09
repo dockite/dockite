@@ -4,6 +4,7 @@ import { usePromise } from 'vue-composable';
 import { useRoute } from 'vue-router';
 
 import { Logo } from '../Logo';
+import { RenderIfComponent } from '../RenderIf';
 
 import { fetchAllSchemas, fetchAllSingletons } from '~/common/api';
 import {
@@ -23,8 +24,11 @@ export const SideMenu = defineComponent({
 
   setup: () => {
     const config = useConfig();
-    const can = useCan();
+
+    const { can, cant } = useCan();
+
     const { onAll, offAll } = useEvent();
+
     const route = useRoute();
 
     const schemas = usePromise(() => fetchAllSchemas());
@@ -70,9 +74,139 @@ export const SideMenu = defineComponent({
       );
     });
 
-    const getSingletonMenuItem = (): JSX.Element | null => {
-      if (can('internal:singleton:read')) {
-        return (
+    return () => (
+      <el-menu
+        backgroundColor={config.ui.backgroundColor}
+        textColor={config.ui.textColor}
+        activeTextColor={config.ui.activeTextColour}
+        // This is undocumented but it actually wants the raw ref
+        defaultActive={activeItem}
+        defaultOpened={activeItems}
+        style="height: 100vh;"
+      >
+        <Logo class="mt-3 mx-auto" style={{ maxWidth: '80%', maxHeight: '60px' }} />
+
+        <el-menu-item index="/">
+          <i class="el-icon-s-home" />
+          <router-link to="/">Home</router-link>
+        </el-menu-item>
+
+        {/* All Documents menu item */}
+        <RenderIfComponent condition={can('internal:document:read')}>
+          <el-menu-item index="/documents">
+            <i class="el-icon-document" />
+            <router-link to="/documents">Documents</router-link>
+          </el-menu-item>
+        </RenderIfComponent>
+
+        {/* Documents with Schema dropdown */}
+        <RenderIfComponent
+          condition={cant('internal:document:read') && cant('internal:schema:read')}
+        >
+          <el-submenu index="/documents">
+            {{
+              title: () => (
+                <>
+                  <i class="el-icon-document" />
+                  Documents
+                </>
+              ),
+              default: () => {
+                if (schemas.loading.value) {
+                  return (
+                    <el-menu-item-group>
+                      <el-menu-item>
+                        Fetching Schemas <i class="el-icon-loading" />
+                      </el-menu-item>
+                    </el-menu-item-group>
+                  );
+                }
+
+                if (schemas.result.value === null || schemas.error.value) {
+                  return (
+                    <el-menu-item index="/schemas/error">
+                      Error occurred while fetching Schemas
+                      <a
+                        class="block font-bold underline"
+                        onClick={withModifiers(schemas.exec, ['prevent'])}
+                      >
+                        Retry?
+                      </a>
+                    </el-menu-item>
+                  );
+                }
+
+                return (
+                  <el-menu-item-group>
+                    {schemas.result.value.map(schema => (
+                      <el-menu-item index={`/schemas/${schema.id}`}>
+                        <router-link to={`/schemas/${schema.id}`}>{schema.title}</router-link>
+                      </el-menu-item>
+                    ))}
+                  </el-menu-item-group>
+                );
+              },
+            }}
+          </el-submenu>
+        </RenderIfComponent>
+
+        {/* Schema dropdown with management */}
+        <RenderIfComponent condition={can('internal:schema:read')}>
+          <el-submenu index="/schemas">
+            {{
+              title: () => (
+                <>
+                  <i class="el-icon-s-grid" />
+                  Schemas
+                </>
+              ),
+              default: () => {
+                if (schemas.loading.value) {
+                  return (
+                    <el-menu-item-group>
+                      <el-menu-item>
+                        Fetching Schemas <i class="el-icon-loading" />
+                      </el-menu-item>
+                    </el-menu-item-group>
+                  );
+                }
+
+                if (schemas.result.value === null || schemas.error.value) {
+                  return (
+                    <el-menu-item index="/schemas/error">
+                      Error occurred while fetching Schemas
+                      <a
+                        class="block font-bold underline"
+                        onClick={withModifiers(schemas.exec, ['prevent'])}
+                      >
+                        Retry?
+                      </a>
+                    </el-menu-item>
+                  );
+                }
+
+                return (
+                  <el-menu-item-group>
+                    {schemas.result.value.map(schema => (
+                      <el-menu-item index={`/schemas/${schema.id}`}>
+                        <i class="el-icon-invalid"></i>
+                        <router-link to={`/schemas/${schema.id}`}>{schema.title}</router-link>
+                      </el-menu-item>
+                    ))}
+
+                    <el-menu-item class="font-semibold" index="/schemas">
+                      <i class="el-icon-setting" />
+                      <router-link to="/schemas">Management</router-link>
+                    </el-menu-item>
+                  </el-menu-item-group>
+                );
+              },
+            }}
+          </el-submenu>
+        </RenderIfComponent>
+
+        {/* Singleton dropdown with managedment */}
+        <RenderIfComponent condition={can('internal:singleton:read')}>
           <el-submenu index="/singletons">
             {{
               title: () => (
@@ -128,153 +262,7 @@ export const SideMenu = defineComponent({
               },
             }}
           </el-submenu>
-        );
-      }
-
-      return null;
-    };
-
-    const getSchemaMenuItem = (): JSX.Element | null => {
-      if (can('internal:schema:read')) {
-        return (
-          <el-submenu index="/schemas">
-            {{
-              title: () => (
-                <>
-                  <i class="el-icon-s-grid" />
-                  Schemas
-                </>
-              ),
-              default: () => {
-                if (schemas.loading.value) {
-                  return (
-                    <el-menu-item-group>
-                      <el-menu-item>
-                        Fetching Schemas <i class="el-icon-loading" />
-                      </el-menu-item>
-                    </el-menu-item-group>
-                  );
-                }
-
-                if (schemas.result.value === null || schemas.error.value) {
-                  return (
-                    <el-menu-item index="/schemas/error">
-                      Error occurred while fetching Schemas
-                      <a
-                        class="block font-bold underline"
-                        onClick={withModifiers(schemas.exec, ['prevent'])}
-                      >
-                        Retry?
-                      </a>
-                    </el-menu-item>
-                  );
-                }
-
-                return (
-                  <el-menu-item-group>
-                    {schemas.result.value.map(schema => (
-                      <el-menu-item index={`/schemas/${schema.id}`}>
-                        <i class="el-icon-invalid"></i>
-                        <router-link to={`/schemas/${schema.id}`}>{schema.title}</router-link>
-                      </el-menu-item>
-                    ))}
-
-                    <el-menu-item class="font-semibold" index="/schemas">
-                      <i class="el-icon-setting" />
-                      <router-link to="/schemas">Management</router-link>
-                    </el-menu-item>
-                  </el-menu-item-group>
-                );
-              },
-            }}
-          </el-submenu>
-        );
-      }
-
-      return null;
-    };
-
-    const getDocumentMenuItem = (): JSX.Element | null => {
-      if (can('internal:document:read')) {
-        return (
-          <el-menu-item index="/documents">
-            <i class="el-icon-document" />
-            <router-link to="/documents">Documents</router-link>
-          </el-menu-item>
-        );
-      }
-
-      return (
-        <el-submenu index="/documents">
-          {{
-            title: () => (
-              <>
-                <i class="el-icon-document" />
-                Documents
-              </>
-            ),
-            default: () => {
-              if (schemas.loading.value) {
-                return (
-                  <el-menu-item-group>
-                    <el-menu-item>
-                      Fetching Schemas <i class="el-icon-loading" />
-                    </el-menu-item>
-                  </el-menu-item-group>
-                );
-              }
-
-              if (schemas.result.value === null || schemas.error.value) {
-                return (
-                  <el-menu-item index="/schemas/error">
-                    Error occurred while fetching Schemas
-                    <a
-                      class="block font-bold underline"
-                      onClick={withModifiers(schemas.exec, ['prevent'])}
-                    >
-                      Retry?
-                    </a>
-                  </el-menu-item>
-                );
-              }
-
-              return (
-                <el-menu-item-group>
-                  {schemas.result.value.map(schema => (
-                    <el-menu-item index={`/schemas/${schema.id}`}>
-                      <router-link to={`/schemas/${schema.id}`}>{schema.title}</router-link>
-                    </el-menu-item>
-                  ))}
-                </el-menu-item-group>
-              );
-            },
-          }}
-        </el-submenu>
-      );
-    };
-
-    return () => (
-      <el-menu
-        backgroundColor={config.ui.backgroundColor}
-        textColor={config.ui.textColor}
-        activeTextColor={config.ui.activeTextColour}
-        // This is undocumented but it actually wants the raw ref
-        defaultActive={activeItem}
-        defaultOpened={activeItems}
-        style="height: 100vh;"
-      >
-        <Logo class="mt-3 mx-auto" style={{ maxWidth: '80%', maxHeight: '60px' }} />
-
-        <el-menu-item index="/">
-          <i class="el-icon-s-home" />
-          <router-link to="/">Home</router-link>
-        </el-menu-item>
-
-        {getDocumentMenuItem()}
-
-        {getSchemaMenuItem()}
-
-        {getSingletonMenuItem()}
+        </RenderIfComponent>
       </el-menu>
     );
   },

@@ -20,7 +20,7 @@ export const getHeaderActions = (): JSX.Element => (
 
           {/* Deleted Singletons */}
           <el-dropdown-item>
-            <router-link class="block" to="/singletons/deleted">
+            <router-link class="block text-orange-600" to="/singletons/deleted">
               <i class="el-icon-folder-delete" />
               View Deleted Singletons
             </router-link>

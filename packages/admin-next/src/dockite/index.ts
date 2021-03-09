@@ -1,7 +1,7 @@
-import { BaseField, Field, Schema } from '@dockite/database';
 import { ElMessage, ElNotification } from 'element-plus';
 import { DefineComponent, Plugin, reactive, ref, Ref } from 'vue';
 
+import { BaseField } from '@dockite/database';
 import {
   DockiteFieldInputComponentProps,
   DockiteFieldSettingsComponentProps,
