@@ -17,7 +17,7 @@ import {
   Query,
   Resolver,
 } from 'type-graphql';
-import { getCustomRepository, getManager, getRepository } from 'typeorm';
+import { getCustomRepository, getManager, getRepository, IsNull, Not } from 'typeorm';
 
 import { Authenticated, Authorized } from '../../../common/decorators';
 import { GlobalContext } from '../../../common/types';
@@ -65,15 +65,17 @@ export class DocumentResolver {
   async getDocument(
     @Arg('id')
     id: string,
+    @Arg('deleted', _type => Boolean, { nullable: true })
+    deleted: boolean | null,
     @Ctx()
     ctx: GlobalContext,
   ): Promise<Document | null> {
     const repository = getRepository(Document);
 
     const document = await repository.findOne({
-      where: { id },
+      where: { id, deletedAt: deleted ? Not(IsNull()) : null },
       relations: ['schema', 'schema.fields', 'user'],
-      withDeleted: true,
+      withDeleted: !!deleted,
     });
 
     if (!document) {

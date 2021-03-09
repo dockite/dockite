@@ -40,6 +40,7 @@ export const FETCH_ALL_DOCUMENTS_QUERY = gql`
         publishedAt
         createdAt
         updatedAt
+        deletedAt
         releaseId
         schemaId
         schema {
@@ -51,6 +52,7 @@ export const FETCH_ALL_DOCUMENTS_QUERY = gql`
           settings
           createdAt
           updatedAt
+          deletedAt
         }
       }
       totalItems

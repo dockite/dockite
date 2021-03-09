@@ -19,6 +19,7 @@ export const GET_DOCUMENT_BY_ID_QUERY = gql`
       publishedAt
       createdAt
       updatedAt
+      deletedAt
       releaseId
       schemaId
     }

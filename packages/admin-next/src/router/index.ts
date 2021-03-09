@@ -28,6 +28,11 @@ export const Router = createRouter({
       component: () => import('../pages/Documents/_Id'),
       meta: { layout: 'Dashboard' },
     },
+    {
+      path: '/documents/:documentId/delete',
+      component: () => import('../pages/Documents/_Id/Delete'),
+      meta: { layout: 'Dashboard' },
+    },
 
     /**
      * Schemas
