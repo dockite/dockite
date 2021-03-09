@@ -28,6 +28,7 @@ module.exports = {
   rules: {
     'no-shadow': 'off',
 
+    '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
     '@typescript-eslint/explicit-function-return-type': [
       'error',
       {
@@ -65,7 +66,7 @@ module.exports = {
           ['~', path.resolve(__dirname, './src')],
           ['@', path.resolve(__dirname, './src')],
         ],
-        extensions: ['.ts', '.tsx', '.js', '.jsx', '.json']
+        extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
       },
     },
     'import/extensions': ['.js', '.mjs', '.jsx', '.ts', '.tsx', '.css', '.scss'],

@@ -3,7 +3,7 @@ import { computed, defineComponent, PropType, ref } from 'vue';
 import { SchemaConfigurableView } from '@dockite/database';
 import { SchemaType } from '@dockite/types';
 
-import SchemaConstraintBuilderComponent from '../ContraintBuilder';
+import { SchemaConstraintBuilderComponent } from '../ConstraintBuilder';
 
 import { baseFormRules } from './formRules';
 import { SchemaViewConfigurationComponentProps } from './types';
