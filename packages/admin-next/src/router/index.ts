@@ -62,6 +62,11 @@ export const Router = createRouter({
       component: () => import('../pages/Schemas/_Id/PermanentDelete'),
       meta: { layout: 'Dashboard' },
     },
+    {
+      path: '/schemas/deleted/:schemaId/restore',
+      component: () => import('../pages/Schemas/_Id/Restore'),
+      meta: { layout: 'Dashboard' },
+    },
 
     /**
      * Single Schema
@@ -113,6 +118,11 @@ export const Router = createRouter({
     {
       path: '/singletons/deleted/:singletonId/permanent-delete',
       component: () => import('../pages/Singletons/_Id/PermanentDelete'),
+      meta: { layout: 'Dashboard' },
+    },
+    {
+      path: '/singletons/deleted/:singletonId/restore',
+      component: () => import('../pages/Singletons/_Id/Restore'),
       meta: { layout: 'Dashboard' },
     },
 

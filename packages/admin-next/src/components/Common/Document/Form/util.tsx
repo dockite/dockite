@@ -1,5 +1,6 @@
-import { Field, Schema } from '@dockite/database';
 import { toRaw } from 'vue';
+
+import { Field, Schema } from '@dockite/database';
 
 import { ApplicationError, ApplicationErrorCode } from '~/common/errors';
 import { useDockite } from '~/dockite';
@@ -34,6 +35,7 @@ export const getFieldComponent = (
 
   return (
     <FieldComponent
+      class={`dockite-form-${field.name}`}
       fieldConfig={field}
       formData={formData}
       name={field.name}

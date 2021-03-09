@@ -336,6 +336,37 @@ export class SchemaResolver {
     }
   }
 
+  @Authenticated()
+  @Authorized('internal:schema:update', { derriveAlternativeScopes: false })
+  @Mutation(_returns => Schema)
+  async restoreSchema(
+    @Arg('id')
+    id: string,
+  ): Promise<Schema> {
+    const schemaRepository = getRepository(Schema);
+    const documentRepository = getRepository(Document);
+
+    const [schema, documents] = await Promise.all([
+      schemaRepository.findOneOrFail({
+        where: { id, type: SchemaType.DEFAULT },
+        withDeleted: true,
+      }),
+      documentRepository.find({
+        where: { schemaId: id },
+        withDeleted: true,
+      }),
+    ]);
+
+    const [recoveredSchema] = await Promise.all([
+      schemaRepository.recover(schema),
+      documentRepository.recover(documents),
+    ]);
+
+    DockiteEvents.emit('reload');
+
+    return recoveredSchema;
+  }
+
   @FieldResolver()
   protected groups(@Root() schema: Schema): Record<string, string[]> {
     return schema.groups.reduce((acc: Record<string, string[]>, curr: Record<string, string[]>) => {

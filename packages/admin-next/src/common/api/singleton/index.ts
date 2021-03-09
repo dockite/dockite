@@ -6,7 +6,11 @@ import { FindManyResult } from '@dockite/types';
 
 import { DOCKITE_ITEMS_PER_PAGE } from '~/common/constants';
 import { ApplicationError, ApplicationErrorCode } from '~/common/errors';
-import { CREATE_SINGLETON_EVENT, DELETE_SINGLETON_EVENT } from '~/common/events';
+import {
+  CREATE_SINGLETON_EVENT,
+  DELETE_SINGLETON_EVENT,
+  UPDATE_SINGLETON_EVENT,
+} from '~/common/events';
 import { logE } from '~/common/logger';
 import { BaseSchema } from '~/common/types';
 import {
@@ -25,6 +29,9 @@ import {
   PermanentDeleteSingletonMutationResponse,
   PermanentDeleteSingletonMutationVariables,
   PERMANENT_DELETE_SINGLETON_MUTATION,
+  RestoreSingletonMutationResponse,
+  RestoreSingletonMutationVariables,
+  RESTORE_SINGLETON_MUTATION,
 } from '~/graphql';
 import { useEvent } from '~/hooks';
 import { useGraphQL } from '~/hooks/useGraphQL';
@@ -280,6 +287,81 @@ export const permanentDeleteSingleton = async (payload: Singleton): Promise<bool
     throw new ApplicationError(
       'An error occurred while attempting to permanently delete the Singleton.',
       ApplicationErrorCode.CANT_DELETE_SINGLETON,
+    );
+  }
+};
+
+export const restoreSingleton = async (payload: Singleton): Promise<Singleton> => {
+  const graphql = useGraphQL();
+  const { emit } = useEvent();
+
+  try {
+    const result = await graphql.executeMutation<
+      RestoreSingletonMutationResponse,
+      RestoreSingletonMutationVariables
+    >({
+      mutation: RESTORE_SINGLETON_MUTATION,
+      variables: {
+        id: payload.id,
+      },
+
+      update: (store, { data: restoreSingletonData }) => {
+        if (restoreSingletonData) {
+          const { restoreSingleton: schema } = restoreSingletonData;
+
+          if (schema) {
+            // Remove any items within the GraphQL cache that relate to our schema
+            store.modify({
+              id: 'ROOT_QUERY',
+              fields: {
+                allSingletons: (_, details) => details.INVALIDATE,
+
+                getSingleton: (_, details) => details.INVALIDATE,
+
+                findDocuments: (documents: FindManyResult<Document>): FindManyResult<Document> => {
+                  return {
+                    ...documents,
+                    results: documents.results.filter(document => document.schemaId !== payload.id),
+                  };
+                },
+
+                searchDocuments: (
+                  documents: FindManyResult<Document>,
+                ): FindManyResult<Document> => {
+                  return {
+                    ...documents,
+                    results: documents.results.filter(document => document.schemaId !== payload.id),
+                  };
+                },
+              },
+            });
+
+            store.gc();
+          }
+        }
+      },
+    });
+
+    if (!result.data) {
+      throw new ApplicationError(
+        'An unknown error occurred, please try again later.',
+        ApplicationErrorCode.UNKNOWN_ERROR,
+      );
+    }
+
+    emit(UPDATE_SINGLETON_EVENT);
+
+    return result.data.restoreSingleton;
+  } catch (err) {
+    logE(err);
+
+    if (err instanceof ApplicationError) {
+      throw err;
+    }
+
+    throw new ApplicationError(
+      'An error occurred while attempting to permanently delete the Singleton.',
+      ApplicationErrorCode.CANT_DELETE_SCHEMA,
     );
   }
 };

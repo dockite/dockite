@@ -7,7 +7,7 @@ import { FindManyResult } from '@dockite/types';
 
 import { DOCKITE_ITEMS_PER_PAGE } from '~/common/constants';
 import { ApplicationError, ApplicationErrorCode } from '~/common/errors';
-import { CREATE_SCHEMA_EVENT, DELETE_SCHEMA_EVENT } from '~/common/events';
+import { CREATE_SCHEMA_EVENT, DELETE_SCHEMA_EVENT, UPDATE_SCHEMA_EVENT } from '~/common/events';
 import { logE } from '~/common/logger';
 import { BaseSchema } from '~/common/types';
 import {
@@ -26,6 +26,9 @@ import {
   PermanentDeleteSchemaMutationResponse,
   PermanentDeleteSchemaMutationVariables,
   PERMANENT_DELETE_SCHEMA_MUTATION,
+  RestoreSchemaMutationResponse,
+  RestoreSchemaMutationVariables,
+  RESTORE_SCHEMA_MUTATION,
 } from '~/graphql';
 import { useEvent } from '~/hooks';
 import { useGraphQL } from '~/hooks/useGraphQL';
@@ -290,6 +293,81 @@ export const permanentDeleteSchema = async (payload: Schema): Promise<boolean> =
 
     throw new ApplicationError(
       'An error occurred while attempting to permanently delete the Schema.',
+      ApplicationErrorCode.CANT_DELETE_SCHEMA,
+    );
+  }
+};
+
+export const restoreSchema = async (payload: Schema): Promise<Schema> => {
+  const graphql = useGraphQL();
+  const { emit } = useEvent();
+
+  try {
+    const result = await graphql.executeMutation<
+      RestoreSchemaMutationResponse,
+      RestoreSchemaMutationVariables
+    >({
+      mutation: RESTORE_SCHEMA_MUTATION,
+      variables: {
+        id: payload.id,
+      },
+
+      update: (store, { data: restoreSchemaData }) => {
+        if (restoreSchemaData) {
+          const { restoreSchema: schema } = restoreSchemaData;
+
+          if (schema) {
+            // Remove any items within the GraphQL cache that relate to our schema
+            store.modify({
+              id: 'ROOT_QUERY',
+              fields: {
+                allSchemas: (_, details) => details.INVALIDATE,
+
+                getSchema: (_, details) => details.INVALIDATE,
+
+                findDocuments: (documents: FindManyResult<Document>): FindManyResult<Document> => {
+                  return {
+                    ...documents,
+                    results: documents.results.filter(document => document.schemaId !== payload.id),
+                  };
+                },
+
+                searchDocuments: (
+                  documents: FindManyResult<Document>,
+                ): FindManyResult<Document> => {
+                  return {
+                    ...documents,
+                    results: documents.results.filter(document => document.schemaId !== payload.id),
+                  };
+                },
+              },
+            });
+
+            store.gc();
+          }
+        }
+      },
+    });
+
+    if (!result.data) {
+      throw new ApplicationError(
+        'An unknown error occurred, please try again later.',
+        ApplicationErrorCode.UNKNOWN_ERROR,
+      );
+    }
+
+    emit(UPDATE_SCHEMA_EVENT);
+
+    return result.data.restoreSchema;
+  } catch (err) {
+    logE(err);
+
+    if (err instanceof ApplicationError) {
+      throw err;
+    }
+
+    throw new ApplicationError(
+      'An error occurred while attempting to restore the Schema.',
       ApplicationErrorCode.CANT_DELETE_SCHEMA,
     );
   }

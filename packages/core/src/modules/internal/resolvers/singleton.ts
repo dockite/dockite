@@ -407,6 +407,37 @@ export class SingletonResolver {
     }
   }
 
+  @Authenticated()
+  @Authorized('internal:schema:update', { derriveAlternativeScopes: false })
+  @Mutation(_returns => Singleton)
+  async restoreSingleton(
+    @Arg('id')
+    id: string,
+  ): Promise<Singleton> {
+    const schemaRepository = getRepository(Schema);
+    const documentRepository = getRepository(Document);
+
+    const [singleton, document] = await Promise.all([
+      schemaRepository.findOneOrFail({
+        where: { id, type: SchemaType.SINGLETON },
+        withDeleted: true,
+      }),
+      documentRepository.findOneOrFail({
+        where: { schemaId: id },
+        withDeleted: true,
+      }),
+    ]);
+
+    const [recoveredSingleton, recoveredDocument] = await Promise.all([
+      schemaRepository.recover(singleton),
+      documentRepository.recover(document),
+    ]);
+
+    DockiteEvents.emit('reload');
+
+    return { ...recoveredSingleton, data: recoveredDocument.data };
+  }
+
   private async createRevision(id: string, userId: string): Promise<void> {
     const schemaRepository = getRepository(Schema);
     const revisionRepository = getRepository(SchemaRevision);
