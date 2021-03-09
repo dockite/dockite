@@ -266,7 +266,7 @@ export const SchemaConstraintBuilderComponent = defineComponent({
                 title="Remove Constraint"
                 onClick={() => handleRemoveConstraintItem(index)}
               >
-                <i class="el-icon-delete text-red-600" />
+                <i class="el-icon-delete text-red-600 hover:text-red-600 hover:opacity-50" />
               </el-button>
             </div>
           </div>
@@ -337,7 +337,9 @@ export const SchemaConstraintBuilderComponent = defineComponent({
                   title="Remove Constraint"
                   onClick={() => handleRemoveConstraintGroup()}
                 >
-                  <span class="text-red-600">Remove Constraint Group</span>
+                  <span class="text-red-600 hover:text-red-600 hover:opacity-50">
+                    Remove Constraint Group
+                  </span>
                 </el-button>
               )}
             </div>

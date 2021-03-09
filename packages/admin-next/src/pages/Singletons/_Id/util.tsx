@@ -21,7 +21,10 @@ export const getHeaderActions = (singleton: Singleton): JSX.Element => {
 
             {/* Delete  */}
             <el-dropdown-item>
-              <router-link class="block text-red-600" to={`/singletons/${singleton.id}/delete`}>
+              <router-link
+                class="block text-red-600 hover:text-red-600 hover:opacity-50"
+                to={`/singletons/${singleton.id}/delete`}
+              >
                 <i class="el-icon-folder-delete" />
                 Delete Singleton
               </router-link>

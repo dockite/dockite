@@ -196,7 +196,7 @@ export const SchemaViewConfigurationComponent = defineComponent({
                 class="hover:opacity-75"
                 onClick={() => handleRemoveView()}
               >
-                <span class="text-red-600">Remove View</span>
+                <span class="text-red-600 hover:text-red-600 hover:opacity-50">Remove View</span>
               </el-button>
             </div>
           </el-form>

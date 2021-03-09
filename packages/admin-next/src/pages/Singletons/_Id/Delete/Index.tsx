@@ -124,7 +124,7 @@ export const DeleteSingletonPage = defineComponent({
 
           <RenderIfComponent condition={singleton.result.value !== null}>
             <Portal to={DASHBOARD_HEADER_PORTAL_TITLE}>
-              Confirmation of <u>{singleton.result.value?.title}</u> Deletion
+              <span>Confirmation of <u>{singleton.result.value?.title}</u> Deletion</span>
             </Portal>
 
             <div>

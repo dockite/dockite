@@ -30,7 +30,10 @@ export const getHeaderActions = (schema: Ref<Schema | null>): JSX.Element => {
 
             {/* Deleted Singletons */}
             <el-dropdown-item>
-              <router-link class="block text-red-600" to={`/schemas/${schema.value?.id}/delete`}>
+              <router-link
+                class="block text-red-600 hover:text-red-600 hover:opacity-50"
+                to={`/schemas/${schema.value?.id}/delete`}
+              >
                 <i class="el-icon-folder-delete" />
                 Delete Schema
               </router-link>

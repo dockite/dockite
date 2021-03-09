@@ -142,7 +142,7 @@ export const PermanentDeleteSchemaPage = defineComponent({
             }
           >
             <Portal to={DASHBOARD_HEADER_PORTAL_TITLE}>
-              Confirmation of <u>{deletedSchema.result.value?.title}</u> Permanent Deletion
+              <span>Confirmation of <u>{deletedSchema.result.value?.title}</u> Permanent Deletion</span>
             </Portal>
 
             <div>

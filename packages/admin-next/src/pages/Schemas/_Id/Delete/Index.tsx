@@ -135,7 +135,9 @@ export const DeleteSchemaPage = defineComponent({
             condition={schema.result.value !== null && allDocumentsForSchema.result.value !== null}
           >
             <Portal to={DASHBOARD_HEADER_PORTAL_TITLE}>
-              Confirmation of <u>{schema.result.value?.title}</u> Deletion
+              <span>
+                Confirmation of <u>{schema.result.value?.title}</u> Deletion
+              </span>
             </Portal>
 
             <div>

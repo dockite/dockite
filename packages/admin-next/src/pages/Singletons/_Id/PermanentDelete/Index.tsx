@@ -127,7 +127,7 @@ export const PermanentDeleteSingletonPage = defineComponent({
 
           <RenderIfComponent condition={deletedSingleton.result.value !== null}>
             <Portal to={DASHBOARD_HEADER_PORTAL_TITLE}>
-              Confirmation of <u>{deletedSingleton.result.value?.title}</u> Permanent Deletion
+              <span>Confirmation of <u>{deletedSingleton.result.value?.title}</u> Permanent Deletion</span>
             </Portal>
 
             <div>

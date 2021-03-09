@@ -50,6 +50,14 @@ export const getTableActions = (schema: Singleton): JSX.Element => {
         <router-link title="View Revisions" class="px-2" to={`/singletons/${schema.id}/revisions`}>
           <i class="el-icon-folder-opened" />
         </router-link>
+
+        <router-link
+          title="Delete Singleton"
+          class="text-red-600 hover:text-red-600 hover:opacity-50 px-2"
+          to={`/singletons/${schema.id}/delete`}
+        >
+          <i class="el-icon-delete" />
+        </router-link>
       </div>
     </div>
   );

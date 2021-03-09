@@ -138,7 +138,7 @@ export const RestoreSchemaPage = defineComponent({
             }
           >
             <Portal to={DASHBOARD_HEADER_PORTAL_TITLE}>
-              Confirmation of <u>{deletedSchema.result.value?.title}</u> Restoration
+              <span>Confirmation of <u>{deletedSchema.result.value?.title}</u> Restoration</span>
             </Portal>
 
             <div>
