@@ -2,7 +2,7 @@
 import { StoreObject } from '@apollo/client/core';
 import { cloneDeep, sortBy } from 'lodash';
 
-import { Document, Schema } from '@dockite/database';
+import { Schema } from '@dockite/database';
 import { FindManyResult } from '@dockite/types';
 
 import { DOCKITE_ITEMS_PER_PAGE } from '~/common/constants';
@@ -32,6 +32,7 @@ import {
 } from '~/graphql';
 import { useEvent } from '~/hooks';
 import { useGraphQL } from '~/hooks/useGraphQL';
+import { bustDocumentsBySchemaId, deleteFields } from '~/utils';
 
 export const getSchemaById = async (id: string, deleted = false): Promise<Schema> => {
   const graphql = useGraphQL();
@@ -174,20 +175,7 @@ export const deleteSchema = async (payload: Schema): Promise<boolean> => {
             store.modify({
               id: 'ROOT_QUERY',
               fields: {
-                findDocuments: (documents: FindManyResult<Document>): FindManyResult<Document> => {
-                  return {
-                    ...documents,
-                    results: documents.results.filter(document => document.schemaId !== payload.id),
-                  };
-                },
-                searchDocuments: (
-                  documents: FindManyResult<Document>,
-                ): FindManyResult<Document> => {
-                  return {
-                    ...documents,
-                    results: documents.results.filter(document => document.schemaId !== payload.id),
-                  };
-                },
+                ...bustDocumentsBySchemaId(payload.id),
               },
             });
 
@@ -251,20 +239,7 @@ export const permanentDeleteSchema = async (payload: Schema): Promise<boolean> =
             store.modify({
               id: 'ROOT_QUERY',
               fields: {
-                findDocuments: (documents: FindManyResult<Document>): FindManyResult<Document> => {
-                  return {
-                    ...documents,
-                    results: documents.results.filter(document => document.schemaId !== payload.id),
-                  };
-                },
-                searchDocuments: (
-                  documents: FindManyResult<Document>,
-                ): FindManyResult<Document> => {
-                  return {
-                    ...documents,
-                    results: documents.results.filter(document => document.schemaId !== payload.id),
-                  };
-                },
+                ...bustDocumentsBySchemaId(payload.id),
               },
             });
 
@@ -321,25 +296,13 @@ export const restoreSchema = async (payload: Schema): Promise<Schema> => {
             store.modify({
               id: 'ROOT_QUERY',
               fields: {
-                allSchemas: (_, details) => details.INVALIDATE,
-
-                getSchema: (_, details) => details.INVALIDATE,
-
-                findDocuments: (documents: FindManyResult<Document>): FindManyResult<Document> => {
-                  return {
-                    ...documents,
-                    results: documents.results.filter(document => document.schemaId !== payload.id),
-                  };
-                },
-
-                searchDocuments: (
-                  documents: FindManyResult<Document>,
-                ): FindManyResult<Document> => {
-                  return {
-                    ...documents,
-                    results: documents.results.filter(document => document.schemaId !== payload.id),
-                  };
-                },
+                ...deleteFields(
+                  'allSchemas',
+                  'getSchema',
+                  'allDocuments',
+                  'findDocuments',
+                  'searchDocuments',
+                ),
               },
             });
 
