@@ -5,13 +5,20 @@ import { Document, Schema } from '@dockite/database';
 import { FindManyResult } from '@dockite/types';
 
 import { ApplicationError, ApplicationErrorCode } from '~/common/errors';
-import { CREATE_DOCUMENT_EVENT, DELETE_DOCUMENT_EVENT } from '~/common/events';
+import {
+  CREATE_DOCUMENT_EVENT,
+  DELETE_DOCUMENT_EVENT,
+  UPDATE_DOCUMENT_EVENT,
+} from '~/common/events';
 import { logE } from '~/common/logger';
 import { BaseDocument } from '~/common/types';
 import {
   CreateDocumentMutationResponse,
   CreateDocumentMutationVariables,
   CREATE_DOCUMENT_MUTATION,
+  UpdateDocumentMutationResponse,
+  UpdateDocumentMutationVariables,
+  UPDATE_DOCUMENT_MUTATION,
 } from '~/graphql';
 import {
   DeleteDocumentMutationResponse,
@@ -63,7 +70,47 @@ export const createDocument = async (payload: BaseDocument, schema: Schema): Pro
   }
 };
 
-export const updateDocument = noop;
+export const updateDocument = async (payload: Document): Promise<Document> => {
+  const graphql = useGraphQL();
+  const { emit } = useEvent();
+
+  try {
+    const result = await graphql.executeMutation<
+      UpdateDocumentMutationResponse,
+      UpdateDocumentMutationVariables
+    >({
+      mutation: UPDATE_DOCUMENT_MUTATION,
+      variables: {
+        id: payload.id,
+        data: payload.data,
+      },
+    });
+
+    if (!result.data) {
+      throw new ApplicationError(
+        'An unknown error occurred, please try again later.',
+        ApplicationErrorCode.UNKNOWN_ERROR,
+      );
+    }
+
+    emit(UPDATE_DOCUMENT_EVENT);
+
+    return result.data.updateDocument;
+  } catch (err) {
+    logE(err);
+
+    const e = graphql.exceptionHandler(err);
+
+    if (e instanceof ApplicationError) {
+      throw e;
+    }
+
+    throw new ApplicationError(
+      'An unknown error has occurred, please try again later.',
+      ApplicationErrorCode.UNKNOWN_ERROR,
+    );
+  }
+};
 
 export const deleteDocument = async (payload: Document): Promise<boolean> => {
   const graphql = useGraphQL();

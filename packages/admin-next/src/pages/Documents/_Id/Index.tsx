@@ -1,13 +1,27 @@
+import { ElMessage } from 'element-plus';
 import { Portal } from 'portal-vue';
-import { computed, defineComponent, reactive, ref, watchEffect } from 'vue';
+import { defineComponent, reactive, ref, watchEffect } from 'vue';
 import { usePromise, usePromiseLazy } from 'vue-composable';
 import { useRoute, useRouter } from 'vue-router';
 
+import { getFooter, getHeaderActions } from './util';
+
 import { getDocumentById, getSchemaById, getSingletonById } from '~/common/api';
-import { DASHBOARD_HEADER_PORTAL_TITLE } from '~/common/constants';
+import { updateDocument } from '~/common/api/document';
+import {
+  DASHBOARD_HEADER_PORTAL_ACTIONS,
+  DASHBOARD_HEADER_PORTAL_TITLE,
+  DASHBOARD_MAIN_PORTAL_FOOTER,
+} from '~/common/constants';
+import { ApplicationError, ApplicationErrorGroup } from '~/common/errors';
+import { FieldErrorList } from '~/common/types';
 import { DocumentFormComponent } from '~/components/Common/Document/Form';
 import { useGraphQL } from '~/hooks';
-import { getDocumentIdentifier } from '~/utils';
+import {
+  displayClientValidationErrors,
+  displayServerValidationErrors,
+  getDocumentIdentifier,
+} from '~/utils';
 
 export const DocumentFormPage = defineComponent({
   name: 'DocumentFormPageComponent',
@@ -25,11 +39,51 @@ export const DocumentFormPage = defineComponent({
 
     const singleton = usePromiseLazy((id: string) => getSingletonById(id));
 
+    const form = ref<any>(null);
+
     const error = ref<Error | null>(null);
 
     const formErrors: Record<string, string> = reactive({});
 
     const { exceptionHandler } = useGraphQL();
+
+    const handleUpdateDocument = usePromiseLazy(async () => {
+      try {
+        if (!document.result.value || !form.value) {
+          ElMessage.warning('Document must be fetched before attempting to save.');
+
+          return;
+        }
+
+        const valid = await form.value.validate().catch((e: FieldErrorList) => e);
+
+        if (valid !== true) {
+          displayClientValidationErrors(valid);
+
+          return;
+        }
+
+        const doc = await updateDocument({ ...document.result.value, data: formData });
+
+        ElMessage.success('Document updated successfully!');
+
+        router.push(`/schemas/${doc.schemaId}`);
+      } catch (err) {
+        if (err instanceof ApplicationErrorGroup) {
+          displayServerValidationErrors(err);
+
+          return;
+        }
+
+        if (err instanceof ApplicationError) {
+          ElMessage.error(err.message);
+
+          return;
+        }
+
+        throw err;
+      }
+    });
 
     watchEffect(() => {
       if (document.error.value) {
@@ -116,12 +170,19 @@ export const DocumentFormPage = defineComponent({
               </span>
             </Portal>
 
+            <Portal to={DASHBOARD_HEADER_PORTAL_ACTIONS}>
+              {getHeaderActions(handleUpdateDocument.exec)}
+            </Portal>
+
             <DocumentFormComponent
               v-model={formData}
               schema={schema.result.value}
               document={document.result.value}
               errors={formErrors}
+              formRef={form}
             />
+
+            <Portal to={DASHBOARD_MAIN_PORTAL_FOOTER}>{getFooter()}</Portal>
           </>
         );
       }

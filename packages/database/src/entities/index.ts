@@ -1,6 +1,7 @@
 export * from './document-revision';
 export * from './document';
 export * from './field';
+export * from './locale';
 export * from './password-reset';
 export * from './release';
 export * from './role';

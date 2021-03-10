@@ -86,6 +86,10 @@ export const SideMenu = defineComponent({
       >
         <Logo class="mt-3 mx-auto" style={{ maxWidth: '80%', maxHeight: '60px' }} />
 
+        <div class="mx-auto">
+          {/*  */}
+        </div>
+
         <el-menu-item index="/">
           <i class="el-icon-s-home" />
           <router-link to="/">Home</router-link>
