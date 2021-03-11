@@ -22,7 +22,7 @@
     "graphql-tag": "^2.10.3",
     "reflect-metadata": "^0.1.13",
     "slugify": "^1.4.4",
-    "type-graphql": "1.0.0-rc.2",
+    "type-graphql": ">= 1.1.1",
     "typeorm": "^0.2.25",
     "validator": "^13.0.0",
     "vue": "^3.0.5"

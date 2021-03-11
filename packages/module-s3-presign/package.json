@@ -20,7 +20,7 @@
     "graphql-tag": "^2.10.3",
     "lodash": "^4.17.15",
     "minio": "^7.0.16",
-    "type-graphql": "1.0.0-rc.2",
+    "type-graphql": ">= 1.1.1",
     "typeorm": "^0.2.25"
   },
   "devDependencies": {
