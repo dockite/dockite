@@ -2,7 +2,7 @@
   "include": ["src"],
   "exclude": ["lib", "node_modules"],
   "compilerOptions": {
-    "target": "ES6",
+    "target": "ES2018",
     "module": "commonjs",
     "declaration": true,
     "declarationMap": true,

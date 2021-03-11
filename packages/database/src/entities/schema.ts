@@ -20,7 +20,10 @@ import { User } from './user';
 import { SchemaRevision } from './schema-revision';
 
 // Register the enum for type-graphql
-registerEnumType(SchemaType, { name: 'SchemaType' });
+registerEnumType(SchemaType, {
+  name: 'SchemaType',
+  valuesConfig: {},
+});
 
 export interface SchemaTableViewSettings {
   fieldsToDisplay: string[];

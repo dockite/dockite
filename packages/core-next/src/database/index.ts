@@ -1,8 +1,8 @@
 import debug from 'debug';
 import {
-  getConnection as getDatabaseConnection,
-  createConnection as createDatabaseConnection,
   Connection,
+  createConnection as createDatabaseConnection,
+  getConnection as getDatabaseConnection,
 } from 'typeorm';
 
 import {
@@ -23,7 +23,9 @@ import {
 } from '@dockite/database';
 
 import { getConfig } from '../common/config';
+import { startTiming } from '../common/util';
 
+import { DocumentSubscriber, FieldSubscriber, SchemaSubscriber } from './subscribers';
 import { EntityLike, SubscriberLike } from './types';
 import { loadExternalEntities } from './util';
 
@@ -48,7 +50,11 @@ const DATABASE_ENTITIES: Array<EntityLike> = [
   WebhookCall,
 ];
 
-const DATABASE_SUBSCRIBERS: Array<SubscriberLike> = [];
+const DATABASE_SUBSCRIBERS: Array<SubscriberLike> = [
+  DocumentSubscriber,
+  FieldSubscriber,
+  SchemaSubscriber,
+];
 
 /**
  * Attempts to retrieve the current database connection returning null
@@ -56,7 +62,7 @@ const DATABASE_SUBSCRIBERS: Array<SubscriberLike> = [];
  */
 export const getConnection = (): Connection | null => {
   try {
-    return getConnection();
+    return getDatabaseConnection();
   } catch (_) {
     return null;
   }
@@ -66,9 +72,9 @@ export const getConnection = (): Connection | null => {
  * Creates the database connection if it doesn't already exist.
  */
 export const createConnection = async (): Promise<Connection> => {
-  const start = performance.now();
+  const elapsed = startTiming();
 
-  const connection = getDatabaseConnection();
+  const connection = getConnection();
 
   if (connection) {
     return connection;
@@ -103,9 +109,7 @@ export const createConnection = async (): Promise<Connection> => {
     },
   });
 
-  const stop = performance.now();
-
-  log(`established database connection in ${stop - start} milliseconds`);
+  log(`established database connection in ${elapsed()} milliseconds`);
 
   return conn;
 };
@@ -114,7 +118,7 @@ export const createConnection = async (): Promise<Connection> => {
  * Closes the database connection if one exists.
  */
 export const closeConnection = async (): Promise<void> => {
-  const connection = getDatabaseConnection();
+  const connection = getConnection();
 
   if (connection) {
     await connection.close();

@@ -2,7 +2,7 @@
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
   "exclude": ["lib", "node_modules", "src/ui", "src/**/*.spec.ts"],
   "compilerOptions": {
-    "target": "ES6",
+    "target": "ES2018",
     "module": "commonjs",
     "jsx": "preserve",
     "declaration": true,

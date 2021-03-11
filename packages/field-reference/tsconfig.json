@@ -3,7 +3,7 @@
   "exclude": ["lib", "node_modules", "src/ui", "src/**/*.spec.ts"],
   "compilerOptions": {
     "declarationDir": "./lib",
-    "target": "ES6",
+    "target": "ES2018",
     "module": "commonjs",
     "jsx": "preserve",
     "declaration": true,

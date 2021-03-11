@@ -25,7 +25,7 @@
     "@dockite/transformer": "^1.0.0",
     "@dockite/types": "^1.0.0",
     "@dockite/where-builder": "^1.0.0",
-    "@graphql-modules/core": "^0.7.14",
+    "graphql-modules": "^1.4.1",
     "@types/uuid": "^8.0.0",
     "ajv": "^6.12.2",
     "apollo-server-express": "^2.15.1",
