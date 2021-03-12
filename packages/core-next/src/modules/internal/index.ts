@@ -1,5 +1,4 @@
 import { GraphQLModule } from '@graphql-modules/core';
-import { graphql } from 'graphql';
 import { buildTypeDefsAndResolvers } from 'type-graphql';
 
 import { DocumentResolver } from './resolvers';

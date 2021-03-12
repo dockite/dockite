@@ -77,10 +77,8 @@ export const createServer = async (): Promise<express.Express> => {
   app.use(express.json({ limit: '10mb' }));
   app.use(cookieParser());
 
-  const [internalServer, externalServer] = await Promise.all([
-    createAndApplyInternalApolloServer(app),
-    createAndApplyExternalApolloServer(app),
-  ]);
+  const internalServer = await createAndApplyInternalApolloServer(app);
+  const externalServer = await createAndApplyExternalApolloServer(app);
 
   return app;
 };
