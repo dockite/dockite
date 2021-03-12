@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.3.1-alpha.2](https://github.com/dockite/dockite/compare/@dockite/field-number@0.3.1-alpha.1...@dockite/field-number@0.3.1-alpha.2) (2021-03-12)
+
+
+### Bug Fixes
+
+* **field-number:** add missing description element ([9271cee](https://github.com/dockite/dockite/commit/9271ceed3db7acece221d746fbf004e0885073cc))
+
+
+
+
+
 ## [0.3.1-alpha.1](https://github.com/dockite/dockite/compare/@dockite/field-number@0.3.1-alpha.0...@dockite/field-number@0.3.1-alpha.1) (2021-02-11)
 
 **Note:** Version bump only for package @dockite/field-number
