@@ -12,24 +12,38 @@
     "lib"
   ],
   "dependencies": {
-    "@dockite/ability": "^1.0.0",
-    "@dockite/database": "^1.0.0",
-    "@dockite/field": "^1.0.0",
-    "@dockite/types": "^1.0.0",
-    "@dockite/where-builder": "^1.0.0",
-    "apollo-server-express": "^2.15.1",
-    "debug": "^4.1.1",
-    "express": "^4.17.1",
-    "graphql": "^15.1.0",
-    "graphql-iso-date": "^3.6.1",
-    "lodash": "^4.17.15",
+    "graphql-iso-date": "^3.6.1"
+  },
+  "peerDependencies": {
+    "@dockite/ability": ">= 1.0.0",
+    "@dockite/database": ">= 1.0.0",
+    "@dockite/field": ">= 1.0.0",
+    "@dockite/types": ">= 1.0.0",
+    "@dockite/where-builder": ">= 1.0.0",
+    "apollo-server-express": ">= 2.15.1",
+    "debug": ">= 4.1.1",
+    "express": ">= 4.17.1",
+    "graphql": ">= 15.1.0",
+    "lodash": ">= 4.17.15",
     "type-graphql": ">= 1.1.1",
-    "typeorm": "^0.2.25"
+    "typeorm": ">= 0.2.25"
   },
   "devDependencies": {
+    "@dockite/ability": ">= 1.0.0",
+    "@dockite/database": ">= 1.0.0",
+    "@dockite/field": ">= 1.0.0",
     "@dockite/rollup": "^1.0.0",
+    "@dockite/types": ">= 1.0.0",
+    "@dockite/where-builder": ">= 1.0.0",
     "@types/graphql-iso-date": "^3.3.3",
     "@types/lodash": "^4.14.149",
+    "apollo-server-express": ">= 2.15.1",
+    "debug": ">= 4.1.1",
+    "express": ">= 4.17.1",
+    "graphql": ">= 15.1.0",
+    "lodash": ">= 4.17.15",
+    "type-graphql": ">= 1.1.1",
+    "typeorm": ">= 0.2.25",
     "typescript": "^4.1.3"
   }
 }

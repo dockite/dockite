@@ -23,7 +23,7 @@
     "mitt": "^2.1.0",
     "portal-vue": "^3.0.0-alpha.0",
     "tailwindcss": "^1.9.6",
-    "vue": "^3.0.5",
+    "vue": ">= 3.0.5",
     "vue-composable": "^1.0.0-beta.16",
     "vue-router": "^4.0.0",
     "vuedraggable": "^4.0.1"

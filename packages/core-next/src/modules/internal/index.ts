@@ -14,9 +14,11 @@ export const createInternalGraphQLModule = async (): Promise<GraphQLModule> => {
     resolvers: [DocumentResolver],
   });
 
+  console.log({ typeDefs, resolvers });
+
   return createModule({
     id: GRAPHQL_MODULE_ID,
-    typeDefs: gql(typeDefs),
+    typeDefs: gql(`extend ${typeDefs}`),
     resolvers,
   });
 };

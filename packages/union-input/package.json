@@ -12,12 +12,14 @@
   "files": [
     "lib"
   ],
-  "dependencies": {
-    "graphql": "^15.1.0",
-    "lodash": "^4.17.15"
+  "peerDependencies": {
+    "graphql": ">= 15.1.0",
+    "lodash": ">= 4.17.15"
   },
   "devDependencies": {
     "@dockite/rollup": "^1.0.0",
+    "graphql": ">= 15.1.0",
+    "lodash": ">= 4.17.15",
     "typescript": "^4.1.3"
   }
 }

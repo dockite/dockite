@@ -1,5 +1,7 @@
 import { Module } from 'graphql-modules';
 
+import { createAuthenticationGraphQLModule } from './authentication';
+import { createExternalGraphQLModule } from './external';
 import { createInternalGraphQLModule } from './internal';
 
 export interface DockiteGraphQLModules {
@@ -22,12 +24,16 @@ export const getGraphQLModules = async (invalidate = false): Promise<DockiteGrap
     return modules;
   }
 
-  const [internalModule] = await Promise.all([createInternalGraphQLModule()]);
+  const [internalModule, externalModule, authenticationModule] = await Promise.all([
+    createInternalGraphQLModule(),
+    createExternalGraphQLModule(),
+    createAuthenticationGraphQLModule(),
+  ]);
 
   modules = {
     internal: internalModule,
-    external: internalModule,
-    authentication: internalModule,
+    external: externalModule,
+    authentication: authenticationModule,
   };
 
   return modules;

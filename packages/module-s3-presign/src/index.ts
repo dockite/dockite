@@ -1,18 +1,19 @@
-import { GraphQLModule } from '@graphql-modules/core';
+import { createModule, gql, Module as GraphQLModule } from 'graphql-modules';
 import { buildTypeDefsAndResolvers } from 'type-graphql';
-import { GlobalContext } from '@dockite/types';
 
 import { PresignResolver } from './resolver';
 
+export const GRAPHQL_MODULE_ID = 'module-s3-presign';
+
 export default async function(): Promise<GraphQLModule> {
-  const typedefsAndResolvers = await buildTypeDefsAndResolvers({
+  const { typeDefs, resolvers } = await buildTypeDefsAndResolvers({
     resolvers: [PresignResolver],
   });
 
-  return new GraphQLModule({
-    typeDefs: typedefsAndResolvers.typeDefs,
-    resolvers: typedefsAndResolvers.resolvers,
-    context: (ctx): GlobalContext => ctx,
+  return createModule({
+    id: GRAPHQL_MODULE_ID,
+    typeDefs: gql(typeDefs),
+    resolvers,
   });
 }
 

@@ -16,28 +16,34 @@
     "lib"
   ],
   "dependencies": {
-    "@dockite/database": "^1.0.0",
-    "@dockite/field": "^1.0.0",
-    "@dockite/types": "^1.0.0",
-    "codemirror": "^5.52.2",
-    "diff-match-patch": "^1.0.4",
-    "graphql": "^15.1.0",
-    "graphql-type-json": "^0.3.1",
-    "jsonlint-mod": "^1.7.6",
-    "reflect-metadata": "^0.1.13",
+    "jsonlint-mod": "^1.7.6"
+  },
+  "peerDependencies": {
+    "@dockite/database": ">= 1.0.0",
+    "@dockite/field": ">= 1.0.0",
+    "@dockite/types": ">= 1.0.0",
+    "codemirror": ">= 5.52.2",
+    "diff-match-patch": ">= 1.0.4",
+    "graphql": ">= 15.1.0",
+    "graphql-type-json": ">= 0.3.1",
+    "reflect-metadata": ">= 0.1.13",
     "type-graphql": ">= 1.1.1",
-    "typeorm": "^0.2.25",
-    "validator": "^13.0.0",
-    "vue": "^3.0.5"
+    "typeorm": ">= 0.2.25",
+    "validator": ">= 13.0.0",
+    "vue": ">= 3.0.5"
   },
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.10.1",
     "@babel/plugin-proposal-decorators": "^7.10.1",
+    "@dockite/database": ">= 1.0.0",
+    "@dockite/field": ">= 1.0.0",
     "@dockite/rollup": "^1.0.0",
+    "@dockite/types": ">= 1.0.0",
     "@types/graphql-type-json": "^0.3.2",
     "@typescript-eslint/eslint-plugin": "^4.17.0",
     "@typescript-eslint/parser": "^4.17.0",
-    "eslint": "^5.16.0 || ^6.8.0 || ^7.2.0",
+    "codemirror": ">= 5.52.2",
+    "diff-match-patch": ">= 1.0.4",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-config-prettier": "^6.10.0",
     "eslint-import-resolver-alias": "^1.1.2",
@@ -45,6 +51,14 @@
     "eslint-import-resolver-webpack": "^0.13.0",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-prettier": "^3.1.2",
-    "eslint-plugin-vue": "^7.3.0"
+    "eslint-plugin-vue": "^7.3.0",
+    "eslint": "^6.8.0",
+    "graphql-type-json": ">= 0.3.1",
+    "graphql": ">= 15.1.0",
+    "reflect-metadata": ">= 0.1.13",
+    "type-graphql": ">= 1.1.1",
+    "typeorm": ">= 0.2.25",
+    "validator": ">= 13.0.0",
+    "vue": ">= 3.0.5"
   }
 }

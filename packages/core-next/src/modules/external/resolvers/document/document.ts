@@ -6,8 +6,6 @@ import { Query, Resolver } from 'type-graphql';
  */
 @Resolver()
 export class DocumentResolver {
-  //
-
   @Query(_returns => String)
   public hello(): string {
     return 'world';

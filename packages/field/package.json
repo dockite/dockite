@@ -12,19 +12,19 @@
     "lib"
   ],
   "peerDependencies": {
-    "@dockite/types": "> =1.0.0",
-    "graphql": "> =15.1.0",
+    "@dockite/types": ">= 1.0.0",
+    "graphql": ">= 15.1.0",
     "type-graphql": ">= 1.1.1",
-    "typeorm": "> =0.2.25",
-    "vue": "> =3.0.5"
+    "typeorm": ">= 0.2.25",
+    "vue": ">= 3.0.5"
   },
   "devDependencies": {
     "@dockite/rollup": "^1.0.0",
-    "@dockite/types": "> =1.0.0",
-    "graphql": "> =15.1.0",
+    "@dockite/types": ">= 1.0.0",
+    "graphql": ">= 15.1.0",
     "type-graphql": ">= 1.1.1",
-    "typeorm": "> =0.2.25",
+    "typeorm": ">= 0.2.25",
     "typescript": "^4.1.3",
-    "vue": "> =3.0.5"
+    "vue": ">= 3.0.5"
   }
 }

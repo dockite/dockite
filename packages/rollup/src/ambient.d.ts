@@ -6,19 +6,11 @@ declare module 'rollup-plugin-progress';
 declare module 'rollup-plugin-sizes';
 declare module 'rollup-plugin-typescript2';
 declare module 'rollup-plugin-visualizer';
+declare module 'rollup-plugin-peer-deps-external';
 declare module 'koa-compress';
 
 declare module '@rollup/plugin-html' {
   import { Plugin, OutputChunk, OutputAsset, OutputBundle } from 'rollup';
-
-  export interface RollupHtmlOptions {
-    title?: string;
-    attributes?: Record<string, any>;
-    fileName?: string;
-    meta?: Record<string, any>[];
-    publicPath?: string;
-    template?: (templateOptions: RollupHtmlTemplateOptions) => string;
-  }
 
   export interface RollupHtmlTemplateOptions {
     title: string;
@@ -29,12 +21,21 @@ declare module '@rollup/plugin-html' {
     files: Record<string, (OutputChunk | OutputAsset)[]>;
   }
 
-  export function makeHtmlAttributes(attributes: Record<string, string>): string;
+  export interface RollupHtmlOptions {
+    title?: string;
+    attributes?: Record<string, any>;
+    fileName?: string;
+    meta?: Record<string, any>[];
+    publicPath?: string;
+    template?: (_templateOptions: RollupHtmlTemplateOptions) => string;
+  }
+
+  export function makeHtmlAttributes(_attributes: Record<string, string>): string;
 
   /**
    * A Rollup plugin which creates HTML files to serve Rollup bundles.
    * @param options - Plugin options.
    * @returns Plugin instance.
    */
-  export default function html(options: RollupHtmlOptions): Plugin;
+  export default function html(_options: RollupHtmlOptions): Plugin;
 }

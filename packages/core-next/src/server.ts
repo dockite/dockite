@@ -2,6 +2,7 @@ import { ApolloServer } from 'apollo-server-express';
 import cookieParser from 'cookie-parser';
 import debug from 'debug';
 import express from 'express';
+import { printSchema } from 'graphql';
 import { createApplication } from 'graphql-modules';
 
 import { createConnection } from './database';
@@ -17,6 +18,8 @@ const createAndApplyInternalApolloServer = async (
   const { schema } = createApplication({
     modules: [modules.internal, modules.external, modules.authentication],
   });
+
+  console.log(printSchema(schema));
 
   const apolloServer = new ApolloServer({
     schema,
@@ -78,7 +81,7 @@ export const createServer = async (): Promise<express.Express> => {
 
   const [internalServer, externalServer] = await Promise.all([
     createAndApplyInternalApolloServer(app),
-    createAndApplyExternalApolloServer(app),
+    // createAndApplyExternalApolloServer(app),
   ]);
 
   return app;
