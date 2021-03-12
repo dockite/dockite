@@ -18,6 +18,10 @@
       :min="min"
       :max="max"
     />
+
+    <div class="el-form-item__description">
+      {{ fieldConfig.description }}
+    </div>
   </el-form-item>
 </template>
 
