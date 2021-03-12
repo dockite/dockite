@@ -17,7 +17,7 @@
   "peerDependencies": {
     "@dockite/field": ">= 1.0.0",
     "@dockite/types": ">= 1.0.0",
-    "graphql-modules": ">= 1.4.1",
+    "@graphql-modules/core": ">= 0.7.17",
     "debug": ">= 4.1.1",
     "graphql": ">= 15.1.0",
     "graphql-tag": ">= 2.10.3",
@@ -32,7 +32,7 @@
     "@types/lodash": "^4.14.149",
     "@types/minio": "^7.0.5",
     "debug": ">= 4.1.1",
-    "graphql-modules": ">= 1.4.1",
+    "@graphql-modules/core": ">= 0.7.17",
     "graphql-tag": ">= 2.10.3",
     "graphql": ">= 15.1.0",
     "lodash": ">= 4.17.15",

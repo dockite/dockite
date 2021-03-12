@@ -1,4 +1,5 @@
-import { createModule, gql, Module as GraphQLModule } from 'graphql-modules';
+import { GlobalContext } from '@dockite/types';
+import { GraphQLModule } from '@graphql-modules/core';
 import { buildTypeDefsAndResolvers } from 'type-graphql';
 
 import { PresignResolver } from './resolver';
@@ -10,10 +11,10 @@ export default async function(): Promise<GraphQLModule> {
     resolvers: [PresignResolver],
   });
 
-  return createModule({
-    id: GRAPHQL_MODULE_ID,
-    typeDefs: gql(typeDefs),
+  return new GraphQLModule({
+    typeDefs,
     resolvers,
+    context: (ctx: GlobalContext) => ctx,
   });
 }
 

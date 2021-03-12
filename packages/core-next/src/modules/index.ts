@@ -1,13 +1,13 @@
-import { Module } from 'graphql-modules';
+import { GraphQLModule } from '@graphql-modules/core';
 
 import { createAuthenticationGraphQLModule } from './authentication';
 import { createExternalGraphQLModule } from './external';
 import { createInternalGraphQLModule } from './internal';
 
 export interface DockiteGraphQLModules {
-  external: Module;
-  internal: Module;
-  authentication: Module;
+  external: GraphQLModule;
+  internal: GraphQLModule;
+  authentication: GraphQLModule;
 }
 
 let modules: DockiteGraphQLModules | null = null;

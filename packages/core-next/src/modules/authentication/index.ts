@@ -1,4 +1,4 @@
-import { createModule, gql, Module as GraphQLModule } from 'graphql-modules';
+import { GraphQLModule } from '@graphql-modules/core';
 import { buildTypeDefsAndResolvers } from 'type-graphql';
 
 import { AuthenticationResolver } from './resolvers';
@@ -15,13 +15,11 @@ export const GRAPHQL_MODULE_ID = 'authentication';
 export const createAuthenticationGraphQLModule = async (): Promise<GraphQLModule> => {
   const { typeDefs, resolvers } = await buildTypeDefsAndResolvers({
     resolvers: [AuthenticationResolver],
+    validate: false,
   });
 
-  console.log({ authentication: { typeDefs, resolvers } });
-
-  return createModule({
-    id: GRAPHQL_MODULE_ID,
-    typeDefs: gql(`extend ${typeDefs}`),
+  return new GraphQLModule({
+    typeDefs,
     resolvers,
   });
 };

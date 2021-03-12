@@ -1,4 +1,5 @@
-import { createModule, gql, Module as GraphQLModule } from 'graphql-modules';
+import { GraphQLModule } from '@graphql-modules/core';
+import { graphql } from 'graphql';
 import { buildTypeDefsAndResolvers } from 'type-graphql';
 
 import { DocumentResolver } from './resolvers';
@@ -12,13 +13,11 @@ export const GRAPHQL_MODULE_ID = 'internal';
 export const createInternalGraphQLModule = async (): Promise<GraphQLModule> => {
   const { typeDefs, resolvers } = await buildTypeDefsAndResolvers({
     resolvers: [DocumentResolver],
+    validate: false,
   });
 
-  console.log({ typeDefs, resolvers });
-
-  return createModule({
-    id: GRAPHQL_MODULE_ID,
-    typeDefs: gql(`extend ${typeDefs}`),
+  return new GraphQLModule({
+    typeDefs,
     resolvers,
   });
 };
