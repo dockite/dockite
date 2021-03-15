@@ -1,19 +1,18 @@
 import { Schema } from '@dockite/database';
-import { DockiteFieldStatic, GlobalContext } from '@dockite/types';
+import { DockiteFieldStatic, ExternalAuthenticationModule, GlobalContext } from '@dockite/types';
 import debug from 'debug';
-import typeorm from 'typeorm';
 import {
-  GraphQLSchema,
-  GraphQLObjectType,
   GraphQLFieldConfigMap,
-  Source,
-  GraphQLString,
+  GraphQLObjectType,
+  GraphQLSchema,
   GraphQLSchemaConfig,
+  GraphQLString,
+  Source,
 } from 'graphql';
+import typeorm from 'typeorm';
 
-import { AuthenticationModule } from './types';
-import DockiteSchema from './schema';
 import Auth from './auth';
+import DockiteSchema from './schema';
 
 const log = debug('dockite:transformer:orchestrator');
 
@@ -30,7 +29,7 @@ export default class DockiteSchemaOrchestrator {
     orm: typeof typeorm,
     schemas: Schema[],
     dockiteFieldsMap: Record<string, DockiteFieldStatic>,
-    externalAuthenticationModule: AuthenticationModule,
+    externalAuthenticationModule: ExternalAuthenticationModule<Schema>,
   ) {
     this.orm = orm;
     this.schemas = schemas;

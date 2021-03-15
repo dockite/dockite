@@ -3,18 +3,18 @@ import { Field as GraphQLField, ObjectType } from 'type-graphql';
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-  DeleteDateColumn,
 } from 'typeorm';
 
+import { DocumentRevision } from './document-revision';
 import { Release } from './release';
 import { Schema } from './schema';
 import { User } from './user';
-import { DocumentRevision } from './document-revision';
 
 @Entity()
 @ObjectType()
@@ -93,6 +93,14 @@ export class Document {
   @ManyToOne(_type => User, { nullable: true, onDelete: 'SET NULL' })
   @GraphQLField(_type => User, { nullable: true })
   public user!: User;
+
+  @Column({ nullable: true })
+  @GraphQLField(_type => String, { nullable: true })
+  public parentId?: string;
+
+  @ManyToOne(_type => Document, { nullable: true, onDelete: 'CASCADE' })
+  @GraphQLField(_type => Document, { nullable: true })
+  public parent?: Document;
 }
 
 export const DocumentEntityProperties: Array<keyof Document> = [

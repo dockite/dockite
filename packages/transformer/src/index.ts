@@ -1,13 +1,12 @@
 /* eslint-disable no-underscore-dangle */
 
 import { Schema } from '@dockite/database';
-import { DockiteFieldStatic } from '@dockite/types';
+import { DockiteFieldStatic, ExternalAuthenticationModule } from '@dockite/types';
 import debug from 'debug';
 import { GraphQLSchema } from 'graphql';
 import typeorm from 'typeorm';
 
 import DockiteSchemaOrchestrator from './schema-orchestrator';
-import { AuthenticationModule } from './types';
 
 const log = debug('dockite:transformer');
 
@@ -17,7 +16,7 @@ export const createSchema = (
   orm: typeof typeorm,
   schemas: Schema[],
   dockiteFieldsMap: Record<string, DockiteFieldStatic>,
-  externalAuthenticationModule: AuthenticationModule,
+  externalAuthenticationModule: ExternalAuthenticationModule<Schema>,
 ): Promise<GraphQLSchema> => {
   log('Creating Schema Orchestrator');
   const orchestrator = new DockiteSchemaOrchestrator(

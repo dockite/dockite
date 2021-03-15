@@ -3,8 +3,6 @@ import { buildTypeDefsAndResolvers } from 'type-graphql';
 
 import { DocumentResolver } from './resolvers';
 
-export const GRAPHQL_MODULE_ID = 'internal';
-
 /**
  * Creates the internal graphql modules that will satisfy requests to the /dockite/graphql/internal
  * endpoint.
@@ -20,3 +18,5 @@ export const createInternalGraphQLModule = async (): Promise<GraphQLModule> => {
     resolvers,
   });
 };
+
+export default createInternalGraphQLModule;

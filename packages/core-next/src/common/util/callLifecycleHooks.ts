@@ -1,0 +1,78 @@
+/* eslint-disable no-param-reassign */
+import { Schema, Document } from '@dockite/database';
+import { DockiteFieldValidationError, HookContextWithOldData } from '@dockite/types';
+
+import { DocumentValidationError } from '../errors';
+
+export type LifecycleHook =
+  | 'processInputRaw'
+  | 'onCreate'
+  | 'onUpdate'
+  | 'onSoftDelete'
+  | 'onPermanentDelete'
+  | 'validateInputRaw';
+
+/**
+ * Provided an update to a document, call the appropriate lifecycle hooks allowing for mutations.
+ *
+ * @param schema The Schema entity within the database
+ * @param data The document's data
+ * @param hook The hook to be called
+ * @param mutates Whether the hook will mutate the document's data
+ * @param document The document if applicable
+ * @param oldData The data prior to the update
+ */
+export const callLifeCycleHooks = async (
+  schema: Schema,
+  data: Record<string, any>,
+  hook: LifecycleHook,
+  mutates = false,
+  document?: Document,
+  oldData?: Record<string, any>,
+): Promise<void> => {
+  const validationErrors: Record<string, string> = {};
+
+  await Promise.all(
+    schema.fields.map(async field => {
+      if (!field.dockiteField) {
+        throw new Error(`dockiteField failed to map for ${field.name} of ${schema.name}`);
+      }
+
+      // Skip fields which don't exist (resolves bulk-update issues)
+      if (data[field.name] === undefined) {
+        return;
+      }
+
+      const fieldData = data[field.name] ?? null;
+
+      const hookContext: HookContextWithOldData = {
+        field,
+        fieldData,
+        data,
+        oldData,
+        document,
+        path: field.name,
+      };
+
+      try {
+        if (mutates) {
+          data[field.name] = await field.dockiteField[hook](hookContext);
+        } else {
+          await field.dockiteField[hook](hookContext);
+        }
+      } catch (err) {
+        if (err instanceof DockiteFieldValidationError) {
+          validationErrors[err.path] = err.message;
+
+          if (err.children) {
+            err.children.forEach(e => {
+              validationErrors[e.path] = e.message;
+            });
+          }
+
+          throw new DocumentValidationError(validationErrors);
+        }
+      }
+    }),
+  );
+};

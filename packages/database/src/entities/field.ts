@@ -30,6 +30,10 @@ export class Field {
   @GraphQLField()
   public type!: string;
 
+  @Column({ default: 0 })
+  @GraphQLField()
+  public priority!: number;
+
   @Column('jsonb', { default: {} })
   @GraphQLField(_type => GraphQLJSON)
   public settings!: FieldSettings;

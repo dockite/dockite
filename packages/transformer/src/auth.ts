@@ -1,11 +1,9 @@
 import { can } from '@dockite/ability';
 import { Schema, User } from '@dockite/database';
-import { GlobalContext } from '@dockite/types';
+import { ExternalAuthenticationModule, GlobalContext } from '@dockite/types';
+import { AuthenticationError } from 'apollo-server-express';
 import { GraphQLResolveInfo } from 'graphql';
 import * as typeorm from 'typeorm';
-import { AuthenticationError } from 'apollo-server-express';
-
-import { AuthenticationModule } from './types';
 
 interface AuthHandlerResponse {
   internalUser: User;
@@ -13,13 +11,16 @@ interface AuthHandlerResponse {
 }
 
 export default class Auth {
-  private externalAuthenticationModule: AuthenticationModule;
+  private externalAuthenticationModule: ExternalAuthenticationModule<Schema>;
 
   private orm: typeof typeorm;
 
   private anonymousUser: User | null = null;
 
-  constructor(externalAuthenticationModule: AuthenticationModule, orm: typeof typeorm) {
+  constructor(
+    externalAuthenticationModule: ExternalAuthenticationModule<Schema>,
+    orm: typeof typeorm,
+  ) {
     this.externalAuthenticationModule = externalAuthenticationModule;
     this.orm = orm;
   }

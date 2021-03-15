@@ -4,7 +4,7 @@ import { cloneDeep } from 'lodash';
 
 import { DockiteConfiguration } from '@dockite/types';
 
-import { ConfigurationError } from './errors';
+import { ConfigurationError } from '../errors';
 
 const log = debug('dockite:core:config');
 

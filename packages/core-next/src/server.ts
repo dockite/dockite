@@ -3,9 +3,12 @@ import { ApolloServer } from 'apollo-server-express';
 import cookieParser from 'cookie-parser';
 import debug from 'debug';
 import express from 'express';
-import { printSchema } from 'graphql';
 
+import { getConfig } from './common/config';
+import { createGlobalContext } from './common/contexts/global';
+import { getBoolean } from './common/util';
 import { createConnection } from './database';
+import { registerDockiteFields } from './fields';
 import { getGraphQLModules } from './modules';
 
 const log = debug('dockite:core');
@@ -21,6 +24,10 @@ const createAndApplyInternalApolloServer = async (
 
   const apolloServer = new ApolloServer({
     schema,
+    playground: true,
+    introspection: true,
+    tracing: getBoolean(process.env.ENABLE_APOLLO_TRACING),
+    context: ctx => createGlobalContext(ctx, schema),
   });
 
   apolloServer.applyMiddleware({
@@ -47,6 +54,10 @@ const createAndApplyExternalApolloServer = async (
 
   const apolloServer = new ApolloServer({
     schema,
+    playground: true,
+    introspection: true,
+    tracing: getBoolean(process.env.ENABLE_APOLLO_TRACING),
+    context: ctx => createGlobalContext(ctx, schema),
   });
 
   apolloServer.applyMiddleware({
@@ -66,7 +77,7 @@ const createAndApplyExternalApolloServer = async (
  * Creates the express server containing the Dockite GraphQL API.
  */
 export const createServer = async (): Promise<express.Express> => {
-  // const config = getConfig();
+  const config = getConfig();
 
   await createConnection();
 
@@ -76,6 +87,8 @@ export const createServer = async (): Promise<express.Express> => {
 
   app.use(express.json({ limit: '10mb' }));
   app.use(cookieParser());
+
+  await registerDockiteFields(config);
 
   const internalServer = await createAndApplyInternalApolloServer(app);
   const externalServer = await createAndApplyExternalApolloServer(app);
