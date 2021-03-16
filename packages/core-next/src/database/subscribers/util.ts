@@ -67,7 +67,9 @@ export type ExternalSubscriberEventType =
 export const getExternalSubscribers = async (): Promise<Array<ExternalSubscriber>> => {
   const config = getConfig();
 
-  return Promise.all(config.listeners.map(listener => importModule<ExternalSubscriber>(listener)));
+  const listeners = config.listeners ?? [];
+
+  return Promise.all(listeners.map(listener => importModule<ExternalSubscriber>(listener)));
 };
 
 /**

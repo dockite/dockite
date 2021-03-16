@@ -12,6 +12,15 @@ export type LifecycleHook =
   | 'onPermanentDelete'
   | 'validateInputRaw';
 
+export interface CallLifecycleHooksArgs {
+  schema: Schema;
+  data: Record<string, any>;
+  hook: LifecycleHook;
+  mutates?: boolean;
+  document?: Document;
+  oldData?: Record<string, any>;
+}
+
 /**
  * Provided an update to a document, call the appropriate lifecycle hooks allowing for mutations.
  *
@@ -22,14 +31,9 @@ export type LifecycleHook =
  * @param document The document if applicable
  * @param oldData The data prior to the update
  */
-export const callLifeCycleHooks = async (
-  schema: Schema,
-  data: Record<string, any>,
-  hook: LifecycleHook,
-  mutates = false,
-  document?: Document,
-  oldData?: Record<string, any>,
-): Promise<void> => {
+export const callLifeCycleHooks = async (payload: CallLifecycleHooksArgs): Promise<void> => {
+  const { schema, data, hook, mutates, document, oldData } = payload;
+
   const validationErrors: Record<string, string> = {};
 
   await Promise.all(

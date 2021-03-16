@@ -8,6 +8,12 @@ import { Document, Schema } from '@dockite/database';
 import { DockiteGraphQLSortInput, FindManyResult, UserContext } from '@dockite/types';
 
 import { pathToColumn } from '../../../../common/util';
+import { callLifeCycleHooks, LifecycleHook } from '../../../../common/util/callLifecycleHooks';
+
+// This is required since the lodash captitalize method will lowercase the remainder of the string
+const capitalize = (input: string): string => {
+  return input.charAt(0).toUpperCase() + input.slice(1);
+};
 
 /**
  * Provided a document and schema, process the document output by calling its associated field hooks.
@@ -55,6 +61,49 @@ export const processDocumentOutput = async (
       }),
     );
   }
+};
+
+/**
+ * Calls the given CRUD hooks handling the processors and validators when dealing with create/update actions.
+ */
+export const callCrudLifecycleHooks = async (
+  type: 'create' | 'update' | 'softDelete' | 'permanentDelete',
+  schema: Schema,
+  data: Record<string, any>,
+  document?: Document,
+  oldData?: Record<string, any>,
+): Promise<void> => {
+  // If we're dealing with a mutating action then we will need to process and validate the input
+  if (type === 'create' || type === 'update') {
+    await callLifeCycleHooks({
+      hook: 'processInputRaw',
+      mutates: true,
+      schema,
+      data,
+      document,
+      oldData,
+    });
+
+    await callLifeCycleHooks({
+      hook: 'validateInputRaw',
+      schema,
+      data,
+      document,
+      oldData,
+    });
+  }
+
+  // Transform the current update type to a lifecycle hook
+  // e.g. update -> onUpdate || permanentDelete -> onPermanentDelete
+  const hook = `on${capitalize(type)}` as LifecycleHook;
+
+  await callLifeCycleHooks({
+    hook,
+    schema,
+    data,
+    document,
+    oldData,
+  });
 };
 
 /**
