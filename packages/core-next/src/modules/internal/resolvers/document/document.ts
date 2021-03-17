@@ -8,11 +8,13 @@ import { Document, DocumentRevision, Schema } from '@dockite/database';
 import { FindManyResult, GlobalContext, SchemaType } from '@dockite/types';
 import { WhereBuilder } from '@dockite/where-builder';
 
-import getInitialDocumentData from '../../../../common/util/getInitialDocumentData';
+import { Authorized, Authenticated } from '../../../../common/decorators';
+import { getInitialDocumentData } from '../../../../common/util/getInitialDocumentData';
 
 import {
   AllDocumentsArgs,
   CreateDocumentArgs,
+  DeleteDocumentArgs,
   GetDocumentByIdArgs,
   UpdateDocumentArgs,
 } from './args';
@@ -45,6 +47,14 @@ export class DocumentResolver {
     this.schemaRepository = getRepository(Schema);
   }
 
+  @Authenticated()
+  @Authorized({
+    scope: 'internal:document:read',
+    resourceType: 'schema',
+    derriveFurtherAlternativeScopes: true,
+    checkArgsOrFields: true,
+    fieldsOrArgsToLookup: ['schemaId'],
+  })
   @Query(_returns => Document)
   public async getDocument(
     @Args()
@@ -59,8 +69,8 @@ export class DocumentResolver {
         .createQueryBuilder('document')
         .where('document.id = :id', { id })
         .andWhere('document.locale = :locale', { locale })
-        .leftJoinAndSelect('user', 'user')
-        .leftJoinAndSelect('schema', 'schema')
+        .leftJoinAndSelect('document.user', 'user')
+        .leftJoinAndSelect('document.schema', 'schema')
         .leftJoinAndSelect('schema.fields', 'fields');
 
       if (fallbackLocale) {
@@ -83,6 +93,14 @@ export class DocumentResolver {
     }
   }
 
+  @Authenticated()
+  @Authorized({
+    scope: 'internal:document:read',
+    resourceType: 'schema',
+    derriveFurtherAlternativeScopes: true,
+    checkArgsOrFields: true,
+    fieldsOrArgsToLookup: ['schemaId'],
+  })
   @Query(_returns => FindManyDocumentsResult)
   @Query(_returns => FindManyDocumentsResult, { name: 'findDocuments' })
   public async allDocuments(
@@ -134,6 +152,14 @@ export class DocumentResolver {
     }
   }
 
+  @Authenticated()
+  @Authorized({
+    scope: 'internal:document:create',
+    resourceType: 'schema',
+    derriveFurtherAlternativeScopes: true,
+    checkArgsOrFields: true,
+    fieldsOrArgsToLookup: ['input.schemaId'],
+  })
   @Mutation(_returns => Document)
   public async createDocument(
     @Arg('input', _type => CreateDocumentArgs)
@@ -168,6 +194,7 @@ export class DocumentResolver {
       const savedDocument = await this.documentRepository.save({
         data,
         locale,
+        schemaId,
         parentId,
         userId: ctx.user?.id,
       });
@@ -187,6 +214,7 @@ export class DocumentResolver {
     }
   }
 
+  @Authenticated()
   @Mutation(_returns => Document)
   public async updateDocument(
     @Arg('input', _type => UpdateDocumentArgs)
@@ -238,6 +266,93 @@ export class DocumentResolver {
       log(err);
 
       throw new Error('An error occurred while attempting to update the document');
+    }
+  }
+
+  @Authenticated()
+  @Mutation(_returns => Boolean)
+  public async deleteDocument(
+    @Arg('input', _type => DeleteDocumentArgs)
+    input: DeleteDocumentArgs,
+    @Ctx()
+    ctx: GlobalContext,
+  ): Promise<boolean> {
+    const { id } = input;
+
+    try {
+      const document = await this.documentRepository.findOneOrFail({
+        where: {
+          id,
+        },
+        relations: ['schema', 'schema.fields', 'user'],
+      });
+
+      const { schema } = document;
+
+      const oldData = cloneDeep(document.data);
+      const revisionData = cloneDeep(document.data);
+
+      await callCrudLifecycleHooks('softDelete', schema, document.data, document, oldData);
+
+      // TODO: Add some handling around the potential handling surround the
+      // TODO: deleting of a root locale document
+      await Promise.all([
+        // !: Listeners may need to be disabled here, if so write up the reasoning as to why
+        this.documentRepository.softRemove(document),
+        this.documentRevisionRepository.save({
+          data: cloneDeep(revisionData),
+          documentId: document.id,
+          schemaId: document.schemaId,
+          userId: ctx.user?.id,
+          createdAt: new Date(),
+          updatedAt: document.updatedAt,
+        }),
+      ]);
+
+      return true;
+    } catch (err) {
+      log(err);
+
+      return false;
+    }
+  }
+
+  @Authenticated()
+  @Mutation(_returns => Boolean)
+  public async permanentlyDeleteDocument(
+    @Arg('input', _type => DeleteDocumentArgs)
+    input: DeleteDocumentArgs,
+    @Ctx()
+    ctx: GlobalContext,
+  ): Promise<boolean> {
+    const { id } = input;
+
+    try {
+      const document = await this.documentRepository.findOneOrFail({
+        where: {
+          id,
+        },
+        relations: ['schema', 'schema.fields', 'user'],
+      });
+
+      const { schema } = document;
+
+      const oldData = cloneDeep(document.data);
+
+      await callCrudLifecycleHooks('permanentDelete', schema, document.data, document, oldData);
+
+      // TODO: Add some handling around the potential handling surround the
+      // TODO: deleting of a root locale document
+      await Promise.all([
+        // !: Listeners may need to be disabled here, if so write up the reasoning as to why
+        this.documentRepository.remove(document),
+      ]);
+
+      return true;
+    } catch (err) {
+      log(err);
+
+      return false;
     }
   }
 }

@@ -1,6 +1,8 @@
 import { GraphQLModule } from '@graphql-modules/core';
 import { buildTypeDefsAndResolvers } from 'type-graphql';
 
+import { GlobalContext } from '@dockite/types';
+
 import { DocumentResolver } from './resolvers';
 
 /**
@@ -16,6 +18,8 @@ export const createInternalGraphQLModule = async (): Promise<GraphQLModule> => {
   return new GraphQLModule({
     typeDefs,
     resolvers,
+    // We have to passthrough the context from the root module otherwise it will be lost.
+    context: (ctx: GlobalContext) => ctx,
   });
 };
 

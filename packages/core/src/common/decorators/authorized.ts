@@ -8,9 +8,13 @@ import { getRepository } from 'typeorm';
 import { GlobalContext } from '../types';
 
 interface AuthorizerOptions {
+  scope: string;
+
+  alternativeScopes: string[];
+  derriveFurtherAlternativeScopes: boolean;
+
   fieldsOrArgsToPeek: string | string[];
   checkArgs: boolean;
-  derriveAlternativeScopes: boolean;
   resourceType: string | null;
   lookAhead: boolean;
   entity: any | null;
@@ -21,7 +25,7 @@ interface AuthorizerOptions {
 const defaultAuthorizerOptions: AuthorizerOptions = {
   fieldsOrArgsToPeek: 'id',
   checkArgs: false,
-  derriveAlternativeScopes: true,
+  derriveFurtherAlternativeScopes: true,
   resourceType: null,
   lookAhead: false,
   entity: null,
@@ -72,7 +76,7 @@ export const Authorized = (
     }
 
     // If we're not allowing further drilling to determine authorization
-    if (!mergedOptions.derriveAlternativeScopes) {
+    if (!mergedOptions.derriveFurtherAlternativeScopes) {
       throw new ForbiddenError('Not authorized');
     }
 

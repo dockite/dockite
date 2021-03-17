@@ -6,7 +6,7 @@ import * as typeorm from 'typeorm';
 import { Schema } from '@dockite/database';
 import { FieldManager, registerScopeResourceId, registerScopes } from '@dockite/manager';
 import { createSchema } from '@dockite/transformer';
-import { DockiteConfiguration, ExternalAuthenticationModule } from '@dockite/types';
+import { DockiteConfiguration, ExternalAuthenticationModule, GlobalContext } from '@dockite/types';
 
 import { getConfig } from '../../common/config';
 import { SchemaGenerationError } from '../../common/errors';
@@ -83,6 +83,8 @@ export const createExternalGraphQLModule = async (): Promise<GraphQLModule> => {
 
   return new GraphQLModule({
     extraSchemas: [schema],
+    // We have to passthrough the context from the root module otherwise it will be lost.
+    context: (ctx: GlobalContext) => ctx,
   });
 };
 
