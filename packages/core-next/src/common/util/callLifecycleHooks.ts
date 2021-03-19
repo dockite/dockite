@@ -1,4 +1,8 @@
+/* eslint-disable no-await-in-loop */
+/* eslint-disable no-restricted-syntax */
 /* eslint-disable no-param-reassign */
+import { groupBy, sortBy } from 'lodash';
+
 import { Schema, Document } from '@dockite/database';
 import { DockiteFieldValidationError, HookContextWithOldData } from '@dockite/types';
 
@@ -36,47 +40,58 @@ export const callLifeCycleHooks = async (payload: CallLifecycleHooksArgs): Promi
 
   const validationErrors: Record<string, string> = {};
 
-  await Promise.all(
-    schema.fields.map(async field => {
-      if (!field.dockiteField) {
-        throw new Error(`dockiteField failed to map for ${field.name} of ${schema.name}`);
-      }
+  // Organise the fields by their priorities so that depedencies can be called correctly
+  const priorityGroups = groupBy(schema.fields, field => {
+    return field.priority ?? 0;
+  });
 
-      // Skip fields which don't exist (resolves bulk-update issues)
-      if (data[field.name] === undefined) {
-        return;
-      }
+  // Retrieve the sorted keys for iterating against
+  const groupKeys = sortBy(Object.keys(priorityGroups));
 
-      const fieldData = data[field.name] ?? null;
-
-      const hookContext: HookContextWithOldData = {
-        field,
-        fieldData,
-        data,
-        oldData,
-        document,
-        path: field.name,
-      };
-
-      try {
-        if (mutates) {
-          data[field.name] = await field.dockiteField[hook](hookContext);
-        } else {
-          await field.dockiteField[hook](hookContext);
+  // Then for each priority group
+  for (const groupKey of groupKeys) {
+    await Promise.all(
+      priorityGroups[groupKey].fields.map(async field => {
+        if (!field.dockiteField) {
+          throw new Error(`dockiteField failed to map for ${field.name} of ${schema.name}`);
         }
-      } catch (err) {
-        if (err instanceof DockiteFieldValidationError) {
-          validationErrors[err.path] = err.message;
 
-          if (err.children) {
-            err.children.forEach(e => {
-              validationErrors[e.path] = e.message;
-            });
+        // Skip fields which don't exist (resolves bulk-update issues)
+        if (data[field.name] === undefined) {
+          return;
+        }
+
+        const fieldData = data[field.name] ?? null;
+
+        const hookContext: HookContextWithOldData = {
+          field,
+          fieldData,
+          data,
+          oldData,
+          document,
+          path: field.name,
+        };
+
+        try {
+          if (mutates) {
+            data[field.name] = await field.dockiteField[hook](hookContext);
+          } else {
+            await field.dockiteField[hook](hookContext);
           }
+        } catch (err) {
+          if (err instanceof DockiteFieldValidationError) {
+            validationErrors[err.path] = err.message;
 
-          throw new DocumentValidationError(validationErrors);
+            if (err.children) {
+              err.children.forEach(e => {
+                validationErrors[e.path] = e.message;
+              });
+            }
+
+            throw new DocumentValidationError(validationErrors);
+          }
         }
-      }
-    }),
-  );
+      }),
+    );
+  }
 };

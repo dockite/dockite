@@ -3,7 +3,7 @@ import { buildTypeDefsAndResolvers } from 'type-graphql';
 
 import { GlobalContext } from '@dockite/types';
 
-import { DocumentResolver } from './resolvers';
+import { DocumentResolver, SchemaResolver } from './resolvers';
 
 /**
  * Creates the internal graphql modules that will satisfy requests to the /dockite/graphql/internal
@@ -11,7 +11,7 @@ import { DocumentResolver } from './resolvers';
  */
 export const createInternalGraphQLModule = async (): Promise<GraphQLModule> => {
   const { typeDefs, resolvers } = await buildTypeDefsAndResolvers({
-    resolvers: [DocumentResolver],
+    resolvers: [DocumentResolver, SchemaResolver],
     validate: false,
   });
 

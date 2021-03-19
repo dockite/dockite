@@ -13,7 +13,7 @@ import { EntityLike } from '../../database/types';
 export interface AuthorizedDecoratorArgs {
   scope: string;
   alternativeScopes: string[];
-  derriveFurtherAlternativeScopes: boolean;
+  deriveFurtherAlternativeScopes: boolean;
 
   checkArgsOrFields: boolean;
   fieldsOrArgsToLookup: string[];
@@ -27,7 +27,7 @@ export interface AuthorizedDecoratorArgs {
 export const DEFAULT_AUTHORIZER_ARGS: AuthorizedDecoratorArgs = {
   scope: '*',
   alternativeScopes: [],
-  derriveFurtherAlternativeScopes: false,
+  deriveFurtherAlternativeScopes: false,
 
   checkArgsOrFields: false,
   fieldsOrArgsToLookup: ['id'],
@@ -95,7 +95,7 @@ export const Authorized = (payload: Partial<AuthorizedDecoratorArgs>): MethodDec
   let {
     scope,
     alternativeScopes,
-    derriveFurtherAlternativeScopes,
+    deriveFurtherAlternativeScopes,
 
     checkArgsOrFields,
     fieldsOrArgsToLookup,
@@ -125,7 +125,7 @@ export const Authorized = (payload: Partial<AuthorizedDecoratorArgs>): MethodDec
 
     // If we aren't attempting to derrive further scopes then we should abort early to avoid
     // any further overhead
-    if (!derriveFurtherAlternativeScopes) {
+    if (!deriveFurtherAlternativeScopes) {
       throw new ForbiddenError(
         `You are not authorized to perform this ${info.operation.operation}`,
       );
@@ -174,13 +174,36 @@ export const Authorized = (payload: Partial<AuthorizedDecoratorArgs>): MethodDec
     }
 
     if (info.operation.operation === 'mutation' && checkArgsOrFields) {
-      const authorized = canWithDerrivedScopes(
-        fieldsOrArgsToLookup,
-        args,
-        resourceType,
-        resourceAction,
-        userNormalizedScopes,
-      );
+      let authorized = false;
+
+      // When dealing with `input` which is exclusively used for mutations
+      // we will make note of an array inputs to validate against each input item.
+      //
+      // This is relevant for `<action>Many` mutations and will provide a greater level of security.
+      if ('input' in args && Array.isArray(args.input)) {
+        authorized = args.input.some(arg => {
+          return canWithDerrivedScopes(
+            fieldsOrArgsToLookup,
+            arg,
+            resourceType as string,
+            resourceAction,
+            userNormalizedScopes,
+          );
+        });
+      }
+
+      // If the args provided weren't an array or didn't pass the
+      // provided condition then we will test again just using the
+      // root args
+      if (!authorized) {
+        authorized = canWithDerrivedScopes(
+          fieldsOrArgsToLookup,
+          args,
+          resourceType,
+          resourceAction,
+          userNormalizedScopes,
+        );
+      }
 
       if (authorized) {
         return next();
