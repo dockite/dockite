@@ -9,7 +9,7 @@ export interface PermanentDeleteSingletonMutationVariables {
 }
 
 export const PERMANENT_DELETE_SINGLETON_MUTATION = gql`
-  mutation PermanentDeleteSingleton($id: String!) {
-    permanentDeleteSingleton: permanentlyRemoveSingleton(id: $id)
+  mutation PermanentDeleteSingleton($input: DeleteSingletonArgs!) {
+    permanentDeleteSingleton(input: $input)
   }
 `;

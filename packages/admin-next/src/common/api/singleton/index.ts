@@ -95,7 +95,7 @@ export const createSingleton = async (payload: BaseSchema): Promise<Singleton> =
     >({
       mutation: CREATE_SINGLETON_MUTATION,
       variables: {
-        payload,
+        input: { payload },
       },
 
       // On Update we will also append the schema to our allSingletons query
@@ -148,7 +148,9 @@ export const deleteSingleton = async (payload: Singleton): Promise<boolean> => {
     >({
       mutation: DELETE_SINGLETON_MUTATION,
       variables: {
-        id: payload.id,
+        input: {
+          id: payload.id,
+        },
       },
 
       // On Update we will also append the schema to our allSingletons query
@@ -302,7 +304,9 @@ export const restoreSingleton = async (payload: Singleton): Promise<Singleton> =
     >({
       mutation: RESTORE_SINGLETON_MUTATION,
       variables: {
-        id: payload.id,
+        input: {
+          id: payload.id,
+        },
       },
 
       update: (store, { data: restoreSingletonData }) => {

@@ -2,7 +2,7 @@ import { computed, defineComponent } from 'vue';
 import { usePromise } from 'vue-composable';
 
 import { fetchAllLocales } from '~/common/api/locales';
-import useState from '~/hooks/useState';
+import { useState } from '~/hooks/useState';
 
 export const LocaleSelectorComponent = defineComponent({
   name: 'LocaleSelectorComponent',

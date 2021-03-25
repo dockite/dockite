@@ -71,10 +71,20 @@ export const createGlobalContext = async (
   // If a refresh token is present and we're using the internal authentication module,
   // attempt to decode the provided token and set the context
   if (refreshToken && isInternalAuth(config.auth)) {
+    console.log(refreshToken);
     const user = await exchangeRefreshTokenForUser(refreshToken, config);
 
     if (user) {
-      createJwtTokenForUser(user, res);
+      const jwtPayload = {
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        normalizedScopes: user.normalizedScopes,
+        verified: user.verified,
+      };
+
+      createJwtTokenForUser(jwtPayload, res);
 
       return {
         req,

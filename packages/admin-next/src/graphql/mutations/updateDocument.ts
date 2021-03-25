@@ -7,13 +7,15 @@ export interface UpdateDocumentMutationResponse {
 }
 
 export interface UpdateDocumentMutationVariables {
-  id: string;
-  data: Record<string, any>;
+  input: {
+    id: string;
+    data: Record<string, any>;
+  };
 }
 
 export const UPDATE_DOCUMENT_MUTATION = gql`
-  mutation UpdateDocument($id: String!, $data: JSON!) {
-    updateDocument(id: $id, data: $data) {
+  mutation UpdateDocument($input: UpdateDocumentArgs!) {
+    updateDocument(input: $input) {
       id
       locale
       data

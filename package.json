@@ -32,5 +32,8 @@
     "lint-staged": "~10.2.2",
     "prettier": "^1.19.1",
     "typescript": "^4.1.3"
+  },
+  "resolutions": {
+    "ts-invariant": "^0.7.3"
   }
 }

@@ -9,12 +9,15 @@ export interface CreateSchemaMutationResponse {
 }
 
 export interface CreateSchemaMutationVariables {
-  payload: BaseSchema;
+  input: {
+    schemaId?: string;
+    payload: BaseSchema;
+  };
 }
 
 export const CREATE_SCHEMA_MUTATION = gql`
-  mutation CreateSchema($payload: JSON!) {
-    createSchema: importSchema(payload: $payload) {
+  mutation CreateSchema($input: ImportSchemaArgs!) {
+    createSchema: importSchema(input: $input) {
       id
       name
       title

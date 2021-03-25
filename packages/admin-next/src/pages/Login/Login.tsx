@@ -63,9 +63,9 @@ export const LoginPage = defineComponent({
 
             // Otherwise handle the auth flow
             if (isNewInstallation.result.value) {
-              await handleRegisterFirstUser(registerState);
+              await handleRegisterFirstUser({ input: registerState });
             } else {
-              await handleLogin(loginState);
+              await handleLogin({ input: loginState });
             }
           } catch (err) {
             if (err instanceof AuthenticationError) {

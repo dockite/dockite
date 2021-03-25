@@ -9,7 +9,16 @@ import {
  *
  */
 @ArgsType()
-export class AllWebhooksArgs {
+export class ResolveReferenceOfArgs {
+  @GraphQLField(_type => String)
+  readonly documentId!: string;
+
+  @GraphQLField(_type => String)
+  readonly schemaId!: string;
+
+  @GraphQLField(_type => String)
+  readonly fieldName!: string;
+
   @GraphQLField(_type => Int, { defaultValue: DEFAULT_PAGINATION_PAGE })
   readonly page!: number;
 
@@ -17,4 +26,4 @@ export class AllWebhooksArgs {
   readonly perPage!: number;
 }
 
-export default AllWebhooksArgs;
+export default ResolveReferenceOfArgs;

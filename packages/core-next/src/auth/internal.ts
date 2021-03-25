@@ -61,15 +61,19 @@ export const exchangeBearerTokenForUser = (
   token: string,
   config: DockiteConfiguration,
 ): User | null => {
-  const authConfig = config.auth as InternalAuthConfiguration;
+  try {
+    const authConfig = config.auth as InternalAuthConfiguration;
 
-  const trimmedToken = (token.split('Bearer').pop() ?? '').trim();
+    const trimmedToken = (token.split('Bearer').pop() ?? '').trim();
 
-  if (!trimmedToken) {
+    if (!trimmedToken) {
+      return null;
+    }
+
+    const user = verify(trimmedToken, authConfig.secret ?? '') as User;
+
+    return user;
+  } catch (err) {
     return null;
   }
-
-  const user = verify(trimmedToken, authConfig.secret ?? '') as User;
-
-  return user ?? null;
 };

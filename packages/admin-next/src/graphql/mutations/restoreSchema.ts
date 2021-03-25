@@ -7,12 +7,14 @@ export interface RestoreSchemaMutationResponse {
 }
 
 export interface RestoreSchemaMutationVariables {
-  id: string;
+  input: {
+    id: string;
+  };
 }
 
 export const RESTORE_SCHEMA_MUTATION = gql`
-  mutation RestoreSchema($id: String!) {
-    restoreSchema(id: $id) {
+  mutation RestoreSchema($input: RestoreSchemaArgs!) {
+    restoreSchema(input: $input) {
       id
       name
       title

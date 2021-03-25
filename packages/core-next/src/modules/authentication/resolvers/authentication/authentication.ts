@@ -1,5 +1,6 @@
 import { AuthenticationError, ForbiddenError } from 'apollo-server-express';
 import { compare } from 'bcrypt';
+import debug from 'debug';
 import { omit } from 'lodash';
 import { Arg, Ctx, Mutation, Query, Resolver } from 'type-graphql';
 import { getRepository, Repository } from 'typeorm';
@@ -8,6 +9,7 @@ import { Role, User } from '@dockite/database';
 import { DockiteConfiguration, GlobalContext } from '@dockite/types';
 
 import { getConfig } from '../../../../common/config';
+import { Authenticated } from '../../../../common/decorators';
 import { createJwtTokenForUser, isInternalAuth } from '../../../../common/util';
 
 import {
@@ -17,6 +19,8 @@ import {
   RegistrationResponse,
 } from './graphqlTypes';
 import { getAnonymousUserData } from './util';
+
+const log = debug('dockite:core:resolvers:authentication');
 
 /**
  *
@@ -71,14 +75,14 @@ export class AuthenticationResolver {
         verified: user.verified,
       };
 
-      const token = await createJwtTokenForUser(payloadForTokenCreation, ctx.res);
+      const token = createJwtTokenForUser(payloadForTokenCreation, ctx.res);
 
       return {
         user: omit(user, 'password'),
         token,
       };
     } catch (err) {
-      console.error(err);
+      log(err);
 
       throw new AuthenticationError('The username or password provided is incorrect.');
     }
@@ -135,17 +139,14 @@ export class AuthenticationResolver {
     };
   }
 
+  @Authenticated()
   @Query(_returns => User)
   public async me(@Ctx() ctx: GlobalContext): Promise<User> {
-    if (!ctx.user) {
-      throw new AuthenticationError('Resolver not available to unauthenticated users');
-    }
-
     try {
       // If the user has been provided to us via context we can then fetch the user in their current state.
       const user = await this.userRepository.findOneOrFail({
         where: {
-          id: ctx.user.id,
+          id: ctx.user?.id,
         },
         relations: ['roles'],
       });
@@ -154,7 +155,7 @@ export class AuthenticationResolver {
 
       return user;
     } catch (err) {
-      console.error(err);
+      log(err);
 
       throw new AuthenticationError('Authenticated user could not be found.');
     }

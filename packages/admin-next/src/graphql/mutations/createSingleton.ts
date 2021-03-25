@@ -9,12 +9,15 @@ export interface CreateSingletonMutationResponse {
 }
 
 export interface CreateSingletonMutationVariables {
-  payload: BaseSchema;
+  input: {
+    singletonId?: string;
+    payload: BaseSchema;
+  };
 }
 
 export const CREATE_SINGLETON_MUTATION = gql`
-  mutation CreateSingleton($payload: JSON!) {
-    createSingleton: importSingleton(payload: $payload) {
+  mutation CreateSingleton($input: ImportSingletonArgs!) {
+    createSingleton: importSingleton(input: $input) {
       id
       name
       title

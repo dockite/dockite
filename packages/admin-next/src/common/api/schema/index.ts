@@ -100,7 +100,9 @@ export const createSchema = async (payload: BaseSchema): Promise<Schema> => {
     >({
       mutation: CREATE_SCHEMA_MUTATION,
       variables: {
-        payload,
+        input: {
+          payload,
+        },
       },
 
       // On Update we will also append the schema to our allSchemas query
@@ -156,7 +158,9 @@ export const deleteSchema = async (payload: Schema): Promise<boolean> => {
     >({
       mutation: DELETE_SCHEMA_MUTATION,
       variables: {
-        id: payload.id,
+        input: {
+          id: payload.id,
+        },
       },
 
       // On Update we will also append the schema to our allSchemas query
@@ -284,7 +288,9 @@ export const restoreSchema = async (payload: Schema): Promise<Schema> => {
     >({
       mutation: RESTORE_SCHEMA_MUTATION,
       variables: {
-        id: payload.id,
+        input: {
+          id: payload.id,
+        },
       },
 
       update: (store, { data: restoreSchemaData }) => {

@@ -5,11 +5,13 @@ export interface DeleteSingletonMutationResponse {
 }
 
 export interface DeleteSingletonMutationVariables {
-  id: string;
+  input: {
+    id: string;
+  };
 }
 
 export const DELETE_SINGLETON_MUTATION = gql`
-  mutation DeleteSingleton($id: String!) {
-    deleteSingleton: removeSingleton(id: $id)
+  mutation DeleteSingleton($input: DeleteSingletonArgs!) {
+    deleteSingleton(input: $input)
   }
 `;

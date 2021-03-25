@@ -1,5 +1,4 @@
 import { StoreObject } from '@apollo/client/core';
-import { noop } from 'lodash';
 
 import { Document, Schema } from '@dockite/database';
 import { FindManyResult } from '@dockite/types';
@@ -38,9 +37,11 @@ export const createDocument = async (payload: BaseDocument, schema: Schema): Pro
     >({
       mutation: CREATE_DOCUMENT_MUTATION,
       variables: {
-        data: payload.data,
-        locale: payload.locale,
-        schemaId: schema.id,
+        input: {
+          data: payload.data,
+          locale: payload.locale,
+          schemaId: schema.id,
+        },
       },
     });
 
@@ -81,8 +82,10 @@ export const updateDocument = async (payload: Document): Promise<Document> => {
     >({
       mutation: UPDATE_DOCUMENT_MUTATION,
       variables: {
-        id: payload.id,
-        data: payload.data,
+        input: {
+          id: payload.id,
+          data: payload.data,
+        },
       },
     });
 
@@ -123,7 +126,9 @@ export const deleteDocument = async (payload: Document): Promise<boolean> => {
     >({
       mutation: DELETE_DOCUMENT_MUTATION,
       variables: {
-        id: payload.id,
+        input: {
+          id: payload.id,
+        },
       },
 
       update: (store, { data: deleteDocumentData }) => {

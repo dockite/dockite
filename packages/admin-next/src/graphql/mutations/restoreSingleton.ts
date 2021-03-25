@@ -7,12 +7,14 @@ export interface RestoreSingletonMutationResponse {
 }
 
 export interface RestoreSingletonMutationVariables {
-  id: string;
+  input: {
+    id: string;
+  };
 }
 
 export const RESTORE_SINGLETON_MUTATION = gql`
-  mutation RestoreSingleton($id: String!) {
-    restoreSingleton(id: $id) {
+  mutation RestoreSingleton($input: RestoreSingletonArgs!) {
+    restoreSingleton(input: $input) {
       id
       name
       title

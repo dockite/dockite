@@ -1,5 +1,6 @@
-import { User } from '@dockite/database';
 import { gql } from '@apollo/client/core';
+
+import { User } from '@dockite/database';
 
 export interface RegisterFirstUserMutationResponse {
   registerFirstUser: {
@@ -8,19 +9,18 @@ export interface RegisterFirstUserMutationResponse {
   };
 }
 
+export interface RegisterFirstUserMutationVariables {
+  input: {
+    email: string;
+    firstName: string;
+    lastName: string;
+    password: string;
+  };
+}
+
 export const REGISTER_FIRST_USER_MUTATION = gql`
-  mutation RegisterFirstUser(
-    $email: String!
-    $firstName: String!
-    $lastName: String!
-    $password: String!
-  ) {
-    registerFirstUser(
-      email: $email
-      firstName: $firstName
-      lastName: $lastName
-      password: $password
-    ) {
+  mutation RegisterFirstUser($input: RegistrationInputArgs!) {
+    registerFirstUser(input: $input) {
       user {
         id
         firstName

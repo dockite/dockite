@@ -9,7 +9,7 @@ export interface PermanentDeleteSchemaMutationVariables {
 }
 
 export const PERMANENT_DELETE_SCHEMA_MUTATION = gql`
-  mutation PermanentDeleteSchema($id: String!) {
-    permanentDeleteSchema: permanentlyRemoveSchema(id: $id)
+  mutation PermanentDeleteSchema($input: DeleteSchemaArgs!) {
+    permanentDeleteSchema(input: $input)
   }
 `;

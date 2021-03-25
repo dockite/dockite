@@ -1,5 +1,6 @@
-import { User } from '@dockite/database';
 import { Ref } from 'vue';
+
+import { User } from '@dockite/database';
 
 import { MaybePromise } from '~/common/types';
 
@@ -13,15 +14,19 @@ export interface UseAuthState {
 }
 
 export interface LoginPayload {
-  email: string;
-  password: string;
+  input: {
+    email: string;
+    password: string;
+  };
 }
 
 export interface RegisterPayload {
-  email: string;
-  password: string;
-  firstName: string;
-  lastName: string;
+  input: {
+    email: string;
+    password: string;
+    firstName: string;
+    lastName: string;
+  };
 }
 
 export interface UseAuthHook {

@@ -5,11 +5,13 @@ export interface DeleteSchemaMutationResponse {
 }
 
 export interface DeleteSchemaMutationVariables {
-  id: string;
+  input: {
+    id: string;
+  };
 }
 
 export const DELETE_SCHEMA_MUTATION = gql`
-  mutation DeleteSchema($id: String!) {
-    deleteSchema: removeSchema(id: $id)
+  mutation DeleteSchema($input: DeleteSchemaArgs!) {
+    deleteSchema(input: $input)
   }
 `;

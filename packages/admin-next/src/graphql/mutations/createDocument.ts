@@ -7,14 +7,16 @@ export interface CreateDocumentMutationResponse {
 }
 
 export interface CreateDocumentMutationVariables {
-  data: Record<string, any>;
-  locale: string;
-  schemaId: string;
+  input: {
+    data: Record<string, any>;
+    locale: string;
+    schemaId: string;
+  };
 }
 
 export const CREATE_DOCUMENT_MUTATION = gql`
-  mutation CreateDocument($schemaId: String!, $data: JSON!, $locale: String!) {
-    createDocument(schemaId: $schemaId, data: $data, locale: $locale) {
+  mutation CreateDocument($input: CreateDocumentArgs!) {
+    createDocument(input: $input) {
       id
       locale
       data

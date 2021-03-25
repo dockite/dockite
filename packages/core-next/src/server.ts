@@ -4,7 +4,10 @@ import cookieParser from 'cookie-parser';
 import debug from 'debug';
 import express from 'express';
 
+import { registerScopes } from '@dockite/manager';
+
 import { getConfig } from './common/config';
+import { ALL_STATIC_SCOPES } from './common/constants/scopes';
 import { createGlobalContext } from './common/contexts/global';
 import { getBoolean } from './common/util';
 import { createConnection } from './database';
@@ -32,7 +35,7 @@ const createAndApplyInternalApolloServer = async (
 
   apolloServer.applyMiddleware({
     app,
-    path: '/internal',
+    path: '/dockite/graphql/internal',
     cors: {
       origin: true,
       credentials: true,
@@ -62,7 +65,7 @@ const createAndApplyExternalApolloServer = async (
 
   apolloServer.applyMiddleware({
     app,
-    path: '/external',
+    path: '/dockite/graphql/external',
     cors: {
       origin: true,
       credentials: true,
@@ -89,6 +92,8 @@ export const createServer = async (): Promise<express.Express> => {
   app.use(cookieParser());
 
   await registerDockiteFields(config);
+
+  registerScopes(...ALL_STATIC_SCOPES);
 
   const internalServer = await createAndApplyInternalApolloServer(app);
   const externalServer = await createAndApplyExternalApolloServer(app);

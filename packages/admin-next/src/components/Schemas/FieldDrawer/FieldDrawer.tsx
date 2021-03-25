@@ -83,6 +83,7 @@ export const SchemaFieldDrawerComponent = defineComponent({
       field.value = {
         name: '',
         title: '',
+        priority: 0,
         type: selectedField.type,
         description: '',
         settings: {},

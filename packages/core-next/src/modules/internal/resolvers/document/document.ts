@@ -115,7 +115,7 @@ export class DocumentResolver {
     @Ctx()
     ctx: GlobalContext,
   ): Promise<FindManyResult<Document>> {
-    const { sort, where, deleted, locale, perPage } = input;
+    const { sort, where, deleted, locale, perPage, schemaId } = input;
 
     const page = input.page - 1;
 
@@ -129,6 +129,10 @@ export class DocumentResolver {
         .leftJoinAndSelect('schema.fields', 'fields')
         .take(perPage)
         .skip(page * perPage);
+
+      if (schemaId) {
+        qb.andWhere('document.schemaId = :schemaId', { schemaId });
+      }
 
       if (where) {
         WhereBuilder.Build(qb, where);
