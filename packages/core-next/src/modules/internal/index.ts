@@ -1,19 +1,48 @@
 import { GraphQLModule } from '@graphql-modules/core';
+import debug from 'debug';
 import { buildTypeDefsAndResolvers } from 'type-graphql';
 
 import { GlobalContext } from '@dockite/types';
 
-import { DocumentResolver, SchemaResolver } from './resolvers';
+import { startTiming } from '../../common/util';
+
+import {
+  DocumentResolver,
+  SchemaResolver,
+  GeneralResolver,
+  FieldResolver,
+  SingletonResolver,
+  RevisionResolver,
+  WebhookResolver,
+  WebhookCallResolver,
+} from './resolvers';
+import { ReleaseResolver } from './resolvers/release';
+
+const log = debug('dockite:core:internal');
 
 /**
  * Creates the internal graphql modules that will satisfy requests to the /dockite/graphql/internal
  * endpoint.
  */
 export const createInternalGraphQLModule = async (): Promise<GraphQLModule> => {
+  const duration = startTiming();
+
   const { typeDefs, resolvers } = await buildTypeDefsAndResolvers({
-    resolvers: [DocumentResolver, SchemaResolver],
+    resolvers: [
+      DocumentResolver,
+      FieldResolver,
+      GeneralResolver,
+      ReleaseResolver,
+      RevisionResolver,
+      SchemaResolver,
+      SingletonResolver,
+      WebhookResolver,
+      WebhookCallResolver,
+    ],
     validate: false,
   });
+
+  log(`typegraphql built in ${duration()} milliseconds`);
 
   return new GraphQLModule({
     typeDefs,

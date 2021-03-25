@@ -2,6 +2,10 @@ import { ArgsType, Field as GraphQLField } from 'type-graphql';
 
 import { QueryBuilder, WhereBuilderInputType } from '@dockite/where-builder';
 
+import {
+  DEFAULT_PAGINATION_ITEMS_PER_PAGE,
+  DEFAULT_PAGINATION_PAGE,
+} from '../../../../../common/constants';
 import { getRootLocale } from '../../../../../common/util';
 import { SortInputType } from '../types';
 
@@ -16,10 +20,10 @@ export class AllDocumentsArgs {
   @GraphQLField(_type => Boolean, { nullable: true })
   readonly fallbackLocale!: boolean;
 
-  @GraphQLField(_type => Number, { defaultValue: 1 })
+  @GraphQLField(_type => Number, { defaultValue: DEFAULT_PAGINATION_PAGE })
   readonly page!: number;
 
-  @GraphQLField(_type => Number, { defaultValue: 25 })
+  @GraphQLField(_type => Number, { defaultValue: DEFAULT_PAGINATION_ITEMS_PER_PAGE })
   readonly perPage!: number;
 
   @GraphQLField(_type => WhereBuilderInputType, { nullable: true })

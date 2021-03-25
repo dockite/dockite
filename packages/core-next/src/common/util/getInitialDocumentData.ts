@@ -14,6 +14,10 @@ export const getInitialDocumentData = (schema: Schema): Record<string, any> => {
   // Construct an empty data object for assignment
   const data: Record<string, any> = {};
 
+  if (!schema.fields) {
+    return data;
+  }
+
   // For each field we will attempt to assign a default value falling back to null
   schema.fields.forEach(field => {
     if (field.dockiteField) {

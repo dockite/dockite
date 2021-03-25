@@ -9,7 +9,7 @@ import { FindManyResult, GlobalContext, SchemaType } from '@dockite/types';
 import { WhereBuilder } from '@dockite/where-builder';
 
 import { Authenticated, Authorized } from '../../../../common/decorators';
-import { getInitialDocumentData } from '../../../../common/util/getInitialDocumentData';
+import { getInitialDocumentData } from '../../../../common/util';
 
 import {
   AllDocumentsArgs,

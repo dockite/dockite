@@ -27,11 +27,18 @@ export class Release {
   @GraphQLField({ nullable: true })
   public description!: string;
 
+  @GraphQLField()
   @OneToMany(
     _type => Document,
     document => document.release,
   )
   public documents!: Document[];
+
+  // @OneToMany(
+  //   _type => Draft,
+  //   draft => draft.release,
+  // )
+  // public drafts!: Draft[];
 
   @ManyToOne(_type => User)
   public user!: User;

@@ -38,20 +38,6 @@ export interface HookContextWithOldData extends HookContext {
   oldData?: Record<string, any>;
 }
 
-export interface DockiteFieldStatic {
-  type: string;
-  title: string;
-  description: string;
-  defaultOptions: object;
-
-  new (
-    schemaField: Field,
-    orm: typeof typeorm,
-    fieldManager: Record<string, DockiteFieldStatic>,
-    graphqlSchemas: Record<string, GraphQLSchema>,
-  ): DockiteField;
-}
-
 export interface DockiteField {
   defaultValue(): any;
 
@@ -90,4 +76,18 @@ export interface DockiteField {
   onFieldCreate(): Promise<void>;
 
   onFieldUpdate(): Promise<void>;
+}
+
+export interface DockiteFieldStatic {
+  type: string;
+  title: string;
+  description: string;
+  defaultOptions: Record<string, any>;
+
+  new (
+    schemaField: Field,
+    orm: typeof typeorm,
+    fieldManager: Record<string, DockiteFieldStatic>,
+    graphqlSchemas: Record<string, GraphQLSchema>,
+  ): DockiteField;
 }

@@ -51,7 +51,7 @@ export const callLifeCycleHooks = async (payload: CallLifecycleHooksArgs): Promi
   // Then for each priority group
   for (const groupKey of groupKeys) {
     await Promise.all(
-      priorityGroups[groupKey].fields.map(async field => {
+      priorityGroups[groupKey].map(async field => {
         if (!field.dockiteField) {
           throw new Error(`dockiteField failed to map for ${field.name} of ${schema.name}`);
         }

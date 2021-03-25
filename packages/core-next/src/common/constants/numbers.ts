@@ -1,3 +1,7 @@
 export const MAX_32_BIT_INT = 2147483647;
 
 export const MIN_32_BIT_INT = -2147483647;
+
+export const DEFAULT_PAGINATION_PAGE = 1;
+
+export const DEFAULT_PAGINATION_ITEMS_PER_PAGE = 25;
