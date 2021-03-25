@@ -115,7 +115,7 @@ export const createSchema = async (payload: BaseSchema): Promise<Schema> => {
           });
 
           if (data) {
-            data.allSchemas.results.push(schema);
+            data.allSchemas.results = [...data.allSchemas.results, schema];
 
             store.writeQuery({ query: FETCH_ALL_SCHEMAS_QUERY, data });
           }

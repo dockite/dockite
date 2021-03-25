@@ -422,16 +422,22 @@ export class SchemaResolver {
         await fieldDeletionPromise;
       }
 
+      if (!Array.isArray(payload.groups) && typeof payload.groups === 'object') {
+        payload.groups = Object.entries(payload.groups).map(([key, value]) => ({ [key]: value }));
+      }
+
       // Assign the payload values to the schema
       Object.assign(schema, omit(payload, 'fields'));
-
-      // Set the schemas fields the mapped fields
-      schema.fields = fieldsToImport.map(f => this.fieldRepository.create(f));
 
       // Save the schema
       const savedSchema = await this.schemaRepository.save(schema);
 
-      return savedSchema;
+      // Set the schemas fields the mapped fields
+      const savedFields = await this.fieldRepository.save(
+        fieldsToImport.map(f => ({ ...f, schemaId: savedSchema.id })),
+      );
+
+      return { ...savedSchema, fields: savedFields };
     } catch (err) {
       log(err);
 
