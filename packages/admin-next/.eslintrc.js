@@ -23,10 +23,26 @@ module.exports = {
     'prettier',
     'plugin:prettier/recommended',
   ],
-  plugins: ['prettier', '@typescript-eslint'],
+  plugins: ['prettier', '@typescript-eslint', 'jsdoc'],
   // add your custom rules here
   rules: {
     'no-shadow': 'off',
+
+    'jsdoc/require-jsdoc': ['error', {
+      publicOnly: {
+        ancestorsOnly: false,
+        esm: true,
+        cjs: false,
+      },
+      require: {
+        ArrowFunctionExpression: true,
+        ClassDeclaration: true,
+        ClassExpression: true,
+        FunctionDeclaration: true,
+        FunctionExpression: true,
+      }
+    }],
+    'jsdoc/require-description': 'error',
 
     '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
     '@typescript-eslint/explicit-function-return-type': [

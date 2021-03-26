@@ -29,7 +29,7 @@ export const createJwtTokenForUser = (
 
   // Create the bearer and refresh token even if we don't have the express response context.
   const [bearer, refresh] = [
-    sign(payload, config.auth.secret ?? '', { expiresIn: '1m' }),
+    sign(payload, config.auth.secret ?? '', { expiresIn: '15m' }),
     sign(payload, config.auth.secret ?? '', { expiresIn: '3d' }),
   ];
 

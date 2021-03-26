@@ -5,7 +5,7 @@ import { cloneDeep, sortBy } from 'lodash';
 import { Schema } from '@dockite/database';
 import { FindManyResult } from '@dockite/types';
 
-import { DOCKITE_ITEMS_PER_PAGE } from '~/common/constants';
+import { DOCKITE_PAGINATION_PER_PAGE } from '~/common/constants';
 import { ApplicationError, ApplicationErrorCode } from '~/common/errors';
 import { CREATE_SCHEMA_EVENT, DELETE_SCHEMA_EVENT, UPDATE_SCHEMA_EVENT } from '~/common/events';
 import { logE } from '~/common/logger';
@@ -34,6 +34,9 @@ import { useEvent } from '~/hooks';
 import { useGraphQL } from '~/hooks/useGraphQL';
 import { bustDocumentsBySchemaId, deleteFields } from '~/utils';
 
+/**
+ *
+ */
 export const getSchemaById = async (id: string, deleted = false): Promise<Schema> => {
   const graphql = useGraphQL();
 
@@ -55,8 +58,11 @@ export const getSchemaById = async (id: string, deleted = false): Promise<Schema
   return result.data.getSchema;
 };
 
+/**
+ *
+ */
 export const fetchAllSchemasWithPagination = async (
-  perPage: number = DOCKITE_ITEMS_PER_PAGE,
+  perPage: number = DOCKITE_PAGINATION_PER_PAGE,
   deleted = false,
 ): Promise<FindManyResult<Schema>> => {
   const graphql = useGraphQL();
@@ -80,8 +86,11 @@ export const fetchAllSchemasWithPagination = async (
   return clone.data.allSchemas;
 };
 
+/**
+ *
+ */
 export const fetchAllSchemas = async (
-  perPage: number = DOCKITE_ITEMS_PER_PAGE,
+  perPage: number = DOCKITE_PAGINATION_PER_PAGE,
   deleted = false,
 ): Promise<Schema[]> => {
   const result = await fetchAllSchemasWithPagination(perPage, deleted);
@@ -89,6 +98,9 @@ export const fetchAllSchemas = async (
   return sortBy(result.results, 'name');
 };
 
+/**
+ *
+ */
 export const createSchema = async (payload: BaseSchema): Promise<Schema> => {
   const graphql = useGraphQL();
   const { emit } = useEvent();
@@ -106,6 +118,9 @@ export const createSchema = async (payload: BaseSchema): Promise<Schema> => {
       },
 
       // On Update we will also append the schema to our allSchemas query
+      /**
+       *
+       */
       update: (store, { data: createSchemaData }) => {
         if (createSchemaData) {
           const { createSchema: schema } = createSchemaData;
@@ -147,6 +162,9 @@ export const createSchema = async (payload: BaseSchema): Promise<Schema> => {
   }
 };
 
+/**
+ *
+ */
 export const deleteSchema = async (payload: Schema): Promise<boolean> => {
   const graphql = useGraphQL();
   const { emit } = useEvent();
@@ -164,6 +182,9 @@ export const deleteSchema = async (payload: Schema): Promise<boolean> => {
       },
 
       // On Update we will also append the schema to our allSchemas query
+      /**
+       *
+       */
       update: (store, { data: deleteSchemaData }) => {
         if (deleteSchemaData) {
           const { deleteSchema: success } = deleteSchemaData;
@@ -213,6 +234,9 @@ export const deleteSchema = async (payload: Schema): Promise<boolean> => {
   }
 };
 
+/**
+ *
+ */
 export const permanentDeleteSchema = async (payload: Schema): Promise<boolean> => {
   const graphql = useGraphQL();
   const { emit } = useEvent();
@@ -228,6 +252,9 @@ export const permanentDeleteSchema = async (payload: Schema): Promise<boolean> =
       },
 
       // On Update we will also append the schema to our allSchemas query
+      /**
+       *
+       */
       update: (store, { data: permanentDeleteSchemaData }) => {
         if (permanentDeleteSchemaData) {
           const { permanentDeleteSchema: success } = permanentDeleteSchemaData;
@@ -277,6 +304,9 @@ export const permanentDeleteSchema = async (payload: Schema): Promise<boolean> =
   }
 };
 
+/**
+ *
+ */
 export const restoreSchema = async (payload: Schema): Promise<Schema> => {
   const graphql = useGraphQL();
   const { emit } = useEvent();
@@ -293,6 +323,9 @@ export const restoreSchema = async (payload: Schema): Promise<Schema> => {
         },
       },
 
+      /**
+       *
+       */
       update: (store, { data: restoreSchemaData }) => {
         if (restoreSchemaData) {
           const { restoreSchema: schema } = restoreSchemaData;

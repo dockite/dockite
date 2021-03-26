@@ -16,7 +16,7 @@ import {
 import {
   DASHBOARD_HEADER_PORTAL_ACTIONS,
   DASHBOARD_HEADER_PORTAL_TITLE,
-  DOCKITE_ITEMS_PER_PAGE,
+  DOCKITE_PAGINATION_PER_PAGE,
 } from '~/common/constants';
 import { ApplicationError, ApplicationErrorCode } from '~/common/errors';
 import { Maybe } from '~/common/types';
@@ -58,7 +58,7 @@ export const SchemaDocumentsPage = defineComponent({
 
     const fetchState = reactive<Omit<FetchDocumentsBySchemaIdArgs, 'schemaId'>>({
       page: Number(route.query.page as string) || 1,
-      perPage: DOCKITE_ITEMS_PER_PAGE,
+      perPage: DOCKITE_PAGINATION_PER_PAGE,
       sort: tableState.sortBy ?? undefined,
       where: getFiltersFromTableState(tableState.filters),
       deleted: false,
@@ -93,7 +93,7 @@ export const SchemaDocumentsPage = defineComponent({
 
         Object.assign(fetchState, {
           page: Number(route.query.page as string) || 1,
-          perPage: DOCKITE_ITEMS_PER_PAGE,
+          perPage: DOCKITE_PAGINATION_PER_PAGE,
           sort: tableState.sortBy ?? undefined,
           where: getFiltersFromTableState(tableState.filters),
           deleted: false,
@@ -192,7 +192,7 @@ export const SchemaDocumentsPage = defineComponent({
 
           <el-pagination
             currentPage={documents.result.value?.currentPage || 1}
-            pageSize={DOCKITE_ITEMS_PER_PAGE}
+            pageSize={DOCKITE_PAGINATION_PER_PAGE}
             layout="prev, pager, next"
             pageCount={documents.result.value?.totalPages || 0}
             onCurrentChange={(newPage: number) => {

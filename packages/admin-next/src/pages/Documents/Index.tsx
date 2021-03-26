@@ -8,7 +8,7 @@ import { AndQuery } from '@dockite/where-builder/lib/types';
 import { getActions } from './util';
 
 import { fetchAllDocumentsWithPagination } from '~/common/api/documents';
-import { DASHBOARD_HEADER_PORTAL_TITLE, DOCKITE_ITEMS_PER_PAGE } from '~/common/constants';
+import { DASHBOARD_HEADER_PORTAL_TITLE, DOCKITE_PAGINATION_PER_PAGE } from '~/common/constants';
 import { Maybe } from '~/common/types';
 import { DocumentTableColumn, DocumentTableComponent } from '~/components/Common/Document/Table';
 import { DocumentTableState } from '~/components/Common/Document/Table/types';
@@ -46,7 +46,7 @@ export const DocumentsIndexPage = defineComponent({
 
     const fetchState = reactive<FetchAllDocumentsQueryVariables>({
       page: Number(route.query.page as string) || 1,
-      perPage: DOCKITE_ITEMS_PER_PAGE,
+      perPage: DOCKITE_PAGINATION_PER_PAGE,
       sort: tableState.sortBy ?? undefined,
       where: getFiltersFromTableState(tableState.filters),
       deleted: false,
@@ -117,7 +117,7 @@ export const DocumentsIndexPage = defineComponent({
 
           <el-pagination
             currentPage={documents.result.value?.currentPage || 1}
-            pageSize={DOCKITE_ITEMS_PER_PAGE}
+            pageSize={DOCKITE_PAGINATION_PER_PAGE}
             layout="prev, pager, next"
             pageCount={documents.result.value?.totalPages || 0}
             onCurrentChange={(newPage: number) => {

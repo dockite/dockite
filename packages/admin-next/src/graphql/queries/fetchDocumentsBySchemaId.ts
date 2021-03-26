@@ -4,7 +4,7 @@ import { Document } from '@dockite/database';
 import { DockiteGraphQLSortInput, FindManyResult } from '@dockite/types';
 import { QueryBuilder } from '@dockite/where-builder/lib/types';
 
-import { DOCKITE_ITEMS_PER_PAGE } from '~/common/constants';
+import { DOCKITE_PAGINATION_PER_PAGE } from '~/common/constants';
 
 export interface FetchDocumentsBySchemaIdQueryResponse {
   findDocuments: FindManyResult<Document>;
@@ -24,7 +24,7 @@ export const FetchDocumentsBySchemaIdDefaultQueryVariables: Omit<
   'schemaId'
 > = {
   page: 1,
-  perPage: DOCKITE_ITEMS_PER_PAGE,
+  perPage: DOCKITE_PAGINATION_PER_PAGE,
   deleted: false,
 };
 

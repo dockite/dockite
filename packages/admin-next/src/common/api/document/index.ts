@@ -26,6 +26,9 @@ import {
 } from '~/graphql/mutations/deleteDocument';
 import { useEvent, useGraphQL } from '~/hooks';
 
+/**
+ *
+ */
 export const createDocument = async (payload: BaseDocument, schema: Schema): Promise<Document> => {
   const graphql = useGraphQL();
   const { emit } = useEvent();
@@ -71,6 +74,9 @@ export const createDocument = async (payload: BaseDocument, schema: Schema): Pro
   }
 };
 
+/**
+ *
+ */
 export const updateDocument = async (payload: Document): Promise<Document> => {
   const graphql = useGraphQL();
   const { emit } = useEvent();
@@ -115,6 +121,9 @@ export const updateDocument = async (payload: Document): Promise<Document> => {
   }
 };
 
+/**
+ *
+ */
 export const deleteDocument = async (payload: Document): Promise<boolean> => {
   const graphql = useGraphQL();
   const { emit } = useEvent();
@@ -131,6 +140,9 @@ export const deleteDocument = async (payload: Document): Promise<boolean> => {
         },
       },
 
+      /**
+       *
+       */
       update: (store, { data: deleteDocumentData }) => {
         if (deleteDocumentData) {
           const { deleteDocument: success } = deleteDocumentData;
@@ -146,6 +158,9 @@ export const deleteDocument = async (payload: Document): Promise<boolean> => {
             store.modify({
               id: 'ROOT_QUERY',
               fields: {
+                /**
+                 *
+                 */
                 get: (document: Document, details): Document | any => {
                   if (document.id === payload.id) {
                     return details.DELETE;
@@ -154,6 +169,9 @@ export const deleteDocument = async (payload: Document): Promise<boolean> => {
                   return document;
                 },
 
+                /**
+                 *
+                 */
                 findDocuments: (documents: FindManyResult<Document>): FindManyResult<Document> => {
                   return {
                     ...documents,
@@ -161,6 +179,9 @@ export const deleteDocument = async (payload: Document): Promise<boolean> => {
                   };
                 },
 
+                /**
+                 *
+                 */
                 searchDocuments: (
                   documents: FindManyResult<Document>,
                 ): FindManyResult<Document> => {

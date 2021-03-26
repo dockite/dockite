@@ -390,7 +390,7 @@ export const DocumentTableComponent = defineComponent({
               hidden: !props.updatableColumns,
             }}
           >
-            <el-popover trigger="hover" title="Displayed Columns" width="auto">
+            <el-popover trigger="click" title="Displayed Columns" width="auto">
               {{
                 reference: () => <i class="el-icon-setting cursor-pointer p-1" role="button" />,
                 default: () => (
@@ -398,7 +398,7 @@ export const DocumentTableComponent = defineComponent({
                     class="overflow-auto flex flex-col"
                     style={{ maxHeight: '400px', maxWidth: '400px' }}
                   >
-                    {props.schema!.fields.map(field => {
+                    {(props.schema?.fields || []).map(field => {
                       const column: DocumentTableColumn = {
                         name: field.name,
                         label: field.title,

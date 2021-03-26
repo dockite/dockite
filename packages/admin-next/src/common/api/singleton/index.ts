@@ -1,10 +1,10 @@
-import { cloneDeep, StoreObject } from '@apollo/client/utilities';
-import { sortBy } from 'lodash';
+import { StoreObject } from '@apollo/client/utilities';
+import { sortBy, cloneDeep } from 'lodash';
 
 import { Document, Singleton } from '@dockite/database';
 import { FindManyResult } from '@dockite/types';
 
-import { DOCKITE_ITEMS_PER_PAGE } from '~/common/constants';
+import { DOCKITE_PAGINATION_PER_PAGE } from '~/common/constants';
 import { ApplicationError, ApplicationErrorCode } from '~/common/errors';
 import {
   CREATE_SINGLETON_EVENT,
@@ -36,6 +36,9 @@ import {
 import { useEvent } from '~/hooks';
 import { useGraphQL } from '~/hooks/useGraphQL';
 
+/**
+ *
+ */
 export const getSingletonById = async (id: string, deleted = false): Promise<Singleton> => {
   const graphql = useGraphQL();
 
@@ -50,8 +53,11 @@ export const getSingletonById = async (id: string, deleted = false): Promise<Sin
   return result.data.getSingleton;
 };
 
+/**
+ *
+ */
 export const fetchAllSingletonsWithPagination = async (
-  perPage: number = DOCKITE_ITEMS_PER_PAGE,
+  perPage: number = DOCKITE_PAGINATION_PER_PAGE,
   deleted = false,
 ): Promise<FindManyResult<Singleton>> => {
   const graphql = useGraphQL();
@@ -75,8 +81,11 @@ export const fetchAllSingletonsWithPagination = async (
   return clone.data.allSingletons;
 };
 
+/**
+ *
+ */
 export const fetchAllSingletons = async (
-  perPage: number = DOCKITE_ITEMS_PER_PAGE,
+  perPage: number = DOCKITE_PAGINATION_PER_PAGE,
   deleted = false,
 ): Promise<Singleton[]> => {
   const result = await fetchAllSingletonsWithPagination(perPage, deleted);
@@ -84,6 +93,9 @@ export const fetchAllSingletons = async (
   return sortBy(result.results, 'name');
 };
 
+/**
+ *
+ */
 export const createSingleton = async (payload: BaseSchema): Promise<Singleton> => {
   const graphql = useGraphQL();
   const { emit } = useEvent();
@@ -99,6 +111,9 @@ export const createSingleton = async (payload: BaseSchema): Promise<Singleton> =
       },
 
       // On Update we will also append the schema to our allSingletons query
+      /**
+       *
+       */
       update: (store, { data: createSingletonData }) => {
         if (createSingletonData) {
           const { createSingleton: schema } = createSingletonData;
@@ -137,6 +152,9 @@ export const createSingleton = async (payload: BaseSchema): Promise<Singleton> =
   }
 };
 
+/**
+ *
+ */
 export const deleteSingleton = async (payload: Singleton): Promise<boolean> => {
   const graphql = useGraphQL();
   const { emit } = useEvent();
@@ -154,6 +172,9 @@ export const deleteSingleton = async (payload: Singleton): Promise<boolean> => {
       },
 
       // On Update we will also append the schema to our allSingletons query
+      /**
+       *
+       */
       update: (store, { data: createSingletonData }) => {
         if (createSingletonData) {
           const { deleteSingleton: success } = createSingletonData;
@@ -169,12 +190,18 @@ export const deleteSingleton = async (payload: Singleton): Promise<boolean> => {
             store.modify({
               id: 'ROOT_QUERY',
               fields: {
+                /**
+                 *
+                 */
                 findDocuments: (documents: FindManyResult<Document>): FindManyResult<Document> => {
                   return {
                     ...documents,
                     results: documents.results.filter(document => document.schemaId !== payload.id),
                   };
                 },
+                /**
+                 *
+                 */
                 searchDocuments: (
                   documents: FindManyResult<Document>,
                 ): FindManyResult<Document> => {
@@ -216,6 +243,9 @@ export const deleteSingleton = async (payload: Singleton): Promise<boolean> => {
   }
 };
 
+/**
+ *
+ */
 export const permanentDeleteSingleton = async (payload: Singleton): Promise<boolean> => {
   const graphql = useGraphQL();
   const { emit } = useEvent();
@@ -231,6 +261,9 @@ export const permanentDeleteSingleton = async (payload: Singleton): Promise<bool
       },
 
       // On Update we will also append the schema to our allSingletons query
+      /**
+       *
+       */
       update: (store, { data: permanentDeleteSingletonData }) => {
         if (permanentDeleteSingletonData) {
           const { permanentDeleteSingleton: success } = permanentDeleteSingletonData;
@@ -246,12 +279,18 @@ export const permanentDeleteSingleton = async (payload: Singleton): Promise<bool
             store.modify({
               id: 'ROOT_QUERY',
               fields: {
+                /**
+                 *
+                 */
                 findDocuments: (documents: FindManyResult<Document>): FindManyResult<Document> => {
                   return {
                     ...documents,
                     results: documents.results.filter(document => document.schemaId !== payload.id),
                   };
                 },
+                /**
+                 *
+                 */
                 searchDocuments: (
                   documents: FindManyResult<Document>,
                 ): FindManyResult<Document> => {
@@ -293,6 +332,9 @@ export const permanentDeleteSingleton = async (payload: Singleton): Promise<bool
   }
 };
 
+/**
+ *
+ */
 export const restoreSingleton = async (payload: Singleton): Promise<Singleton> => {
   const graphql = useGraphQL();
   const { emit } = useEvent();
@@ -309,6 +351,9 @@ export const restoreSingleton = async (payload: Singleton): Promise<Singleton> =
         },
       },
 
+      /**
+       *
+       */
       update: (store, { data: restoreSingletonData }) => {
         if (restoreSingletonData) {
           const { restoreSingleton: schema } = restoreSingletonData;
@@ -318,10 +363,19 @@ export const restoreSingleton = async (payload: Singleton): Promise<Singleton> =
             store.modify({
               id: 'ROOT_QUERY',
               fields: {
+                /**
+                 *
+                 */
                 allSingletons: (_, details) => details.INVALIDATE,
 
+                /**
+                 *
+                 */
                 getSingleton: (_, details) => details.INVALIDATE,
 
+                /**
+                 *
+                 */
                 findDocuments: (documents: FindManyResult<Document>): FindManyResult<Document> => {
                   return {
                     ...documents,
@@ -329,6 +383,9 @@ export const restoreSingleton = async (payload: Singleton): Promise<Singleton> =
                   };
                 },
 
+                /**
+                 *
+                 */
                 searchDocuments: (
                   documents: FindManyResult<Document>,
                 ): FindManyResult<Document> => {

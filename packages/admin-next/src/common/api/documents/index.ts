@@ -24,6 +24,9 @@ import { useGraphQL } from '~/hooks';
 
 export type FetchDocumentsBySchemaIdArgs = FetchDocumentsBySchemaIdQueryVariables;
 
+/**
+ *
+ */
 export const fetchDocumentsBySchemaIdWithPagination = async (
   payload: FetchDocumentsBySchemaIdArgs,
   deleted = false,
@@ -49,6 +52,9 @@ export const fetchDocumentsBySchemaIdWithPagination = async (
   return result.data.findDocuments;
 };
 
+/**
+ *
+ */
 export const fetchDocumentsBySchemaId = async (
   payload: FetchDocumentsBySchemaIdArgs,
   deleted = false,
@@ -65,6 +71,9 @@ export const fetchDocumentsBySchemaId = async (
 
 export type FetchAllDocumentsArgs = FetchAllDocumentsQueryVariables;
 
+/**
+ *
+ */
 export const fetchAllDocumentsWithPagination = async (
   payload: FetchAllDocumentsArgs,
 ): Promise<FindManyResult<Document>> => {
@@ -86,6 +95,9 @@ export const fetchAllDocumentsWithPagination = async (
   return result.data.allDocuments;
 };
 
+/**
+ *
+ */
 export const fetchAllDocuments = async (payload: FetchAllDocumentsArgs): Promise<Document[]> => {
   const args: FetchAllDocumentsArgs = defaultsDeep(
     cloneDeep(payload),
@@ -97,6 +109,9 @@ export const fetchAllDocuments = async (payload: FetchAllDocumentsArgs): Promise
   return results;
 };
 
+/**
+ *
+ */
 export const getDocumentById = async (id: string): Promise<Document> => {
   const graphql = useGraphQL();
 

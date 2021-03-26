@@ -14,7 +14,10 @@ const createState = (): ApplicationState => {
   });
 };
 
-export const useState = (): readonly ApplicationState => {
+/**
+ *
+ */
+export const useState = (): ApplicationState => {
   if (!state) {
     state = createState();
   }

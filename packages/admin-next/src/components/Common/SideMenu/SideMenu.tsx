@@ -15,6 +15,7 @@ import {
   UPDATE_SINGLETON_EVENT,
   DELETE_SINGLETON_EVENT,
 } from '~/common/events';
+import { LocaleSelectorComponent } from '~/components/LocaleSelector';
 import { useEvent } from '~/hooks';
 import { useCan } from '~/hooks/useCan';
 import { useConfig } from '~/hooks/useConfig';
@@ -84,11 +85,9 @@ export const SideMenu = defineComponent({
         defaultOpened={activeItems}
         style="height: 100vh;"
       >
-        <Logo class="mt-3 mx-auto" style={{ maxWidth: '80%', maxHeight: '60px' }} />
+        <Logo class="my-3 mx-auto" style={{ maxWidth: '80%', maxHeight: '60px' }} />
 
-        <div class="mx-auto">
-          {/*  */}
-        </div>
+        <LocaleSelectorComponent />
 
         <el-menu-item index="/">
           <i class="el-icon-s-home" />

@@ -8,13 +8,14 @@ import { startTiming } from '../../common/util';
 
 import {
   DocumentResolver,
-  SchemaResolver,
-  GeneralResolver,
   FieldResolver,
-  SingletonResolver,
+  GeneralResolver,
+  LocaleResolver,
   RevisionResolver,
-  WebhookResolver,
+  SchemaResolver,
+  SingletonResolver,
   WebhookCallResolver,
+  WebhookResolver,
 } from './resolvers';
 import { ReleaseResolver } from './resolvers/release';
 
@@ -32,6 +33,7 @@ export const createInternalGraphQLModule = async (): Promise<GraphQLModule> => {
       DocumentResolver,
       FieldResolver,
       GeneralResolver,
+      LocaleResolver,
       ReleaseResolver,
       RevisionResolver,
       SchemaResolver,

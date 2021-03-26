@@ -1,7 +1,10 @@
 import { FindManyResult } from '@dockite/types';
 
-import { DOCKITE_ITEMS_PER_PAGE } from '~/common/constants';
+import { DOCKITE_PAGINATION_PER_PAGE } from '~/common/constants';
 
+/**
+ *
+ */
 export const getPaginationString = (paginationDetails: FindManyResult<any>): string => {
   if (!paginationDetails) {
     return '';
@@ -11,7 +14,7 @@ export const getPaginationString = (paginationDetails: FindManyResult<any>): str
 
   const itemCount = results.length;
 
-  let startingItem = (currentPage - 1) * DOCKITE_ITEMS_PER_PAGE + 1;
+  let startingItem = (currentPage - 1) * DOCKITE_PAGINATION_PER_PAGE + 1;
 
   // We apply a Math.min here to handle edge cases where there are 0 results
   // or pagination is completely borked

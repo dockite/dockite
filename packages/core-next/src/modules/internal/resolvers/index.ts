@@ -1,6 +1,7 @@
 export * from './document';
 export * from './field';
 export * from './general';
+export * from './locale';
 export * from './revision';
 export * from './schema';
 export * from './singleton';
