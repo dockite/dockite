@@ -17,7 +17,9 @@ export const LocaleIconComponent = defineComponent({
 
   setup: props => {
     return () => {
-      const flagFound = WORLD_FLAGS.find(flag => flag.name === props.icon);
+      const flagFound = WORLD_FLAGS.find(
+        flag => flag.name === props.icon || flag.emoji === props.icon,
+      );
 
       if (flagFound) {
         return (

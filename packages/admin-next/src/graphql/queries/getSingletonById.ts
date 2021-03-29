@@ -8,12 +8,13 @@ export interface GetSingletonByIdQueryResponse {
 
 export interface GetSingletonByIdQueryVariables {
   id: string;
+  locale?: string;
   deleted?: boolean;
 }
 
 export const GET_SINGLETON_BY_ID_QUERY = gql`
-  query GetSingletonById($id: String!, $deleted: Boolean = false) {
-    getSingleton(id: $id, deleted: $deleted) {
+  query GetSingletonById($id: String!, $locale: String, $deleted: Boolean = false) {
+    getSingleton(id: $id, locale: $locale, deleted: $deleted) {
       id
       name
       title

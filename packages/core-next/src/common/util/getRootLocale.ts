@@ -6,7 +6,7 @@ import { getConfig } from '../config';
 export const getRootLocale = (): string => {
   const config = getConfig();
 
-  return config.app.rootLocale ?? 'en-AU';
+  return config.app.rootLocale?.id ?? 'en-AU';
 };
 
 export default getRootLocale;

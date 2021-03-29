@@ -112,7 +112,10 @@ export const fetchAllDocuments = async (payload: FetchAllDocumentsArgs): Promise
 /**
  *
  */
-export const getDocumentById = async (id: string): Promise<Document> => {
+export const getDocumentById = async (payload: {
+  id: string;
+  locale: string;
+}): Promise<Document> => {
   const graphql = useGraphQL();
 
   const result = await graphql.executeQuery<
@@ -120,7 +123,7 @@ export const getDocumentById = async (id: string): Promise<Document> => {
     GetDocumentByIdQueryVariables
   >({
     query: GET_DOCUMENT_BY_ID_QUERY,
-    variables: { id },
+    variables: { id: payload.id, locale: payload.locale },
   });
 
   return result.data.getDocument;

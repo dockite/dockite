@@ -9,6 +9,7 @@ import { deleteDocument } from '~/common/api/document';
 import { DASHBOARD_HEADER_PORTAL_TITLE } from '~/common/constants';
 import { ApplicationError, ApplicationErrorCode } from '~/common/errors';
 import { logE } from '~/common/logger';
+import { useState } from '~/hooks';
 import { getDocumentIdentifier } from '~/utils';
 
 export const DeleteDocumentPage = defineComponent({
@@ -19,11 +20,15 @@ export const DeleteDocumentPage = defineComponent({
 
     const router = useRouter();
 
+    const state = useState();
+
     const delay = ref(3);
 
     const documentId = computed(() => route.params.documentId as string);
 
-    const document = usePromise(() => getDocumentById(documentId.value));
+    const document = usePromise(() =>
+      getDocumentById({ id: documentId.value, locale: state.locale.id ?? 'en-AU' }),
+    );
 
     const handleDeleteDocument = usePromiseLazy(async () => {
       try {

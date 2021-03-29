@@ -111,9 +111,6 @@ export const createSingleton = async (payload: BaseSchema): Promise<Singleton> =
       },
 
       // On Update we will also append the schema to our allSingletons query
-      /**
-       *
-       */
       update: (store, { data: createSingletonData }) => {
         if (createSingletonData) {
           const { createSingleton: schema } = createSingletonData;
@@ -172,9 +169,6 @@ export const deleteSingleton = async (payload: Singleton): Promise<boolean> => {
       },
 
       // On Update we will also append the schema to our allSingletons query
-      /**
-       *
-       */
       update: (store, { data: createSingletonData }) => {
         if (createSingletonData) {
           const { deleteSingleton: success } = createSingletonData;
@@ -190,18 +184,13 @@ export const deleteSingleton = async (payload: Singleton): Promise<boolean> => {
             store.modify({
               id: 'ROOT_QUERY',
               fields: {
-                /**
-                 *
-                 */
                 findDocuments: (documents: FindManyResult<Document>): FindManyResult<Document> => {
                   return {
                     ...documents,
                     results: documents.results.filter(document => document.schemaId !== payload.id),
                   };
                 },
-                /**
-                 *
-                 */
+
                 searchDocuments: (
                   documents: FindManyResult<Document>,
                 ): FindManyResult<Document> => {
@@ -261,9 +250,6 @@ export const permanentDeleteSingleton = async (payload: Singleton): Promise<bool
       },
 
       // On Update we will also append the schema to our allSingletons query
-      /**
-       *
-       */
       update: (store, { data: permanentDeleteSingletonData }) => {
         if (permanentDeleteSingletonData) {
           const { permanentDeleteSingleton: success } = permanentDeleteSingletonData;
@@ -279,18 +265,13 @@ export const permanentDeleteSingleton = async (payload: Singleton): Promise<bool
             store.modify({
               id: 'ROOT_QUERY',
               fields: {
-                /**
-                 *
-                 */
                 findDocuments: (documents: FindManyResult<Document>): FindManyResult<Document> => {
                   return {
                     ...documents,
                     results: documents.results.filter(document => document.schemaId !== payload.id),
                   };
                 },
-                /**
-                 *
-                 */
+
                 searchDocuments: (
                   documents: FindManyResult<Document>,
                 ): FindManyResult<Document> => {
@@ -351,9 +332,6 @@ export const restoreSingleton = async (payload: Singleton): Promise<Singleton> =
         },
       },
 
-      /**
-       *
-       */
       update: (store, { data: restoreSingletonData }) => {
         if (restoreSingletonData) {
           const { restoreSingleton: schema } = restoreSingletonData;
@@ -363,19 +341,10 @@ export const restoreSingleton = async (payload: Singleton): Promise<Singleton> =
             store.modify({
               id: 'ROOT_QUERY',
               fields: {
-                /**
-                 *
-                 */
                 allSingletons: (_, details) => details.INVALIDATE,
 
-                /**
-                 *
-                 */
                 getSingleton: (_, details) => details.INVALIDATE,
 
-                /**
-                 *
-                 */
                 findDocuments: (documents: FindManyResult<Document>): FindManyResult<Document> => {
                   return {
                     ...documents,
@@ -383,9 +352,6 @@ export const restoreSingleton = async (payload: Singleton): Promise<Singleton> =
                   };
                 },
 
-                /**
-                 *
-                 */
                 searchDocuments: (
                   documents: FindManyResult<Document>,
                 ): FindManyResult<Document> => {

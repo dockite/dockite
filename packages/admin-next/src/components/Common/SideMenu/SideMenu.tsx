@@ -87,7 +87,9 @@ export const SideMenu = defineComponent({
       >
         <Logo class="my-3 mx-auto" style={{ maxWidth: '80%', maxHeight: '60px' }} />
 
-        <LocaleSelectorComponent />
+        <div class="pb-3">
+          <LocaleSelectorComponent />
+        </div>
 
         <el-menu-item index="/">
           <i class="el-icon-s-home" />
@@ -192,7 +194,8 @@ export const SideMenu = defineComponent({
                   <el-menu-item-group>
                     {schemas.result.value.map(schema => (
                       <el-menu-item index={`/schemas/${schema.id}`}>
-                        <i class="el-icon-invalid"></i>
+                        <i class="el-icon-invalid" />
+
                         <router-link to={`/schemas/${schema.id}`}>{schema.title}</router-link>
                       </el-menu-item>
                     ))}
@@ -249,7 +252,8 @@ export const SideMenu = defineComponent({
                   <el-menu-item-group>
                     {singletons.result.value.map(singleton => (
                       <el-menu-item index={`/singletons/${singleton.id}`}>
-                        <i class="el-icon-invalid"></i>
+                        <i class="el-icon-invalid" />
+
                         <router-link to={`/singletons/${singleton.id}`}>
                           {singleton.title}
                         </router-link>
@@ -266,6 +270,35 @@ export const SideMenu = defineComponent({
             }}
           </el-submenu>
         </RenderIfComponent>
+
+        {/* Settings SubMenu */}
+        <el-submenu index="/settings">
+          {{
+            title: () => (
+              <>
+                <i class="el-icon-setting" />
+                Settings
+              </>
+            ),
+            default: () => {
+              return (
+                <el-menu-item-group>
+                  <el-menu-item index="/settings/account">
+                    <i class="el-icon-user" />
+
+                    <router-link to="/settings/account">Account</router-link>
+                  </el-menu-item>
+
+                  <el-menu-item index="/settings/locales">
+                    <i class="el-icon-map-location" />
+
+                    <router-link to="/settings/locales">Locales</router-link>
+                  </el-menu-item>
+                </el-menu-item-group>
+              );
+            },
+          }}
+        </el-submenu>
       </el-menu>
     );
   },

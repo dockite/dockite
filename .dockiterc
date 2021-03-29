@@ -5,7 +5,8 @@
     "description": "The simpler HeadlessCMS",
     "url": "http://localhost:4000",
     "graphqlEndpoint": "http://localhost:3000/dockite/graphql/internal",
-    "authProvider": "internal"
+    "authProvider": "internal",
+    "rootLocale":
   },
   "ui": {
     "backgroundColor": "#2b6cb0",

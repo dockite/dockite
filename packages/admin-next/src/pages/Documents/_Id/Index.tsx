@@ -16,7 +16,7 @@ import {
 import { ApplicationError, ApplicationErrorGroup } from '~/common/errors';
 import { FieldErrorList } from '~/common/types';
 import { DocumentFormComponent } from '~/components/Common/Document/Form';
-import { useGraphQL } from '~/hooks';
+import { useGraphQL, useState } from '~/hooks';
 import {
   displayClientValidationErrors,
   displayServerValidationErrors,
@@ -31,9 +31,16 @@ export const DocumentFormPage = defineComponent({
 
     const router = useRouter();
 
+    const state = useState();
+
     const formData = reactive<Record<string, any>>({});
 
-    const document = usePromise(() => getDocumentById(route.params.documentId as string));
+    const document = usePromise(() =>
+      getDocumentById({
+        id: route.params.documentId as string,
+        locale: state.locale.id ?? 'en-AU',
+      }),
+    );
 
     const schema = usePromiseLazy((id: string) => getSchemaById(id));
 

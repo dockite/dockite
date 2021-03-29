@@ -13,7 +13,7 @@ import { Maybe } from '~/common/types';
 import { DocumentTableColumn, DocumentTableComponent } from '~/components/Common/Document/Table';
 import { DocumentTableState } from '~/components/Common/Document/Table/types';
 import { FetchAllDocumentsQueryVariables } from '~/graphql/queries/fetchAllDocuments';
-import { useGraphQL } from '~/hooks';
+import { useGraphQL, useState } from '~/hooks';
 import {
   getAppliedFilters,
   getAppliedSort,
@@ -29,6 +29,8 @@ export const DocumentsIndexPage = defineComponent({
     const route = useRoute();
 
     const router = useRouter();
+
+    const state = useState();
 
     const { exceptionHandler } = useGraphQL();
 
@@ -49,6 +51,7 @@ export const DocumentsIndexPage = defineComponent({
       perPage: DOCKITE_PAGINATION_PER_PAGE,
       sort: tableState.sortBy ?? undefined,
       where: getFiltersFromTableState(tableState.filters),
+      locale: state.locale?.id ?? 'en-AU',
       deleted: false,
     });
 

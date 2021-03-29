@@ -17,7 +17,6 @@ export const Router = createRouter({
     /**
      * Documents
      */
-
     {
       path: '/documents',
       component: () => import('../pages/Documents'),
@@ -37,7 +36,6 @@ export const Router = createRouter({
     /**
      * Schemas
      */
-
     {
       path: '/schemas',
       component: () => import('../pages/Schemas'),
@@ -95,7 +93,6 @@ export const Router = createRouter({
     /**
      * Singletons
      */
-
     {
       path: '/singletons',
       component: () => import('../pages/Singletons'),
@@ -147,9 +144,22 @@ export const Router = createRouter({
     },
 
     /**
+     * Settings
+     */
+    {
+      path: '/settings/locales',
+      component: () => import('../pages/Settings/Locales'),
+      meta: { layout: 'Dashboard' },
+    },
+    {
+      path: '/settings/locales/create',
+      component: () => import('../pages/Settings/Locales/Create'),
+      meta: { layout: 'Dashboard' },
+    },
+
+    /**
      * Errors
      */
-
     {
       path: '/403',
       name: 'NotAuthorized',

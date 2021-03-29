@@ -140,9 +140,6 @@ export const deleteDocument = async (payload: Document): Promise<boolean> => {
         },
       },
 
-      /**
-       *
-       */
       update: (store, { data: deleteDocumentData }) => {
         if (deleteDocumentData) {
           const { deleteDocument: success } = deleteDocumentData;
@@ -158,9 +155,6 @@ export const deleteDocument = async (payload: Document): Promise<boolean> => {
             store.modify({
               id: 'ROOT_QUERY',
               fields: {
-                /**
-                 *
-                 */
                 get: (document: Document, details): Document | any => {
                   if (document.id === payload.id) {
                     return details.DELETE;
@@ -169,9 +163,6 @@ export const deleteDocument = async (payload: Document): Promise<boolean> => {
                   return document;
                 },
 
-                /**
-                 *
-                 */
                 findDocuments: (documents: FindManyResult<Document>): FindManyResult<Document> => {
                   return {
                     ...documents,
@@ -179,9 +170,6 @@ export const deleteDocument = async (payload: Document): Promise<boolean> => {
                   };
                 },
 
-                /**
-                 *
-                 */
                 searchDocuments: (
                   documents: FindManyResult<Document>,
                 ): FindManyResult<Document> => {

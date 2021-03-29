@@ -6,7 +6,7 @@ import { useRoute, useRouter } from 'vue-router';
 
 import { getFooter, getHeaderActions } from './util';
 
-import { getSchemaById } from '~/common/api';
+import { getDocumentById, getSchemaById } from '~/common/api';
 import { createDocument } from '~/common/api/document';
 import {
   DASHBOARD_HEADER_PORTAL_ACTIONS,
@@ -16,7 +16,12 @@ import {
 import { ApplicationErrorGroup } from '~/common/errors';
 import { BaseDocument, FieldErrorList } from '~/common/types';
 import { DocumentFormComponent } from '~/components/Common/Document/Form';
-import { displayClientValidationErrors, displayServerValidationErrors } from '~/utils';
+import { useConfig, useState } from '~/hooks';
+import {
+  displayClientValidationErrors,
+  displayServerValidationErrors,
+  isRootLocale,
+} from '~/utils';
 
 export const SchemaCreateDocumentPage = defineComponent({
   name: 'SchemaCreateDocumentPage',
@@ -26,13 +31,31 @@ export const SchemaCreateDocumentPage = defineComponent({
 
     const router = useRouter();
 
+    const state = useState();
+    const config = useConfig();
+
     const formData = reactive<Record<string, any>>({});
 
     const schema = usePromise(() => getSchemaById(route.params.schemaId as string));
 
+    const parent = usePromise(() => {
+      if (
+        !isRootLocale(state.locale) &&
+        route.query.parent &&
+        typeof route.query.parent === 'string'
+      ) {
+        return getDocumentById({
+          id: route.query.parent,
+          locale: config.app.rootLocale?.id ?? 'en-AU',
+        });
+      }
+
+      return Promise.resolve(null);
+    });
+
     const document = ref<BaseDocument>({
-      locale: 'en-AU',
       data: formData,
+      locale: state.locale.id ?? 'en-AU',
       schemaId: schema.result.value?.id ?? '',
     });
 
@@ -114,6 +137,7 @@ export const SchemaCreateDocumentPage = defineComponent({
             <DocumentFormComponent
               v-model={formData}
               schema={schema.result.value}
+              parent={parent.result.value}
               document={document.value}
               errors={formErrors}
               formRef={form}

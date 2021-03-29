@@ -9,7 +9,7 @@ import {
   DASHBOARD_HEADER_PORTAL_TITLE,
   DASHBOARD_MAIN_PORTAL_FOOTER,
 } from '~/common/constants';
-import { useAuth } from '~/hooks';
+import { useAuth, useState } from '~/hooks';
 
 export const DashboardLayout = defineComponent({
   name: 'DashboardLayoutComponent',
@@ -19,12 +19,14 @@ export const DashboardLayout = defineComponent({
 
     const route = useRoute();
 
-    const { state } = useAuth();
+    const { state: authState } = useAuth();
+
+    const state = useState();
 
     watch(
-      state,
+      authState,
       () => {
-        if (state.initialised && !state.authenticated) {
+        if (authState.initialised && !authState.authenticated) {
           router.push({
             path: '/login',
             query: { redirectTo: encodeURIComponent(route.fullPath) },
@@ -35,13 +37,13 @@ export const DashboardLayout = defineComponent({
     );
 
     onBeforeRouteUpdate(() => {
-      if (state.initialised && !state.authenticated) {
+      if (authState.initialised && !authState.authenticated) {
         router.push({ path: '/login', query: { redirectTo: encodeURIComponent(route.fullPath) } });
       }
     });
 
     return () => (
-      <el-container>
+      <el-container key={state.locale?.id}>
         <el-aside style="height: 100vh">
           <SideMenu />
         </el-aside>
@@ -50,7 +52,7 @@ export const DashboardLayout = defineComponent({
           <el-header class="shadow border-b-2 flex items-center justify-between">
             <PortalTarget name={DASHBOARD_HEADER_PORTAL_TITLE}>
               <div>
-                Welcome {state.user?.firstName} {state.user?.lastName}
+                Welcome {authState.user?.firstName} {authState.user?.lastName}
               </div>
             </PortalTarget>
 

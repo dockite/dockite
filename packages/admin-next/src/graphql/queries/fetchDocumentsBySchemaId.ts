@@ -16,6 +16,7 @@ export type FetchDocumentsBySchemaIdQueryVariables = {
   perPage?: number;
   sort?: DockiteGraphQLSortInput;
   where?: QueryBuilder;
+  locale?: string;
   deleted?: boolean;
 };
 
@@ -35,6 +36,7 @@ export const FETCH_DOCUMENTS_BY_SCHEMA_ID_QUERY = gql`
     $where: WhereBuilderInputType
     $sort: SortInputType
     $perPage: Int = 25
+    $locale: String
     $deleted: Boolean = false
   ) {
     findDocuments(
@@ -43,6 +45,7 @@ export const FETCH_DOCUMENTS_BY_SCHEMA_ID_QUERY = gql`
       where: $where
       sort: $sort
       perPage: $perPage
+      locale: $locale
       deleted: $deleted
     ) {
       results {

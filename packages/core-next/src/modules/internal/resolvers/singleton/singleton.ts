@@ -86,16 +86,17 @@ export class SingletonResolver {
     @Args()
     input: GetSingletonByIdArgs,
   ): Promise<Singleton> {
-    const { id, deleted } = input;
+    const { id, deleted, locale } = input;
 
     try {
       const qb = this.singletonRepository
         .createQueryBuilder('singleton')
         .where('singleton.id = :id', { id })
-        .andWhere('singleton.type = :type', { type: SchemaType.SINGLETON })
         .leftJoinAndSelect('singleton.fields', 'fields')
         .leftJoinAndSelect('singleton.user', 'user')
-        .leftJoinAndSelect('singleton.documents', 'document');
+        .leftJoinAndSelect('singleton.documents', 'document')
+        .andWhere('singleton.type = :type', { type: SchemaType.SINGLETON })
+        .andWhere('document.locale = :locale', { locale });
 
       if (deleted) {
         qb.andWhere('singleton.deletedAt IS NOT NULL').withDeleted();

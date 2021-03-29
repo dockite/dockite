@@ -1,5 +1,6 @@
 export * from './caching';
 export * from './filters';
+export * from './isRootLocale';
 export * from './getDocumentIdentifier';
 export * from './getInitialFormData';
 export * from './getPaginationString';

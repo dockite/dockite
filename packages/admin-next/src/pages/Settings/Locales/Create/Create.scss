@@ -1,0 +1,20 @@
+.line-around {
+  display: flex;
+  flex-direction: row;
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1 1;
+    border-bottom: 1px solid #e2e8f0;
+    margin: auto;
+  }
+
+  &::before {
+    margin-right: 10px;
+  }
+
+  &::after {
+    margin-left: 10px;
+  }
+}

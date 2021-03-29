@@ -22,7 +22,7 @@ import { ApplicationError, ApplicationErrorCode } from '~/common/errors';
 import { Maybe } from '~/common/types';
 import { DocumentTableColumn, DocumentTableComponent } from '~/components/Common/Document/Table';
 import { DocumentTableState } from '~/components/Common/Document/Table/types';
-import { useGraphQL } from '~/hooks';
+import { useGraphQL, useState } from '~/hooks';
 import {
   getAppliedFilters,
   getAppliedSort,
@@ -39,6 +39,8 @@ export const SchemaDocumentsPage = defineComponent({
     const route = useRoute();
 
     const router = useRouter();
+
+    const state = useState();
 
     const { exceptionHandler } = useGraphQL();
 
@@ -61,6 +63,7 @@ export const SchemaDocumentsPage = defineComponent({
       perPage: DOCKITE_PAGINATION_PER_PAGE,
       sort: tableState.sortBy ?? undefined,
       where: getFiltersFromTableState(tableState.filters),
+      locale: state.locale.id ?? 'en-AU',
       deleted: false,
     });
 

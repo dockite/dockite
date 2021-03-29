@@ -15,6 +15,7 @@ export type FetchAllDocumentsQueryVariables = {
   perPage?: number;
   sort?: DockiteGraphQLSortInput;
   where?: QueryBuilder;
+  locale?: string;
   deleted?: boolean;
 };
 
@@ -30,9 +31,17 @@ export const FETCH_ALL_DOCUMENTS_QUERY = gql`
     $where: WhereBuilderInputType
     $sort: SortInputType
     $perPage: Int = 25
+    $locale: String
     $deleted: Boolean = false
   ) {
-    allDocuments(page: $page, where: $where, sort: $sort, perPage: $perPage, deleted: $deleted) {
+    allDocuments(
+      page: $page
+      where: $where
+      sort: $sort
+      perPage: $perPage
+      locale: $locale
+      deleted: $deleted
+    ) {
       results {
         id
         locale

@@ -14,6 +14,7 @@ export interface DocumentFormComponentProps {
   modelValue: Record<string, any>;
   document: BaseDocument | Singleton;
   schema: Schema | Singleton;
+  parent: Document | null;
   errors: Record<string, string>;
   formRef?: Ref<any>;
 }
@@ -29,6 +30,11 @@ export const DocumentFormComponent = defineComponent({
     document: {
       type: Object as PropType<DocumentFormComponentProps['document']>,
       required: true,
+    },
+
+    parent: {
+      type: Object as PropType<DocumentFormComponentProps['parent']>,
+      required: false,
     },
 
     schema: {

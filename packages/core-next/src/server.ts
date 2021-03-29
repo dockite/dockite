@@ -10,6 +10,7 @@ import { getConfig } from './common/config';
 import { ALL_STATIC_SCOPES } from './common/constants/scopes';
 import { createGlobalContext } from './common/contexts/global';
 import { getBoolean } from './common/util';
+import createRootLocaleIfNotExists from './common/util/createRootLocaleIfNotExists';
 import { createConnection } from './database';
 import { registerDockiteFields } from './fields';
 import { getGraphQLModules } from './modules';
@@ -84,6 +85,9 @@ export const createServer = async (): Promise<express.Express> => {
 
   await createConnection();
 
+  const localePromise = createRootLocaleIfNotExists(config);
+  const dockiteFieldRegistrationPromise = registerDockiteFields(config);
+
   log('creating http server');
 
   const app = express();
@@ -91,7 +95,7 @@ export const createServer = async (): Promise<express.Express> => {
   app.use(express.json({ limit: '10mb' }));
   app.use(cookieParser());
 
-  await registerDockiteFields(config);
+  await Promise.all([localePromise, dockiteFieldRegistrationPromise]);
 
   registerScopes(...ALL_STATIC_SCOPES);
 
