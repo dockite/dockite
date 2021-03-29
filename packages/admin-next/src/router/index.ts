@@ -156,6 +156,11 @@ export const Router = createRouter({
       component: () => import('../pages/Settings/Locales/Create'),
       meta: { layout: 'Dashboard' },
     },
+    {
+      path: '/settings/locales/:localeId',
+      component: () => import('../pages/Settings/Locales/Update'),
+      meta: { layout: 'Dashboard' },
+    },
 
     /**
      * Errors

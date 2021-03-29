@@ -71,7 +71,7 @@ export const LocaleSelectorComponent = defineComponent({
             reference: () => (
               <div class="flex items-center justify-center">
                 <div
-                  class="border border-white rounded transition duration-300 ease-in-out text-sm text-white cursor-pointer py-1 text-center opacity-75 hover:opacity-100 focus:hover:opacity-100"
+                  class="flex items-center justify-center px-2 border border-white rounded transition duration-300 ease-in-out text-sm text-white cursor-pointer py-1 text-center opacity-75 hover:opacity-100 focus:hover:opacity-100"
                   style={{
                     maxWidth: '150px',
                     width: '150px',

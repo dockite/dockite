@@ -2,11 +2,11 @@ import { gql } from '@apollo/client/core';
 
 import { Locale } from '@dockite/database';
 
-export interface getLocaleByIdQueryResponse {
+export interface GetLocaleByIdQueryResponse {
   getLocale: Locale;
 }
 
-export interface getLocaleByIdQueryVariables {
+export interface GetLocaleByIdQueryVariables {
   id: string;
 }
 

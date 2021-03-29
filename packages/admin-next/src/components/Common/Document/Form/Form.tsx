@@ -2,7 +2,7 @@ import { cloneDeep } from 'lodash';
 import { computed, defineComponent, PropType, reactive, Ref, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
-import { Field, Schema, Singleton } from '@dockite/database';
+import { Document, Field, Schema, Singleton } from '@dockite/database';
 
 import { getFieldComponent } from './util';
 

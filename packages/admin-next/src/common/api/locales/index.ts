@@ -22,11 +22,39 @@ import {
   FetchAllLocalesQueryResponse,
   FetchAllLocalesQueryVariables,
   FETCH_ALL_LOCALES_QUERY,
+  GetLocaleByIdQueryResponse,
+  GetLocaleByIdQueryVariables,
+  GET_LOCALE_BY_ID_QUERY,
   UpdateLocaleMutationResponse,
   UpdateLocaleMutationVariables,
   UPDATE_LOCALE_MUTATION,
 } from '~/graphql';
 import { useEvent, useGraphQL } from '~/hooks';
+
+/**
+ *
+ */
+export const getLocale = async (payload: { id: string }): Promise<Locale> => {
+  const graphql = useGraphQL();
+
+  try {
+    const result = await graphql.executeQuery<
+      GetLocaleByIdQueryResponse,
+      GetLocaleByIdQueryVariables
+    >({
+      query: GET_LOCALE_BY_ID_QUERY,
+      variables: {
+        id: payload.id,
+      },
+    });
+
+    return result.data.getLocale;
+  } catch (err) {
+    logE(err);
+
+    throw err;
+  }
+};
 
 /**
  *
