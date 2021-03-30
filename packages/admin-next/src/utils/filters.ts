@@ -5,6 +5,9 @@ import { Constraint, ConstraintOperator, AndQuery } from '@dockite/where-builder
 
 import { Nullable, Maybe } from '~/common/types';
 
+/**
+ *
+ */
 export const getAppliedFilters = (route: RouteLocation): Record<string, Nullable<Constraint>> => {
   const { filters } = route.query;
 
@@ -49,6 +52,9 @@ export const getAppliedFilters = (route: RouteLocation): Record<string, Nullable
   return constraints;
 };
 
+/**
+ *
+ */
 export const getFiltersFromTableState = (
   filters: Record<string, Nullable<Constraint>>,
 ): Maybe<AndQuery> => {
@@ -61,6 +67,9 @@ export const getFiltersFromTableState = (
   return undefined;
 };
 
+/**
+ *
+ */
 export const transformFiltersToQueryParam = (filters: Maybe<AndQuery>): string[] | undefined => {
   if (!filters) {
     return undefined;
@@ -75,6 +84,9 @@ export const transformFiltersToQueryParam = (filters: Maybe<AndQuery>): string[]
   }).filter(f => !!f) as string[];
 };
 
+/**
+ *
+ */
 export const getAppliedSort = (route: RouteLocation): DockiteGraphQLSortInput | undefined => {
   if (!route.query.sortBy) {
     return undefined;

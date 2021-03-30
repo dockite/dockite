@@ -19,6 +19,7 @@ import {
   getAppliedSort,
   getFiltersFromTableState,
   getPaginationString,
+  getRootLocale,
   transformFiltersToQueryParam,
 } from '~/utils';
 
@@ -51,7 +52,7 @@ export const DocumentsIndexPage = defineComponent({
       perPage: DOCKITE_PAGINATION_PER_PAGE,
       sort: tableState.sortBy ?? undefined,
       where: getFiltersFromTableState(tableState.filters),
-      locale: state.locale?.id ?? 'en-AU',
+      locale: state.locale?.id ?? getRootLocale().id,
       deleted: false,
     });
 

@@ -1,5 +1,8 @@
 import { Document } from '@dockite/database';
 
+/**
+ *
+ */
 export const getDocumentIdentifier = (
   formData: Record<string, any>,
   document: Document | null,

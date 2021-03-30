@@ -1,8 +1,12 @@
-import { BaseField, Schema } from '@dockite/database';
 import { sortBy } from 'lodash';
+
+import { BaseField } from '@dockite/database';
 
 import { BaseSchema } from '~/common/types';
 
+/**
+ *
+ */
 export const getFieldsByGroup = (groupName: string, schema: BaseSchema): BaseField[] => {
   const groups = schema.groups as Record<string, string[]>;
 

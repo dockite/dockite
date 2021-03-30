@@ -1,8 +1,12 @@
-import { Schema } from '@dockite/database';
 import { RouteLocation } from 'vue-router';
 
-import { DocumentTableColumn } from '~/components/Common/Document/Table';
+import { Schema } from '@dockite/database';
 
+import { DocumentTableColumn } from '~/components/Common/Document/Table/types';
+
+/**
+ *
+ */
 export const getColumnsFromQueryParams = (
   route: RouteLocation,
   schema: Schema,

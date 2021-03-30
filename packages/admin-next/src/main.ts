@@ -7,6 +7,7 @@ import './assets/element.scss';
 
 import { App } from './App';
 import { bootstrapDockite, DockiteVuePlugin } from './dockite';
+import { DockiteStatePlugin } from './hooks';
 import { Router } from './router';
 
 (window as any).Vue = Vue;
@@ -17,7 +18,8 @@ const app = Vue.createApp(App);
 
 app.use(Router);
 app.use(ElementPlus);
-app.use(DockiteVuePlugin);
+app.use(new DockiteVuePlugin());
+app.use(new DockiteStatePlugin());
 app.use(PortalVue, {
   portalName: false,
   portalTargetName: false,

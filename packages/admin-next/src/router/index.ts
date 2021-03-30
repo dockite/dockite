@@ -158,7 +158,12 @@ export const Router = createRouter({
     },
     {
       path: '/settings/locales/:localeId',
-      component: () => import('../pages/Settings/Locales/Update'),
+      component: () => import('../pages/Settings/Locales/_Id/Update'),
+      meta: { layout: 'Dashboard' },
+    },
+    {
+      path: '/settings/locales/:localeId/delete',
+      component: () => import('../pages/Settings/Locales/_Id/Delete'),
       meta: { layout: 'Dashboard' },
     },
 

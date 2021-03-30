@@ -20,6 +20,7 @@ import { useConfig, useState } from '~/hooks';
 import {
   displayClientValidationErrors,
   displayServerValidationErrors,
+  getRootLocale,
   isRootLocale,
 } from '~/utils';
 
@@ -46,7 +47,7 @@ export const SchemaCreateDocumentPage = defineComponent({
       ) {
         return getDocumentById({
           id: route.query.parent,
-          locale: config.app.rootLocale?.id ?? 'en-AU',
+          locale: getRootLocale().id,
         });
       }
 
@@ -55,7 +56,7 @@ export const SchemaCreateDocumentPage = defineComponent({
 
     const document = ref<BaseDocument>({
       data: formData,
-      locale: state.locale.id ?? 'en-AU',
+      locale: state.locale.id,
       schemaId: schema.result.value?.id ?? '',
     });
 

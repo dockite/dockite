@@ -1,20 +1,20 @@
-import { reactive, readonly } from 'vue';
-
-import { useConfig } from '../useConfig';
+/* eslint-disable class-methods-use-this */
+import { App, reactive, readonly } from 'vue';
+import { useLocalStorage } from 'vue-composable';
 
 import { ApplicationState, MutatorFn, MutatorSourceFn } from './types';
+
+import { getRootLocale } from '~/utils';
 
 let state: ApplicationState | undefined;
 
 const createState = (): ApplicationState => {
-  const config = useConfig();
+  const defaultLocale = getRootLocale();
+
+  const { storage: localeStorage } = useLocalStorage('currentLocale', defaultLocale, true);
 
   return reactive({
-    locale: {
-      id: config.app.rootLocale?.id ?? 'en-AU',
-      title: config.app.rootLocale?.title ?? 'Australia',
-      icon: config.app.rootLocale?.icon ?? '🇦🇺',
-    },
+    locale: localeStorage,
   });
 };
 
@@ -39,5 +39,14 @@ export const useMutation = <T>(mutator: MutatorSourceFn<T>): MutatorFn<T> => {
 
   return (payload: T) => mutator(state as ApplicationState, payload);
 };
+
+/**
+ *
+ */
+export class DockiteStatePlugin {
+  public install(app: App): void {
+    app.provide('$state', useState());
+  }
+}
 
 export default useState;

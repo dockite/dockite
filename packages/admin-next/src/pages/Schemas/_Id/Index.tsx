@@ -63,7 +63,7 @@ export const SchemaDocumentsPage = defineComponent({
       perPage: DOCKITE_PAGINATION_PER_PAGE,
       sort: tableState.sortBy ?? undefined,
       where: getFiltersFromTableState(tableState.filters),
-      locale: state.locale.id ?? 'en-AU',
+      locale: state.locale.id,
       deleted: false,
     });
 

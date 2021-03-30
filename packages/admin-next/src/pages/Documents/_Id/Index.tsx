@@ -4,7 +4,7 @@ import { defineComponent, reactive, ref, watchEffect } from 'vue';
 import { usePromise, usePromiseLazy } from 'vue-composable';
 import { useRoute, useRouter } from 'vue-router';
 
-import { getFooter, getHeaderActions } from './util';
+import { getFooter } from './util';
 
 import { getDocumentById, getSchemaById, getSingletonById } from '~/common/api';
 import { updateDocument } from '~/common/api/document';
@@ -16,6 +16,7 @@ import {
 import { ApplicationError, ApplicationErrorGroup } from '~/common/errors';
 import { FieldErrorList } from '~/common/types';
 import { DocumentFormComponent } from '~/components/Common/Document/Form';
+import { DocumentHeaderActionsDropdownComponent } from '~/components/Documents/_Id/ActionsDropdown';
 import { useGraphQL, useState } from '~/hooks';
 import {
   displayClientValidationErrors,
@@ -38,7 +39,7 @@ export const DocumentFormPage = defineComponent({
     const document = usePromise(() =>
       getDocumentById({
         id: route.params.documentId as string,
-        locale: state.locale.id ?? 'en-AU',
+        locale: state.locale.id,
       }),
     );
 
@@ -178,7 +179,12 @@ export const DocumentFormPage = defineComponent({
             </Portal>
 
             <Portal to={DASHBOARD_HEADER_PORTAL_ACTIONS}>
-              {getHeaderActions(handleUpdateDocument.exec)}
+              <DocumentHeaderActionsDropdownComponent
+                document={document.result.value}
+                {...{
+                  'onAction:saveDocument': handleUpdateDocument.exec,
+                }}
+              />
             </Portal>
 
             <DocumentFormComponent

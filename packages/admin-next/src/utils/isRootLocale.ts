@@ -1,6 +1,6 @@
 import { Locale } from '@dockite/database';
 
-import { useConfig } from '~/hooks';
+import { useConfig } from '~/hooks/useConfig';
 
 /**
  * Determines whether the provided Locale is the root locale by comparing locale id's.

@@ -73,6 +73,7 @@ export class SchemaResolver {
       const qb = this.schemaRepository
         .createQueryBuilder('schema')
         .where('schema.id = :id', { id })
+        .andWhere('schema.type = :schemaType', { schemaType: SchemaType.DEFAULT })
         .leftJoinAndSelect('schema.fields', 'fields')
         .leftJoinAndSelect('schema.user', 'user');
 
@@ -107,7 +108,7 @@ export class SchemaResolver {
 
     const qb = this.schemaRepository
       .createQueryBuilder('schema')
-      .where('1 = 1')
+      .where('schema.type = :schemaType', { schemaType: SchemaType.DEFAULT })
       .leftJoinAndSelect('schema.fields', 'fields')
       .leftJoinAndSelect('schema.user', 'user');
 

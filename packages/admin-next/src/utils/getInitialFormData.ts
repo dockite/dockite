@@ -2,6 +2,9 @@ import { Schema, Singleton } from '@dockite/database';
 
 import { BaseDocument } from '~/common/types';
 
+/**
+ *
+ */
 export const getInitialFormData = (
   document: BaseDocument | Singleton,
   schema: Schema | Singleton,

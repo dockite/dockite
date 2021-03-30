@@ -1,4 +1,4 @@
-import { defineComponent, PropType } from 'vue';
+import { computed, defineComponent, PropType } from 'vue';
 
 import { WORLD_FLAGS } from '~/common/constants';
 
@@ -37,7 +37,18 @@ export const LocaleIconComponent = defineComponent({
         );
       }
 
-      return <img style={{ width: '25px', height: '25px' }} src={props.icon} alt="Locale Icon" />;
+      const src = computed(() => {
+        const icon = props.icon ?? '';
+
+        // A png will always start with the following when encoded as base64
+        if (icon.startsWith('iVBORw0KGgo')) {
+          return `data:image/png;base64,${icon}`;
+        }
+
+        return `data:image/jpg;base64,${icon}`;
+      });
+
+      return <img style={{ width: '25px', height: '25px' }} src={src.value} alt="Locale Icon" />;
     };
   },
 });

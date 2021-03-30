@@ -1,5 +1,6 @@
+/* eslint-disable class-methods-use-this */
 import { ElMessage, ElNotification } from 'element-plus';
-import { DefineComponent, Plugin, reactive, ref, Ref } from 'vue';
+import { App, DefineComponent, reactive, ref, Ref } from 'vue';
 
 import { BaseField } from '@dockite/database';
 import {
@@ -46,6 +47,9 @@ const registerField = (
   };
 };
 
+/**
+ *
+ */
 export const bootstrapDockite = (): void => {
   if (!w.dockite) {
     w.dockite = {
@@ -64,19 +68,27 @@ export interface UseDockiteHook {
   hasLoadedFields: Ref<boolean>;
 }
 
+/**
+ *
+ */
 export const useDockite = (): UseDockiteHook => {
   return { hasLoadedFields, fieldManager };
 };
 
-export const DockiteVuePlugin: Plugin = app => {
-  // eslint-disable-next-line no-param-reassign
-  app.config.globalProperties.$dockite = { hasLoadedFields, fieldManager };
+/**
+ *
+ */
+export class DockiteVuePlugin {
+  public install(app: App): void {
+    // eslint-disable-next-line no-param-reassign
+    app.config.globalProperties.$dockite = { hasLoadedFields, fieldManager };
 
-  const $graphql = useGraphQL();
+    const $graphql = useGraphQL();
 
-  app.provide('$graphql', $graphql);
+    app.provide('$graphql', $graphql);
 
-  app.provide('$dockite', { hasLoadedFields, fieldManager });
-  app.provide('$message', ElMessage);
-  app.provide('$notify', ElNotification);
-};
+    app.provide('$dockite', { hasLoadedFields, fieldManager });
+    app.provide('$message', ElMessage);
+    app.provide('$notify', ElNotification);
+  }
+}

@@ -27,7 +27,7 @@ export const getTableActions = (locale: Locale): JSX.Element => {
   return (
     <div style="margin: 0 -10px">
       <div class="flex items-center -mx-2">
-        <router-link title="Edit Locale" class="px-2" to={`/settings/locales/${locale.id}/edit`}>
+        <router-link title="Edit Locale" class="px-2" to={`/settings/locales/${locale.id}`}>
           <i class="el-icon-edit-outline" />
         </router-link>
 

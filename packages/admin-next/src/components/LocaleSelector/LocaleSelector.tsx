@@ -1,4 +1,5 @@
-import { computed, defineComponent, ref, watch } from 'vue';
+import { omit } from 'lodash';
+import { defineComponent, ref, watchEffect } from 'vue';
 import { usePromise } from 'vue-composable';
 import { useRoute, useRouter } from 'vue-router';
 
@@ -26,37 +27,25 @@ export const LocaleSelectorComponent = defineComponent({
 
     const locales = usePromise(() => fetchAllLocales());
 
-    const locale = computed<Locale>(() => {
-      if (locales.result.value) {
-        if (route.query.locale && typeof route.query.locale === 'string') {
-          const localeQueryParam = route.query.locale;
-
-          const match = locales.result.value.find(
-            l => l.id === localeQueryParam || l.title === localeQueryParam,
-          );
-
-          if (match) {
-            return match;
-          }
-        }
-      }
-
-      return state.locale;
-    });
-
     const handleSetLocale = (locale: Locale): void => {
       setLocale(locale);
-
-      router.replace({ query: { ...route.query, locale: locale.id } });
 
       if (popoverRef.value) {
         popoverRef.value.hide();
       }
     };
 
-    watch(locale, value => {
-      if (state.locale.id !== value.id) {
-        setLocale(value);
+    watchEffect(() => {
+      if (locales.result.value) {
+        if (route.query.locale && typeof route.query.locale === 'string') {
+          const match = locales.result.value.find(l => l.id === route.query.locale);
+
+          if (match && match.id !== state.locale.id) {
+            handleSetLocale(match);
+          }
+
+          router.replace({ query: omit(route.query, 'locale') });
+        }
       }
     });
 

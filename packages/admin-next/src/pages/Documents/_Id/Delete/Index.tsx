@@ -27,7 +27,7 @@ export const DeleteDocumentPage = defineComponent({
     const documentId = computed(() => route.params.documentId as string);
 
     const document = usePromise(() =>
-      getDocumentById({ id: documentId.value, locale: state.locale.id ?? 'en-AU' }),
+      getDocumentById({ id: documentId.value, locale: state.locale.id }),
     );
 
     const handleDeleteDocument = usePromiseLazy(async () => {
