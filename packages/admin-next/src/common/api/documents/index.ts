@@ -115,6 +115,7 @@ export const fetchAllDocuments = async (payload: FetchAllDocumentsArgs): Promise
 export const getDocumentById = async (payload: {
   id: string;
   locale: string;
+  fallbackLocale?: boolean;
 }): Promise<Document> => {
   const graphql = useGraphQL();
 
@@ -123,7 +124,11 @@ export const getDocumentById = async (payload: {
     GetDocumentByIdQueryVariables
   >({
     query: GET_DOCUMENT_BY_ID_QUERY,
-    variables: { id: payload.id, locale: payload.locale },
+    variables: {
+      id: payload.id,
+      locale: payload.locale,
+      fallbackLocale: payload.fallbackLocale,
+    },
   });
 
   return result.data.getDocument;

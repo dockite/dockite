@@ -44,6 +44,7 @@ export const createDocument = async (payload: BaseDocument, schema: Schema): Pro
           data: payload.data,
           locale: payload.locale,
           schemaId: schema.id,
+          parentId: payload.parentId,
         },
       },
     });

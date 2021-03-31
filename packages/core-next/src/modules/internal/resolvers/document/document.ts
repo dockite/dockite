@@ -1,6 +1,6 @@
 /* eslint-disable class-methods-use-this */
 import debug from 'debug';
-import { cloneDeep, merge } from 'lodash';
+import { cloneDeep, merge, orderBy } from 'lodash';
 import { Arg, Args, Ctx, Mutation, Query, Resolver } from 'type-graphql';
 import { getRepository, IsNull, Not, Repository } from 'typeorm';
 
@@ -9,7 +9,7 @@ import { FindManyResult, GlobalContext, SchemaType } from '@dockite/types';
 import { WhereBuilder } from '@dockite/where-builder';
 
 import { Authenticated, Authorized } from '../../../../common/decorators';
-import { getInitialDocumentData } from '../../../../common/util';
+import { getInitialDocumentData, getRootLocale } from '../../../../common/util';
 
 import {
   AllDocumentsArgs,
@@ -73,19 +73,24 @@ export class DocumentResolver {
     try {
       const qb = this.documentRepository
         .createQueryBuilder('document')
-        .where('document.id = :id', { id })
-        .andWhere('document.locale = :locale', { locale })
+        .where('locale = :locale', { locale })
+        .andWhere('document.id = :id', { id })
         .leftJoinAndSelect('document.user', 'user')
         .leftJoinAndSelect('document.schema', 'schema')
         .leftJoinAndSelect('schema.fields', 'fields');
 
       if (fallbackLocale) {
-        qb.orWhere('document.parentId = :id');
+        qb.where('locale = :locale')
+          .andWhere('(document.id = :id OR document.parentId = :id)')
+          .orWhere('(locale = :rootLocale AND document.id = :id)', { rootLocale: getRootLocale() })
+          .orderBy('document.locale = :locale', 'DESC');
       }
 
       if (deleted) {
         qb.andWhere('document.deletedAt IS NOT NULL').withDeleted();
       }
+
+      console.log(qb.getQueryAndParameters());
 
       const document = await qb.getOneOrFail();
 
@@ -312,6 +317,12 @@ export class DocumentResolver {
         },
         relations: ['schema', 'schema.fields', 'user'],
       });
+
+      if (document.parentId) {
+        const result = await this.permanentlyDeleteDocument(input, ctx);
+
+        return result;
+      }
 
       const { schema } = document;
 

@@ -9,11 +9,12 @@ export interface GetDocumentByIdQueryResponse {
 export interface GetDocumentByIdQueryVariables {
   id: string;
   locale?: string;
+  fallbackLocale?: boolean;
 }
 
 export const GET_DOCUMENT_BY_ID_QUERY = gql`
-  query GetDocumentById($id: String!, $locale: String) {
-    getDocument(id: $id, locale: $locale) {
+  query GetDocumentById($id: String!, $locale: String, $fallbackLocale: Boolean = false) {
+    getDocument(id: $id, locale: $locale, fallbackLocale: $fallbackLocale) {
       id
       locale
       data

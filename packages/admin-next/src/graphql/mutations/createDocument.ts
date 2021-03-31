@@ -11,6 +11,7 @@ export interface CreateDocumentMutationVariables {
     data: Record<string, any>;
     locale: string;
     schemaId: string;
+    parentId?: string;
   };
 }
 

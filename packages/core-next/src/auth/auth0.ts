@@ -25,7 +25,7 @@ export const verifyAuth0Token = (
 ): Promise<Auth0TokenPayload> => {
   // Wrap the below call in a promise to manage callbacks
   return new Promise((resolve, reject) => {
-    // First attempt to verify the token using the Jwks library for deciphering the `well_known` public keys for a
+    // First attempt to verify the token using the `jwks` library for deciphering the `well_known` public keys for a
     // given auth0 account.
     verify(
       token,

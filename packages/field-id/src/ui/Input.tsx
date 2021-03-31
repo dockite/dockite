@@ -1,5 +1,5 @@
-import { computed, defineComponent, PropType, ref, toRefs } from 'vue';
 import { DockiteFieldInputComponentProps } from '@dockite/types';
+import { computed, defineComponent, PropType, ref, toRefs } from 'vue';
 
 import { DockiteFieldIDEntity } from '../types';
 

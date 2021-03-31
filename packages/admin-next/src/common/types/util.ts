@@ -11,7 +11,7 @@ export type MaybePersisted<T> = T & { id?: string };
 
 export type BaseSchema = Pick<Schema, 'name' | 'title' | 'type' | 'groups' | 'settings' | 'fields'>;
 
-export type BaseDocument = Pick<Document, 'locale' | 'data' | 'schemaId'>;
+export type BaseDocument = Pick<Document, 'locale' | 'data' | 'schemaId' | 'parentId'>;
 
 export interface ValidateError {
   message: string;

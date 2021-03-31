@@ -4,7 +4,7 @@ import { defineComponent, reactive, ref, watchEffect } from 'vue';
 import { usePromise, usePromiseLazy } from 'vue-composable';
 import { useRoute, useRouter } from 'vue-router';
 
-import { getFooter, getHeaderActions } from './util';
+import { getFooter, getFormFieldIdentifiers, getHeaderActions, validateFields } from './util';
 
 import { getDocumentById, getSchemaById } from '~/common/api';
 import { createDocument } from '~/common/api/document';
@@ -13,14 +13,13 @@ import {
   DASHBOARD_HEADER_PORTAL_TITLE,
   DASHBOARD_MAIN_PORTAL_FOOTER,
 } from '~/common/constants';
-import { ApplicationErrorGroup } from '~/common/errors';
-import { BaseDocument, FieldErrorList } from '~/common/types';
+import { ApplicationError, ApplicationErrorGroup } from '~/common/errors';
+import { FieldErrorList } from '~/common/types';
 import { DocumentFormComponent } from '~/components/Common/Document/Form';
-import { useConfig, useState } from '~/hooks';
+import { useState } from '~/hooks';
 import {
   displayClientValidationErrors,
   displayServerValidationErrors,
-  getRootLocale,
   isRootLocale,
 } from '~/utils';
 
@@ -33,9 +32,8 @@ export const SchemaCreateDocumentPage = defineComponent({
     const router = useRouter();
 
     const state = useState();
-    const config = useConfig();
 
-    const formData = reactive<Record<string, any>>({});
+    const formData = ref<Record<string, any>>({});
 
     const schema = usePromise(() => getSchemaById(route.params.schemaId as string));
 
@@ -47,17 +45,12 @@ export const SchemaCreateDocumentPage = defineComponent({
       ) {
         return getDocumentById({
           id: route.query.parent,
-          locale: getRootLocale().id,
+          locale: state.locale.id,
+          fallbackLocale: true,
         });
       }
 
       return Promise.resolve(null);
-    });
-
-    const document = ref<BaseDocument>({
-      data: formData,
-      locale: state.locale.id,
-      schemaId: schema.result.value?.id ?? '',
     });
 
     const form = ref<any>(null);
@@ -66,10 +59,30 @@ export const SchemaCreateDocumentPage = defineComponent({
 
     const formErrors: Record<string, string> = reactive({});
 
+    watchEffect(() => {
+      if (parent.result.value) {
+        if (parent.result.value.locale === state.locale.id) {
+          router.push(`/documents/${parent.result.value.id}`);
+        }
+      }
+    });
+
     const handleCreateDocument = usePromiseLazy(async () => {
       try {
         if (schema.result.value && form.value) {
-          const valid = await form.value.validate().catch((e: FieldErrorList) => e);
+          let valid: true | FieldErrorList = {};
+
+          if (!parent.result.value) {
+            valid = await form.value.validate().catch((e: FieldErrorList) => e);
+          } else {
+            const fieldsToValidate = getFormFieldIdentifiers(formData.value);
+
+            valid = await validateFields(form.value, fieldsToValidate).catch(
+              (e: FieldErrorList) => e,
+            );
+
+            console.log({ valid });
+          }
 
           if (valid !== true) {
             displayClientValidationErrors(valid);
@@ -77,7 +90,15 @@ export const SchemaCreateDocumentPage = defineComponent({
             return;
           }
 
-          const doc = await createDocument(document.value, schema.result.value);
+          const doc = await createDocument(
+            {
+              data: formData.value,
+              locale: state.locale.id,
+              schemaId: schema.result.value?.id ?? '',
+              parentId: parent.result.value?.id,
+            },
+            schema.result.value,
+          );
 
           ElMessage.success('Document created successfully!');
 
@@ -90,18 +111,18 @@ export const SchemaCreateDocumentPage = defineComponent({
           return;
         }
 
+        if (err instanceof ApplicationError) {
+          ElMessage.error(err.message);
+
+          return;
+        }
+
         throw err;
       }
     });
 
-    watchEffect(() => {
-      if (schema.result.value && document.value.schemaId !== schema.result.value.id) {
-        document.value.schemaId = schema.result.value.id;
-      }
-    });
-
     return () => {
-      if (schema.loading.value) {
+      if (schema.loading.value || parent.loading.value) {
         return (
           <>
             <Portal to={DASHBOARD_HEADER_PORTAL_TITLE}>Fetching Schema...</Portal>
@@ -136,10 +157,14 @@ export const SchemaCreateDocumentPage = defineComponent({
             </Portal>
 
             <DocumentFormComponent
-              v-model={formData}
+              v-model={formData.value}
               schema={schema.result.value}
               parent={parent.result.value}
-              document={document.value}
+              document={{
+                data: formData.value,
+                locale: state.locale.id,
+                schemaId: schema.result.value.id,
+              }}
               errors={formErrors}
               formRef={form}
             />

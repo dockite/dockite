@@ -1,8 +1,7 @@
-import { locale } from 'element-plus';
 import { noop } from 'lodash';
 import { defineComponent, PropType, ref, withModifiers } from 'vue';
 import { usePromise } from 'vue-composable';
-import { useRoute, useRouter } from 'vue-router';
+import { useRouter } from 'vue-router';
 
 import { Document } from '@dockite/database';
 
@@ -95,7 +94,7 @@ export const DocumentHeaderActionsDropdownComponent = defineComponent({
           >
             {{
               default: () => (
-                <el-form>
+                <el-form class="-my-8">
                   <el-form-item label="Locale to create an override for">
                     <el-select v-model={localeToCreateOverrideFor.value} class="w-full">
                       {(locales.result.value ?? []).map(locale => (
@@ -107,7 +106,7 @@ export const DocumentHeaderActionsDropdownComponent = defineComponent({
                       ))}
                     </el-select>
 
-                    <div class="el-form-item__description">
+                    <div class="el-form-item__description break-normal">
                       The locale to create an override for, if there is already an override for the
                       provided locale you will be redirected to the document instead.
                     </div>
