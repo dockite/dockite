@@ -56,6 +56,10 @@ export class DockiteFieldDatetime extends DockiteField {
   }
 
   public async processOutputGraphQL<T>({ fieldData }: FieldContext): Promise<T> {
+    if (!fieldData) {
+      return (null as any) as T;
+    }
+
     return (new Date(fieldData) as any) as T;
   }
 }
