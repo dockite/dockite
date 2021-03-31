@@ -36,16 +36,15 @@
             Click to upload
           </el-button>
           <div slot="tip" class="el-upload__tip" style="line-height: 1.2">
-            <div
-              v-if="constraints.length > 0"
-              class="block pt-1 cursor-pointer dockite-s3-image--constraints"
-            >
-              <span class="underline">
-                The uploaded image must satisfy the following constraints:
-              </span>
+            <el-popover v-if="constraints.length > 0" trigger="click">
+              <a slot="reference" href="#" @click.prevent="">
+                Image Constraints
+
+                <i class="el-icon-info " />
+              </a>
 
               <ul
-                class="list-disc dockite-s3-image--constraints-list"
+                class="-my-1 text-xs list-disc dockite-s3-image--constraints-list"
                 style="list-style-position: inside;"
               >
                 <li class="pt-1">
@@ -56,7 +55,7 @@
                   {{ constraint }}
                 </li>
               </ul>
-            </div>
+            </el-popover>
           </div>
         </el-upload>
         <vue-draggable
