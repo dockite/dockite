@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.3](https://github.com/dockite/dockite/compare/@dockite/field-s3-image@0.4.0-alpha.2...@dockite/field-s3-image@0.4.0-alpha.3) (2021-04-01)
+
+
+### Bug Fixes
+
+* **field-s3-image:** improve constraints display ([bcf9acd](https://github.com/dockite/dockite/commit/bcf9acd34ddf301b65aab45937f2137a75954f6c))
+
+
+
+
+
 # [0.4.0-alpha.2](https://github.com/dockite/dockite/compare/@dockite/field-s3-image@0.4.0-alpha.1...@dockite/field-s3-image@0.4.0-alpha.2) (2021-02-22)
 
 
