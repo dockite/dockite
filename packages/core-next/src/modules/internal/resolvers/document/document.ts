@@ -1,6 +1,6 @@
 /* eslint-disable class-methods-use-this */
 import debug from 'debug';
-import { cloneDeep, merge, orderBy } from 'lodash';
+import { cloneDeep, merge } from 'lodash';
 import { Arg, Args, Ctx, Mutation, Query, Resolver } from 'type-graphql';
 import { getRepository, IsNull, Not, Repository } from 'typeorm';
 
@@ -90,8 +90,6 @@ export class DocumentResolver {
         qb.andWhere('document.deletedAt IS NOT NULL').withDeleted();
       }
 
-      console.log(qb.getQueryAndParameters());
-
       const document = await qb.getOneOrFail();
 
       await processDocumentOutput(document, document.schema, ctx.user);
@@ -120,7 +118,7 @@ export class DocumentResolver {
     @Ctx()
     ctx: GlobalContext,
   ): Promise<FindManyResult<Document>> {
-    const { sort, where, deleted, locale, perPage, schemaId } = input;
+    const { sort, where, deleted, locale, perPage, schemaId, fallbackLocale } = input;
 
     const page = input.page - 1;
 
@@ -137,6 +135,25 @@ export class DocumentResolver {
 
       if (schemaId) {
         qb.andWhere('document.schemaId = :schemaId', { schemaId });
+
+        // For a fallback locale we want to retrieve all the documents in the root locale
+        // that don't already have a locale override. We do this by getting a distinct list of
+        // parent ids from the current locale and diffing that against the root locale ids
+        if (fallbackLocale) {
+          qb.orWhere(qb => {
+            const subQuery = qb
+              .subQuery()
+              .select('document.parentId', 'id')
+              .from(Document, 'document')
+              .where('document.locale = :locale', { locale })
+              .andWhere('document.schemaId = :schemaId', { schemaId })
+              .andWhere('document.parentId IS NOT NULL')
+              .distinctOn(['document.parentId'])
+              .getQuery();
+
+            return `document.locale = :rootLocale AND document.id NOT IN ${subQuery}`;
+          }).setParameter('rootLocale', getRootLocale());
+        }
       }
 
       if (where) {
@@ -259,7 +276,11 @@ export class DocumentResolver {
       const oldData = cloneDeep(document.data);
       const revisionData = cloneDeep(document.data);
 
-      const data = merge(cloneDeep(document.data), input.data);
+      let data = merge(cloneDeep(document.data), input.data);
+
+      if (document.parentId) {
+        data = input.data;
+      }
 
       await callCrudLifecycleHooks('update', schema, data, document, oldData);
 
@@ -576,7 +597,6 @@ export class DocumentResolver {
 
       const qb = this.documentRepository
         .createQueryBuilder('document')
-        .where('1 = 1')
         .leftJoinAndSelect('document.schema', 'schema')
         .leftJoinAndSelect('document.user', 'user');
 

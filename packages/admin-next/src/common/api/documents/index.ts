@@ -112,11 +112,14 @@ export const fetchAllDocuments = async (payload: FetchAllDocumentsArgs): Promise
 /**
  *
  */
-export const getDocumentById = async (payload: {
-  id: string;
-  locale: string;
-  fallbackLocale?: boolean;
-}): Promise<Document> => {
+export const getDocumentById = async (
+  payload: {
+    id: string;
+    locale: string;
+    fallbackLocale?: boolean;
+  },
+  deleted = false,
+): Promise<Document> => {
   const graphql = useGraphQL();
 
   const result = await graphql.executeQuery<
@@ -128,6 +131,7 @@ export const getDocumentById = async (payload: {
       id: payload.id,
       locale: payload.locale,
       fallbackLocale: payload.fallbackLocale,
+      deleted,
     },
   });
 

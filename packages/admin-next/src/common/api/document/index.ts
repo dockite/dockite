@@ -24,6 +24,16 @@ import {
   DeleteDocumentMutationVariables,
   DELETE_DOCUMENT_MUTATION,
 } from '~/graphql/mutations/deleteDocument';
+import {
+  PermanentlyDeleteDocumentMutationResponse,
+  PermanentlyDeleteDocumentMutationVariables,
+  PERMANENTLY_DELETE_DOCUMENT_MUTATION,
+} from '~/graphql/mutations/permanentlyDeleteDocument';
+import {
+  RestoreDocumentMutationResponse,
+  RestoreDocumentMutationVariables,
+  RESTORE_DOCUMENT_MUTATION,
+} from '~/graphql/mutations/restoreDocument';
 import { useEvent, useGraphQL } from '~/hooks';
 
 /**
@@ -156,12 +166,19 @@ export const deleteDocument = async (payload: Document): Promise<boolean> => {
             store.modify({
               id: 'ROOT_QUERY',
               fields: {
-                get: (document: Document, details): Document | any => {
+                getDocument: (document: Document, details): Document | any => {
                   if (document.id === payload.id) {
                     return details.DELETE;
                   }
 
                   return document;
+                },
+
+                allDocuments: (documents: FindManyResult<Document>): FindManyResult<Document> => {
+                  return {
+                    ...documents,
+                    results: documents.results.filter(document => document.id !== payload.id),
+                  };
                 },
 
                 findDocuments: (documents: FindManyResult<Document>): FindManyResult<Document> => {
@@ -198,6 +215,204 @@ export const deleteDocument = async (payload: Document): Promise<boolean> => {
     emit(DELETE_DOCUMENT_EVENT);
 
     return result.data.deleteDocument;
+  } catch (err) {
+    logE(err);
+
+    const e = graphql.exceptionHandler(err);
+
+    if (e instanceof ApplicationError) {
+      throw e;
+    }
+
+    throw new ApplicationError(
+      'An unknown error has occurred, please try again later.',
+      ApplicationErrorCode.UNKNOWN_ERROR,
+    );
+  }
+};
+
+/**
+ *
+ */
+export const permanentlyDeleteDocument = async (payload: Document): Promise<boolean> => {
+  const graphql = useGraphQL();
+  const { emit } = useEvent();
+
+  try {
+    const result = await graphql.executeMutation<
+      PermanentlyDeleteDocumentMutationResponse,
+      PermanentlyDeleteDocumentMutationVariables
+    >({
+      mutation: PERMANENTLY_DELETE_DOCUMENT_MUTATION,
+      variables: {
+        input: {
+          id: payload.id,
+        },
+      },
+
+      update: (store, { data: permanentlyDeleteDocumentData }) => {
+        if (permanentlyDeleteDocumentData) {
+          const { permanentlyDeleteDocument: success } = permanentlyDeleteDocumentData;
+
+          if (success) {
+            // Evict the current entry for the Document from all known cache entries.
+            store.evict({
+              id: store.identify((payload as unknown) as StoreObject),
+              broadcast: false,
+            });
+
+            // Remove any documents containing the schema from the cache
+            store.modify({
+              id: 'ROOT_QUERY',
+              fields: {
+                getDocument: (document: Document, details): Document | any => {
+                  if (document.id === payload.id) {
+                    return details.DELETE;
+                  }
+
+                  return document;
+                },
+
+                allDocuments: (documents: FindManyResult<Document>): FindManyResult<Document> => {
+                  return {
+                    ...documents,
+                    results: documents.results.filter(document => document.id !== payload.id),
+                  };
+                },
+
+                findDocuments: (documents: FindManyResult<Document>): FindManyResult<Document> => {
+                  return {
+                    ...documents,
+                    results: documents.results.filter(document => document.id !== payload.id),
+                  };
+                },
+
+                searchDocuments: (
+                  documents: FindManyResult<Document>,
+                ): FindManyResult<Document> => {
+                  return {
+                    ...documents,
+                    results: documents.results.filter(document => document.id !== payload.id),
+                  };
+                },
+              },
+            });
+
+            store.gc();
+          }
+        }
+      },
+    });
+
+    if (!result.data) {
+      throw new ApplicationError(
+        'An unknown error occurred, please try again later.',
+        ApplicationErrorCode.UNKNOWN_ERROR,
+      );
+    }
+
+    emit(DELETE_DOCUMENT_EVENT);
+
+    return result.data.permanentlyDeleteDocument;
+  } catch (err) {
+    logE(err);
+
+    const e = graphql.exceptionHandler(err);
+
+    if (e instanceof ApplicationError) {
+      throw e;
+    }
+
+    throw new ApplicationError(
+      'An unknown error has occurred, please try again later.',
+      ApplicationErrorCode.UNKNOWN_ERROR,
+    );
+  }
+};
+
+/**
+ *
+ */
+export const restoreDocument = async (payload: Document): Promise<boolean> => {
+  const graphql = useGraphQL();
+  const { emit } = useEvent();
+
+  try {
+    const result = await graphql.executeMutation<
+      RestoreDocumentMutationResponse,
+      RestoreDocumentMutationVariables
+    >({
+      mutation: RESTORE_DOCUMENT_MUTATION,
+      variables: {
+        input: {
+          id: payload.id,
+        },
+      },
+
+      update: (store, { data: restoreDocumentData }) => {
+        if (restoreDocumentData) {
+          const { restoreDocument: success } = restoreDocumentData;
+
+          if (success) {
+            // Evict the current entry for the Document from all known cache entries.
+            store.evict({
+              id: store.identify((payload as unknown) as StoreObject),
+              broadcast: false,
+            });
+
+            // Remove any documents containing the schema from the cache
+            store.modify({
+              id: 'ROOT_QUERY',
+              fields: {
+                getDocument: (document: Document, details): Document | any => {
+                  if (document.id === payload.id) {
+                    return details.DELETE;
+                  }
+
+                  return document;
+                },
+
+                allDocuments: (documents: FindManyResult<Document>): FindManyResult<Document> => {
+                  return {
+                    ...documents,
+                    results: documents.results.filter(document => document.id !== payload.id),
+                  };
+                },
+
+                findDocuments: (documents: FindManyResult<Document>): FindManyResult<Document> => {
+                  return {
+                    ...documents,
+                    results: documents.results.filter(document => document.id !== payload.id),
+                  };
+                },
+
+                searchDocuments: (
+                  documents: FindManyResult<Document>,
+                ): FindManyResult<Document> => {
+                  return {
+                    ...documents,
+                    results: documents.results.filter(document => document.id !== payload.id),
+                  };
+                },
+              },
+            });
+
+            store.gc();
+          }
+        }
+      },
+    });
+
+    if (!result.data) {
+      throw new ApplicationError(
+        'An unknown error occurred, please try again later.',
+        ApplicationErrorCode.UNKNOWN_ERROR,
+      );
+    }
+
+    emit(DELETE_DOCUMENT_EVENT);
+
+    return result.data.restoreDocument;
   } catch (err) {
     logE(err);
 

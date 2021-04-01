@@ -22,16 +22,6 @@ export const getHeaderActions = (schema: Ref<Schema | null>): JSX.Element => {
             </el-dropdown-item>
 
             <el-dropdown-item>
-              <router-link
-                class="block text-orange-600 hover:text-orange-600"
-                to={`/schemas/${schema.value?.id}/deleted`}
-              >
-                <i class="el-icon-delete" />
-                View Deleted Documents
-              </router-link>
-            </el-dropdown-item>
-
-            <el-dropdown-item>
               <router-link class="block" to={`/schemas/${schema.value?.id}/edit`}>
                 <i class="el-icon-folder-add" />
                 Edit Schema
@@ -67,18 +57,26 @@ export const getTableActions = (document: Document, _schema: Schema): JSX.Elemen
   return (
     <div style="margin: 0 -10px">
       <div class="flex items-center -mx-2">
-        <router-link title="Edit Document" class="px-2" to={`/documents/${document.id}`}>
-          <i class="el-icon-edit-outline" />
+        <router-link
+          title="Restore Document"
+          class="px-2"
+          to={`/documents/deleted/${document.id}/restore`}
+        >
+          <i class="el-icon-refresh-left" />
         </router-link>
 
-        <router-link title="View Revisions" class="px-2" to={`/documents/${document.id}/revisions`}>
+        <router-link
+          title="View Revisions"
+          class="px-2"
+          to={`/documents/deleted/${document.id}/revisions`}
+        >
           <i class="el-icon-folder-opened" />
         </router-link>
 
         <router-link
-          title="Edit Document"
+          title="Permanently Delete Document"
           class="px-2 text-red-600 hover:text-red-600 hover:opacity-50"
-          to={`/documents/${document.id}/delete`}
+          to={`/documents/deleted/${document.id}/permanent-delete`}
         >
           <i class="el-icon-delete" />
         </router-link>

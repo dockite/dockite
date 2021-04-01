@@ -45,19 +45,23 @@ export const processDocumentOutput = async (
           );
         }
 
-        // If the field doesn't hold any data we will assign a default value
-        if (document.data[field.name] === undefined) {
-          document.data[field.name] =
-            field.settings.default ?? field.dockiteField.defaultValue() ?? null;
+        if (!document.parentId) {
+          // If the field doesn't hold any data we will assign a default value
+          if (document.data[field.name] === undefined) {
+            document.data[field.name] =
+              field.settings.default ?? field.dockiteField.defaultValue() ?? null;
+          }
         }
 
-        // Finally call the process hook to update the documents data if required.
-        document.data[field.name] = await field.dockiteField.processOutputRaw({
-          data: { ...document.data, id: document.id },
-          field,
-          fieldData: document.data[field.name],
-          user,
-        });
+        if (document.data[field.name] === undefined) {
+          // Finally call the process hook to update the documents data if required.
+          document.data[field.name] = await field.dockiteField.processOutputRaw({
+            data: { ...document.data, id: document.id },
+            field,
+            fieldData: document.data[field.name],
+            user,
+          });
+        }
       }),
     );
   }

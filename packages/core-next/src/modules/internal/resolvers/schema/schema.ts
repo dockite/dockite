@@ -238,7 +238,8 @@ export class SchemaResolver {
       });
 
       await Promise.all([
-        this.schemaRepository.softRemove(schema),
+        // We `omit` the fields here since typeorm will try to recusrively soft delete them
+        this.schemaRepository.softRemove(omit(schema, 'fields')),
         this.schemaRevisionRepository.save({
           schemaId: schema.id,
           data: clonedSchema,

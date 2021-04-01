@@ -18,10 +18,13 @@ import { FieldErrorList } from '~/common/types';
 import { DocumentFormComponent } from '~/components/Common/Document/Form';
 import { DocumentHeaderActionsDropdownComponent } from '~/components/Documents/_Id/ActionsDropdown';
 import { useGraphQL, useState } from '~/hooks';
+import { getFormFieldIdentifiers, validateFields } from '~/pages/Schemas/_Id/Create/util';
 import {
   displayClientValidationErrors,
   displayServerValidationErrors,
   getDocumentIdentifier,
+  getRootLocale,
+  isRootLocale,
 } from '~/utils';
 
 export const DocumentFormPage = defineComponent({
@@ -34,7 +37,7 @@ export const DocumentFormPage = defineComponent({
 
     const state = useState();
 
-    const formData = reactive<Record<string, any>>({});
+    const formData = ref<Record<string, any>>({});
 
     const document = usePromise(() =>
       getDocumentById({
@@ -42,6 +45,17 @@ export const DocumentFormPage = defineComponent({
         locale: state.locale.id,
       }),
     );
+
+    const parent = usePromiseLazy((parentId: string) => {
+      if (!isRootLocale(state.locale)) {
+        return getDocumentById({
+          id: parentId,
+          locale: getRootLocale().id,
+        });
+      }
+
+      return Promise.resolve(null);
+    });
 
     const schema = usePromiseLazy((id: string) => getSchemaById(id));
 
@@ -63,7 +77,19 @@ export const DocumentFormPage = defineComponent({
           return;
         }
 
-        const valid = await form.value.validate().catch((e: FieldErrorList) => e);
+        let valid: true | FieldErrorList = {};
+
+        if (!parent.result.value) {
+          valid = await form.value.validate().catch((e: FieldErrorList) => e);
+        } else {
+          const fieldsToValidate = getFormFieldIdentifiers(formData.value);
+
+          valid = await validateFields(form.value, fieldsToValidate).catch(
+            (e: FieldErrorList) => e,
+          );
+
+          console.log({ valid });
+        }
 
         if (valid !== true) {
           displayClientValidationErrors(valid);
@@ -71,7 +97,7 @@ export const DocumentFormPage = defineComponent({
           return;
         }
 
-        const doc = await updateDocument({ ...document.result.value, data: formData });
+        const doc = await updateDocument({ ...document.result.value, data: formData.value });
 
         ElMessage.success('Document updated successfully!');
 
@@ -126,10 +152,19 @@ export const DocumentFormPage = defineComponent({
       ) {
         schema.exec(document.result.value.schemaId);
       }
+
+      if (
+        document.result.value &&
+        document.result.value.parentId &&
+        !parent.loading.value &&
+        (!parent.result.value || parent.result.value.id !== document.result.value.parentId)
+      ) {
+        parent.exec(document.result.value.parentId);
+      }
     });
 
     return () => {
-      if (schema.loading.value || document.loading.value) {
+      if (schema.loading.value || document.loading.value || parent.loading.value) {
         return (
           <>
             <Portal to={DASHBOARD_HEADER_PORTAL_TITLE}>Fetching document data...</Portal>
@@ -172,9 +207,9 @@ export const DocumentFormPage = defineComponent({
               <span
                 class="truncate"
                 style={{ maxWidth: '250px' }}
-                title={getDocumentIdentifier(formData, document.result.value)}
+                title={getDocumentIdentifier(formData.value, document.result.value)}
               >
-                {getDocumentIdentifier(formData, document.result.value)}
+                {getDocumentIdentifier(formData.value, document.result.value)}
               </span>
             </Portal>
 
@@ -188,10 +223,11 @@ export const DocumentFormPage = defineComponent({
             </Portal>
 
             <DocumentFormComponent
-              v-model={formData}
+              v-model={formData.value}
               schema={schema.result.value}
               document={document.result.value}
               errors={formErrors}
+              parent={parent.result.value}
               formRef={form}
             />
 

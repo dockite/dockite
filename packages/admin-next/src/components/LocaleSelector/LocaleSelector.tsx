@@ -1,5 +1,5 @@
 import { omit } from 'lodash';
-import { defineComponent, ref, watchEffect } from 'vue';
+import { computed, defineComponent, ref, watchEffect } from 'vue';
 import { usePromise } from 'vue-composable';
 import { useRoute, useRouter } from 'vue-router';
 
@@ -27,7 +27,21 @@ export const LocaleSelectorComponent = defineComponent({
 
     const locales = usePromise(() => fetchAllLocales());
 
+    const availableLocales = computed(() => {
+      if (!locales.result.value) {
+        return [];
+      }
+
+      return locales.result.value.filter(locale => locale.id !== state.locale.id);
+    });
+
     const handleSetLocale = (locale: Locale): void => {
+      // If we're dealing with anything document related, we're likely to see some breakage
+      // so it's best to redirect to homepage instead.
+      if (route.params.documentId) {
+        router.push('/');
+      }
+
       setLocale(locale);
 
       if (popoverRef.value) {
@@ -82,7 +96,7 @@ export const LocaleSelectorComponent = defineComponent({
                 <div style={{ maxHeight: '400px' }} class="overflow-y-auto -mx-3">
                   <h5 class="px-3 font-bold pb-3">Available Locales</h5>
 
-                  {(locales.result.value || []).map(locale => (
+                  {availableLocales.value.map(locale => (
                     <div
                       class="flex items-center hover:bg-gray-100 cursor-pointer px-3 py-1"
                       role="button"

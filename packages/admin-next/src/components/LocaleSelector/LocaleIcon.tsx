@@ -48,7 +48,14 @@ export const LocaleIconComponent = defineComponent({
         return `data:image/jpg;base64,${icon}`;
       });
 
-      return <img style={{ width: '25px', height: '25px' }} src={src.value} alt="Locale Icon" />;
+      return (
+        <img
+          class="inline-block"
+          style={{ width: '25px', height: '25px' }}
+          src={src.value}
+          alt="Locale Icon"
+        />
+      );
     };
   },
 });

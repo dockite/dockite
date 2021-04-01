@@ -10,11 +10,17 @@ export interface GetDocumentByIdQueryVariables {
   id: string;
   locale?: string;
   fallbackLocale?: boolean;
+  deleted?: boolean;
 }
 
 export const GET_DOCUMENT_BY_ID_QUERY = gql`
-  query GetDocumentById($id: String!, $locale: String, $fallbackLocale: Boolean = false) {
-    getDocument(id: $id, locale: $locale, fallbackLocale: $fallbackLocale) {
+  query GetDocumentById(
+    $id: String!
+    $locale: String
+    $fallbackLocale: Boolean = false
+    $deleted: Boolean = false
+  ) {
+    getDocument(id: $id, locale: $locale, fallbackLocale: $fallbackLocale, deleted: $deleted) {
       id
       locale
       data
@@ -24,6 +30,7 @@ export const GET_DOCUMENT_BY_ID_QUERY = gql`
       deletedAt
       releaseId
       schemaId
+      parentId
     }
   }
 `;

@@ -1,5 +1,5 @@
 import { noop } from 'lodash';
-import { defineComponent, PropType, ref, withModifiers } from 'vue';
+import { computed, defineComponent, PropType, ref, withModifiers } from 'vue';
 import { usePromise } from 'vue-composable';
 import { useRouter } from 'vue-router';
 
@@ -34,6 +34,14 @@ export const DocumentHeaderActionsDropdownComponent = defineComponent({
     const locales = usePromise(() => fetchAllLocales());
 
     const localeToCreateOverrideFor = ref('');
+
+    const availableLocales = computed(() => {
+      if (!locales.result.value) {
+        return [];
+      }
+
+      return locales.result.value.filter(locale => locale.id !== state.locale.id);
+    });
 
     const handleShowCreateLocaleOverrideDialog = (): void => {
       showCreateLocaleOverrideDialog.value = true;
@@ -97,7 +105,7 @@ export const DocumentHeaderActionsDropdownComponent = defineComponent({
                 <el-form class="-my-8">
                   <el-form-item label="Locale to create an override for">
                     <el-select v-model={localeToCreateOverrideFor.value} class="w-full">
-                      {(locales.result.value ?? []).map(locale => (
+                      {availableLocales.value.map(locale => (
                         <el-option label={locale.title} value={locale.id}>
                           <LocaleIconComponent icon={locale.icon} />
 

@@ -6,7 +6,7 @@ import { Document, Field, Schema, Singleton } from '@dockite/database';
 
 import { RenderIfComponent } from '../../RenderIf';
 
-import FormFieldComponent from './Field';
+import { FormFieldComponent } from './Field';
 
 import { BaseDocument } from '~/common/types';
 import { useDockite } from '~/dockite';
@@ -95,6 +95,8 @@ export const DocumentFormComponent = defineComponent({
 
     if (!props.parent) {
       Object.assign(formData.value, getInitialFormData(props.document, props.schema));
+    } else {
+      Object.assign(formData.value, props.document.data);
     }
 
     if (route.query.tab && typeof route.query.tab === 'string') {
@@ -113,10 +115,7 @@ export const DocumentFormComponent = defineComponent({
       if (value) {
         formData.value[field.name] = formData.value[field.name] ?? field.settings.default ?? null;
       } else {
-        const omitted = omit(formData.value, field.name);
-        formData.value = {};
-
-        console.log({ formData: formData.value, omitted });
+        formData.value = omit(formData.value, field.name);
       }
     };
 

@@ -59,9 +59,15 @@ export const SchemaCreateDocumentPage = defineComponent({
 
     const formErrors: Record<string, string> = reactive({});
 
-    watchEffect(() => {
+    const stopLocaleWatcher = watchEffect(() => {
       if (parent.result.value) {
         if (parent.result.value.locale === state.locale.id) {
+          stopLocaleWatcher();
+
+          ElMessage.warning(
+            'A locale override already exists for the specified document, navigating to it instead.',
+          );
+
           router.push(`/documents/${parent.result.value.id}`);
         }
       }

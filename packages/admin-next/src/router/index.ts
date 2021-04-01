@@ -33,6 +33,22 @@ export const Router = createRouter({
       meta: { layout: 'Dashboard' },
     },
 
+    {
+      path: '/documents/deleted/:documentId/permanent-delete',
+      component: () => import('../pages/Documents/Deleted/_Id/PermanentDelete'),
+      meta: { layout: 'Dashboard' },
+    },
+    {
+      path: '/documents/deleted/:documentId/restore',
+      component: () => import('../pages/Documents/Deleted/_Id/Restore'),
+      meta: { layout: 'Dashboard' },
+    },
+    // {
+    //   path: '/documents/deleted/:documentId/revisions',
+    //   component: () => import('../pages/Documents/_Id/Revisions'),
+    //   meta: { layout: 'Dashboard' },
+    // },
+
     /**
      * Schemas
      */
@@ -87,6 +103,11 @@ export const Router = createRouter({
     {
       path: '/schemas/:schemaId/delete',
       component: () => import('../pages/Schemas/_Id/Delete'),
+      meta: { layout: 'Dashboard' },
+    },
+    {
+      path: '/schemas/:schemaId/deleted',
+      component: () => import('../pages/Schemas/_Id/Deleted'),
       meta: { layout: 'Dashboard' },
     },
 

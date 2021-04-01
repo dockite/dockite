@@ -75,7 +75,6 @@ export class FieldResolver {
     try {
       const qb = this.fieldRepository
         .createQueryBuilder('field')
-        .where('1 = 1')
         .leftJoinAndSelect('field.schema', 'schema');
 
       const [results, count] = await qb.getManyAndCount();

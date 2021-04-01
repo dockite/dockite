@@ -129,7 +129,6 @@ export class SingletonResolver {
 
     const qb = this.singletonRepository
       .createQueryBuilder('singleton')
-      .where('1 = 1')
       .andWhere('singleton.type = :type', { type: SchemaType.SINGLETON })
       .leftJoinAndSelect('singleton.fields', 'fields')
       .leftJoinAndSelect('singleton.user', 'user')
