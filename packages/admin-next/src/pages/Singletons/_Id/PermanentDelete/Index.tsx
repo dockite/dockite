@@ -1,15 +1,16 @@
 import { ElMessage } from 'element-plus';
 import { Portal } from 'portal-vue';
-import { computed, defineComponent, ref, watch, watchEffect } from 'vue';
+import { computed, defineComponent, watch, watchEffect } from 'vue';
 import { usePromiseLazy } from 'vue-composable';
 import { useRoute, useRouter } from 'vue-router';
 
-import { getSingletonById, permanentDeleteSingleton } from '~/common/api';
+import { getSingletonById, permanentlyDeleteSingleton } from '~/common/api';
 import { DASHBOARD_HEADER_PORTAL_TITLE } from '~/common/constants';
 import { ApplicationError, ApplicationErrorCode } from '~/common/errors';
 import { logE } from '~/common/logger';
 import { RenderIfComponent } from '~/components/Common/RenderIf';
 import { SpinnerComponent } from '~/components/Common/Spinner';
+import { useCountdownLazy } from '~/hooks';
 
 export const PermanentDeleteSingletonPage = defineComponent({
   name: 'PermanentDeleteSingletonPage',
@@ -17,8 +18,6 @@ export const PermanentDeleteSingletonPage = defineComponent({
   setup: () => {
     const route = useRoute();
     const router = useRouter();
-
-    const delay = ref(3);
 
     const singletonId = computed(() => {
       if (route.params.singletonId && typeof route.params.singletonId === 'string') {
@@ -36,20 +35,12 @@ export const PermanentDeleteSingletonPage = defineComponent({
       return Promise.reject(new Error('A valid singletonId is required'));
     });
 
-    const handleDecrementDelay = (): void => {
-      if (delay.value > 0) {
-        setTimeout(() => {
-          delay.value -= 1;
-
-          handleDecrementDelay();
-        }, 1000);
-      }
-    };
+    const { counterInSeconds, startCountdown } = useCountdownLazy(3000);
 
     const handlePermanentDeleteSingleton = usePromiseLazy(async () => {
       try {
         if (singletonId.value && deletedSingleton.result.value) {
-          const result = await permanentDeleteSingleton(deletedSingleton.result.value);
+          const result = await permanentlyDeleteSingleton(deletedSingleton.result.value);
 
           if (!result) {
             throw new ApplicationError(
@@ -97,7 +88,7 @@ export const PermanentDeleteSingletonPage = defineComponent({
       () => deletedSingleton.result.value,
       value => {
         if (value) {
-          handleDecrementDelay();
+          startCountdown();
         }
       },
     );
@@ -127,7 +118,9 @@ export const PermanentDeleteSingletonPage = defineComponent({
 
           <RenderIfComponent condition={deletedSingleton.result.value !== null}>
             <Portal to={DASHBOARD_HEADER_PORTAL_TITLE}>
-              <span>Confirmation of <u>{deletedSingleton.result.value?.title}</u> Permanent Deletion</span>
+              <span>
+                Confirmation of <u>{deletedSingleton.result.value?.title}</u> Permanent Deletion
+              </span>
             </Portal>
 
             <div>
@@ -142,11 +135,13 @@ export const PermanentDeleteSingletonPage = defineComponent({
 
                 <el-button
                   type="danger"
-                  loading={delay.value > 0 || handlePermanentDeleteSingleton.loading.value}
+                  loading={
+                    counterInSeconds.value > 0 || handlePermanentDeleteSingleton.loading.value
+                  }
                   onClick={() => handlePermanentDeleteSingleton.exec()}
                 >
-                  {delay.value > 0
-                    ? `Available in ${delay.value} seconds...`
+                  {counterInSeconds.value > 0
+                    ? `Available in ${counterInSeconds.value} seconds...`
                     : `Permanently Delete ${deletedSingleton.result.value?.title}`}
                 </el-button>
               </div>

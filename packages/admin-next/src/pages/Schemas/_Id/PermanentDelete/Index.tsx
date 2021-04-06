@@ -1,19 +1,20 @@
 import { ElMessage } from 'element-plus';
 import { Portal } from 'portal-vue';
-import { computed, defineComponent, ref, watch, watchEffect } from 'vue';
+import { computed, defineComponent, watch, watchEffect } from 'vue';
 import { usePromiseLazy } from 'vue-composable';
 import { useRoute, useRouter } from 'vue-router';
 
 import {
   fetchDocumentsBySchemaIdWithPagination,
   getSchemaById,
-  permanentDeleteSchema,
+  permanentlyDeleteSchema,
 } from '~/common/api';
 import { DASHBOARD_HEADER_PORTAL_TITLE } from '~/common/constants';
 import { ApplicationError, ApplicationErrorCode } from '~/common/errors';
 import { logE } from '~/common/logger';
 import { RenderIfComponent } from '~/components/Common/RenderIf';
 import { SpinnerComponent } from '~/components/Common/Spinner';
+import { useCountdownLazy } from '~/hooks';
 
 export const PermanentDeleteSchemaPage = defineComponent({
   name: 'PermanentDeleteSchemaPage',
@@ -21,8 +22,6 @@ export const PermanentDeleteSchemaPage = defineComponent({
   setup: () => {
     const route = useRoute();
     const router = useRouter();
-
-    const delay = ref(3);
 
     const schemaId = computed(() => {
       if (route.params.schemaId && typeof route.params.schemaId === 'string') {
@@ -48,20 +47,12 @@ export const PermanentDeleteSchemaPage = defineComponent({
       return Promise.reject(new Error('A valid schemaId is required'));
     });
 
-    const handleDecrementDelay = (): void => {
-      if (delay.value > 0) {
-        setTimeout(() => {
-          delay.value -= 1;
-
-          handleDecrementDelay();
-        }, 1000);
-      }
-    };
+    const { counterInSeconds, startCountdown } = useCountdownLazy(3000);
 
     const handlePermanentDeleteSchema = usePromiseLazy(async () => {
       try {
         if (schemaId.value && deletedSchema.result.value) {
-          const result = await permanentDeleteSchema(deletedSchema.result.value);
+          const result = await permanentlyDeleteSchema(deletedSchema.result.value);
 
           if (!result) {
             throw new ApplicationError(
@@ -108,7 +99,7 @@ export const PermanentDeleteSchemaPage = defineComponent({
       () => deletedSchema.result.value,
       value => {
         if (value) {
-          handleDecrementDelay();
+          startCountdown();
         }
       },
     );
@@ -142,7 +133,9 @@ export const PermanentDeleteSchemaPage = defineComponent({
             }
           >
             <Portal to={DASHBOARD_HEADER_PORTAL_TITLE}>
-              <span>Confirmation of <u>{deletedSchema.result.value?.title}</u> Permanent Deletion</span>
+              <span>
+                Confirmation of <u>{deletedSchema.result.value?.title}</u> Permanent Deletion
+              </span>
             </Portal>
 
             <div>
@@ -163,11 +156,11 @@ export const PermanentDeleteSchemaPage = defineComponent({
 
                 <el-button
                   type="danger"
-                  loading={delay.value > 0 || handlePermanentDeleteSchema.loading.value}
+                  loading={counterInSeconds.value > 0 || handlePermanentDeleteSchema.loading.value}
                   onClick={() => handlePermanentDeleteSchema.exec()}
                 >
-                  {delay.value > 0
-                    ? `Available in ${delay.value} seconds...`
+                  {counterInSeconds.value > 0
+                    ? `Available in ${counterInSeconds.value} seconds...`
                     : `Permanently Delete ${deletedSchema.result.value?.title}`}
                 </el-button>
               </div>

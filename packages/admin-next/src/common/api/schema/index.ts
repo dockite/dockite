@@ -237,7 +237,7 @@ export const deleteSchema = async (payload: Schema): Promise<boolean> => {
 /**
  *
  */
-export const permanentDeleteSchema = async (payload: Schema): Promise<boolean> => {
+export const permanentlyDeleteSchema = async (payload: Schema): Promise<boolean> => {
   const graphql = useGraphQL();
   const { emit } = useEvent();
 
@@ -248,7 +248,9 @@ export const permanentDeleteSchema = async (payload: Schema): Promise<boolean> =
     >({
       mutation: PERMANENT_DELETE_SCHEMA_MUTATION,
       variables: {
-        id: payload.id,
+        input: {
+          id: payload.id,
+        },
       },
 
       // On Update we will also append the schema to our allSchemas query
@@ -257,7 +259,7 @@ export const permanentDeleteSchema = async (payload: Schema): Promise<boolean> =
        */
       update: (store, { data: permanentDeleteSchemaData }) => {
         if (permanentDeleteSchemaData) {
-          const { permanentDeleteSchema: success } = permanentDeleteSchemaData;
+          const { permanentlyDeleteSchema: success } = permanentDeleteSchemaData;
 
           if (success) {
             // Evict the current entry for the Schema from all known cache entries.
@@ -289,7 +291,7 @@ export const permanentDeleteSchema = async (payload: Schema): Promise<boolean> =
 
     emit(DELETE_SCHEMA_EVENT);
 
-    return result.data.permanentDeleteSchema;
+    return result.data.permanentlyDeleteSchema;
   } catch (err) {
     logE(err);
 

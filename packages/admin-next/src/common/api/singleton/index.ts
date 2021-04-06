@@ -235,7 +235,7 @@ export const deleteSingleton = async (payload: Singleton): Promise<boolean> => {
 /**
  *
  */
-export const permanentDeleteSingleton = async (payload: Singleton): Promise<boolean> => {
+export const permanentlyDeleteSingleton = async (payload: Singleton): Promise<boolean> => {
   const graphql = useGraphQL();
   const { emit } = useEvent();
 
@@ -246,13 +246,15 @@ export const permanentDeleteSingleton = async (payload: Singleton): Promise<bool
     >({
       mutation: PERMANENT_DELETE_SINGLETON_MUTATION,
       variables: {
-        id: payload.id,
+        input: {
+          id: payload.id,
+        },
       },
 
       // On Update we will also append the schema to our allSingletons query
       update: (store, { data: permanentDeleteSingletonData }) => {
         if (permanentDeleteSingletonData) {
-          const { permanentDeleteSingleton: success } = permanentDeleteSingletonData;
+          const { permanentlyDeleteSingleton: success } = permanentDeleteSingletonData;
 
           if (success) {
             // Evict the current entry for the Singleton from all known cache entries.
@@ -298,7 +300,7 @@ export const permanentDeleteSingleton = async (payload: Singleton): Promise<bool
 
     emit(DELETE_SINGLETON_EVENT);
 
-    return result.data.permanentDeleteSingleton;
+    return result.data.permanentlyDeleteSingleton;
   } catch (err) {
     logE(err);
 

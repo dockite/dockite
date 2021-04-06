@@ -2,7 +2,7 @@
 import debug from 'debug';
 import { cloneDeep, omit } from 'lodash';
 import { Arg, Args, Ctx, FieldResolver, Mutation, Query, Resolver, Root } from 'type-graphql';
-import { getRepository, Repository } from 'typeorm';
+import { getRepository, IsNull, Not, Repository } from 'typeorm';
 
 import { Field, Schema, SchemaRevision, SchemaType } from '@dockite/database';
 import { GlobalContext } from '@dockite/types';
@@ -272,8 +272,9 @@ export class SchemaResolver {
     try {
       const [schema, revisions] = await Promise.all([
         this.schemaRepository.findOneOrFail({
-          where: { id },
+          where: { id, deletedAt: Not(IsNull()) },
           relations: ['fields', 'user'],
+          withDeleted: true,
         }),
         this.schemaRevisionRepository.find({ where: { schemaId: id } }),
       ]);

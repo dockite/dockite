@@ -398,8 +398,10 @@ export class DocumentResolver {
       const document = await this.documentRepository.findOneOrFail({
         where: {
           id,
+          deletedAt: Not(IsNull()),
         },
         relations: ['schema', 'schema.fields', 'user'],
+        withDeleted: true,
       });
 
       const { schema } = document;

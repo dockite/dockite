@@ -1,16 +1,16 @@
 import { ElMessage } from 'element-plus';
 import { Portal } from 'portal-vue';
-import { computed, defineComponent, ref, watch } from 'vue';
+import { computed, defineComponent, watch } from 'vue';
 import { usePromise, usePromiseLazy } from 'vue-composable';
 import { useRoute, useRouter } from 'vue-router';
-
 import { getDocumentById } from '~/common/api';
 import { deleteDocument } from '~/common/api/document';
 import { DASHBOARD_HEADER_PORTAL_TITLE } from '~/common/constants';
 import { ApplicationError, ApplicationErrorCode } from '~/common/errors';
 import { logE } from '~/common/logger';
-import { useState } from '~/hooks';
+import { useCountdownLazy, useState } from '~/hooks';
 import { getDocumentIdentifier } from '~/utils';
+
 
 export const DeleteDocumentPage = defineComponent({
   name: 'DeleteDocumentPage',
@@ -21,8 +21,6 @@ export const DeleteDocumentPage = defineComponent({
     const router = useRouter();
 
     const state = useState();
-
-    const delay = ref(3);
 
     const documentId = computed(() => route.params.documentId as string);
 
@@ -68,21 +66,13 @@ export const DeleteDocumentPage = defineComponent({
       return 'N/A';
     });
 
-    const handleDecrementDelay = (): void => {
-      if (delay.value > 0) {
-        setTimeout(() => {
-          delay.value -= 1;
-
-          handleDecrementDelay();
-        }, 1000);
-      }
-    };
+    const { counterInSeconds, startCountdown } = useCountdownLazy(3000);
 
     watch(
       () => document.result.value,
       value => {
         if (value) {
-          handleDecrementDelay();
+          startCountdown();
         }
       },
     );
@@ -138,15 +128,15 @@ export const DeleteDocumentPage = defineComponent({
 
                 <el-button
                   type="danger"
-                  loading={delay.value > 0 || handleDeleteDocument.loading.value}
+                  loading={counterInSeconds.value > 0 || handleDeleteDocument.loading.value}
                   onClick={() => handleDeleteDocument.exec()}
                 >
                   <span
-                    class={{ 'block truncate': delay.value === 0 }}
+                    class={{ 'block truncate': counterInSeconds.value === 0 }}
                     style={{ maxWidth: '150px' }}
                   >
-                    {delay.value > 0
-                      ? `Available in ${delay.value} seconds...`
+                    {counterInSeconds.value > 0
+                      ? `Available in ${counterInSeconds.value} seconds...`
                       : `Delete ${documentIdentifier.value}`}
                   </span>
                 </el-button>

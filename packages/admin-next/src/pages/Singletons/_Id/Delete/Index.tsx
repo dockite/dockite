@@ -1,15 +1,16 @@
 import { ElMessage } from 'element-plus';
 import { Portal } from 'portal-vue';
-import { computed, defineComponent, ref, watch, watchEffect } from 'vue';
+import { computed, defineComponent, watch, watchEffect } from 'vue';
 import { usePromiseLazy } from 'vue-composable';
 import { useRoute, useRouter } from 'vue-router';
-
 import { deleteSingleton, getSingletonById } from '~/common/api';
 import { DASHBOARD_HEADER_PORTAL_TITLE } from '~/common/constants';
 import { ApplicationError, ApplicationErrorCode } from '~/common/errors';
 import { logE } from '~/common/logger';
 import { RenderIfComponent } from '~/components/Common/RenderIf';
 import { SpinnerComponent } from '~/components/Common/Spinner';
+import { useCountdownLazy } from '~/hooks';
+
 
 export const DeleteSingletonPage = defineComponent({
   name: 'DeleteSingletonPage',
@@ -17,8 +18,6 @@ export const DeleteSingletonPage = defineComponent({
   setup: () => {
     const route = useRoute();
     const router = useRouter();
-
-    const delay = ref(3);
 
     const singletonId = computed(() => {
       if (route.params.singletonId && typeof route.params.singletonId === 'string') {
@@ -36,15 +35,7 @@ export const DeleteSingletonPage = defineComponent({
       return Promise.reject(new Error('A valid singletonId is required'));
     });
 
-    const handleDecrementDelay = (): void => {
-      if (delay.value > 0) {
-        setTimeout(() => {
-          delay.value -= 1;
-
-          handleDecrementDelay();
-        }, 1000);
-      }
-    };
+    const { counterInSeconds, startCountdown } = useCountdownLazy(3000);
 
     const handleDeleteSingleton = usePromiseLazy(async () => {
       try {
@@ -94,7 +85,7 @@ export const DeleteSingletonPage = defineComponent({
       () => singleton.result.value,
       value => {
         if (value) {
-          handleDecrementDelay();
+          startCountdown();
         }
       },
     );
@@ -124,7 +115,9 @@ export const DeleteSingletonPage = defineComponent({
 
           <RenderIfComponent condition={singleton.result.value !== null}>
             <Portal to={DASHBOARD_HEADER_PORTAL_TITLE}>
-              <span>Confirmation of <u>{singleton.result.value?.title}</u> Deletion</span>
+              <span>
+                Confirmation of <u>{singleton.result.value?.title}</u> Deletion
+              </span>
             </Portal>
 
             <div>
@@ -139,11 +132,11 @@ export const DeleteSingletonPage = defineComponent({
 
                 <el-button
                   type="danger"
-                  loading={delay.value > 0 || handleDeleteSingleton.loading.value}
+                  loading={counterInSeconds.value > 0 || handleDeleteSingleton.loading.value}
                   onClick={() => handleDeleteSingleton.exec()}
                 >
-                  {delay.value > 0
-                    ? `Available in ${delay.value} seconds...`
+                  {counterInSeconds.value > 0
+                    ? `Available in ${counterInSeconds.value} seconds...`
                     : `Delete ${singleton.result.value?.title}`}
                 </el-button>
               </div>

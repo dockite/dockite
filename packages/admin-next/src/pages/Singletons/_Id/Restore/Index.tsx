@@ -1,15 +1,16 @@
 import { ElMessage } from 'element-plus';
 import { Portal } from 'portal-vue';
-import { computed, defineComponent, ref, watch, watchEffect } from 'vue';
+import { computed, defineComponent, watch, watchEffect } from 'vue';
 import { usePromiseLazy } from 'vue-composable';
 import { useRoute, useRouter } from 'vue-router';
-
 import { getSingletonById, restoreSingleton } from '~/common/api';
 import { DASHBOARD_HEADER_PORTAL_TITLE } from '~/common/constants';
 import { ApplicationError, ApplicationErrorCode } from '~/common/errors';
 import { logE } from '~/common/logger';
 import { RenderIfComponent } from '~/components/Common/RenderIf';
 import { SpinnerComponent } from '~/components/Common/Spinner';
+import { useCountdownLazy } from '~/hooks';
+
 
 export const RestoreSingletonPage = defineComponent({
   name: 'RestoreSingletonPage',
@@ -17,8 +18,6 @@ export const RestoreSingletonPage = defineComponent({
   setup: () => {
     const route = useRoute();
     const router = useRouter();
-
-    const delay = ref(3);
 
     const singletonId = computed(() => {
       if (route.params.singletonId && typeof route.params.singletonId === 'string') {
@@ -36,15 +35,7 @@ export const RestoreSingletonPage = defineComponent({
       return Promise.reject(new Error('A valid singletonId is required'));
     });
 
-    const handleDecrementDelay = (): void => {
-      if (delay.value > 0) {
-        setTimeout(() => {
-          delay.value -= 1;
-
-          handleDecrementDelay();
-        }, 1000);
-      }
-    };
+    const { counterInSeconds, startCountdown } = useCountdownLazy(3000);
 
     const handleRestoreSingleton = usePromiseLazy(async () => {
       try {
@@ -97,7 +88,7 @@ export const RestoreSingletonPage = defineComponent({
       () => deletedSingleton.result.value,
       value => {
         if (value) {
-          handleDecrementDelay();
+          startCountdown();
         }
       },
     );
@@ -127,7 +118,9 @@ export const RestoreSingletonPage = defineComponent({
 
           <RenderIfComponent condition={deletedSingleton.result.value !== null}>
             <Portal to={DASHBOARD_HEADER_PORTAL_TITLE}>
-              <span>Confirmation of <u>{deletedSingleton.result.value?.title}</u> Restoration</span>
+              <span>
+                Confirmation of <u>{deletedSingleton.result.value?.title}</u> Restoration
+              </span>
             </Portal>
 
             <div>
@@ -142,11 +135,11 @@ export const RestoreSingletonPage = defineComponent({
 
                 <el-button
                   type="danger"
-                  loading={delay.value > 0 || handleRestoreSingleton.loading.value}
+                  loading={counterInSeconds.value > 0 || handleRestoreSingleton.loading.value}
                   onClick={() => handleRestoreSingleton.exec()}
                 >
-                  {delay.value > 0
-                    ? `Available in ${delay.value} seconds...`
+                  {counterInSeconds.value > 0
+                    ? `Available in ${counterInSeconds.value} seconds...`
                     : `Restore ${deletedSingleton.result.value?.title}`}
                 </el-button>
               </div>

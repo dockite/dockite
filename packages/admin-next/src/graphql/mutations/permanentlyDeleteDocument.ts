@@ -11,7 +11,7 @@ export interface PermanentlyDeleteDocumentMutationVariables {
 }
 
 export const PERMANENTLY_DELETE_DOCUMENT_MUTATION = gql`
-  mutation PermanentlyDeleteDocument($input: PermanentlyDeleteDocumentArgs!) {
+  mutation PermanentlyDeleteDocument($input: DeleteDocumentArgs!) {
     permanentlyDeleteDocument(input: $input)
   }
 `;

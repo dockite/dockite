@@ -1,15 +1,17 @@
 import { gql } from '@apollo/client/core';
 
 export interface PermanentDeleteSchemaMutationResponse {
-  permanentDeleteSchema: boolean;
+  permanentlyDeleteSchema: boolean;
 }
 
 export interface PermanentDeleteSchemaMutationVariables {
-  id: string;
+  input: {
+    id: string;
+  };
 }
 
 export const PERMANENT_DELETE_SCHEMA_MUTATION = gql`
-  mutation PermanentDeleteSchema($input: DeleteSchemaArgs!) {
-    permanentDeleteSchema(input: $input)
+  mutation PermanentlyDeleteSchema($input: DeleteSchemaArgs!) {
+    permanentlyDeleteSchema(input: $input)
   }
 `;

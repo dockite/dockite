@@ -8,7 +8,11 @@ import { Schema } from '@dockite/database';
 import { getTableActions } from './util';
 
 import { fetchAllSchemas } from '~/common/api';
-import { DASHBOARD_HEADER_PORTAL_TITLE, MAX_32_BIT_INT } from '~/common/constants';
+import {
+  DASHBOARD_HEADER_PORTAL_ACTIONS,
+  DASHBOARD_HEADER_PORTAL_TITLE,
+  MAX_32_BIT_INT,
+} from '~/common/constants';
 import { useGraphQL } from '~/hooks';
 
 export interface SchemaTableColumnDefaultScopedSlot {
@@ -68,6 +72,15 @@ export const DeletedSchemasIndexPage = defineComponent({
       return (
         <>
           <Portal to={DASHBOARD_HEADER_PORTAL_TITLE}>All Deleted Schemas</Portal>
+
+          <Portal to={DASHBOARD_HEADER_PORTAL_ACTIONS}>
+            <router-link to="/schemas">
+              <el-button>
+                <i class="el-icon-back el-icon--left" />
+                Back
+              </el-button>
+            </router-link>
+          </Portal>
 
           <div class="-m-5">
             <el-table style="width: 100%;" class="w-full" data={deletedSchemas.result.value}>

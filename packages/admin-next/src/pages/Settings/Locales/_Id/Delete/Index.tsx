@@ -1,29 +1,26 @@
 import { ElMessage } from 'element-plus';
 import { Portal } from 'portal-vue';
-import { defineComponent, ref, watch } from 'vue';
+import { defineComponent, watch } from 'vue';
 import { usePromise, usePromiseLazy } from 'vue-composable';
 import { useRoute, useRouter } from 'vue-router';
-
 import { fetchAllDocumentsWithPagination } from '~/common/api';
 import { deleteLocale, getLocale } from '~/common/api/locales';
 import { DASHBOARD_HEADER_PORTAL_TITLE } from '~/common/constants';
 import { logE } from '~/common/logger';
-import { useState } from '~/hooks';
+import { useCountdownLazy, useState } from '~/hooks';
 import { setLocale } from '~/mutations';
 import { getRootLocale } from '~/utils';
 import './Update.scss';
+
 
 export const LocaleDeletePage = defineComponent({
   name: 'LocaleDeletePage',
 
   setup: () => {
     const router = useRouter();
-
     const route = useRoute();
 
     const state = useState();
-
-    const delay = ref(3);
 
     const locale = usePromise(() =>
       getLocale({
@@ -39,15 +36,7 @@ export const LocaleDeletePage = defineComponent({
       }),
     );
 
-    const handleDecrementDelay = (): void => {
-      if (delay.value > 0) {
-        setTimeout(() => {
-          delay.value -= 1;
-
-          handleDecrementDelay();
-        }, 1000);
-      }
-    };
+    const { counterInSeconds, startCountdown } = useCountdownLazy(3000);
 
     const handleDeleteLocale = usePromiseLazy(async () => {
       try {
@@ -77,7 +66,7 @@ export const LocaleDeletePage = defineComponent({
       () => locale.result.value,
       value => {
         if (value) {
-          handleDecrementDelay();
+          startCountdown();
         }
       },
     );
@@ -107,11 +96,11 @@ export const LocaleDeletePage = defineComponent({
 
               <el-button
                 type="danger"
-                loading={delay.value > 0 || handleDeleteLocale.loading.value}
+                loading={counterInSeconds.value > 0 || handleDeleteLocale.loading.value}
                 onClick={() => handleDeleteLocale.exec()}
               >
-                {delay.value > 0
-                  ? `Available in ${delay.value} seconds...`
+                {counterInSeconds.value > 0
+                  ? `Available in ${counterInSeconds.value} seconds...`
                   : `Delete ${locale.result.value?.title}`}
               </el-button>
             </div>

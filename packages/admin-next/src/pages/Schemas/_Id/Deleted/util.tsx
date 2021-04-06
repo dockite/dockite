@@ -4,52 +4,12 @@ import { Document, Schema } from '@dockite/database';
 
 export const getHeaderActions = (schema: Ref<Schema | null>): JSX.Element => {
   return (
-    <el-dropdown>
-      {{
-        default: () => (
-          <el-button size="medium">
-            Actions <i class="el-icon-arrow-down el-icon--right" />
-          </el-button>
-        ),
-        dropdown: () => (
-          <el-dropdown-menu>
-            {/* Create Schema */}
-            <el-dropdown-item>
-              <router-link class="block" to={`/schemas/${schema.value?.id}/create`}>
-                <i class="el-icon-folder-add" />
-                Create Document
-              </router-link>
-            </el-dropdown-item>
-
-            <el-dropdown-item>
-              <router-link class="block" to={`/schemas/${schema.value?.id}/edit`}>
-                <i class="el-icon-folder-add" />
-                Edit Schema
-              </router-link>
-            </el-dropdown-item>
-
-            {/* Deleted Schemas */}
-            <el-dropdown-item>
-              <router-link
-                class="block text-red-600 hover:text-red-600 hover:opacity-50"
-                to={`/schemas/${schema.value?.id}/delete`}
-              >
-                <i class="el-icon-folder-delete" />
-                Delete Schema
-              </router-link>
-            </el-dropdown-item>
-
-            {/* Import Schema */}
-            <el-dropdown-item divided>
-              <router-link class="block" to={`/schemas/${schema.value?.id}/import`}>
-                <i class="el-icon-upload2" />
-                Advanced Schema Editor (JSON)
-              </router-link>
-            </el-dropdown-item>
-          </el-dropdown-menu>
-        ),
-      }}
-    </el-dropdown>
+    <router-link to={`/schemas/${schema.value?.id}`}>
+      <el-button>
+        <i class="el-icon-back el-icon--left" />
+        Back
+      </el-button>
+    </router-link>
   );
 };
 
