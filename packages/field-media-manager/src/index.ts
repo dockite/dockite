@@ -2,6 +2,7 @@ import { DockiteField } from '@dockite/field';
 import { PresignResolver } from '@dockite/module-s3-presign';
 import { GlobalContext, HookContext } from '@dockite/types';
 import { GraphQLInputType, GraphQLOutputType } from 'graphql';
+import { GraphQLJSON } from 'graphql-type-json';
 
 import { DEFAULT_OPTIONS, S3Settings } from './types';
 
@@ -19,7 +20,7 @@ export class DockiteFieldMediaManager extends DockiteField {
   }
 
   public async outputType(): Promise<GraphQLOutputType> {
-    return (null as any) as GraphQLOutputType;
+    return GraphQLJSON;
   }
 
   public async onSoftDelete(ctx: HookContext): Promise<void> {
