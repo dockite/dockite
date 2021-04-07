@@ -139,10 +139,10 @@ export const InputComponent = defineComponent({
 
     onMounted(() => {
       if (!fieldData.value) {
-        return;
+        fieldData.value = { content: '', language: 'JSON' };
       }
 
-      const editor = CodeMirror(textarea.value, {
+      const editor = CodeMirror.fromTextArea(textarea.value, {
         value: fieldData.value.content,
         lineNumbers: true,
         lineWrapping: false,

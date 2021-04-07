@@ -258,7 +258,10 @@ export const DeletedSchemaDocumentsPage = defineComponent({
 
       return (
         <>
-          <Portal to={DASHBOARD_HEADER_PORTAL_TITLE}>{schema.result.value.title}</Portal>
+          <Portal to={DASHBOARD_HEADER_PORTAL_TITLE}>
+            Deleted documents for {schema.result.value.title}
+          </Portal>
+
           <Portal to={DASHBOARD_HEADER_PORTAL_ACTIONS}>{getHeaderActions(schema.result)}</Portal>
 
           <DocumentTableComponent

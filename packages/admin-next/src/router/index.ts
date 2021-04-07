@@ -101,6 +101,11 @@ export const Router = createRouter({
       meta: { layout: 'Dashboard' },
     },
     {
+      path: '/schemas/:schemaId/import',
+      component: () => import('../pages/Schemas/_Id/Import'),
+      meta: { layout: 'Dashboard' },
+    },
+    {
       path: '/schemas/:schemaId/delete',
       component: () => import('../pages/Schemas/_Id/Delete'),
       meta: { layout: 'Dashboard' },

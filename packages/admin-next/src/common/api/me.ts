@@ -7,6 +7,9 @@ import { logE } from '../logger';
 import { MeQueryResponse, ME_QUERY } from '~/graphql';
 import { useGraphQL } from '~/hooks/useGraphQL';
 
+/**
+ *
+ */
 export const getMe = async (): Promise<User> => {
   const graphql = useGraphQL();
 

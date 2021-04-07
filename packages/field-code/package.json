@@ -9,9 +9,6 @@
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx --quiet",
     "typecheck": "tsc --noEmit"
   },
-  "sideEffects": [
-    "*.css"
-  ],
   "files": [
     "lib"
   ],
@@ -38,7 +35,7 @@
     "@dockite/field": ">= 1.0.0",
     "@dockite/rollup": "^1.0.0",
     "@dockite/types": ">= 1.0.0",
-    "@types/codemirror": "0.0.56",
+    "@types/codemirror": "^0.0.108",
     "@types/graphql-type-json": "^0.3.2",
     "@typescript-eslint/eslint-plugin": "^4.17.0",
     "@typescript-eslint/parser": "^4.17.0",

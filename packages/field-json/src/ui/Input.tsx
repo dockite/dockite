@@ -1,16 +1,26 @@
 import { DockiteFieldInputComponentProps } from '@dockite/types';
 import CodeMirror from 'codemirror';
 import jsonlint from 'jsonlint-mod';
-import { computed, defineComponent, onMounted, PropType, ref, toRefs } from 'vue';
+import { computed, defineComponent, onMounted, onUnmounted, PropType, ref, toRefs } from 'vue';
 
 import { DockiteFieldJSONEntity } from '../types';
 
-import './Input.scss';
+import 'codemirror/addon/dialog/dialog';
+import 'codemirror/addon/display/autorefresh';
+import 'codemirror/addon/edit/closebrackets';
+import 'codemirror/addon/edit/matchbrackets';
+import 'codemirror/addon/lint/json-lint';
+import 'codemirror/addon/lint/lint';
+import 'codemirror/addon/search/search';
+import 'codemirror/mode/javascript/javascript';
 
 import 'codemirror/lib/codemirror.css';
-import 'codemirror/theme/nord.css';
 
-import 'codemirror/mode/javascript/javascript';
+import 'codemirror/theme/nord.css';
+import 'codemirror/addon/dialog/dialog.css';
+import 'codemirror/addon/lint/lint.css';
+
+import './Input.scss';
 
 export type InputComponentProps = DockiteFieldInputComponentProps<string, DockiteFieldJSONEntity>;
 
@@ -21,23 +31,28 @@ export const InputComponent = defineComponent({
       type: String as PropType<InputComponentProps['name']>,
       required: true,
     },
+
     modelValue: {
       type: (null as any) as PropType<InputComponentProps['value']>,
       required: true,
     },
+
     formData: {
       type: Object as PropType<InputComponentProps['formData']>,
       required: true,
     },
+
     fieldConfig: {
       type: Object as PropType<InputComponentProps['fieldConfig']>,
       required: true,
     },
+
     errors: {
       type: Object as PropType<InputComponentProps['errors']>,
       required: true,
     },
   },
+
   setup: (props, ctx) => {
     const { errors, fieldConfig, modelValue, name } = toRefs(props);
 
@@ -45,7 +60,7 @@ export const InputComponent = defineComponent({
       {
         message: `${fieldConfig.value.title} must be valid JSON`,
         trigger: 'blur',
-        validator(_rule: never, value: string | null, callback: Function) {
+        validator(_rule: never, value: string | null, callback: any) {
           if (value === null || value.length === 0) {
             return callback();
           }
@@ -61,12 +76,12 @@ export const InputComponent = defineComponent({
       },
     ]);
 
-    const textarea = ref<any>(null);
-
     const editor = ref<CodeMirror.Editor | null>(null);
 
+    const textarea = ref<HTMLTextAreaElement | null>(null);
+
     const fieldData = computed({
-      get: () => modelValue.value,
+      get: () => modelValue.value || '',
       set: newValue => ctx.emit('update:modelValue', newValue),
     });
 
@@ -101,52 +116,61 @@ export const InputComponent = defineComponent({
         w.jsonlint = jsonlint;
       }
 
-      if (fieldData.value === null) {
-        return;
+      if (!editor.value && textarea.value) {
+        editor.value = CodeMirror.fromTextArea(textarea.value, {
+          mode: 'application/json',
+          theme: 'nord',
+
+          autoCloseBrackets: true,
+          autoRefresh: true,
+          gutters: ['CodeMirror-lint-markers', 'CodeMirror-linenumbers'],
+          lineNumbers: true,
+          lineWrapping: true,
+          lint: true,
+          matchBrackets: true,
+          tabSize: 2,
+
+          extraKeys: {
+            'Shift-Alt-F': formatDocument,
+          },
+        });
+
+        editor.value.on('change', instance => {
+          if (!fieldData.value) {
+            return;
+          }
+
+          fieldData.value = instance.getValue();
+        });
+
+        // Handles the syncing of blur between CodeMirror and the underlying textarea
+        // so that async validator rules may be triggered
+        editor.value.on('blur', () => {
+          if (textarea.value) {
+            textarea.value.focus();
+            textarea.value.blur();
+          }
+        });
       }
+    });
 
-      editor.value = CodeMirror(textarea.value, {
-        value: fieldData.value,
-        lineNumbers: true,
-        lineWrapping: false,
-        mode: 'application/json',
-        tabSize: 2,
-        theme: 'nord',
-        extraKeys: {
-          'Shift-Ctrl-F': formatDocument,
-        },
-        lint: true,
-      });
+    onUnmounted(() => {
+      const w = window as any;
 
-      editor.value.on('change', instance => {
-        if (!fieldData.value) {
-          return;
-        }
-
-        fieldData.value = instance.getValue();
-      });
-
-      // Handles the syncing of blur between CodeMirror and the underlying textarea
-      // so that async validator rules may be triggered
-      editor.value.on('blur', () => {
-        textarea.value.focus();
-        textarea.value.blur();
-      });
+      if ('jsonlint' in w) {
+        delete w.jsonlint;
+      }
     });
 
     return (): JSX.Element => {
-      if (!fieldData.value) {
-        return <div>Field has not been assigned a value yet.</div>;
-      }
-
       return (
         <el-form-item
           label={fieldConfig.value.title}
           prop={name.value}
           rules={rules.value}
-          class={`dockite-field-json ${errors.value[name.value] ? 'is-error' : ''}`}
+          class="dockite-field-json"
         >
-          <div class="w-full">
+          <div class="shadow flex flex-col" style={{ minHeight: '60vh', maxHeight: '800px' }}>
             <textarea ref={textarea} />
           </div>
 

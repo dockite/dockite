@@ -2,13 +2,9 @@ import { Singleton } from '@dockite/database';
 
 export const getHeaderActions = (singleton: Singleton): JSX.Element => {
   return (
-    <el-dropdown>
+    <el-dropdown splitButton>
       {{
-        default: () => (
-          <el-button size="medium">
-            Actions <i class="el-icon-arrow-down el-icon--right" />
-          </el-button>
-        ),
+        default: () => <span>Save</span>,
         dropdown: () => (
           <el-dropdown-menu>
             {/* Edit Singleton */}

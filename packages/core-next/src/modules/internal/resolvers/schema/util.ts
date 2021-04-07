@@ -101,57 +101,63 @@ export const updateDocumentsWithFieldChanges = async (
 ): Promise<void> => {
   const documentRepository = getRepository(Document);
 
-  // Remove keys that correspond to deleted fields
-  await documentRepository
-    .createQueryBuilder('document')
-    .update()
-    .where('document.schemaId = :schemaId', { schemaId: schema.id })
-    .set({
-      data: () =>
-        pgFormat.withArray(
-          `data - ARRAY[%s]`,
-          fieldsThatHaveBeenDeleted.map(f => f.name),
-        ),
-    })
-    .callListeners(false)
-    .execute();
-
-  // Rename keys that correspond to renamed fields
-  await documentRepository
-    .createQueryBuilder('document')
-    .update()
-    .where('document.schemaId = :schemaId', { schemaId: schema.id })
-    // As dirty as this is, its the only way I can think of to neatly deal with this in a SQL safe manner
-    .set({
-      data: () =>
-        [
+  if (fieldsThatHaveBeenDeleted.length > 0) {
+    // Remove keys that correspond to deleted fields
+    await documentRepository
+      .createQueryBuilder('document')
+      .update()
+      .where('document.schemaId = :schemaId', { schemaId: schema.id })
+      .set({
+        data: () =>
           pgFormat.withArray(
-            'data - ARRAY[%s]',
-            fieldsThatHaveBeenRenamed.map(f => f.oldField.name),
+            `data - ARRAY[%L]`,
+            fieldsThatHaveBeenDeleted.map(f => f.name),
           ),
-          pgFormat.withArray(
-            'jsonb_build_object(%L)',
-            fieldsThatHaveBeenRenamed.map(f => `'${f.name}', data->'${f.oldField.name}'`),
-          ),
-        ].join(' || '),
-    })
-    .callListeners(false)
-    .execute();
+      })
+      .callListeners(false)
+      .execute();
+  }
 
-  // Create keys that correspond to deleted fields
-  await documentRepository
-    .createQueryBuilder('document')
-    .update()
-    .where('document.schemaId = :schemaId', { schemaId: schema.id })
-    .set({
-      data: () =>
-        pgFormat.withArray(
-          `data || jsonb_build_object(%L)`,
-          fieldsThatHaveBeenCreated.map(f => `'${f.name}', ${f.settings.default ?? null}`),
-        ),
-    })
-    .callListeners(false)
-    .execute();
+  if (fieldsThatHaveBeenRenamed.length > 0) {
+    // Rename keys that correspond to renamed fields
+    await documentRepository
+      .createQueryBuilder('document')
+      .update()
+      .where('document.schemaId = :schemaId', { schemaId: schema.id })
+      // As dirty as this is, its the only way I can think of to neatly deal with this in a SQL safe manner
+      .set({
+        data: () =>
+          [
+            pgFormat.withArray(
+              'data - ARRAY[%L]',
+              fieldsThatHaveBeenRenamed.map(f => f.oldField.name),
+            ),
+            pgFormat.withArray(
+              'jsonb_build_object(%s)',
+              fieldsThatHaveBeenRenamed.map(f => `'${f.name}', data->'${f.oldField.name}'`),
+            ),
+          ].join(' || '),
+      })
+      .callListeners(false)
+      .execute();
+  }
+
+  if (fieldsThatHaveBeenCreated.length > 0) {
+    // Create keys that correspond to deleted fields
+    await documentRepository
+      .createQueryBuilder('document')
+      .update()
+      .where('document.schemaId = :schemaId', { schemaId: schema.id })
+      .set({
+        data: () =>
+          pgFormat.withArray(
+            `data || jsonb_build_object(%s)`,
+            fieldsThatHaveBeenCreated.map(f => `'${f.name}', ${f.settings.default ?? null}`),
+          ),
+      })
+      .callListeners(false)
+      .execute();
+  }
 };
 
 /**
@@ -169,9 +175,9 @@ export const reviseAllDocumentsForSchema = async (
     pgFormat(
       `
         INSERT INTO %I ("documentId", "data", "userId", "schemaId", "createdAt", "updatedAt")
-        SELECT d."id", d."data", %s as "userId", d."schemaId", NOW() as "createdAt", d."updatedAt"
+        SELECT d."id", d."data", %L as "userId", d."schemaId", NOW() as "createdAt", d."updatedAt"
         FROM %I d
-        WHERE d."schemaId" = %s
+        WHERE d."schemaId" = %L
       `,
       documentRevisionRepository.metadata.tableName,
       userId,

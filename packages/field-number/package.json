@@ -5,7 +5,7 @@
   "module": "lib/index.esm.js",
   "license": "MIT",
   "scripts": {
-    "build": "tsc -p tsconfig.json && webpack --config ../webpack/webpack.config.js",
+    "build": "tsc && rollup -c",
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx --quiet",
     "typecheck": "tsc --noEmit"
   },

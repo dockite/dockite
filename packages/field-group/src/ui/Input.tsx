@@ -204,7 +204,7 @@ export const InputComponent = defineComponent({
 
     return (): JSX.Element => {
       return (
-        <el-form-item prop={name.value} rules={rules} class="dockite-field-group">
+        <el-form-item prop={name.value} rules={rules.value} class="dockite-field-group">
           <el-collapse value={expanded.value} class="border">
             <el-collapse-item name={name.value}>
               {{

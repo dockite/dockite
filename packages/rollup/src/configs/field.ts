@@ -1,23 +1,22 @@
 /* eslint-disable no-param-reassign */
 import path from 'path';
 
-import { RollupOptions } from 'rollup';
+import { DEFAULT_EXTENSIONS } from '@babel/core';
 import babel from '@rollup/plugin-babel';
 import commonjs from '@rollup/plugin-commonjs';
 import graphql from '@rollup/plugin-graphql';
 import json from '@rollup/plugin-json';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import replace from '@rollup/plugin-replace';
-import strip from '@rollup/plugin-strip';
-import typescript from 'rollup-plugin-typescript2';
 import url from '@rollup/plugin-url';
+import { RollupOptions } from 'rollup';
+import postcss from 'rollup-plugin-postcss';
 import progress from 'rollup-plugin-progress';
 import sizes from 'rollup-plugin-sizes';
-import postcss from 'rollup-plugin-postcss';
-import visualizer from 'rollup-plugin-visualizer';
 import { terser } from 'rollup-plugin-terser';
+import typescript from 'rollup-plugin-typescript2';
+import visualizer from 'rollup-plugin-visualizer';
 import vue from 'rollup-plugin-vue';
-import { DEFAULT_EXTENSIONS } from '@babel/core';
 
 import { isDevelopmentMode } from '../utils';
 
@@ -55,13 +54,13 @@ export const getDockiteFieldRollupConfiguration = (): RollupOptions => {
     ],
 
     plugins: [
-      replace(),
-      sizes(),
-      visualizer(),
-      url(),
-      postcss({
-        minimize: !isDevelopmentMode(),
+      replace({
+        'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
+        DOCKITE_APP_ENV: JSON.stringify(process.env.NODE_ENV || 'development'),
+        __VUE_OPTIONS_API__: JSON.stringify(true),
+        __VUE_PROD_DEVTOOLS__: JSON.stringify(true),
       }),
+      visualizer(),
       progress(),
       graphql(),
       json(),
@@ -76,46 +75,38 @@ export const getDockiteFieldRollupConfiguration = (): RollupOptions => {
           compilerOptions: {
             module: 'ESNext',
             target: 'ESNext',
-            declarationDir: './lib',
           },
         },
-        useTsconfigDeclarationDir: true,
         rollupCommonJSResolveHack: true,
       }),
       commonjs(),
-      strip({
-        include: ['**/*.(mjs|jsx|js|ts|tsx)'],
-      }),
       vue(),
+      // dynamicImportVars(),
       babel({
         babelHelpers: 'bundled',
         exclude: 'node_modules/**',
         extensions: [...DEFAULT_EXTENSIONS, '.ts', '.tsx'],
       }),
+      postcss({
+        minimize: !isDevelopmentMode(),
+        extract: !!process.env.EXTRACT_CSS,
+      }),
+      sizes(),
+      url({
+        include: [
+          '**/*.svg',
+          '**/*.png',
+          '**/*.jp(e)?g',
+          '**/*.gif',
+          '**/*.webp',
+          '**/*.woff2?',
+          '**/*.[ot]tf',
+        ],
+      }),
     ],
 
     external: ['vue', 'vue-router', /lodash/, 'graphql-tag'],
   };
-
-  if (config.plugins) {
-    // config.plugins.unshift(
-    //   alias({
-    //     entries: [
-    //       {
-    //         find: /type-graphql/,
-    //         replacement: 'type-graphql/dist/browser-shim.js',
-    //       },
-    //       {
-    //         find: /typeorm/,
-    //         replacement: path.join(
-    //           path.dirname(require.resolve('@dockite/database')),
-    //           'extra/typeorm-model-shim.js',
-    //         ),
-    //       },
-    //     ],
-    //   }),
-    // );
-  }
 
   return config;
 };

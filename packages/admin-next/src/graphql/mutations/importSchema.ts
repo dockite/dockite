@@ -4,20 +4,20 @@ import { Schema } from '@dockite/database';
 
 import { BaseSchema } from '~/common/types';
 
-export interface CreateSchemaMutationResponse {
-  createSchema: Schema;
+export interface ImportSchemaMutationResponse {
+  importSchema: Schema;
 }
 
-export interface CreateSchemaMutationVariables {
+export interface ImportSchemaMutationVariables {
   input: {
     id?: string;
     payload: BaseSchema;
   };
 }
 
-export const CREATE_SCHEMA_MUTATION = gql`
-  mutation CreateSchema($input: ImportSchemaArgs!) {
-    createSchema: importSchema(input: $input) {
+export const IMPORT_SCHEMA_MUTATION = gql`
+  mutation ImportSchema($input: ImportSchemaArgs!) {
+    importSchema(input: $input) {
       id
       name
       title

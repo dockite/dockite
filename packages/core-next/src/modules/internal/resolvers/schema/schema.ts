@@ -430,7 +430,7 @@ export class SchemaResolver {
       }
 
       // Assign the payload values to the schema
-      Object.assign(schema, omit(payload, 'fields'));
+      Object.assign(schema, omit(payload, 'fields', 'createdAt', 'updatedAt', 'deletedAt'));
 
       // Save the schema
       const savedSchema = await this.schemaRepository.save(schema);
@@ -443,6 +443,8 @@ export class SchemaResolver {
       return { ...savedSchema, fields: savedFields };
     } catch (err) {
       log(err);
+
+      throw err;
 
       throw new Error('An error occurred while importing your schema');
     }

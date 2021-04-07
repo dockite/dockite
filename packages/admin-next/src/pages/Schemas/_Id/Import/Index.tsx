@@ -1,11 +1,11 @@
 import { ElMessage } from 'element-plus';
 import { omit } from 'lodash';
 import { Portal } from 'portal-vue';
-import { computed, defineComponent, reactive, ref } from 'vue';
+import { computed, defineComponent, reactive, ref, watchEffect } from 'vue';
 import { usePromise, usePromiseLazy } from 'vue-composable';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
-import { createSchema, fetchAllSchemas } from '~/common/api';
+import { fetchAllSchemas, getSchemaById, updateSchema } from '~/common/api';
 import { DASHBOARD_HEADER_PORTAL_TITLE } from '~/common/constants';
 import { logE } from '~/common/logger';
 import { BaseSchema, MaybePersisted, SchemaType } from '~/common/types';
@@ -17,6 +17,7 @@ export const SchemaImportPage = defineComponent({
   name: 'SchemaImportPage',
 
   setup: () => {
+    const route = useRoute();
     const router = useRouter();
 
     const schema = reactive<MaybePersisted<BaseSchema>>({
@@ -34,15 +35,17 @@ export const SchemaImportPage = defineComponent({
 
     const validJSON = ref(true);
 
+    const fetchedSchema = usePromise(() => getSchemaById(route.params.schemaId as string));
+
     const allSchemas = usePromise(() => fetchAllSchemas());
 
     const handleImportSchema = usePromiseLazy(async () => {
       try {
-        const createdSchema = await createSchema(schema);
+        const updatedSchema = await updateSchema(schema, route.params.schemaId as string);
 
         ElMessage.success('Schema successfully imported!');
 
-        router.push(`/schemas/${createdSchema.id}`);
+        router.push(`/schemas/${updatedSchema.id}`);
       } catch (err) {
         logE(err);
 
@@ -70,7 +73,15 @@ export const SchemaImportPage = defineComponent({
         return false;
       }
 
-      return allSchemas.result.value.some(s => s.id === schema.id || s.name === schema.name);
+      if (!fetchedSchema.result.value) {
+        return false;
+      }
+
+      const fetchedSchemaId = fetchedSchema.result.value.id;
+
+      return allSchemas.result.value.some(
+        s => (s.id === schema.id || s.name === schema.name) && s.id !== fetchedSchemaId,
+      );
     });
 
     const titleHasBeenUsed = computed(() => {
@@ -78,7 +89,21 @@ export const SchemaImportPage = defineComponent({
         return false;
       }
 
-      return allSchemas.result.value.some(s => s.title === schema.title);
+      if (!fetchedSchema.result.value) {
+        return false;
+      }
+
+      const fetchedSchemaTitle = fetchedSchema.result.value.title;
+
+      return allSchemas.result.value.some(
+        s => s.title === schema.title && s.title !== fetchedSchemaTitle,
+      );
+    });
+
+    watchEffect(() => {
+      if (fetchedSchema.result.value && schema.id !== fetchedSchema.result.value.id) {
+        Object.assign(schema, fetchedSchema.result.value);
+      }
     });
 
     return () => {
@@ -86,7 +111,10 @@ export const SchemaImportPage = defineComponent({
         <>
           <Portal to={DASHBOARD_HEADER_PORTAL_TITLE}>Import a Schema</Portal>
 
-          <div class="relative" v-loading={handleImportSchema.loading.value}>
+          <div
+            class="relative"
+            v-loading={handleImportSchema.loading.value || fetchedSchema.loading.value}
+          >
             <h3 class="text-lg font-semibold pb-5">Import a Schema via JSON</h3>
 
             <blockquote class="p-3 border-l-4 border-gray-400 rounded text-sm bg-gray-200 mb-5">
@@ -94,31 +122,21 @@ export const SchemaImportPage = defineComponent({
               different installation or crafted for usage with the current installation.
             </blockquote>
 
-            <RenderIfComponent condition={!!schemaHasBeenUsed.value}>
-              <div class="pb-5">
-                <el-alert
-                  type="error"
-                  title="Schema already exists"
-                  description="The details provided already in use with an existing Schema. If you wish to update that Schema, please navigate to its import page."
-                  closable={false}
-                  showIcon
-                />
-              </div>
-            </RenderIfComponent>
-
             <RenderIfComponent condition={!!titleHasBeenUsed.value}>
               <div class="pb-5">
                 <el-alert
                   type="warning"
                   title="Title has already been used"
-                  description="The currently provided title has already been used with another Singleton. This may lead to confusion when navigating through the Admin UI, if this is intentional please ignore this warning."
+                  description="The currently provided title has already been used with another Schema. This may lead to confusion when navigating through the Admin UI, if this is intentional please ignore this warning."
                   closable={true}
                   showIcon
                 />
               </div>
             </RenderIfComponent>
 
-            <JsonEditorComponent v-model={schemaAsJSON.value} minHeight="60vh" />
+            <RenderIfComponent condition={!fetchedSchema.loading.value}>
+              <JsonEditorComponent v-model={schemaAsJSON.value} minHeight="60vh" />
+            </RenderIfComponent>
 
             <div class="flex flex-row-reverse pt-3">
               <el-button

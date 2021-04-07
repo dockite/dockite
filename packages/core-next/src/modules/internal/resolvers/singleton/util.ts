@@ -109,7 +109,7 @@ export const updateDocumentsWithFieldChanges = async (
     .set({
       data: () =>
         pgFormat.withArray(
-          `data - ARRAY[%s]`,
+          `data - ARRAY[%L]`,
           fieldsThatHaveBeenDeleted.map(f => f.name),
         ),
     })
@@ -126,11 +126,11 @@ export const updateDocumentsWithFieldChanges = async (
       data: () =>
         [
           pgFormat.withArray(
-            'data - ARRAY[%s]',
+            'data - ARRAY[%L]',
             fieldsThatHaveBeenRenamed.map(f => f.oldField.name),
           ),
           pgFormat.withArray(
-            'jsonb_build_object(%L)',
+            'jsonb_build_object(%s)',
             fieldsThatHaveBeenRenamed.map(f => `'${f.name}', data->'${f.oldField.name}'`),
           ),
         ].join(' || '),
@@ -146,7 +146,7 @@ export const updateDocumentsWithFieldChanges = async (
     .set({
       data: () =>
         pgFormat.withArray(
-          `data || jsonb_build_object(%L)`,
+          `data || jsonb_build_object(%s)`,
           fieldsThatHaveBeenCreated.map(f => `'${f.name}', ${f.settings.default ?? null}`),
         ),
     })
@@ -169,9 +169,9 @@ export const reviseAllDocumentsForSingleton = async (
     pgFormat(
       `
         INSERT INTO %I ("documentId", "data", "userId", "singletonId", "createdAt", "updatedAt")
-        SELECT d."id", d."data", %s as "userId", d."schemaId", NOW() as "createdAt", d."updatedAt"
+        SELECT d."id", d."data", %L as "userId", d."schemaId", NOW() as "createdAt", d."updatedAt"
         FROM %I d
-        WHERE d."schemaId" = %s
+        WHERE d."schemaId" = %L
       `,
       documentRevisionRepository.metadata.tableName,
       userId,
@@ -198,5 +198,5 @@ export const createSingletonFromSchemaAndDocuments = (
     return { ...schema, data: document.data };
   }
 
-  throw new Error('Unable to create singleton object since no could be found');
+  return { ...schema, data: {} };
 };

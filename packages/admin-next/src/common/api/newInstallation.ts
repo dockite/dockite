@@ -5,6 +5,9 @@ import { logE } from '../logger';
 import { NewInstallationQueryResponse, NEW_INSTALLATION_QUERY } from '~/graphql';
 import { useGraphQL } from '~/hooks/useGraphQL';
 
+/**
+ *
+ */
 export const getNewInstallation = async (): Promise<boolean> => {
   const graphql = useGraphQL();
 

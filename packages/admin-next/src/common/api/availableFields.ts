@@ -9,6 +9,9 @@ import {
 } from '~/graphql';
 import { useGraphQL } from '~/hooks/useGraphQL';
 
+/**
+ *
+ */
 export const getAvailableFields = async (): Promise<AvailableFieldItem[]> => {
   const graphql = useGraphQL();
 

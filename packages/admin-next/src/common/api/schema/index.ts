@@ -23,12 +23,18 @@ import {
   GetSchemaByIdQueryResponse,
   GetSchemaByIdQueryVariables,
   GET_SCHEMA_BY_ID_QUERY,
+  ImportSchemaMutationResponse,
+  ImportSchemaMutationVariables,
+  IMPORT_SCHEMA_MUTATION,
   PermanentDeleteSchemaMutationResponse,
   PermanentDeleteSchemaMutationVariables,
   PERMANENT_DELETE_SCHEMA_MUTATION,
   RestoreSchemaMutationResponse,
   RestoreSchemaMutationVariables,
   RESTORE_SCHEMA_MUTATION,
+  UpdateSchemaMutationResponse,
+  UpdateSchemaMutationVariables,
+  UPDATE_SCHEMA_MUTATION,
 } from '~/graphql';
 import { useEvent } from '~/hooks';
 import { useGraphQL } from '~/hooks/useGraphQL';
@@ -157,6 +163,134 @@ export const createSchema = async (payload: BaseSchema): Promise<Schema> => {
 
     throw new ApplicationError(
       'An error occurred while attempting to create the Schema.',
+      ApplicationErrorCode.CANT_CREATE_SCHEMA,
+    );
+  }
+};
+
+/**
+ *
+ */
+export const updateSchema = async (payload: BaseSchema, id: string): Promise<Schema> => {
+  const graphql = useGraphQL();
+  const { emit } = useEvent();
+
+  try {
+    const result = await graphql.executeMutation<
+      UpdateSchemaMutationResponse,
+      UpdateSchemaMutationVariables
+    >({
+      mutation: UPDATE_SCHEMA_MUTATION,
+      variables: {
+        input: {
+          payload,
+          id,
+        },
+      },
+
+      // On Update we will also append the schema to our allSchemas query
+      update: (store, { data: updateSchemaData }) => {
+        if (updateSchemaData) {
+          store.evict({
+            id: 'ROOT_QUERY',
+            fieldName: 'getSchema',
+            broadcast: false,
+          });
+
+          store.evict({
+            id: 'ROOT_QUERY',
+            fieldName: 'allSchemas',
+            broadcast: false,
+          });
+
+          store.gc();
+        }
+      },
+    });
+
+    if (!result.data) {
+      throw new ApplicationError(
+        'An unknown error occurred, please try again later.',
+        ApplicationErrorCode.UNKNOWN_ERROR,
+      );
+    }
+
+    emit(UPDATE_SCHEMA_EVENT);
+
+    return result.data.updateSchema;
+  } catch (err) {
+    logE(err);
+
+    if (err instanceof ApplicationError) {
+      throw err;
+    }
+
+    throw new ApplicationError(
+      'An error occurred while attempting to update the Schema.',
+      ApplicationErrorCode.CANT_CREATE_SCHEMA,
+    );
+  }
+};
+
+/**
+ *
+ */
+export const importSchema = async (payload: BaseSchema, id?: string): Promise<Schema> => {
+  const graphql = useGraphQL();
+  const { emit } = useEvent();
+
+  try {
+    const result = await graphql.executeMutation<
+      ImportSchemaMutationResponse,
+      ImportSchemaMutationVariables
+    >({
+      mutation: IMPORT_SCHEMA_MUTATION,
+      variables: {
+        input: {
+          payload,
+          id,
+        },
+      },
+
+      // On Update we will also append the schema to our allSchemas query
+      update: (store, { data: importSchemaData }) => {
+        if (importSchemaData) {
+          store.evict({
+            id: 'ROOT_QUERY',
+            fieldName: 'getSchema',
+            broadcast: false,
+          });
+
+          store.evict({
+            id: 'ROOT_QUERY',
+            fieldName: 'allSchemas',
+            broadcast: false,
+          });
+
+          store.gc();
+        }
+      },
+    });
+
+    if (!result.data) {
+      throw new ApplicationError(
+        'An unknown error occurred, please try again later.',
+        ApplicationErrorCode.UNKNOWN_ERROR,
+      );
+    }
+
+    emit(UPDATE_SCHEMA_EVENT);
+
+    return result.data.importSchema;
+  } catch (err) {
+    logE(err);
+
+    if (err instanceof ApplicationError) {
+      throw err;
+    }
+
+    throw new ApplicationError(
+      'An error occurred while attempting to update the Schema.',
       ApplicationErrorCode.CANT_CREATE_SCHEMA,
     );
   }

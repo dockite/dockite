@@ -19,6 +19,8 @@ import {
 } from './queries';
 import { getSHA256ChecksumFromFile, getImageConstraints, slugifyFileName } from './util';
 
+import './Input.scss';
+
 export type InputComponentProps = DockiteFieldInputComponentProps<
   S3ImageType | MultipleS3ImageType | null,
   DockiteFieldS3ImageEntity

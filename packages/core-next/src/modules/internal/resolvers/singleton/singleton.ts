@@ -177,6 +177,8 @@ export class SingletonResolver {
         userId: ctx.user?.id,
       });
 
+      console.log({ singleton });
+
       const document = await this.documentRepository.create({
         data: merge(getInitialDocumentData(singleton), data),
 
@@ -238,7 +240,7 @@ export class SingletonResolver {
           settings,
         }),
         this.schemaRevisionRepository.save({
-          singletonId: singleton.id,
+          schemaId: singleton.id,
           data: clonedSingleton,
           updatedAt: singleton.updatedAt,
           userId: ctx.user?.id,
@@ -288,7 +290,7 @@ export class SingletonResolver {
       await Promise.all([
         this.singletonRepository.softRemove(singleton),
         this.schemaRevisionRepository.save({
-          singletonId: singleton.id,
+          schemaId: singleton.id,
           data: clonedSingleton,
           updatedAt: singleton.updatedAt,
           userId: ctx.user?.id,
@@ -322,7 +324,7 @@ export class SingletonResolver {
           where: { id },
           relations: ['fields', 'user'],
         }),
-        this.schemaRevisionRepository.find({ where: { singletonId: id } }),
+        this.schemaRevisionRepository.find({ where: { schemaId: id } }),
       ]);
 
       await Promise.all([
@@ -368,7 +370,7 @@ export class SingletonResolver {
       await Promise.all([
         this.singletonRepository.recover(singleton),
         this.schemaRevisionRepository.save({
-          singletonId: singleton.id,
+          schemaId: singleton.id,
           data: clonedSingleton,
           updatedAt: singleton.updatedAt,
           userId: ctx.user?.id,
@@ -411,6 +413,10 @@ export class SingletonResolver {
 
       let singleton = new Schema();
 
+      if (!Array.isArray(payload.groups) && typeof payload.groups === 'object') {
+        payload.groups = Object.entries(payload.groups).map(([key, value]) => ({ [key]: value }));
+      }
+
       // If a singleton id has been provided, fetch the singleton failing if there are no matches
       if (id || payload.id) {
         singleton = await this.singletonRepository.findOneOrFail({
@@ -426,7 +432,7 @@ export class SingletonResolver {
         });
 
         await this.schemaRevisionRepository.save({
-          singletonId: singleton.id,
+          schemaId: singleton.id,
           data: clonedSingleton,
           updatedAt: singleton.updatedAt,
           userId: ctx.user?.id,
@@ -472,13 +478,28 @@ export class SingletonResolver {
       }
 
       // Assign the payload values to the singleton
-      Object.assign(singleton, omit(payload, 'fields', 'data'));
-
-      // Set the singletons fields the mapped fields
-      singleton.fields = fieldsToImport.map(f => this.fieldRepository.create(f));
+      Object.assign(
+        singleton,
+        omit(payload, 'fields', 'data', 'createdAt', 'updatedAt', 'deletedAt'),
+      );
 
       // Save the singleton
       const savedSingleton = await this.singletonRepository.save(singleton);
+
+      // Set the singletons fields to the mapped fields
+      savedSingleton.fields = await Promise.all(
+        fieldsToImport.map(f => this.fieldRepository.save({ ...f, schemaId: savedSingleton.id })),
+      );
+
+      // If the singleton id doesn't exist we can assume we are creating a new singleton
+      if (!singleton.id) {
+        await this.documentRepository.save({
+          data: merge(payload.data || {}, getInitialDocumentData(savedSingleton)),
+          locale: getRootLocale(),
+          schemaId: savedSingleton.id,
+          userId: ctx.user?.id,
+        });
+      }
 
       return createSingletonFromSchemaAndDocuments(merge(cloneDeep(savedSingleton), singleton));
     } catch (err) {

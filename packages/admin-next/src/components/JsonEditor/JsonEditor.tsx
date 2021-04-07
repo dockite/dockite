@@ -1,4 +1,4 @@
-import CodeMirror, { Editor } from 'codemirror';
+import CodeMirror from 'codemirror';
 import { ElMessage } from 'element-plus';
 import jsonlint from 'jsonlint-mod';
 import { computed, defineComponent, onMounted, onUnmounted, PropType, ref } from 'vue';
@@ -12,6 +12,8 @@ import 'codemirror/addon/edit/matchbrackets';
 import 'codemirror/addon/lint/json-lint';
 import 'codemirror/addon/lint/lint';
 import 'codemirror/addon/search/search';
+
+import 'codemirror/lib/codemirror.css';
 
 import 'codemirror/theme/nord.css';
 import 'codemirror/addon/dialog/dialog.css';
@@ -53,7 +55,7 @@ export const JsonEditorComponent = defineComponent({
      *
      * @param cm The codemirror instance
      */
-    const handleFormatContent = (cm: Editor): void => {
+    const handleFormatContent = (cm: CodeMirror.Editor): void => {
       try {
         const content = cm.getValue();
 

@@ -27,7 +27,7 @@ export class Release {
   @GraphQLField({ nullable: true })
   public description!: string;
 
-  @GraphQLField()
+  @GraphQLField(_type => [Document])
   @OneToMany(
     _type => Document,
     document => document.release,

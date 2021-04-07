@@ -1,4 +1,4 @@
-import { omit } from 'lodash';
+import { omit, sortBy } from 'lodash';
 import { computed, defineComponent, ref, watchEffect } from 'vue';
 import { usePromise } from 'vue-composable';
 import { useRoute, useRouter } from 'vue-router';
@@ -32,7 +32,7 @@ export const LocaleSelectorComponent = defineComponent({
         return [];
       }
 
-      return locales.result.value.filter(locale => locale.id !== state.locale.id);
+      return sortBy(locales.result.value, 'title');
     });
 
     const handleSetLocale = (locale: Locale): void => {
@@ -98,9 +98,12 @@ export const LocaleSelectorComponent = defineComponent({
 
                   {availableLocales.value.map(locale => (
                     <div
-                      class="flex items-center hover:bg-gray-100 cursor-pointer px-3 py-1"
+                      class={{
+                        'flex items-center hover:bg-gray-100 cursor-pointer px-3 py-1': true,
+                        'bg-gray-300 cursor-not-allowed': state.locale.id === locale.id,
+                      }}
                       role="button"
-                      onClick={() => handleSetLocale(locale)}
+                      onClick={() => state.locale.id !== locale.id && handleSetLocale(locale)}
                     >
                       <LocaleIconComponent icon={locale.icon} />
 

@@ -49,10 +49,6 @@ export const getBaseRollupConfiguration = (): RollupOptions => {
         __VUE_PROD_DEVTOOLS__: JSON.stringify(true),
       }),
       visualizer(),
-      postcss({
-        minimize: !isDevelopmentMode(),
-        extract: !!process.env.EXTRACT_CSS,
-      }),
       progress(),
       graphql(),
       json(),
@@ -77,6 +73,10 @@ export const getBaseRollupConfiguration = (): RollupOptions => {
         babelHelpers: 'bundled',
         exclude: 'node_modules/**',
         extensions: [...DEFAULT_EXTENSIONS, '.ts', '.tsx'],
+      }),
+      postcss({
+        minimize: !isDevelopmentMode(),
+        extract: !!process.env.EXTRACT_CSS,
       }),
       url({
         include: [

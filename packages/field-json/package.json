@@ -9,9 +9,6 @@
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx --quiet",
     "typecheck": "tsc --noEmit"
   },
-  "sideEffects": [
-    "*.css"
-  ],
   "files": [
     "lib"
   ],
@@ -23,7 +20,6 @@
     "@dockite/field": ">= 1.0.0",
     "@dockite/types": ">= 1.0.0",
     "codemirror": ">= 5.52.2",
-    "diff-match-patch": ">= 1.0.4",
     "graphql": ">= 15.1.0",
     "graphql-type-json": ">= 0.3.1",
     "reflect-metadata": ">= 0.1.13",
@@ -39,11 +35,9 @@
     "@dockite/field": ">= 1.0.0",
     "@dockite/rollup": "^1.0.0",
     "@dockite/types": ">= 1.0.0",
+    "@types/codemirror": "^0.0.108",
     "@types/graphql-type-json": "^0.3.2",
-    "@typescript-eslint/eslint-plugin": "^4.17.0",
-    "@typescript-eslint/parser": "^4.17.0",
     "codemirror": ">= 5.52.2",
-    "diff-match-patch": ">= 1.0.4",
     "graphql-type-json": ">= 0.3.1",
     "graphql": ">= 15.1.0",
     "reflect-metadata": ">= 0.1.13",

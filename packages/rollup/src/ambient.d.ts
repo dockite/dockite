@@ -4,7 +4,7 @@ declare module '@rollup/plugin-url';
 declare module 'rollup-plugin-serve';
 declare module 'rollup-plugin-progress';
 declare module 'rollup-plugin-sizes';
-declare module 'rollup-plugin-typescript2';
+// declare module 'rollup-plugin-typescript2';
 declare module 'rollup-plugin-visualizer';
 declare module 'rollup-plugin-peer-deps-external';
 declare module 'koa-compress';

@@ -1,16 +1,14 @@
 import { ElMessage } from 'element-plus';
 import { omit } from 'lodash';
 import { Portal } from 'portal-vue';
-import { computed, defineComponent, reactive, ref } from 'vue';
+import { computed, defineComponent, reactive, ref, watchEffect } from 'vue';
 import { usePromise, usePromiseLazy } from 'vue-composable';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
-import { SchemaType } from '@dockite/types';
-
-import { createSingleton, fetchAllSingletons } from '~/common/api';
+import { fetchAllSingletons, getSingletonById, updateSingleton } from '~/common/api';
 import { DASHBOARD_HEADER_PORTAL_TITLE } from '~/common/constants';
 import { logE } from '~/common/logger';
-import { BaseSchema, MaybePersisted } from '~/common/types';
+import { BaseSchema, MaybePersisted, SchemaType } from '~/common/types';
 import { RenderIfComponent } from '~/components/Common/RenderIf';
 import { JsonEditorComponent } from '~/components/JsonEditor';
 import { stableJSONStringify } from '~/utils';
@@ -19,12 +17,13 @@ export const SingletonImportPage = defineComponent({
   name: 'SingletonImportPage',
 
   setup: () => {
+    const route = useRoute();
     const router = useRouter();
 
     const singleton = reactive<MaybePersisted<BaseSchema>>({
       name: 'identifier',
       title: 'Title',
-      type: SchemaType.SINGLETON,
+      type: SchemaType.DEFAULT,
       groups: {},
       fields: [],
       settings: {
@@ -36,15 +35,20 @@ export const SingletonImportPage = defineComponent({
 
     const validJSON = ref(true);
 
+    const fetchedSingleton = usePromise(() => getSingletonById(route.params.singletonId as string));
+
     const allSingletons = usePromise(() => fetchAllSingletons());
 
     const handleImportSingleton = usePromiseLazy(async () => {
       try {
-        const createdSingleton = await createSingleton(singleton);
+        const updatedSingleton = await updateSingleton(
+          singleton,
+          route.params.singletonId as string,
+        );
 
         ElMessage.success('Singleton successfully imported!');
 
-        router.push(`/singletons/${createdSingleton.id}`);
+        router.push(`/singletons/${updatedSingleton.id}`);
       } catch (err) {
         logE(err);
 
@@ -72,8 +76,14 @@ export const SingletonImportPage = defineComponent({
         return false;
       }
 
+      if (!fetchedSingleton.result.value) {
+        return false;
+      }
+
+      const fetchedSingletonId = fetchedSingleton.result.value.id;
+
       return allSingletons.result.value.some(
-        s => s.id === singleton.id || s.name === singleton.name,
+        s => (s.id === singleton.id || s.name === singleton.name) && s.id !== fetchedSingletonId,
       );
     });
 
@@ -82,7 +92,21 @@ export const SingletonImportPage = defineComponent({
         return false;
       }
 
-      return allSingletons.result.value.some(s => s.title === singleton.title);
+      if (!fetchedSingleton.result.value) {
+        return false;
+      }
+
+      const fetchedSingletonTitle = fetchedSingleton.result.value.title;
+
+      return allSingletons.result.value.some(
+        s => s.title === singleton.title && s.title !== fetchedSingletonTitle,
+      );
+    });
+
+    watchEffect(() => {
+      if (fetchedSingleton.result.value && singleton.id !== fetchedSingleton.result.value.id) {
+        Object.assign(singleton, fetchedSingleton.result.value);
+      }
     });
 
     return () => {
@@ -90,7 +114,10 @@ export const SingletonImportPage = defineComponent({
         <>
           <Portal to={DASHBOARD_HEADER_PORTAL_TITLE}>Import a Singleton</Portal>
 
-          <div class="relative" v-loading={handleImportSingleton.loading.value}>
+          <div
+            class="relative"
+            v-loading={handleImportSingleton.loading.value || fetchedSingleton.loading.value}
+          >
             <h3 class="text-lg font-semibold pb-5">Import a Singleton via JSON</h3>
 
             <blockquote class="p-3 border-l-4 border-gray-400 rounded text-sm bg-gray-200 mb-5">
@@ -98,19 +125,7 @@ export const SingletonImportPage = defineComponent({
               different installation or crafted for usage with the current installation.
             </blockquote>
 
-            <RenderIfComponent condition={singletonHasBeenUsed.value}>
-              <div class="pb-5">
-                <el-alert
-                  type="error"
-                  title="Singleton already exists"
-                  description="The details provided are already in use with an existing Singleton. If you wish to update that Singleton, please navigate to its import page."
-                  closable={false}
-                  showIcon
-                />
-              </div>
-            </RenderIfComponent>
-
-            <RenderIfComponent condition={titleHasBeenUsed.value}>
+            <RenderIfComponent condition={!!titleHasBeenUsed.value}>
               <div class="pb-5">
                 <el-alert
                   type="warning"
@@ -122,7 +137,9 @@ export const SingletonImportPage = defineComponent({
               </div>
             </RenderIfComponent>
 
-            <JsonEditorComponent v-model={singletonAsJSON.value} minHeight="60vh" />
+            <RenderIfComponent condition={!fetchedSingleton.loading.value}>
+              <JsonEditorComponent v-model={singletonAsJSON.value} minHeight="60vh" />
+            </RenderIfComponent>
 
             <div class="flex flex-row-reverse pt-3">
               <el-button
