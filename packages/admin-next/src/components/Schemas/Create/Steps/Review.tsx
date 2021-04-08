@@ -4,11 +4,20 @@ import { SchemaType } from '@dockite/types';
 
 import { StepComponentProps } from './types';
 
+import { RenderIfComponent } from '~/components/Common/RenderIf';
+
 export const SchemaCreateReviewStepComponent = defineComponent({
   name: 'SchemaCreateReviewStepComponent',
 
   props: {
-    modelValue: Object as PropType<StepComponentProps['modelValue']>,
+    modelValue: {
+      type: Object as PropType<StepComponentProps['modelValue']>,
+    },
+
+    updating: {
+      type: Boolean as PropType<StepComponentProps['updating']>,
+      default: false,
+    },
   },
 
   setup: (props, ctx) => {
@@ -21,8 +30,12 @@ export const SchemaCreateReviewStepComponent = defineComponent({
       modelValue.value.type === SchemaType.DEFAULT ? 'Schema' : 'Singleton',
     );
 
-    const handleCreateSchema = (): void => {
-      ctx.emit('action:createSchema');
+    const handleSaveSchema = (): void => {
+      if (props.updating) {
+        ctx.emit('action:updateSchema');
+      } else {
+        ctx.emit('action:createSchema');
+      }
     };
 
     const handlePreviousStep = (): void => {
@@ -32,13 +45,15 @@ export const SchemaCreateReviewStepComponent = defineComponent({
     return () => {
       return (
         <div>
-          <h3 class="text-xl font-semibold pb-3">Finally, lets review the {schemaType.value}!</h3>
+          <RenderIfComponent condition={!props.updating}>
+            <h3 class="text-xl font-semibold pb-3">Finally, lets review the {schemaType.value}!</h3>
 
-          <blockquote class="border-l-4 rounded text-sm p-3 bg-gray-200 mb-5">
-            Just before we create the {schemaType.value}, let’s review what we’ve configured to
-            ensure it’s what we were expecting. If anything is incorrect or missing, we can simply
-            go back to the previous steps and update items where needed.
-          </blockquote>
+            <blockquote class="border-l-4 rounded text-sm p-3 bg-gray-200 mb-5">
+              Just before we create the {schemaType.value}, let’s review what we’ve configured to
+              ensure it’s what we were expecting. If anything is incorrect or missing, we can simply
+              go back to the previous steps and update items where needed.
+            </blockquote>
+          </RenderIfComponent>
 
           <h4 class="font-semibold text-lg pb-3">Summary</h4>
 
@@ -91,8 +106,8 @@ export const SchemaCreateReviewStepComponent = defineComponent({
               Previous Step
             </el-button>
 
-            <el-button type="primary" onClick={() => handleCreateSchema()}>
-              Create {schemaType.value}
+            <el-button type="primary" onClick={() => handleSaveSchema()}>
+              {props.updating ? 'Update' : 'Create'} {schemaType.value}
             </el-button>
           </div>
         </div>

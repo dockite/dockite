@@ -7,11 +7,20 @@ import { SchemaFieldTreeComponent } from '../../FieldTree/FieldTree';
 import { fieldsStepFormRules } from './formRules';
 import { StepComponentProps } from './types';
 
+import { RenderIfComponent } from '~/components/Common/RenderIf';
+
 export const SchemaCreateFieldsStepComponent = defineComponent({
   name: 'SchemaCreateFieldsStepComponent',
 
   props: {
-    modelValue: Object as PropType<StepComponentProps['modelValue']>,
+    modelValue: {
+      type: Object as PropType<StepComponentProps['modelValue']>,
+    },
+
+    updating: {
+      type: Boolean as PropType<StepComponentProps['updating']>,
+      default: false,
+    },
   },
 
   setup: (props, ctx) => {
@@ -41,16 +50,18 @@ export const SchemaCreateFieldsStepComponent = defineComponent({
     return () => {
       return (
         <div>
-          <h3 class="text-xl font-semibold pb-3">
-            Next, lets add fields to our {schemaType.value}!
-          </h3>
+          <RenderIfComponent condition={!props.updating}>
+            <h3 class="text-xl font-semibold pb-3">
+              Next, lets add fields to our {schemaType.value}!
+            </h3>
 
-          <blockquote class="border-l-4 rounded text-sm p-3 bg-gray-200 mb-5">
-            Fields define the content that a {schemaType.value} can hold. You may add string fields
-            for names and descriptions, number fields for prices, ratings, and so forth.
-            <span class="block pb-2" />A {schemaType.value} can have as many fields as you desire;
-            however, the more you add, the harder it may be to manage later.
-          </blockquote>
+            <blockquote class="border-l-4 rounded text-sm p-3 bg-gray-200 mb-5">
+              Fields define the content that a {schemaType.value} can hold. You may add string
+              fields for names and descriptions, number fields for prices, ratings, and so forth.
+              <span class="block pb-2" />A {schemaType.value} can have as many fields as you desire;
+              however, the more you add, the harder it may be to manage later.
+            </blockquote>
+          </RenderIfComponent>
 
           <el-form
             ref={form}

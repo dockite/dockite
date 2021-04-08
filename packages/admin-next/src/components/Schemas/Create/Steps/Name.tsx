@@ -6,11 +6,20 @@ import { SchemaType } from '@dockite/types';
 import { nameStepFormRules } from './formRules';
 import { StepComponentProps } from './types';
 
+import { RenderIfComponent } from '~/components/Common/RenderIf';
+
 export const SchemaCreateNameStepComponent = defineComponent({
   name: 'SchemaCreateNameStepComponent',
 
   props: {
-    modelValue: Object as PropType<StepComponentProps['modelValue']>,
+    modelValue: {
+      type: Object as PropType<StepComponentProps['modelValue']>,
+    },
+
+    updating: {
+      type: Boolean as PropType<StepComponentProps['updating']>,
+      default: false,
+    },
   },
 
   setup: (props, ctx) => {
@@ -55,27 +64,29 @@ export const SchemaCreateNameStepComponent = defineComponent({
     return () => {
       return (
         <div>
-          <h3 class="text-xl font-semibold pb-3">
-            First, lets give the {schemaType.value} a name!
-          </h3>
+          <RenderIfComponent condition={!props.updating}>
+            <h3 class="text-xl font-semibold pb-3">
+              First, lets give the {schemaType.value} a name!
+            </h3>
 
-          {modelValue.value.type === SchemaType.DEFAULT && (
-            <blockquote class="border-l-4 rounded text-sm p-3 bg-gray-200 mb-5">
-              The Schema name should be reflective of the type of content that it will hold.
-              <span class="block pb-2" />
-              An example of a good Schema name would be <u>BlogPosts</u> for a Schema designed to
-              contain all of the blog posts for a particular backend.
-            </blockquote>
-          )}
+            {modelValue.value.type === SchemaType.DEFAULT && (
+              <blockquote class="border-l-4 rounded text-sm p-3 bg-gray-200 mb-5">
+                The Schema name should be reflective of the type of content that it will hold.
+                <span class="block pb-2" />
+                An example of a good Schema name would be <u>BlogPosts</u> for a Schema designed to
+                contain all of the blog posts for a particular backend.
+              </blockquote>
+            )}
 
-          {modelValue.value.type === SchemaType.SINGLETON && (
-            <blockquote class="border-l-4 rounded text-sm p-3 bg-gray-200 mb-5">
-              The Singleton name should be reflective of the type of content that it will hold.
-              <span class="block pb-2" />
-              An example of a good Singleton name would be <u>Settings</u> for a Singleton which is
-              responsible for the management of settings for a particular backend.
-            </blockquote>
-          )}
+            {modelValue.value.type === SchemaType.SINGLETON && (
+              <blockquote class="border-l-4 rounded text-sm p-3 bg-gray-200 mb-5">
+                The Singleton name should be reflective of the type of content that it will hold.
+                <span class="block pb-2" />
+                An example of a good Singleton name would be <u>Settings</u> for a Singleton which
+                is responsible for the management of settings for a particular backend.
+              </blockquote>
+            )}
+          </RenderIfComponent>
 
           <el-form
             ref={form}

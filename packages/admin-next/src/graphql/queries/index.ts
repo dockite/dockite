@@ -4,6 +4,7 @@ export * from './fetchAllSchemas';
 export * from './fetchAllSingletons';
 export * from './getDocumentById';
 export * from './getLocaleById';
+export * from './getRevisionsForDocument';
 export * from './getSchemaById';
 export * from './getSingletonById';
 export * from './me';

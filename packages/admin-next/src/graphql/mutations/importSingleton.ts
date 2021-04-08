@@ -4,20 +4,20 @@ import { Singleton } from '@dockite/database';
 
 import { BaseSchema } from '~/common/types';
 
-export interface CreateSingletonMutationResponse {
-  createSingleton: Singleton;
+export interface ImportSingletonMutationResponse {
+  importSingleton: Singleton;
 }
 
-export interface CreateSingletonMutationVariables {
+export interface ImportSingletonMutationVariables {
   input: {
     id?: string;
     payload: BaseSchema;
   };
 }
 
-export const CREATE_SINGLETON_MUTATION = gql`
-  mutation CreateSingleton($input: ImportSingletonArgs!) {
-    createSingleton: importSingleton(input: $input) {
+export const IMPORT_SINGLETON_MUTATION = gql`
+  mutation ImportSingleton($input: ImportSingletonArgs!) {
+    importSingleton(input: $input) {
       id
       name
       title

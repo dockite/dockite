@@ -101,6 +101,11 @@ export const Router = createRouter({
       meta: { layout: 'Dashboard' },
     },
     {
+      path: '/schemas/:schemaId/edit',
+      component: () => import('../pages/Schemas/_Id/Edit'),
+      meta: { layout: 'Dashboard' },
+    },
+    {
       path: '/schemas/:schemaId/import',
       component: () => import('../pages/Schemas/_Id/Import'),
       meta: { layout: 'Dashboard' },
@@ -164,8 +169,18 @@ export const Router = createRouter({
       meta: { layout: 'Dashboard' },
     },
     {
+      path: '/singletons/:singletonId/edit',
+      component: () => import('../pages/Singletons/_Id/Edit'),
+      meta: { layout: 'Dashboard' },
+    },
+    {
       path: '/singletons/:singletonId/delete',
       component: () => import('../pages/Singletons/_Id/Delete'),
+      meta: { layout: 'Dashboard' },
+    },
+    {
+      path: '/singletons/:singletonId/import',
+      component: () => import('../pages/Singletons/_Id/Import'),
       meta: { layout: 'Dashboard' },
     },
 

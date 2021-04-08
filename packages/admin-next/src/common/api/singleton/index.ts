@@ -26,12 +26,18 @@ import {
   GetSingletonByIdQueryResponse,
   GetSingletonByIdQueryVariables,
   GET_SINGLETON_BY_ID_QUERY,
+  ImportSingletonMutationResponse,
+  ImportSingletonMutationVariables,
+  IMPORT_SINGLETON_MUTATION,
   PermanentDeleteSingletonMutationResponse,
   PermanentDeleteSingletonMutationVariables,
   PERMANENT_DELETE_SINGLETON_MUTATION,
   RestoreSingletonMutationResponse,
   RestoreSingletonMutationVariables,
   RESTORE_SINGLETON_MUTATION,
+  UpdateSingletonMutationResponse,
+  UpdateSingletonMutationVariables,
+  UPDATE_SINGLETON_MUTATION,
 } from '~/graphql';
 import { useEvent } from '~/hooks';
 import { useGraphQL } from '~/hooks/useGraphQL';
@@ -139,6 +145,122 @@ export const createSingleton = async (payload: BaseSchema): Promise<Singleton> =
     emit(CREATE_SINGLETON_EVENT);
 
     return result.data.createSingleton;
+  } catch (err) {
+    logE(err);
+
+    throw new ApplicationError(
+      'An error occurred while attempting to create the Singleton.',
+      ApplicationErrorCode.CANT_CREATE_SINGLETON,
+    );
+  }
+};
+
+/**
+ *
+ */
+export const updateSingleton = async (payload: BaseSchema, id: string): Promise<Singleton> => {
+  const graphql = useGraphQL();
+  const { emit } = useEvent();
+
+  try {
+    const result = await graphql.executeMutation<
+      UpdateSingletonMutationResponse,
+      UpdateSingletonMutationVariables
+    >({
+      mutation: UPDATE_SINGLETON_MUTATION,
+      variables: {
+        input: { payload, id },
+      },
+
+      // On Update we will also append the schema to our allSingletons query
+      update: (store, { data: updateSingletonData }) => {
+        if (updateSingletonData) {
+          store.evict({
+            id: 'ROOT_QUERY',
+            fieldName: 'getSingleton',
+            broadcast: false,
+          });
+
+          store.evict({
+            id: 'ROOT_QUERY',
+            fieldName: 'allSingletons',
+            broadcast: false,
+          });
+
+          store.gc();
+        }
+      },
+    });
+
+    if (!result.data) {
+      throw new ApplicationError(
+        'An unknown error occurred, please try again later.',
+        ApplicationErrorCode.UNKNOWN_ERROR,
+      );
+    }
+
+    // Emit the singleton creation event so consumers can run any required callbacks
+    emit(UPDATE_SINGLETON_EVENT);
+
+    return result.data.updateSingleton;
+  } catch (err) {
+    logE(err);
+
+    throw new ApplicationError(
+      'An error occurred while attempting to create the Singleton.',
+      ApplicationErrorCode.CANT_CREATE_SINGLETON,
+    );
+  }
+};
+
+/**
+ *
+ */
+export const importSingleton = async (payload: BaseSchema, id: string): Promise<Singleton> => {
+  const graphql = useGraphQL();
+  const { emit } = useEvent();
+
+  try {
+    const result = await graphql.executeMutation<
+      ImportSingletonMutationResponse,
+      ImportSingletonMutationVariables
+    >({
+      mutation: IMPORT_SINGLETON_MUTATION,
+      variables: {
+        input: { payload, id },
+      },
+
+      // On Update we will also append the schema to our allSingletons query
+      update: (store, { data: importSingletonData }) => {
+        if (importSingletonData) {
+          store.evict({
+            id: 'ROOT_QUERY',
+            fieldName: 'getSingleton',
+            broadcast: false,
+          });
+
+          store.evict({
+            id: 'ROOT_QUERY',
+            fieldName: 'allSingletons',
+            broadcast: false,
+          });
+
+          store.gc();
+        }
+      },
+    });
+
+    if (!result.data) {
+      throw new ApplicationError(
+        'An unknown error occurred, please try again later.',
+        ApplicationErrorCode.UNKNOWN_ERROR,
+      );
+    }
+
+    // Emit the singleton creation event so consumers can run any required callbacks
+    emit(UPDATE_SINGLETON_EVENT);
+
+    return result.data.importSingleton;
   } catch (err) {
     logE(err);
 

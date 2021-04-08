@@ -3,24 +3,37 @@ import { Modifiers } from '@apollo/client/cache/core/types/common';
 import { Document } from '@dockite/database';
 import { FindManyResult } from '@dockite/types';
 
+/**
+ *
+ */
 export const bustDocumentsBySchemaId = (schemaId: string): Modifiers => {
   return {
-    allDocuments: (documents: FindManyResult<Document>): FindManyResult<Document> => {
+    getDocument: (document: Document, details): Document => {
+      if (document.schemaId === schemaId) {
+        return details.DELETE;
+      }
+
+      return document;
+    },
+
+    allDocuments: (store: FindManyResult<Document>): FindManyResult<Document> => {
       return {
-        ...documents,
-        results: documents.results.filter(document => document.schemaId !== schemaId),
+        ...store,
+        results: store.results.filter(document => document.schemaId !== schemaId),
       };
     },
-    findDocuments: (documents: FindManyResult<Document>): FindManyResult<Document> => {
+
+    findDocuments: (store: FindManyResult<Document>): FindManyResult<Document> => {
       return {
-        ...documents,
-        results: documents.results.filter(document => document.schemaId !== schemaId),
+        ...store,
+        results: store.results.filter(document => document.schemaId !== schemaId),
       };
     },
-    searchDocuments: (documents: FindManyResult<Document>): FindManyResult<Document> => {
+
+    searchDocuments: (store: FindManyResult<Document>): FindManyResult<Document> => {
       return {
-        ...documents,
-        results: documents.results.filter(document => document.schemaId !== schemaId),
+        ...store,
+        results: store.results.filter(document => document.schemaId !== schemaId),
       };
     },
   };

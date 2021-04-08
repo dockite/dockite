@@ -17,6 +17,7 @@ import { ApplicationError, ApplicationErrorGroup } from '~/common/errors';
 import { FieldErrorList } from '~/common/types';
 import { DocumentFormComponent } from '~/components/Common/Document/Form';
 import { DocumentHeaderActionsDropdownComponent } from '~/components/Documents/_Id/ActionsDropdown';
+import DocumentRevisionsFlyoutComponent from '~/components/Documents/_Id/RevisionsFlyout';
 import { useGraphQL, useState } from '~/hooks';
 import { getFormFieldIdentifiers, validateFields } from '~/pages/Schemas/_Id/Create/util';
 import {
@@ -230,6 +231,8 @@ export const DocumentFormPage = defineComponent({
               parent={parent.result.value}
               formRef={form}
             />
+
+            <DocumentRevisionsFlyoutComponent document={document.result.value} />
 
             <Portal to={DASHBOARD_MAIN_PORTAL_FOOTER}>{getFooter()}</Portal>
           </>

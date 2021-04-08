@@ -62,6 +62,7 @@ export const stableJSONStringify = (obj: any, space = 2): string => {
     'fields',
     'createdAt',
     'updatedAt',
+    'data',
   ];
 
   // Sort the keys based on priority attributes, falling back to an alphabetical sort otherwise

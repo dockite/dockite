@@ -203,6 +203,14 @@ export const updateSchema = async (payload: BaseSchema, id: string): Promise<Sch
             broadcast: false,
           });
 
+          store.modify({
+            id: 'ROOT_QUERY',
+            fields: {
+              ...bustDocumentsBySchemaId(id),
+            },
+            broadcast: false,
+          });
+
           store.gc();
         }
       },
@@ -266,6 +274,16 @@ export const importSchema = async (payload: BaseSchema, id?: string): Promise<Sc
             fieldName: 'allSchemas',
             broadcast: false,
           });
+
+          if (id) {
+            store.modify({
+              id: 'ROOT_QUERY',
+              fields: {
+                ...bustDocumentsBySchemaId(id),
+              },
+              broadcast: false,
+            });
+          }
 
           store.gc();
         }
@@ -336,6 +354,7 @@ export const deleteSchema = async (payload: Schema): Promise<boolean> => {
               fields: {
                 ...bustDocumentsBySchemaId(payload.id),
               },
+              broadcast: false,
             });
 
             store.gc();
@@ -408,6 +427,7 @@ export const permanentlyDeleteSchema = async (payload: Schema): Promise<boolean>
               fields: {
                 ...bustDocumentsBySchemaId(payload.id),
               },
+              broadcast: false,
             });
 
             store.gc();

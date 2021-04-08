@@ -106,7 +106,7 @@ export const updateDocumentsWithFieldChanges = async (
     await documentRepository
       .createQueryBuilder('document')
       .update()
-      .where('document.schemaId = :schemaId', { schemaId: schema.id })
+      .where('document."schemaId" = :schemaId', { schemaId: schema.id })
       .set({
         data: () =>
           pgFormat.withArray(
@@ -123,7 +123,7 @@ export const updateDocumentsWithFieldChanges = async (
     await documentRepository
       .createQueryBuilder('document')
       .update()
-      .where('document.schemaId = :schemaId', { schemaId: schema.id })
+      .where('document."schemaId" = :schemaId', { schemaId: schema.id })
       // As dirty as this is, its the only way I can think of to neatly deal with this in a SQL safe manner
       .set({
         data: () =>
@@ -147,7 +147,7 @@ export const updateDocumentsWithFieldChanges = async (
     await documentRepository
       .createQueryBuilder('document')
       .update()
-      .where('document.schemaId = :schemaId', { schemaId: schema.id })
+      .where('document."schemaId" = :schemaId', { schemaId: schema.id })
       .set({
         data: () =>
           pgFormat.withArray(
