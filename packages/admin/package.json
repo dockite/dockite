@@ -1,6 +1,6 @@
 {
   "name": "@dockite/admin",
-  "version": "0.5.0-alpha.7",
+  "version": "0.5.0-alpha.8",
   "description": "",
   "author": "Dockite",
   "main": "nuxt.config.ts",
@@ -14,9 +14,9 @@
   },
   "dependencies": {
     "@dockite/ability": "^0.2.2-alpha.0",
-    "@dockite/database": "^0.4.1-alpha.0",
+    "@dockite/database": "^0.4.1-alpha.1",
     "@dockite/types": "^0.3.0",
-    "@dockite/where-builder": "^0.2.1-alpha.1",
+    "@dockite/where-builder": "^0.2.1-alpha.2",
     "@nuxt/types": "2.13.3",
     "@nuxt/typescript-build": "^2.0.0",
     "@nuxt/typescript-runtime": "^1.0.0",
