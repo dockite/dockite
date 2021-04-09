@@ -35,6 +35,7 @@ export class SearchEngine {
   @ViewColumn()
   public deletedAt?: Date | null;
 
+  @Index()
   @ViewColumn()
   public schemaId!: string;
 
@@ -48,6 +49,7 @@ export class SearchEngine {
   )
   public schema!: Schema;
 
+  @Index()
   @ViewColumn()
   public releaseId?: string | null;
 
@@ -61,6 +63,7 @@ export class SearchEngine {
   )
   public release!: Release;
 
+  @Index()
   @ViewColumn()
   public userId?: string | null;
 

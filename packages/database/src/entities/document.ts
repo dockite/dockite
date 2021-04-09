@@ -9,6 +9,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
   DeleteDateColumn,
+  Index,
 } from 'typeorm';
 
 import { Release } from './release';
@@ -17,6 +18,26 @@ import { User } from './user';
 import { DocumentRevision } from './document-revision';
 
 @Entity()
+@Index('idx_document_1', { synchronize: false })
+@Index('idx_document_2', { synchronize: false })
+@Index('idx_document_3', { synchronize: false })
+@Index('idx_document_4', { synchronize: false })
+@Index('idx_document_5', { synchronize: false })
+@Index('idx_document_6', { synchronize: false })
+@Index('idx_document_7', { synchronize: false })
+@Index('idx_document_8', { synchronize: false })
+@Index('idx_document_9', { synchronize: false })
+@Index('idx_document_10', { synchronize: false })
+@Index('idx_document_11', { synchronize: false })
+@Index('idx_document_12', { synchronize: false })
+@Index('idx_document_13', { synchronize: false })
+@Index('idx_document_14', { synchronize: false })
+@Index('idx_document_15', { synchronize: false })
+@Index('idx_document_16', { synchronize: false })
+@Index('idx_document_17', { synchronize: false })
+@Index('idx_document_18', { synchronize: false })
+@Index('idx_document_19', { synchronize: false })
+@Index('idx_document_20', { synchronize: false })
 @ObjectType()
 export class Document {
   @PrimaryGeneratedColumn('uuid')
@@ -47,6 +68,7 @@ export class Document {
   @GraphQLField(_type => Date, { nullable: true })
   public deletedAt?: Date | null;
 
+  @Index()
   @Column()
   @GraphQLField(_type => String)
   public schemaId!: string;
@@ -62,6 +84,7 @@ export class Document {
   @GraphQLField(_type => Schema)
   public schema!: Schema;
 
+  @Index()
   @Column({ nullable: true })
   @GraphQLField(_type => String, { nullable: true })
   public releaseId?: string | null;
@@ -82,6 +105,7 @@ export class Document {
   )
   public revisions!: DocumentRevision[];
 
+  @Index()
   @Column({ nullable: true })
   @GraphQLField(_type => String, { nullable: true })
   public userId?: string;
