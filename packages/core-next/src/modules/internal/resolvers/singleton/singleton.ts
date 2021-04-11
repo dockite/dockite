@@ -3,7 +3,7 @@ import debug from 'debug';
 import GraphQLJSON from 'graphql-type-json';
 import { cloneDeep, merge, omit } from 'lodash';
 import { Arg, Args, Ctx, FieldResolver, Mutation, Query, Resolver, Root } from 'type-graphql';
-import { getRepository, Repository } from 'typeorm';
+import { getRepository, IsNull, Not, Repository } from 'typeorm';
 
 import {
   Document,
@@ -106,6 +106,7 @@ export class SingletonResolver {
 
       return createSingletonFromSchemaAndDocuments(singleton);
     } catch (err) {
+      console.error(err);
       log(err);
 
       throw new Error(`Unable to retrieve singleton with ID ${id}`);
@@ -288,7 +289,7 @@ export class SingletonResolver {
       });
 
       await Promise.all([
-        this.singletonRepository.softRemove(singleton),
+        this.singletonRepository.softRemove(omit(singleton, 'fields')),
         this.schemaRevisionRepository.save({
           schemaId: singleton.id,
           data: clonedSingleton,
@@ -321,8 +322,9 @@ export class SingletonResolver {
     try {
       const [singleton, revisions] = await Promise.all([
         this.singletonRepository.findOneOrFail({
-          where: { id },
+          where: { id, deletedAt: Not(IsNull()) },
           relations: ['fields', 'user'],
+          withDeleted: true,
         }),
         this.schemaRevisionRepository.find({ where: { schemaId: id } }),
       ]);

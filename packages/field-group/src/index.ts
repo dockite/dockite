@@ -111,6 +111,7 @@ export class DockiteFieldGroup extends DockiteField {
 
     // If we already have data, merge it with initial values incase the shape has changed
     if (settings.repeatable && Array.isArray(ctx.data[this.schemaField.name])) {
+      console.log(JSON.stringify(ctx.data[this.schemaField.name], null, 2));
       ctx.data[this.schemaField.name].forEach((_: any, i: number): void => {
         ctx.data[this.schemaField.name][i] = merge(
           this.makeInitialFieldData(childFields),

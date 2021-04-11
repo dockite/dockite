@@ -1,3 +1,9 @@
 import { getDockiteFieldRollupConfiguration } from '@dockite/rollup';
 
-export default getDockiteFieldRollupConfiguration();
+const config = getDockiteFieldRollupConfiguration();
+
+if (config.external && Array.isArray(config.external)) {
+  config.external.push('vuedraggable');
+}
+
+export default config;

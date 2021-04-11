@@ -1,6 +1,16 @@
 import { DockiteFieldInputComponentProps } from '@dockite/types';
 import cloneDeep from 'lodash/cloneDeep';
-import { computed, defineComponent, PropType, ref, Ref, toRef, toRefs, watch } from 'vue';
+import {
+  computed,
+  defineComponent,
+  onMounted,
+  PropType,
+  ref,
+  Ref,
+  toRef,
+  toRefs,
+  watch,
+} from 'vue';
 import VueDraggable from 'vuedraggable';
 
 import { ChildField, DockiteFieldGroupEntity } from '../types';
@@ -78,6 +88,8 @@ export const InputComponent = defineComponent({
     // Handles the expansion of the group field.
     const expanded = ref('');
 
+    const ready = ref(false);
+
     // The initial field data for the group or group item
     const initialFieldData = getInitialFieldData(fields.value);
 
@@ -91,9 +103,13 @@ export const InputComponent = defineComponent({
     // set of defaults
     if (fieldData.value === null) {
       if (fieldConfig.value.settings.repeatable) {
-        fieldData.value = new Array(fieldConfig.value.settings.minRows ?? 0)
-          .fill(0)
-          .map(_ => cloneDeep(initialFieldData));
+        if (fieldConfig.value.settings.minRows && fieldConfig.value.settings.minRows > 0) {
+          fieldData.value = new Array(fieldConfig.value.settings.minRows)
+            .fill(0)
+            .map(_ => cloneDeep(initialFieldData));
+        } else {
+          fieldData.value = [];
+        }
       } else {
         fieldData.value = cloneDeep(initialFieldData);
       }
@@ -119,6 +135,10 @@ export const InputComponent = defineComponent({
       // Otherwise we just perform a map and merge
       fieldData.value = { ...cloneDeep(initialFieldData), ...fieldData.value };
     }
+
+    onMounted(() => {
+      ready.value = true;
+    });
 
     watch(
       fieldData,
@@ -187,6 +207,7 @@ export const InputComponent = defineComponent({
     if (fieldConfig.value.settings.repeatable) {
       if (fieldConfig.value.settings.minRows) {
         rules.value.push({
+          type: 'array',
           min: Number(fieldConfig.value.settings.minRows),
           message: `${fieldConfig.value.title} must contain atleast ${fieldConfig.value.settings.minRows} entries.`,
           trigger: 'blur',
@@ -195,6 +216,7 @@ export const InputComponent = defineComponent({
 
       if (fieldConfig.value.settings.maxRows) {
         rules.value.push({
+          type: 'array',
           max: Number(fieldConfig.value.settings.maxRows),
           message: `${fieldConfig.value.title} must contain no more than ${fieldConfig.value.settings.maxRows} entries.`,
           trigger: 'blur',
@@ -238,66 +260,69 @@ export const InputComponent = defineComponent({
                           </el-button>
                         </div>
 
-                        <div class="-my-3">
-                          <VueDraggable
-                            v-model={fieldData.value}
-                            itemKey="__sortable_item_key"
-                            animation={300}
-                            easing="cubic-bezier(0.37, 0, 0.63, 1)"
-                            style={{ minHeight: '30px' }}
-                            handle=".dockite-field-group__item-handle"
-                          >
-                            {{
-                              item: ({ index }: { index: number }) => (
-                                <div class="py-3 flex items-center">
-                                  <div class="pr-3 flex flex-col items-center justify-center text-center dockite-field-group--movement-buttons">
-                                    <el-button
-                                      class="dockite-field-group--movement-button"
-                                      type="text"
-                                      icon="el-icon-top"
-                                      // length = 2, index = 1
-                                      disabled={index === 0}
-                                      onClick={() => handleShiftFieldUp(index)}
-                                    />
+                        {fieldData.value.length > 0 && ready.value && (
+                          <div class="-my-3">
+                            <VueDraggable
+                              v-model={fieldData.value}
+                              itemKey="__sortable_item_key"
+                              animation={300}
+                              easing="cubic-bezier(0.37, 0, 0.63, 1)"
+                              style={{ minHeight: '30px' }}
+                              handle=".dockite-field-group__item-handle"
+                            >
+                              {{
+                                item: ({ index }: { index: number }) => (
+                                  <div class="py-3 flex items-center">
+                                    <div class="pr-3 flex flex-col items-center justify-center text-center dockite-field-group--movement-buttons">
+                                      <el-button
+                                        class="dockite-field-group--movement-button"
+                                        type="text"
+                                        icon="el-icon-top"
+                                        // length = 2, index = 1
+                                        disabled={index === 0}
+                                        onClick={() => handleShiftFieldUp(index)}
+                                      />
 
-                                    {/* Draggable Handle */}
-                                    <i class="dockite-field-group__item-handle dockite-field-group--movement-button py-1 cursor-pointer el-icon-rank" />
+                                      {/* Draggable Handle */}
+                                      <i class="dockite-field-group__item-handle dockite-field-group--movement-button py-1 cursor-pointer el-icon-rank" />
 
-                                    <el-button
-                                      class="dockite-field-group--movement-button"
-                                      type="text"
-                                      icon="el-icon-bottom"
-                                      disabled={index === fieldData.value!.length - 1}
-                                      onClick={() => handleShiftFieldDown(index)}
-                                    />
+                                      <el-button
+                                        class="dockite-field-group--movement-button"
+                                        type="text"
+                                        icon="el-icon-bottom"
+                                        disabled={index === fieldData.value!.length - 1}
+                                        onClick={() => handleShiftFieldDown(index)}
+                                      />
 
-                                    <el-button
-                                      class="dockite-field-group--movement-button"
-                                      type="text"
-                                      icon="el-icon-delete"
-                                      disabled={
-                                        fieldData.value!.length <= (settings.value.minRows ?? 0) ||
-                                        fieldData.value!.length >=
-                                          (settings.value.maxRows ?? Infinity)
-                                      }
-                                      style={{ color: '#F56C6C' }}
-                                      onClick={() => handleRemoveField(index)}
-                                    />
+                                      <el-button
+                                        class="dockite-field-group--movement-button"
+                                        type="text"
+                                        icon="el-icon-delete"
+                                        disabled={
+                                          fieldData.value!.length <=
+                                            (settings.value.minRows ?? 0) ||
+                                          fieldData.value!.length >=
+                                            (settings.value.maxRows ?? Infinity)
+                                        }
+                                        style={{ color: '#F56C6C' }}
+                                        onClick={() => handleRemoveField(index)}
+                                      />
+                                    </div>
+
+                                    <div class="flex-1 clearfix border border-dashed p-3">
+                                      {getForm(
+                                        fieldData.value as Record<string, any>[],
+                                        fields.value,
+                                        props,
+                                        index,
+                                      )}
+                                    </div>
                                   </div>
-
-                                  <div class="flex-1 clearfix border border-dashed p-3">
-                                    {getForm(
-                                      fieldData.value as Record<string, any>[],
-                                      fields.value,
-                                      props,
-                                      index,
-                                    )}
-                                  </div>
-                                </div>
-                              ),
-                            }}
-                          </VueDraggable>
-                        </div>
+                                ),
+                              }}
+                            </VueDraggable>
+                          </div>
+                        )}
 
                         <div class="text-center py-3">
                           <el-button circle size="small" onClick={handleAddFieldAfter}>

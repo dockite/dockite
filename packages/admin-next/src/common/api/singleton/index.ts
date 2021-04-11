@@ -126,7 +126,7 @@ export const createSingleton = async (payload: BaseSchema): Promise<Singleton> =
           });
 
           if (data) {
-            data.allSingletons.results.push(schema);
+            data.allSingletons.results = [...data.allSingletons.results, schema];
 
             store.writeQuery({ query: FETCH_ALL_SINGLETONS_QUERY, data });
           }

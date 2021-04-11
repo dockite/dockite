@@ -69,6 +69,7 @@ export const InputComponent = defineComponent({
 
     if (fieldConfig.value.settings.min) {
       rules.value.push({
+        type: 'number',
         min: Number(fieldConfig.value.settings.min),
         message: `${fieldConfig.value.title} must be greater than ${fieldConfig.value.settings.min}.`,
         trigger: 'blur',
@@ -77,6 +78,7 @@ export const InputComponent = defineComponent({
 
     if (fieldConfig.value.settings.max) {
       rules.value.push({
+        type: 'number',
         max: Number(fieldConfig.value.settings.max),
         message: `${fieldConfig.value.title} must be less than ${fieldConfig.value.settings.max}.`,
         trigger: 'blur',

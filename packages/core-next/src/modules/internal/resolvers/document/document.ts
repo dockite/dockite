@@ -276,7 +276,7 @@ export class DocumentResolver {
       const oldData = cloneDeep(document.data);
       const revisionData = cloneDeep(document.data);
 
-      let data = merge(cloneDeep(document.data), input.data);
+      let data = { ...cloneDeep(document.data), ...input.data };
 
       if (document.parentId) {
         data = input.data;
