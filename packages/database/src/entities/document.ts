@@ -44,6 +44,7 @@ export class Document {
   @GraphQLField(_type => String)
   public id!: string;
 
+  @Index()
   @Column()
   @GraphQLField(_type => String)
   public locale!: string;
@@ -52,18 +53,22 @@ export class Document {
   @GraphQLField(_type => GraphQLJSON)
   public data!: Record<string, any>; // eslint-disable-line
 
+  @Index()
   @Column({ type: 'timestamp', nullable: true, default: null })
   @GraphQLField(_type => Date, { nullable: true })
   public publishedAt?: Date | null;
 
+  @Index()
   @CreateDateColumn()
   @GraphQLField(_type => Date)
   public createdAt!: Date;
 
+  @Index()
   @UpdateDateColumn()
   @GraphQLField(_type => Date)
   public updatedAt!: Date;
 
+  @Index()
   @DeleteDateColumn()
   @GraphQLField(_type => Date, { nullable: true })
   public deletedAt?: Date | null;

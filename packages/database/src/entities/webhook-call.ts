@@ -1,6 +1,13 @@
 import GraphQLJSON from 'graphql-type-json';
 import { Field as GraphQLField, ObjectType } from 'type-graphql';
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  Index,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 import { Webhook } from './webhook';
 
@@ -35,10 +42,12 @@ export class WebhookCall {
   @GraphQLField(_type => GraphQLJSON)
   public response!: JSONObject; // eslint-disable-line
 
+  @Index()
   @CreateDateColumn()
   @GraphQLField(_type => Date)
   public executedAt!: Date;
 
+  @Index()
   @Column({ nullable: true })
   public webhookId!: string;
 

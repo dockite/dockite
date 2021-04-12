@@ -6,6 +6,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -51,6 +52,7 @@ export class Webhook {
   @GraphQLField()
   public id!: string;
 
+  @Index()
   @Column()
   @GraphQLField()
   public name!: string;
@@ -67,10 +69,12 @@ export class Webhook {
   @GraphQLField(_type => GraphQLJSON)
   public options!: WebhookOptions;
 
+  @Index()
   @CreateDateColumn()
   @GraphQLField()
   public createdAt!: Date;
 
+  @Index()
   @UpdateDateColumn()
   @GraphQLField()
   public updatedAt!: Date;

@@ -1,8 +1,8 @@
-import { ViewColumn, ViewEntity, Index, ManyToOne, PrimaryColumn } from 'typeorm';
+import { Index, ManyToOne, PrimaryColumn, ViewColumn, ViewEntity } from 'typeorm';
 
 import { Document } from './document';
-import { Schema } from './schema';
 import { Release } from './release';
+import { Schema } from './schema';
 
 @ViewEntity({
   expression: conn =>
@@ -12,6 +12,11 @@ import { Release } from './release';
       .addSelect(`jsonb_to_tsvector('english', document.data, '["all"]')`, 'fts')
       .from(Document, 'document'),
 })
+@Index('view_idx_1', { synchronize: false })
+@Index('view_idx_2', { synchronize: false })
+@Index('view_idx_3', { synchronize: false })
+@Index('view_idx_4', { synchronize: false })
+@Index('view_idx_5', { synchronize: false })
 export class SearchEngine {
   @ViewColumn()
   @PrimaryColumn()
@@ -26,12 +31,15 @@ export class SearchEngine {
   @ViewColumn()
   public publishedAt?: Date | null;
 
+  @Index()
   @ViewColumn()
   public createdAt!: Date;
 
+  @Index()
   @ViewColumn()
   public updatedAt!: Date;
 
+  @Index()
   @ViewColumn()
   public deletedAt?: Date | null;
 

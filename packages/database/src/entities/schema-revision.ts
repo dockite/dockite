@@ -24,10 +24,12 @@ export class SchemaRevision {
   @GraphQLField(_type => GraphQLJSON)
   public data!: Record<string, any>; // eslint-disable-line
 
+  @Index()
   @CreateDateColumn()
   @GraphQLField(_type => Date)
   public createdAt!: Date;
 
+  @Index()
   @UpdateDateColumn()
   @GraphQLField(_type => Date)
   public updatedAt!: Date;

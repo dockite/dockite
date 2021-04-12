@@ -1,10 +1,16 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { Document, DocumentRevision, Schema, SearchEngineRepository } from '@dockite/database';
+import {
+  Document,
+  DocumentRevision,
+  Field,
+  Schema,
+  SearchEngineRepository,
+} from '@dockite/database';
 import { DockiteFieldValidationError, HookContextWithOldData } from '@dockite/types';
 import { QueryBuilder, WhereBuilder, WhereBuilderInputType } from '@dockite/where-builder';
 import GraphQLJSON from 'graphql-type-json';
-import { cloneDeep } from 'lodash';
+import { cloneDeep, groupBy, uniq } from 'lodash';
 import format from 'pg-format';
 import {
   Arg,
@@ -17,7 +23,7 @@ import {
   Query,
   Resolver,
 } from 'type-graphql';
-import { getCustomRepository, getManager, getRepository } from 'typeorm';
+import { getCustomRepository, getManager, getRepository, In } from 'typeorm';
 
 import { Authenticated, Authorized } from '../../../common/decorators';
 import { GlobalContext } from '../../../common/types';
@@ -68,17 +74,22 @@ export class DocumentResolver {
     @Ctx()
     ctx: GlobalContext,
   ): Promise<Document | null> {
-    const repository = getRepository(Document);
+    const documentRepository = getRepository(Document);
+    const fieldRepository = getRepository(Field);
 
-    const document = await repository.findOne({
+    const document = await documentRepository.findOne({
       where: { id },
-      relations: ['schema', 'schema.fields', 'user'],
+      relations: ['schema', 'user'],
       withDeleted: true,
     });
 
     if (!document) {
       return null;
     }
+
+    const fields = await fieldRepository.find({ where: { schemaId: document.schemaId } });
+
+    document.schema.fields = fields;
 
     await Promise.all(
       document.schema.fields.map(async field => {
@@ -105,7 +116,7 @@ export class DocumentResolver {
     @Arg('schemaId', _type => String, { nullable: true })
     schemaId: string | null,
     @Arg('schemaIds', _type => [String], { nullable: true })
-    schemaIds: string | null,
+    schemaIds: string[] | null,
     @Arg('where', _type => WhereBuilderInputType, { nullable: true })
     where: QueryBuilder | null,
     @Arg('page', _type => Int, { defaultValue: 1 })
@@ -119,12 +130,12 @@ export class DocumentResolver {
     @Ctx()
     ctx: GlobalContext,
   ): Promise<ManyDocuments> {
-    const repository = getRepository(Document);
+    const documentRepository = getRepository(Document);
+    const fieldRepository = getRepository(Field);
 
-    const qb = repository
+    const qb = documentRepository
       .createQueryBuilder('document')
-      .leftJoinAndSelect('document.schema', 'schema')
-      .leftJoinAndSelect('schema.fields', 'fields');
+      .leftJoinAndSelect('document.schema', 'schema');
 
     if (schemaId) {
       qb.andWhere('document.schemaId = :schemaId', { schemaId });
@@ -166,17 +177,29 @@ export class DocumentResolver {
 
     const [results, totalItems] = await qb.getManyAndCount();
 
+    const fields = await fieldRepository
+      .find({
+        where: {
+          schemaId: In(schemaIds || [schemaId]),
+        },
+      })
+      .then(result => groupBy(result, 'schemaId'));
+
     await Promise.all(
       results.map(async item => {
+        item.schema.fields = fields[item.schemaId];
+
         await Promise.all(
           item.schema.fields.map(async field => {
-            item.data[field.name] = await field.dockiteField!.processOutputRaw({
+            const result = await field.dockiteField!.processOutputRaw({
               data: { id: item.id, ...item.data },
               field,
               fieldData: item.data[field.name] ?? null,
               document: item,
               user: ctx.user,
             });
+
+            item.data[field.name] = result;
           }),
         );
       }),
@@ -211,12 +234,12 @@ export class DocumentResolver {
     @Ctx()
     ctx: GlobalContext,
   ): Promise<ManyDocuments> {
-    const repository = getRepository(Document);
+    const documentRepository = getRepository(Document);
+    const fieldRepository = getRepository(Field);
 
-    const qb = repository
+    const qb = documentRepository
       .createQueryBuilder('document')
       .leftJoinAndSelect('document.schema', 'schema')
-      .leftJoinAndSelect('schema.fields', 'fields')
       .take(perPage)
       .skip(perPage * (page - 1));
 
@@ -240,8 +263,16 @@ export class DocumentResolver {
 
     const [results, totalItems] = await qb.getManyAndCount();
 
+    const schemaIds = uniq(results.map(d => d.schemaId));
+
+    const fields = await fieldRepository
+      .find({ where: { schemaId: In(schemaIds) } })
+      .then(result => groupBy(result, 'schemaId'));
+
     await Promise.all(
       results.map(async item => {
+        item.schema.fields = fields[item.schemaId];
+
         await Promise.all(
           item.schema.fields.map(async field => {
             item.data[field.name] = await field.dockiteField!.processOutputRaw({
@@ -292,12 +323,12 @@ export class DocumentResolver {
     @Ctx()
     ctx: GlobalContext,
   ): Promise<ManyDocuments> {
-    const repository = getCustomRepository(SearchEngineRepository);
+    const documentRepository = getCustomRepository(SearchEngineRepository);
+    const fieldRepository = getRepository(Field);
 
-    const qb = repository
+    const qb = documentRepository
       .search(term)
       .leftJoinAndSelect('document.schema', 'schema')
-      .leftJoinAndSelect('schema.fields', 'fields')
       .take(perPage)
       .skip(perPage * (page - 1));
 
@@ -329,9 +360,15 @@ export class DocumentResolver {
 
     const [results, totalItems] = await qb.getManyAndCount();
 
+    const fields = await fieldRepository
+      .find({ where: { schemaId: In(uniq(results.map(d => d.schemaId))) } })
+      .then(result => groupBy(result, 'schemaId'));
+
     await Promise.all(
       results.map(async item => {
-        await Promise.all(
+        item.schema.fields = fields[item.schemaId];
+
+        await Promise.all([
           item.schema.fields.map(async field => {
             item.data[field.name] = await field.dockiteField!.processOutputRaw({
               data: { id: item.id, ...item.data },
@@ -340,7 +377,7 @@ export class DocumentResolver {
               user: ctx.user,
             });
           }),
-        );
+        ]);
       }),
     );
 
@@ -369,12 +406,19 @@ export class DocumentResolver {
     @Ctx() ctx: GlobalContext,
   ): Promise<Document | null> {
     const documentRepository = getRepository(Document);
+    const fieldRepository = getRepository(Field);
     const schemaRepository = getRepository(Schema);
 
-    const schema = await schemaRepository.findOneOrFail({
-      where: { id: schemaId, deletedAt: null },
-      relations: ['fields'],
-    });
+    const [schema, fields] = await Promise.all([
+      schemaRepository.findOneOrFail({
+        where: { id: schemaId, deletedAt: null },
+      }),
+      fieldRepository.find({
+        where: { schemaId },
+      }),
+    ]);
+
+    schema.fields = fields;
 
     const { id: userId } = ctx.user!; // eslint-disable-line
 
@@ -417,6 +461,7 @@ export class DocumentResolver {
     @Ctx() ctx: GlobalContext,
   ): Promise<Document | null> {
     const documentRepository = getRepository(Document);
+    const fieldRepository = getRepository(Field);
     const revisionRepository = getRepository(DocumentRevision);
 
     const validationErrors: Record<string, string> = {};
@@ -425,12 +470,16 @@ export class DocumentResolver {
 
     const document = await documentRepository.findOne({
       where: { id, deletedAt: null },
-      relations: ['schema', 'schema.fields'],
+      relations: ['schema'],
     });
 
     if (!document) {
       return null;
     }
+
+    const fields = await fieldRepository.find({ where: { schemaId: document.schemaId } });
+
+    document.schema.fields = fields;
 
     const { schema } = document;
 
@@ -477,18 +526,25 @@ export class DocumentResolver {
     @Ctx() ctx: GlobalContext,
   ): Promise<Document[] | null> {
     const documentRepository = getRepository(Document);
+    const fieldRepository = getRepository(Field);
     const revisionRepository = getRepository(DocumentRevision);
 
     const { id: userId } = ctx.user!; // eslint-disable-line
 
-    const retrievedDocuments = await documentRepository
-      .createQueryBuilder('document')
-      .select()
-      .leftJoinAndSelect('document.schema', 'schema')
-      .leftJoinAndSelect('schema.fields', 'fields')
-      .whereInIds(documents.map(x => x.id))
-      .andWhere('document.schemaId = :schemaId', { schemaId })
-      .getMany();
+    const [retrievedDocuments, fields] = await Promise.all([
+      documentRepository
+        .createQueryBuilder('document')
+        .select()
+        .leftJoinAndSelect('document.schema', 'schema')
+        .whereInIds(documents.map(x => x.id))
+        .andWhere('document.schemaId = :schemaId', { schemaId })
+        .getMany(),
+      fieldRepository.find({ where: { schemaId } }),
+    ]);
+
+    retrievedDocuments.forEach(d => {
+      d.schema.fields = fields;
+    });
 
     if (!retrievedDocuments || retrievedDocuments.length === 0) {
       return null;
@@ -550,18 +606,23 @@ export class DocumentResolver {
     @Ctx() ctx: GlobalContext,
   ): Promise<Document | null> {
     const documentRepository = getRepository(Document);
+    const fieldRepository = getRepository(Field);
 
     const { id: userId } = ctx.user!; // eslint-disable-line
 
     const document = await documentRepository.findOne({
       where: { id },
-      relations: ['schema', 'schema.fields'],
+      relations: ['schema'],
       withDeleted: true,
     });
 
     if (!document) {
       return null;
     }
+
+    const fields = await fieldRepository.find({ where: { schemaId: document.schemaId } });
+
+    document.schema.fields = fields;
 
     document.deletedAt = null;
     document.userId = userId;
@@ -673,13 +734,18 @@ export class DocumentResolver {
   })
   @Mutation(_returns => Boolean)
   async removeDocument(@Arg('id') id: string): Promise<boolean> {
-    const repository = getRepository(Document);
+    const documentRepository = getRepository(Document);
+    const fieldRepository = getRepository(Field);
 
     try {
-      const document = await repository.findOneOrFail({
+      const document = await documentRepository.findOneOrFail({
         where: { id },
-        relations: ['schema', 'schema.fields'],
+        relations: ['schema'],
       });
+
+      const fields = await fieldRepository.find({ where: { schemaId: document.schemaId } });
+
+      document.schema.fields = fields;
 
       const { schema, data } = document;
 
@@ -693,7 +759,7 @@ export class DocumentResolver {
         }),
       );
 
-      await repository.softRemove(document, { listeners: false });
+      await documentRepository.softRemove(document, { listeners: false });
       await afterRemove(document);
 
       return true;
@@ -716,13 +782,18 @@ export class DocumentResolver {
   async permanentlyRemoveDocument(@Arg('id') id: string): Promise<boolean> {
     const documentRepository = getRepository(Document);
     const revisionRepository = getRepository(DocumentRevision);
+    const fieldRepository = getRepository(Field);
 
     try {
       const document = await documentRepository.findOneOrFail({
         where: { id },
-        relations: ['schema', 'schema.fields'],
+        relations: ['schema'],
         withDeleted: true,
       });
+
+      const fields = await fieldRepository.find({ where: { schemaId: document.schemaId } });
+
+      document.schema.fields = fields;
 
       const { schema, data } = document;
 
