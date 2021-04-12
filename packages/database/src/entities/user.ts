@@ -8,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
   AfterLoad,
+  Index,
 } from 'typeorm';
 import { flatMap } from 'lodash';
 
@@ -31,6 +32,7 @@ export class User {
   @Column()
   public password!: string;
 
+  @Index()
   @Column({ unique: true })
   @GraphQLField()
   public email!: string;

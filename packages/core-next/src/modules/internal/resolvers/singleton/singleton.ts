@@ -1,9 +1,10 @@
 /* eslint-disable class-methods-use-this */
 import debug from 'debug';
 import GraphQLJSON from 'graphql-type-json';
-import { cloneDeep, merge, omit } from 'lodash';
+import { cloneDeep, groupBy, merge, omit, uniq } from 'lodash';
+import { doc } from 'prettier';
 import { Arg, Args, Ctx, FieldResolver, Mutation, Query, Resolver, Root } from 'type-graphql';
-import { getRepository, IsNull, Not, Repository } from 'typeorm';
+import { getRepository, In, IsNull, Not, Repository } from 'typeorm';
 
 import {
   Document,
@@ -92,17 +93,21 @@ export class SingletonResolver {
       const qb = this.singletonRepository
         .createQueryBuilder('singleton')
         .where('singleton.id = :id', { id })
-        .leftJoinAndSelect('singleton.fields', 'fields')
         .leftJoinAndSelect('singleton.user', 'user')
-        .leftJoinAndSelect('singleton.documents', 'document')
-        .andWhere('singleton.type = :type', { type: SchemaType.SINGLETON })
-        .andWhere('document.locale = :locale', { locale });
+        .andWhere('singleton.type = :type', { type: SchemaType.SINGLETON });
 
       if (deleted) {
         qb.andWhere('singleton.deletedAt IS NOT NULL').withDeleted();
       }
 
-      const singleton = await qb.getOneOrFail();
+      const [singleton, fields, documents] = await Promise.all([
+        qb.getOneOrFail(),
+        this.fieldRepository.find({ where: { schemaId: id } }),
+        this.documentRepository.find({ where: { schemaId: id, locale } }),
+      ]);
+
+      singleton.fields = fields;
+      singleton.documents = documents;
 
       return createSingletonFromSchemaAndDocuments(singleton);
     } catch (err) {
@@ -130,16 +135,28 @@ export class SingletonResolver {
 
     const qb = this.singletonRepository
       .createQueryBuilder('singleton')
-      .andWhere('singleton.type = :type', { type: SchemaType.SINGLETON })
-      .leftJoinAndSelect('singleton.fields', 'fields')
-      .leftJoinAndSelect('singleton.user', 'user')
-      .leftJoinAndSelect('singleton.documents', 'documents');
+      .where('singleton.type = :type', { type: SchemaType.SINGLETON })
+      .leftJoinAndSelect('singleton.user', 'user');
 
     if (deleted) {
       qb.andWhere('singleton.deletedAt IS NOT NULL').withDeleted();
     }
 
     const [singletons, count] = await qb.getManyAndCount();
+
+    // We fetch and assign the fields here rather than as a join to avoid exponential
+    // results from joining a many to one relation
+    const fields = await this.fieldRepository
+      .find({
+        where: { schemaId: In(uniq(singletons.map(s => s.id))) },
+      })
+      .then(result => groupBy(result, 'schemaId'));
+
+    singletons.forEach(singleton => {
+      Object.assign(singleton, {
+        fields: fields[singleton.id],
+      });
+    });
 
     const mappedSingletons = singletons.map(s => createSingletonFromSchemaAndDocuments(s));
 
@@ -178,8 +195,6 @@ export class SingletonResolver {
         userId: ctx.user?.id,
       });
 
-      console.log({ singleton });
-
       const document = await this.documentRepository.create({
         data: merge(getInitialDocumentData(singleton), data),
 
@@ -214,14 +229,18 @@ export class SingletonResolver {
     const { id, name, title, groups, settings, data, locale } = input;
 
     try {
-      const singleton = await this.singletonRepository
-        .createQueryBuilder('singleton')
-        .where('singleton.id = :id', { id })
-        .andWhere('documents.locale = :locale', { locale })
-        .leftJoinAndSelect('singleton.fields', 'fields')
-        .leftJoinAndSelect('singleton.user', 'user')
-        .leftJoinAndSelect('singleton.documents', 'documents')
-        .getOneOrFail();
+      const [singleton, fields, documents] = await Promise.all([
+        this.singletonRepository
+          .createQueryBuilder('singleton')
+          .where('singleton.id = :id', { id })
+          .leftJoinAndSelect('singleton.user', 'user')
+          .getOneOrFail(),
+        this.fieldRepository.find({ where: { schemaId: id } }),
+        this.documentRepository.find({ where: { schemaId: id, locale } }),
+      ]);
+
+      singleton.fields = fields;
+      singleton.documents = documents;
 
       const [document] = singleton.documents;
 
@@ -276,10 +295,15 @@ export class SingletonResolver {
     const { id } = input;
 
     try {
-      const singleton = await this.singletonRepository.findOneOrFail({
-        where: { id },
-        relations: ['fields', 'user'],
-      });
+      const [singleton, fields] = await Promise.all([
+        this.singletonRepository.findOneOrFail({
+          where: { id },
+          relations: ['user'],
+        }),
+        this.fieldRepository.find({ where: { schemaId: id } }),
+      ]);
+
+      singleton.fields = fields;
 
       // Clone the retrieved singleton but omit the `dockiteField` property from the retrieved fields
       // to avoid circular dependencies during serialization
@@ -320,14 +344,17 @@ export class SingletonResolver {
     const { id } = input;
 
     try {
-      const [singleton, revisions] = await Promise.all([
+      const [singleton, fields, revisions] = await Promise.all([
         this.singletonRepository.findOneOrFail({
           where: { id, deletedAt: Not(IsNull()) },
-          relations: ['fields', 'user'],
+          relations: ['user'],
           withDeleted: true,
         }),
+        this.fieldRepository.find({ where: { schemaId: id } }),
         this.schemaRevisionRepository.find({ where: { schemaId: id } }),
       ]);
+
+      singleton.fields = fields;
 
       await Promise.all([
         this.singletonRepository.remove(singleton),
@@ -356,11 +383,16 @@ export class SingletonResolver {
     const { id } = input;
 
     try {
-      const singleton = await this.singletonRepository.findOneOrFail({
-        where: { id },
-        relations: ['fields', 'user'],
-        withDeleted: true,
-      });
+      const [singleton, fields] = await Promise.all([
+        this.singletonRepository.findOneOrFail({
+          where: { id },
+          relations: ['fields', 'user'],
+          withDeleted: true,
+        }),
+        this.fieldRepository.find({ where: { schemaId: id } }),
+      ]);
+
+      singleton.fields = fields;
 
       // Clone the retrieved singleton but omit the `dockiteField` property from the retrieved fields
       // to avoid circular dependencies during serialization
@@ -425,8 +457,16 @@ export class SingletonResolver {
           where: {
             id: id ?? payload.id,
           },
-          relations: ['fields', 'user', 'documents'],
+          relations: ['user'],
         });
+
+        const [fields, documents] = await Promise.all([
+          this.fieldRepository.find({ where: { schemaId: singleton.id } }),
+          this.documentRepository.find({ where: { schemaId: singleton.id } }),
+        ]);
+
+        singleton.fields = fields;
+        singleton.documents = documents;
 
         const clonedSingleton = cloneDeep({
           ...singleton,

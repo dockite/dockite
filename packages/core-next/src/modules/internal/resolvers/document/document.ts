@@ -1,10 +1,11 @@
 /* eslint-disable class-methods-use-this */
 import debug from 'debug';
-import { cloneDeep, merge } from 'lodash';
+import { cloneDeep, groupBy, merge, uniq } from 'lodash';
+import { doc } from 'prettier';
 import { Arg, Args, Ctx, Mutation, Query, Resolver } from 'type-graphql';
-import { getRepository, IsNull, Not, Repository } from 'typeorm';
+import { getRepository, In, IsNull, Not, Repository } from 'typeorm';
 
-import { Document, DocumentRevision, Schema } from '@dockite/database';
+import { Document, DocumentRevision, Field, Schema } from '@dockite/database';
 import { FindManyResult, GlobalContext, SchemaType } from '@dockite/types';
 import { WhereBuilder } from '@dockite/where-builder';
 
@@ -41,12 +42,16 @@ export class DocumentResolver {
 
   private schemaRepository: Repository<Schema>;
 
+  private fieldRepository: Repository<Field>;
+
   constructor() {
     this.documentRepository = getRepository(Document);
 
     this.documentRevisionRepository = getRepository(DocumentRevision);
 
     this.schemaRepository = getRepository(Schema);
+
+    this.fieldRepository = getRepository(Field);
   }
 
   /**
@@ -76,8 +81,7 @@ export class DocumentResolver {
         .where('locale = :locale', { locale })
         .andWhere('document.id = :id', { id })
         .leftJoinAndSelect('document.user', 'user')
-        .leftJoinAndSelect('document.schema', 'schema')
-        .leftJoinAndSelect('schema.fields', 'fields');
+        .leftJoinAndSelect('document.schema', 'schema');
 
       if (fallbackLocale) {
         qb.where('locale = :locale')
@@ -91,6 +95,12 @@ export class DocumentResolver {
       }
 
       const document = await qb.getOneOrFail();
+
+      // We fetch and assign fields in this manner to avoid accidental massive
+      // queries on moderate sized documents.
+      const fields = await this.fieldRepository.find({ where: { schemaId: document.schemaId } });
+
+      document.schema.fields = fields;
 
       await processDocumentOutput(document, document.schema, ctx.user);
 
@@ -129,7 +139,6 @@ export class DocumentResolver {
         .andWhere('schema.type = :schemaType', { schemaType: SchemaType.DEFAULT })
         .leftJoinAndSelect('document.user', 'user')
         .leftJoinAndSelect('document.schema', 'schema')
-        .leftJoinAndSelect('schema.fields', 'fields')
         .take(perPage)
         .skip(page * perPage);
 
@@ -172,6 +181,20 @@ export class DocumentResolver {
 
       const [documents, count] = await qb.getManyAndCount();
 
+      // We fetch and assign the fields here rather than as a join to avoid exponential
+      // results from joining a many to one relation
+      const fields = await this.fieldRepository
+        .find({
+          where: { schemaId: In(uniq(documents.map(d => d.schemaId))) },
+        })
+        .then(result => groupBy(result, 'schemaId'));
+
+      documents.forEach(document => {
+        Object.assign(document.schema, {
+          fields: fields[document.schemaId],
+        });
+      });
+
       await Promise.all(
         documents.map(document => processDocumentOutput(document, document.schema, ctx.user)),
       );
@@ -209,7 +232,7 @@ export class DocumentResolver {
         relations: ['fields'],
       });
 
-      let data = merge(getInitialDocumentData(schema), input.data);
+      let data = { ...getInitialDocumentData(schema), ...input.data };
 
       // If we have an associated parent we only want to deal with the fields that were provided data
       // rather than assigning defaults which would fork the document further from its parent
@@ -235,8 +258,11 @@ export class DocumentResolver {
         where: {
           id: savedDocument.id,
         },
-        relations: ['schema', 'schema.fields', 'user'],
+        relations: ['user'],
       });
+
+      // Assign the already fetched schema to saved document to avoid extra costs
+      document.schema = schema;
 
       return document;
     } catch (err) {
@@ -268,8 +294,12 @@ export class DocumentResolver {
         where: {
           id,
         },
-        relations: ['schema', 'schema.fields', 'user'],
+        relations: ['schema', 'user'],
       });
+
+      const fields = await this.fieldRepository.find({ where: { schemaId: document.schemaId } });
+
+      document.schema.fields = fields;
 
       const { schema } = document;
 
@@ -304,7 +334,7 @@ export class DocumentResolver {
         }),
       ]);
 
-      return merge(cloneDeep(document), updatedDocument);
+      return { ...cloneDeep(document), ...updatedDocument };
     } catch (err) {
       log(err);
 
@@ -336,8 +366,12 @@ export class DocumentResolver {
         where: {
           id,
         },
-        relations: ['schema', 'schema.fields', 'user'],
+        relations: ['schema', 'user'],
       });
+
+      const fields = await this.fieldRepository.find({ where: { schemaId: document.schemaId } });
+
+      document.schema.fields = fields;
 
       if (document.parentId) {
         const result = await this.permanentlyDeleteDocument(input, ctx);
@@ -400,9 +434,13 @@ export class DocumentResolver {
           id,
           deletedAt: Not(IsNull()),
         },
-        relations: ['schema', 'schema.fields', 'user'],
+        relations: ['schema', 'user'],
         withDeleted: true,
       });
+
+      const fields = await this.fieldRepository.find({ where: { schemaId: document.schemaId } });
+
+      document.schema.fields = fields;
 
       const { schema } = document;
 
@@ -450,9 +488,13 @@ export class DocumentResolver {
           id,
           deletedAt: Not(IsNull()),
         },
-        relations: ['schema', 'schema.fields', 'user'],
+        relations: ['schema', 'user'],
         withDeleted: true,
       });
+
+      const fields = await this.fieldRepository.find({ where: { schemaId: document.schemaId } });
+
+      document.schema.fields = fields;
 
       const { schema } = document;
 
@@ -514,8 +556,14 @@ export class DocumentResolver {
             where: {
               id,
             },
-            relations: ['schema', 'schema.fields', 'user'],
+            relations: ['schema', 'user'],
           });
+
+          const fields = await this.fieldRepository.find({
+            where: { schemaId: document.schemaId },
+          });
+
+          document.schema.fields = fields;
 
           const { schema } = document;
 
@@ -557,7 +605,7 @@ export class DocumentResolver {
             this.documentRevisionRepository.save(revision),
           ]);
 
-          return merge(cloneDeep(document), updatedDocument);
+          return { ...cloneDeep(document), ...updatedDocument };
         }),
       );
 

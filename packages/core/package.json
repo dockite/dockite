@@ -46,7 +46,7 @@
     "pg-format": "^1.0.4",
     "reflect-metadata": "^0.1.13",
     "type-graphql": "1.0.0-rc.2",
-    "typeorm": "^0.2.25",
+    "typeorm": ">= 0.2.25",
     "uuid": "^8.0.0"
   },
   "devDependencies": {

@@ -4,6 +4,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -23,18 +24,22 @@ export class DocumentRevision {
   @GraphQLField(_type => GraphQLJSON)
   public data!: Record<string, any>; // eslint-disable-line
 
+  @Index()
   @CreateDateColumn()
   @GraphQLField(_type => Date)
   public createdAt!: Date;
 
+  @Index()
   @UpdateDateColumn()
   @GraphQLField(_type => Date)
   public updatedAt!: Date;
 
+  @Index()
   @Column()
   @GraphQLField(_type => String)
   public documentId!: string;
 
+  @Index()
   @Column()
   @GraphQLField(_type => String)
   public schemaId!: string;

@@ -10,6 +10,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
   DeleteDateColumn,
+  Index,
 } from 'typeorm';
 
 import { SchemaType } from '../types';
@@ -123,6 +124,7 @@ export class Schema {
   @GraphQLField(_type => [Field], { nullable: true })
   public fields!: Field[];
 
+  @Index()
   @Column({ nullable: true })
   @GraphQLField(_type => String, { nullable: true })
   public userId?: string | null;
@@ -130,14 +132,17 @@ export class Schema {
   @ManyToOne(_type => User, { nullable: true, onDelete: 'SET NULL' })
   public user!: User;
 
+  @Index()
   @CreateDateColumn()
   @GraphQLField()
   public createdAt!: Date;
 
+  @Index()
   @UpdateDateColumn()
   @GraphQLField()
   public updatedAt!: Date;
 
+  @Index()
   @DeleteDateColumn()
   @GraphQLField(_type => Date, { nullable: true })
   public deletedAt?: Date | null;

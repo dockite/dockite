@@ -1,8 +1,8 @@
 /* eslint-disable class-methods-use-this */
 import debug from 'debug';
-import { cloneDeep, omit } from 'lodash';
+import { cloneDeep, groupBy, omit, result, uniq } from 'lodash';
 import { Arg, Args, Ctx, FieldResolver, Mutation, Query, Resolver, Root } from 'type-graphql';
-import { getRepository, IsNull, Not, Repository } from 'typeorm';
+import { getRepository, In, IsNull, Not, Repository } from 'typeorm';
 
 import { Field, Schema, SchemaRevision, SchemaType } from '@dockite/database';
 import { GlobalContext } from '@dockite/types';
@@ -74,14 +74,18 @@ export class SchemaResolver {
         .createQueryBuilder('schema')
         .where('schema.id = :id', { id })
         .andWhere('schema.type = :schemaType', { schemaType: SchemaType.DEFAULT })
-        .leftJoinAndSelect('schema.fields', 'fields')
         .leftJoinAndSelect('schema.user', 'user');
 
       if (deleted) {
         qb.andWhere('schema.deletedAt IS NOT NULL').withDeleted();
       }
 
-      const schema = await qb.getOneOrFail();
+      const [schema, fields] = await Promise.all([
+        qb.getOneOrFail(),
+        this.fieldRepository.find({ where: { schemaId: id } }),
+      ]);
+
+      schema.fields = fields;
 
       return schema;
     } catch (err) {
@@ -109,7 +113,6 @@ export class SchemaResolver {
     const qb = this.schemaRepository
       .createQueryBuilder('schema')
       .where('schema.type = :schemaType', { schemaType: SchemaType.DEFAULT })
-      .leftJoinAndSelect('schema.fields', 'fields')
       .leftJoinAndSelect('schema.user', 'user');
 
     if (deleted) {
@@ -117,6 +120,18 @@ export class SchemaResolver {
     }
 
     const [schemas, count] = await qb.getManyAndCount();
+
+    const fields = await this.fieldRepository
+      .find({
+        where: { schemaId: In(uniq(schemas.map(s => s.id))) },
+      })
+      .then(result => groupBy(result, 'schemaId'));
+
+    schemas.forEach(schema => {
+      Object.assign(schema, {
+        fields: fields[schema.id],
+      });
+    });
 
     return createFindManyResult<Schema>(schemas, count, 1, MAX_32_BIT_INT);
   }
@@ -175,10 +190,15 @@ export class SchemaResolver {
     const { id, name, title, groups, settings } = input;
 
     try {
-      const schema = await this.schemaRepository.findOneOrFail({
-        where: { id },
-        relations: ['fields', 'user'],
-      });
+      const [schema, fields] = await Promise.all([
+        this.schemaRepository.findOneOrFail({
+          where: { id },
+          relations: ['user'],
+        }),
+        this.fieldRepository.find({ where: { schemaId: id } }),
+      ]);
+
+      schema.fields = fields;
 
       // Clone the retrieved schema but omit the `dockiteField` property from the retrieved fields
       // to avoid circular dependencies during serialization
@@ -225,10 +245,15 @@ export class SchemaResolver {
     const { id } = input;
 
     try {
-      const schema = await this.schemaRepository.findOneOrFail({
-        where: { id },
-        relations: ['fields', 'user'],
-      });
+      const [schema, fields] = await Promise.all([
+        this.schemaRepository.findOneOrFail({
+          where: { id },
+          relations: ['user'],
+        }),
+        this.fieldRepository.find({ where: { schemaId: id } }),
+      ]);
+
+      schema.fields = fields;
 
       // Clone the retrieved schema but omit the `dockiteField` property from the retrieved fields
       // to avoid circular dependencies during serialization
@@ -270,14 +295,17 @@ export class SchemaResolver {
     const { id } = input;
 
     try {
-      const [schema, revisions] = await Promise.all([
+      const [schema, fields, revisions] = await Promise.all([
         this.schemaRepository.findOneOrFail({
           where: { id, deletedAt: Not(IsNull()) },
-          relations: ['fields', 'user'],
+          relations: ['user'],
           withDeleted: true,
         }),
+        this.fieldRepository.find({ where: { schemaId: id } }),
         this.schemaRevisionRepository.find({ where: { schemaId: id } }),
       ]);
+
+      schema.fields = fields;
 
       await Promise.all([
         this.schemaRepository.remove(schema),
@@ -306,11 +334,14 @@ export class SchemaResolver {
     const { id } = input;
 
     try {
-      const schema = await this.schemaRepository.findOneOrFail({
-        where: { id },
-        relations: ['fields', 'user'],
-        withDeleted: true,
-      });
+      const [schema, fields] = await Promise.all([
+        this.schemaRepository.findOneOrFail({
+          where: { id },
+          relations: ['fields', 'user'],
+          withDeleted: true,
+        }),
+        this.fieldRepository.find({ where: { schemaId: id } }),
+      ]);
 
       // Clone the retrieved schema but omit the `dockiteField` property from the retrieved fields
       // to avoid circular dependencies during serialization
@@ -369,8 +400,12 @@ export class SchemaResolver {
           where: {
             id: id ?? payload.id,
           },
-          relations: ['fields', 'user'],
+          relations: ['user'],
         });
+
+        const fields = await this.fieldRepository.find({ where: { schemaId: schema.id } });
+
+        schema.fields = fields;
 
         const clonedSchema = cloneDeep({
           ...schema,

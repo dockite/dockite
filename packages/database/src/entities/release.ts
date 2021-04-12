@@ -3,6 +3,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -43,6 +44,7 @@ export class Release {
   @ManyToOne(_type => User)
   public user!: User;
 
+  @Index()
   @Column()
   @GraphQLField()
   public userId!: string;
@@ -51,6 +53,7 @@ export class Release {
   @GraphQLField(_type => Date, { nullable: true })
   public scheduledFor?: Date | null;
 
+  @Index()
   @Column({ type: 'timestamp', nullable: true })
   @GraphQLField(_type => Date, { nullable: true })
   public publishedAt?: Date | null;
@@ -59,10 +62,12 @@ export class Release {
   @GraphQLField(_type => String, { nullable: true })
   public publishedBy?: string | null;
 
+  @Index()
   @CreateDateColumn()
   @GraphQLField()
   public createdAt!: Date;
 
+  @Index()
   @UpdateDateColumn()
   @GraphQLField()
   public updatedAt!: Date;
