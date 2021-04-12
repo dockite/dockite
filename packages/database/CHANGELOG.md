@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.4.1-alpha.2](https://github.com/dockite/dockite/compare/@dockite/database@0.4.1-alpha.1...@dockite/database@0.4.1-alpha.2) (2021-04-12)
+
+
+### Bug Fixes
+
+* **database:** add further indexing ([33d5c38](https://github.com/dockite/dockite/commit/33d5c3825a0084d8ec4d4421c17d7e717a102571))
+
+
+
+
+
 ## [0.4.1-alpha.1](https://github.com/dockite/dockite/compare/@dockite/database@0.4.1-alpha.0...@dockite/database@0.4.1-alpha.1) (2021-04-09)
 
 

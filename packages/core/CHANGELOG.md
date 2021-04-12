@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.5.0-alpha.3](https://github.com/dockite/dockite/compare/@dockite/core@0.5.0-alpha.2...@dockite/core@0.5.0-alpha.3) (2021-04-12)
+
+
+### Bug Fixes
+
+* **database:** add further indexing ([33d5c38](https://github.com/dockite/dockite/commit/33d5c3825a0084d8ec4d4421c17d7e717a102571))
+
+
+
+
+
 # [0.5.0-alpha.2](https://github.com/dockite/dockite/compare/@dockite/core@0.5.0-alpha.1...@dockite/core@0.5.0-alpha.2) (2021-04-09)
 
 **Note:** Version bump only for package @dockite/core
