@@ -9,7 +9,10 @@ import { Schema } from './schema';
     conn
       .createQueryBuilder()
       .select('document.*')
-      .addSelect(`jsonb_to_tsvector('english', document.data, '["all"]')`, 'fts')
+      .addSelect(
+        `to_tsvector(SUBSTRING((SELECT string_agg(value, ' ') FROM jsonb_each_text(document.data)), 0, 15000))`,
+        'fts',
+      )
       .from(Document, 'document'),
 })
 @Index('view_idx_1', { synchronize: false })
