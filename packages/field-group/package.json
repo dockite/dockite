@@ -1,6 +1,6 @@
 {
   "name": "@dockite/field-group",
-  "version": "0.4.1-alpha.4",
+  "version": "0.4.1-alpha.5",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
@@ -12,7 +12,7 @@
     "lib"
   ],
   "dependencies": {
-    "@dockite/database": "^0.4.1-alpha.2",
+    "@dockite/database": "^0.4.1-alpha.3",
     "@dockite/field": "^0.4.0-alpha.0",
     "@dockite/types": "^0.3.0",
     "graphql": "^15.1.0",

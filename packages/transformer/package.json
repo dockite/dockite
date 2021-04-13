@@ -1,6 +1,6 @@
 {
   "name": "@dockite/transformer",
-  "version": "0.4.0-alpha.3",
+  "version": "0.4.0-alpha.4",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
@@ -12,10 +12,10 @@
   ],
   "dependencies": {
     "@dockite/ability": "^0.2.2-alpha.0",
-    "@dockite/database": "^0.4.1-alpha.2",
+    "@dockite/database": "^0.4.1-alpha.3",
     "@dockite/field": "^0.4.0-alpha.0",
     "@dockite/types": "^0.3.0",
-    "@dockite/where-builder": "^0.2.1-alpha.3",
+    "@dockite/where-builder": "^0.2.1-alpha.4",
     "apollo-server-express": "^2.15.1",
     "debug": "^4.1.1",
     "express": "^4.17.1",
