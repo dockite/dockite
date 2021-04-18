@@ -36,8 +36,17 @@ export enum ApplicationErrorCode {
   CANT_DELETE_SINGLETON = 'CANT_DELETE_SINGLETON',
   CANT_PERMANENT_DELETE_SINGLETON = 'CANT_PERMANENT_DELETE_SINGLETON',
   CANT_RESTORE_SINGLETON = 'CANT_RESTORE_SINGLETON',
+
+  /**
+   * API Keys
+   */
+  CANT_CREATE_API_KEY = 'CANT_CREATE_API_KEY',
+  CANT_DELETE_API_KEY = 'CANT_DELETE_API_KEY',
 }
 
+/**
+ *
+ */
 export class ApplicationError extends Error {
   public code: ApplicationErrorCode;
 
@@ -52,6 +61,9 @@ export class ApplicationError extends Error {
   }
 }
 
+/**
+ *
+ */
 export class ApplicationErrorGroup extends Error {
   public errors: ApplicationError[];
 

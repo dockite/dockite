@@ -88,7 +88,7 @@ export const DeletedSchemasIndexPage = defineComponent({
                 {{
                   default: ({ row }: SchemaTableColumnDefaultScopedSlot) => (
                     <router-link
-                      class="font-mono overflow-ellipsis whitespace-no-wrap break-normal"
+                      class="font-mono truncate"
                       to={`/schemas/deleted/${row.id}/restore`}
                     >
                       {row.id}

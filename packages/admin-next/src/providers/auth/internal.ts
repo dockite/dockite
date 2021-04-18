@@ -9,6 +9,9 @@ import {
 } from '~/graphql';
 import { LoginPayload, RegisterPayload } from '~/hooks/useAuth/types';
 
+/**
+ *
+ */
 export const init = (..._args: unknown[]): void => {
   // no-op
 };
@@ -46,10 +49,16 @@ export const login = async (payload: LoginPayload): Promise<string> => {
   }
 };
 
+/**
+ *
+ */
 export const register = async (..._args: unknown[]): Promise<string> => {
   throw new Error('Registration is not implemented for internal authentication.');
 };
 
+/**
+ *
+ */
 export const registerFirstUser = async (payload: RegisterPayload): Promise<string> => {
   const graphql = await import('~/hooks/useGraphQL').then(mod => mod.useGraphQL());
 
@@ -80,6 +89,9 @@ export const registerFirstUser = async (payload: RegisterPayload): Promise<strin
   }
 };
 
+/**
+ *
+ */
 export const logout = async (): Promise<void> => {
   const graphql = await import('~/hooks/useGraphQL').then(mod => mod.useGraphQL());
 

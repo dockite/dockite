@@ -67,7 +67,7 @@ export const LocalesIndexPage = defineComponent({
                 {{
                   default: ({ row }: LocaleTableColumnDefaultScopedSlot) => (
                     <router-link
-                      class="font-mono overflow-ellipsis whitespace-no-wrap break-normal"
+                      class="font-mono truncate"
                       to={`/settings/locales/${row.id}`}
                     >
                       {row.id}

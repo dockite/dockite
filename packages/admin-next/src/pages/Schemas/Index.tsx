@@ -85,10 +85,7 @@ export const SchemasIndexPage = defineComponent({
               <el-table-column label="ID" prop="id">
                 {{
                   default: ({ row }: SchemaTableColumnDefaultScopedSlot) => (
-                    <router-link
-                      class="font-mono overflow-ellipsis whitespace-no-wrap break-normal"
-                      to={`/schemas/${row.id}`}
-                    >
+                    <router-link class="font-mono truncate" to={`/schemas/${row.id}`}>
                       {row.id}
                     </router-link>
                   ),

@@ -19,6 +19,9 @@ const state: UseAuthState = reactive({
 
 const { storage: storedToken } = useLocalStorage(AUTH_TOKEN_STORAGE_KEY, '');
 
+/**
+ *
+ */
 export const useAuth = (): UseAuthHook => {
   const config = useConfig();
 
@@ -35,6 +38,9 @@ export const useAuth = (): UseAuthHook => {
   }
 
   // eslint-disable-next-line consistent-return
+  /**
+   *
+   */
   const handleInitProvider = (): MaybePromise<void> => {
     if (state.type !== 'internal') {
       if (config.app.authProvider === 'auth0') {
@@ -62,6 +68,9 @@ export const useAuth = (): UseAuthHook => {
     }
   };
 
+  /**
+   *
+   */
   const handleLogin = (payload: LoginPayload): MaybePromise<string | void> => {
     if (state.type !== 'internal') {
       if (config.app.authProvider === 'auth0') {
@@ -89,6 +98,9 @@ export const useAuth = (): UseAuthHook => {
       });
   };
 
+  /**
+   *
+   */
   const handleRefreshUser = (): MaybePromise<void> => {
     return import('~/common/api')
       .then(({ getMe }) => getMe())
@@ -97,6 +109,9 @@ export const useAuth = (): UseAuthHook => {
       });
   };
 
+  /**
+   *
+   */
   const handleRegister = (payload: RegisterPayload): MaybePromise<string | void> => {
     if (state.type !== 'internal') {
       if (config.app.authProvider === 'auth0') {
@@ -124,6 +139,9 @@ export const useAuth = (): UseAuthHook => {
       });
   };
 
+  /**
+   *
+   */
   const handleRegisterFirstUser = (payload: RegisterPayload): MaybePromise<string | void> => {
     if (state.type !== 'internal') {
       if (config.app.authProvider === 'auth0') {
@@ -151,6 +169,9 @@ export const useAuth = (): UseAuthHook => {
       });
   };
 
+  /**
+   *
+   */
   const handleRefreshToken = (): MaybePromise<void> => {
     if (state.type !== 'internal') {
       if (config.app.authProvider === 'auth0') {
@@ -177,6 +198,9 @@ export const useAuth = (): UseAuthHook => {
     return handleRefreshUser();
   };
 
+  /**
+   *
+   */
   const handleLogout = (): MaybePromise<void> => {
     if (state.type !== 'internal') {
       if (config.app.authProvider === 'auth0') {

@@ -1,15 +1,17 @@
+import crypto from 'crypto';
+
 import { AuthenticationError, ForbiddenError } from 'apollo-server-express';
 import { compare } from 'bcrypt';
 import debug from 'debug';
 import { omit } from 'lodash';
-import { Arg, Ctx, Mutation, Query, Resolver } from 'type-graphql';
+import { Arg, ArgsType, Ctx, Mutation, Query, Resolver } from 'type-graphql';
 import { getRepository, Repository } from 'typeorm';
 
 import { Role, User } from '@dockite/database';
 import { DockiteConfiguration, GlobalContext } from '@dockite/types';
 
 import { getConfig } from '../../../../common/config';
-import { Authenticated } from '../../../../common/decorators';
+import { Authenticated, Authorized } from '../../../../common/decorators';
 import { createJwtTokenForUser, isInternalAuth } from '../../../../common/util';
 
 import {
@@ -158,6 +160,67 @@ export class AuthenticationResolver {
       log(err);
 
       throw new AuthenticationError('Authenticated user could not be found.');
+    }
+  }
+
+  @Authenticated()
+  @Authorized({ scope: 'internal:apikey:create' })
+  @Mutation(_returns => Boolean)
+  public async createApiKey(@Ctx() ctx: GlobalContext): Promise<boolean> {
+    try {
+      if (!ctx.user) {
+        throw new ForbiddenError('You must be authenticated to perform this action');
+      }
+
+      const { id } = ctx.user;
+
+      const user = await this.userRepository.findOneOrFail(id);
+
+      const key = crypto
+        .createHash('sha256')
+        .update(Date.now().toString())
+        .digest('hex')
+        .slice(0, 40);
+
+      user.apiKeys.push(key);
+
+      await this.userRepository.save(user);
+
+      return true;
+    } catch (err) {
+      log(err);
+
+      return false;
+    }
+  }
+
+  @Authenticated()
+  @Authorized({ scope: 'internal:apikey:delete' })
+  @Mutation(_returns => Boolean)
+  public async deleteApiKey(
+    @Arg('key', _type => String)
+    key: string,
+    @Ctx()
+    ctx: GlobalContext,
+  ): Promise<boolean> {
+    try {
+      if (!ctx.user) {
+        throw new ForbiddenError('You must be authenticated to perform this action');
+      }
+
+      const { id } = ctx.user;
+
+      const user = await this.userRepository.findOneOrFail(id);
+
+      user.apiKeys = user.apiKeys.filter(apiKey => apiKey !== key);
+
+      await this.userRepository.save(user);
+
+      return true;
+    } catch (err) {
+      log(err);
+
+      return false;
     }
   }
 }

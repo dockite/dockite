@@ -12,6 +12,11 @@ module.exports = {
   theme: {
     extend: {},
   },
-  variants: {},
+  variants: {
+    extend: {
+      blur: ['hover', 'focus'],
+      borderWidth: ['last'],
+    },
+  },
   plugins: [],
 };

@@ -1,0 +1,7 @@
+.account--api-key:hover .account--api-key__copy {
+  display: flex;
+}
+
+.account--api-key:hover .account--api-key__preview {
+  filter: blur(7px);
+}

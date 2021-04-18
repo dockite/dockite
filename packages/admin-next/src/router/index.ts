@@ -188,6 +188,11 @@ export const Router = createRouter({
      * Settings
      */
     {
+      path: '/settings/account',
+      component: () => import('../pages/Settings/Account'),
+      meta: { layout: 'Dashboard' },
+    },
+    {
       path: '/settings/locales',
       component: () => import('../pages/Settings/Locales'),
       meta: { layout: 'Dashboard' },

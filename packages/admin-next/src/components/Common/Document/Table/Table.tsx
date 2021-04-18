@@ -274,10 +274,7 @@ export const DocumentTableComponent = defineComponent({
               <el-table-column label="ID" prop="id">
                 {{
                   default: ({ row }: DocumentTableColumnDefaultScopedSlot) => (
-                    <router-link
-                      class="font-mono overflow-ellipsis whitespace-no-wrap break-normal"
-                      to={`/documents/${row.id}`}
-                    >
+                    <router-link class="font-mono truncate" to={`/documents/${row.id}`}>
                       {row.id}
                     </router-link>
                   ),
@@ -350,10 +347,7 @@ export const DocumentTableComponent = defineComponent({
               <el-table-column label="ID" prop="id">
                 {{
                   default: ({ row }: DocumentTableColumnDefaultScopedSlot) => (
-                    <router-link
-                      class="font-mono overflow-ellipsis whitespace-no-wrap break-normal"
-                      to={`/documents/${row.id}`}
-                    >
+                    <router-link class="font-mono truncate" to={`/documents/${row.id}`}>
                       {row.id}
                     </router-link>
                   ),

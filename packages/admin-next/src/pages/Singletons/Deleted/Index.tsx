@@ -75,7 +75,7 @@ export const DeletedSingletonsIndexPage = defineComponent({
                 {{
                   default: ({ row }: SingletonTableColumnDefaultScopedSlot) => (
                     <router-link
-                      class="font-mono overflow-ellipsis whitespace-no-wrap break-normal"
+                      class="font-mono truncate"
                       to={`/singletons/deleted/${row.id}/restore`}
                     >
                       {row.id}
