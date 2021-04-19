@@ -124,22 +124,12 @@ export const createSchema = async (payload: BaseSchema): Promise<Schema> => {
       },
 
       // On Update we will also append the schema to our allSchemas query
-      /**
-       *
-       */
       update: (store, { data: createSchemaData }) => {
         if (createSchemaData) {
-          const { createSchema: schema } = createSchemaData;
-
-          const data = store.readQuery<FetchAllSchemasQueryResponse>({
-            query: FETCH_ALL_SCHEMAS_QUERY,
+          store.modify({
+            id: 'ROOT_QUERY',
+            fields: deleteFields('allSchemas'),
           });
-
-          if (data) {
-            data.allSchemas.results = [...data.allSchemas.results, schema];
-
-            store.writeQuery({ query: FETCH_ALL_SCHEMAS_QUERY, data });
-          }
         }
       },
     });
@@ -191,22 +181,11 @@ export const updateSchema = async (payload: BaseSchema, id: string): Promise<Sch
       // On Update we will also append the schema to our allSchemas query
       update: (store, { data: updateSchemaData }) => {
         if (updateSchemaData) {
-          store.evict({
-            id: 'ROOT_QUERY',
-            fieldName: 'getSchema',
-            broadcast: false,
-          });
-
-          store.evict({
-            id: 'ROOT_QUERY',
-            fieldName: 'allSchemas',
-            broadcast: false,
-          });
-
           store.modify({
             id: 'ROOT_QUERY',
             fields: {
               ...bustDocumentsBySchemaId(id),
+              ...deleteFields('getSchema', 'allSchemas'),
             },
             broadcast: false,
           });
@@ -263,15 +242,11 @@ export const importSchema = async (payload: BaseSchema, id?: string): Promise<Sc
       // On Update we will also append the schema to our allSchemas query
       update: (store, { data: importSchemaData }) => {
         if (importSchemaData) {
-          store.evict({
+          store.modify({
             id: 'ROOT_QUERY',
-            fieldName: 'getSchema',
-            broadcast: false,
-          });
-
-          store.evict({
-            id: 'ROOT_QUERY',
-            fieldName: 'allSchemas',
+            fields: {
+              ...deleteFields('getSchema', 'allSchemas'),
+            },
             broadcast: false,
           });
 
@@ -334,9 +309,6 @@ export const deleteSchema = async (payload: Schema): Promise<boolean> => {
       },
 
       // On Update we will also append the schema to our allSchemas query
-      /**
-       *
-       */
       update: (store, { data: deleteSchemaData }) => {
         if (deleteSchemaData) {
           const { deleteSchema: success } = deleteSchemaData;
@@ -407,9 +379,6 @@ export const permanentlyDeleteSchema = async (payload: Schema): Promise<boolean>
       },
 
       // On Update we will also append the schema to our allSchemas query
-      /**
-       *
-       */
       update: (store, { data: permanentDeleteSchemaData }) => {
         if (permanentDeleteSchemaData) {
           const { permanentlyDeleteSchema: success } = permanentDeleteSchemaData;
@@ -478,10 +447,6 @@ export const restoreSchema = async (payload: Schema): Promise<Schema> => {
           id: payload.id,
         },
       },
-
-      /**
-       *
-       */
       update: (store, { data: restoreSchemaData }) => {
         if (restoreSchemaData) {
           const { restoreSchema: schema } = restoreSchemaData;

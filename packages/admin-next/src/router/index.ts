@@ -28,6 +28,16 @@ export const Router = createRouter({
       meta: { layout: 'Dashboard' },
     },
     {
+      path: '/documents/:documentId/revisions',
+      component: () => import('../pages/Documents/_Id/Revisions'),
+      meta: { layout: 'Dashboard' },
+    },
+    {
+      path: '/documents/:documentId/compare',
+      component: () => import('../pages/Documents/_Id/Compare'),
+      meta: { layout: 'Dashboard' },
+    },
+    {
       path: '/documents/:documentId/delete',
       component: () => import('../pages/Documents/_Id/Delete'),
       meta: { layout: 'Dashboard' },

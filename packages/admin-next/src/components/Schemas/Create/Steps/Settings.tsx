@@ -109,7 +109,7 @@ export const SchemaCreateSettingsStepComponent = defineComponent({
             labelPosition="top"
           >
             <fieldset class="pb-3 border-b">
-              <legend class="text-lg font-semibold pb-3">API Methods</legend>
+              <legend class="text-lg font-medium pb-3">API Methods</legend>
 
               <el-form-item label="Enable GraphQL Muatations" prop="enableMutations">
                 <el-switch v-model={modelValue.value.settings.enableMutations} />
@@ -169,7 +169,7 @@ export const SchemaCreateSettingsStepComponent = defineComponent({
             <fieldset
               class={{ 'mt-5 pb-3 border-b': true, hidden: schemaType.value === 'Singleton' }}
             >
-              <legend class="text-lg font-semibold pb-3">{schemaType.value} Views</legend>
+              <legend class="text-lg font-medium pb-3">{schemaType.value} Views</legend>
               <el-form-item label="Default View" prop="defaultView">
                 <el-select
                   v-model={modelValue.value.settings.defaultView}

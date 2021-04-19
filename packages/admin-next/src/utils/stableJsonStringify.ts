@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
-import { sortBy, cloneDeep } from 'lodash';
+import { cloneDeep, sortBy } from 'lodash';
 
-import { BaseField, Field, Schema } from '@dockite/database';
+import { BaseField } from '@dockite/database';
 
 const recursiveReplacer = (key: string, value: any, keyCollection: string[]): any => {
   if (!keyCollection.includes(key)) {
@@ -34,7 +34,7 @@ export const sortFields = (fields: BaseField[]): BaseField[] => {
 export const stableJSONStringify = (obj: any, space = 2): string => {
   const clone = cloneDeep(obj);
 
-  if (clone.fields) {
+  if (clone && clone.fields) {
     clone.fields = sortFields(clone.fields);
   }
 

@@ -1,7 +1,7 @@
 import crypto from 'crypto';
 
 import { AuthenticationError, ForbiddenError } from 'apollo-server-express';
-import { compare } from 'bcrypt';
+import { compare, hash } from 'bcrypt';
 import debug from 'debug';
 import { omit } from 'lodash';
 import { Arg, ArgsType, Ctx, Mutation, Query, Resolver } from 'type-graphql';
@@ -117,6 +117,7 @@ export class AuthenticationResolver {
 
     const firstUser = this.userRepository.create({
       ...input,
+      password: await hash(input.password, 10),
       roles: [role],
     });
 

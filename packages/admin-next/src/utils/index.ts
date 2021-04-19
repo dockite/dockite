@@ -10,3 +10,4 @@ export * from './getPaginationString';
 export * from './getRootLocale';
 export * from './isRootLocale';
 export * from './stableJsonStringify';
+export * from './loadScript';

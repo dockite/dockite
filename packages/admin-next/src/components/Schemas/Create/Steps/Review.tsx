@@ -60,7 +60,7 @@ export const SchemaCreateReviewStepComponent = defineComponent({
           <div class="bg-gray-200 border rounded text-sm py-3 px-5">
             <div class="flex -mx-3">
               <div class="w-1/2 px-3 flex">
-                <ul class="font-semibold text-right pr-5">
+                <ul class="font-medium text-right pr-5">
                   <li class="pb-1 last:pb-0">Name</li>
                   <li class="pb-1 last:pb-0">Identifier</li>
                   <li class="pb-1 last:pb-0">Groups</li>
@@ -77,7 +77,7 @@ export const SchemaCreateReviewStepComponent = defineComponent({
               </div>
 
               <div class="w-1/2 px-3 flex">
-                <ul class="font-semibold text-right pr-5">
+                <ul class="font-medium text-right pr-5">
                   <li class="pb-1 last:pb-0">Mutations Enabled</li>
                   <li class="pb-1 last:pb-0">Create Mutation Enabled</li>
                   <li class="pb-1 last:pb-0">Update Mutation Enabled</li>

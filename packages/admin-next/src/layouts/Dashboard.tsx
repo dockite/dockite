@@ -7,7 +7,9 @@ import { SideMenu } from '../components/Common/SideMenu';
 import {
   DASHBOARD_HEADER_PORTAL_ACTIONS,
   DASHBOARD_HEADER_PORTAL_TITLE,
+  DASHBOARD_MAIN_PORTAL_BREADCRUMBS,
   DASHBOARD_MAIN_PORTAL_FOOTER,
+  DASHBOARD_MAIN_PORTAL_HEADER,
 } from '~/common/constants';
 import { useAuth, useState } from '~/hooks';
 
@@ -60,6 +62,10 @@ export const DashboardLayout = defineComponent({
           </el-header>
 
           <el-main class="flex flex-col bg-gray-100">
+            <PortalTarget name={DASHBOARD_MAIN_PORTAL_BREADCRUMBS} />
+
+            <PortalTarget name={DASHBOARD_MAIN_PORTAL_HEADER} />
+
             <div class="p-5 relative bg-white rounded-sm shadow">
               {ctx.slots.default && ctx.slots.default()}
             </div>

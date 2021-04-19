@@ -18,6 +18,7 @@ import {
 } from '../schema/util';
 
 import {
+  GetDocumentRevisionArgs,
   GetRevisionsForDocumentArgs,
   GetRevisionsForSchemaArgs,
   RestoreDocumentRevisionArgs,
@@ -62,6 +63,38 @@ export class RevisionResolver {
     checkArgsOrFields: true,
     fieldsOrArgsToLookup: ['schemaId'],
   })
+  @Query(_returns => DocumentRevision)
+  public async getDocumentRevision(
+    @Args()
+    input: GetDocumentRevisionArgs,
+  ): Promise<DocumentRevision> {
+    const { documentId, revisionId } = input;
+
+    try {
+      const revision = await this.documentRevisionRepository.findOneOrFail({
+        where: {
+          id: revisionId,
+          documentId,
+        },
+        relations: ['user'],
+      });
+
+      return revision;
+    } catch (err) {
+      log(err);
+
+      throw new Error(`Unable to retrieve revision with ID: ${revisionId}`);
+    }
+  }
+
+  @Authenticated()
+  @Authorized({
+    scope: 'internal:document:read',
+    deriveFurtherAlternativeScopes: true,
+    resourceType: 'schema',
+    checkArgsOrFields: true,
+    fieldsOrArgsToLookup: ['schemaId'],
+  })
   @Query(_returns => FindManyDocumentRevisionsResult)
   public async getRevisionsForDocument(
     @Args()
@@ -73,8 +106,10 @@ export class RevisionResolver {
       const [revisions, count] = await this.documentRevisionRepository
         .createQueryBuilder('revision')
         .where('revision.documentId = :documentId', { documentId })
+        .leftJoinAndSelect('revision.user', 'user')
+        .orderBy('revision.createdAt', 'DESC')
         .take(perPage)
-        .skip(page)
+        .skip((page - 1) * perPage)
         .getManyAndCount();
 
       return createFindManyResult(revisions, count, page, perPage);
@@ -152,8 +187,10 @@ export class RevisionResolver {
       const [revisions, count] = await this.schemaRevisionRepository
         .createQueryBuilder('revision')
         .where('revision.schemaId = :schemaId', { schemaId })
+        .leftJoinAndSelect('revision.user', 'user')
+        .orderBy('revision.createdAt', 'DESC')
         .take(perPage)
-        .skip(page)
+        .skip((page - 1) * perPage)
         .getManyAndCount();
 
       return createFindManyResult(revisions, count, page, perPage);

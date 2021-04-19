@@ -147,7 +147,7 @@ export const SchemaFieldDrawerComponent = defineComponent({
 
                       <a
                         href="#"
-                        class="font-semibold"
+                        class="font-medium"
                         onClick={withModifiers(() => availableFields.exec(), ['prevent'])}
                       >
                         Retry?

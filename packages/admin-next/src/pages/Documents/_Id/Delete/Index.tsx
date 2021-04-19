@@ -3,6 +3,7 @@ import { Portal } from 'portal-vue';
 import { computed, defineComponent, watch } from 'vue';
 import { usePromise, usePromiseLazy } from 'vue-composable';
 import { useRoute, useRouter } from 'vue-router';
+
 import { getDocumentById } from '~/common/api';
 import { deleteDocument } from '~/common/api/document';
 import { DASHBOARD_HEADER_PORTAL_TITLE } from '~/common/constants';
@@ -10,7 +11,6 @@ import { ApplicationError, ApplicationErrorCode } from '~/common/errors';
 import { logE } from '~/common/logger';
 import { useCountdownLazy, useState } from '~/hooks';
 import { getDocumentIdentifier } from '~/utils';
-
 
 export const DeleteDocumentPage = defineComponent({
   name: 'DeleteDocumentPage',

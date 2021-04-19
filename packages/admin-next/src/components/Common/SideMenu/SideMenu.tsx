@@ -200,7 +200,7 @@ export const SideMenu = defineComponent({
                       </el-menu-item>
                     ))}
 
-                    <el-menu-item class="font-semibold" index="/schemas">
+                    <el-menu-item class="font-medium" index="/schemas">
                       <i class="el-icon-setting" />
                       <router-link to="/schemas">Management</router-link>
                     </el-menu-item>
@@ -260,7 +260,7 @@ export const SideMenu = defineComponent({
                       </el-menu-item>
                     ))}
 
-                    <el-menu-item class="font-semibold" index="/singletons">
+                    <el-menu-item class="font-medium" index="/singletons">
                       <i class="el-icon-setting" />
                       <router-link to="/singletons">Management</router-link>
                     </el-menu-item>

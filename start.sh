@@ -8,7 +8,7 @@ if [[ "$(docker images -q $IMAGE_TAG 2> /dev/null)" == "" ]]; then
   docker pull "$IMAGE_TAG"
 fi
 
-if [[ -z "$(docker container ls --all | grep "$CONTAINER_NAME")" ]]; then
+if [[ -z "$(docker container ls --all | grep -P "${CONTAINER_NAME}$")" ]]; then
   docker run -itd \
     -e "POSTGRES_USER=dockite" \
     -e "POSTGRES_PASSWORD=password" \

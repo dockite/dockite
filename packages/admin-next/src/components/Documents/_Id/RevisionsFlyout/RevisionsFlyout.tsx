@@ -1,12 +1,11 @@
-import { noop } from 'lodash';
-import { defineComponent, PropType, ref, withModifiers } from 'vue';
-import { usePromise } from 'vue-composable';
+import { defineComponent, PropType, ref, toRefs, watch, withModifiers } from 'vue';
+import { usePromise, usePromiseLazy } from 'vue-composable';
 
 import { Document } from '@dockite/database';
 
 import { getRevisionsForDocument } from '~/common/api/documentRevisions';
-import RenderIfComponent from '~/components/Common/RenderIf';
-import SpinnerComponent from '~/components/Common/Spinner';
+import { RenderIfComponent } from '~/components/Common/RenderIf';
+import { SpinnerComponent } from '~/components/Common/Spinner';
 
 export interface DocumentRevisionsFlyoutComponentProps {
   document: Document;
@@ -23,13 +22,21 @@ export const DocumentRevisionsFlyoutComponent = defineComponent({
   },
 
   setup: props => {
+    const { document } = toRefs(props);
+
     const drawerVisible = ref(false);
 
     const toggleDrawerVisibility = (): void => {
       drawerVisible.value = !drawerVisible.value;
     };
 
-    const documentRevisions = usePromise(() => getRevisionsForDocument(props.document.id));
+    const documentRevisions = usePromiseLazy(() => getRevisionsForDocument(document.value.id));
+
+    watch(drawerVisible, visible => {
+      if (visible && !documentRevisions.result.value) {
+        documentRevisions.exec();
+      }
+    });
 
     return () => {
       return (
@@ -63,20 +70,37 @@ export const DocumentRevisionsFlyoutComponent = defineComponent({
               </RenderIfComponent>
 
               <RenderIfComponent condition={!documentRevisions.loading.value}>
-                <el-timeline>
+                <el-timeline class="text-sm">
                   <el-timeline-item
-                    timestamp={new Date(props.document.updatedAt).toLocaleString()}
+                    timestamp={new Date(document.value.updatedAt).toLocaleString()}
                     type="primary"
                   >
-                    Current Status
+                    Current
                   </el-timeline-item>
 
                   {(documentRevisions.result.value || []).map(item => (
                     <el-timeline-item timestamp={new Date(item.createdAt).toLocaleString()}>
-                      Modified by {item.user?.email ?? 'Unknown'}
+                      Modified by <span>{item.user?.email ?? 'Unknown'}</span>
+                      <router-link
+                        to={{
+                          path: `/documents/${document.value.id}/compare`,
+                          query: { against: item.id },
+                        }}
+                        class="block mt-1 text-xs"
+                      >
+                        Compare against current?
+                      </router-link>
                     </el-timeline-item>
                   ))}
                 </el-timeline>
+
+                <router-link
+                  class="block text-sm mt-1"
+                  to={`/documents/${document.value.id}/revisions`}
+                >
+                  View More Revisions
+                  <i class="el-icon-right el-icon--right" />
+                </router-link>
               </RenderIfComponent>
             </div>
           </el-drawer>

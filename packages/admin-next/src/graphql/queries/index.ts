@@ -3,6 +3,7 @@ export * from './fetchAllLocales';
 export * from './fetchAllSchemas';
 export * from './fetchAllSingletons';
 export * from './getDocumentById';
+export * from './getDocumentRevision';
 export * from './getLocaleById';
 export * from './getRevisionsForDocument';
 export * from './getSchemaById';

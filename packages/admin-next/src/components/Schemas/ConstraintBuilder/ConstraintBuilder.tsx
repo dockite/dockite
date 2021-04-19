@@ -286,7 +286,7 @@ export const SchemaConstraintBuilderComponent = defineComponent({
           }}
         >
           {constraintType.value && (
-            <div class="absolute left-0 font-semibold transform -rotate-90">
+            <div class="absolute left-0 font-medium transform -rotate-90">
               {constraintType.value}
             </div>
           )}

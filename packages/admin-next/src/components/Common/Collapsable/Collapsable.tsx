@@ -45,7 +45,7 @@ export const CollapsableComponent = defineComponent({
           <div
             class={{
               'flex justify-between items-center': true,
-              'bg-primary font-semibold rounded-t p-3 text-white cursor-pointer transition-all duration-300': true,
+              'bg-primary font-medium rounded-t p-3 text-white cursor-pointer transition-all duration-300': true,
               'rounded-b border': !modelValue.value,
             }}
             role="button"

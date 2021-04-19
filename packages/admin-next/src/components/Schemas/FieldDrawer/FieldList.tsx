@@ -1,5 +1,5 @@
 import { noop, sortBy } from 'lodash';
-import { computed, defineComponent, PropType, ref, toRefs, withKeys, withModifiers } from 'vue';
+import { computed, defineComponent, PropType, ref, toRefs, withModifiers } from 'vue';
 
 import { AvailableFieldItem } from '~/graphql';
 
@@ -68,7 +68,7 @@ export const SchemaAvailableFieldsListComponent = defineComponent({
                 onClick={() => handleSelectField(field)}
                 role="button"
               >
-                <span class="block font-semibold">{field.title}</span>
+                <span class="block font-medium">{field.title}</span>
 
                 <p
                   class="text-sm truncate"

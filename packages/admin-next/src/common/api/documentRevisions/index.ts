@@ -3,11 +3,37 @@ import { FindManyResult } from '@dockite/types';
 
 import { DOCKITE_PAGINGATION_PAGE, DOCKITE_PAGINATION_PER_PAGE } from '~/common/constants';
 import {
+  GetDocumentRevisionQueryResponse,
+  GetDocumentRevisionQueryVariables,
   GetRevisionsForDocumentQueryResponse,
   GetRevisionsForDocumentQueryVariables,
+  GET_DOCUMENT_REVISION_QUERY,
   GET_REVISIONS_FOR_DOCUMENT_QUERY,
 } from '~/graphql/queries';
 import { useGraphQL } from '~/hooks';
+
+/**
+ *
+ */
+export const getDocumentRevision = async (
+  documentId: string,
+  revisionId: string,
+): Promise<DocumentRevision> => {
+  const graphql = useGraphQL();
+
+  const result = await graphql.executeQuery<
+    GetDocumentRevisionQueryResponse,
+    GetDocumentRevisionQueryVariables
+  >({
+    query: GET_DOCUMENT_REVISION_QUERY,
+    variables: {
+      documentId,
+      revisionId,
+    },
+  });
+
+  return result.data.getDocumentRevision;
+};
 
 /**
  *

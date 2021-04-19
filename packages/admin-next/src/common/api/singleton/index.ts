@@ -41,6 +41,7 @@ import {
 } from '~/graphql';
 import { useEvent } from '~/hooks';
 import { useGraphQL } from '~/hooks/useGraphQL';
+import { deleteFields } from '~/utils';
 
 /**
  *
@@ -119,17 +120,10 @@ export const createSingleton = async (payload: BaseSchema): Promise<Singleton> =
       // On Update we will also append the schema to our allSingletons query
       update: (store, { data: createSingletonData }) => {
         if (createSingletonData) {
-          const { createSingleton: schema } = createSingletonData;
-
-          const data = store.readQuery<FetchAllSingletonsQueryResponse>({
-            query: FETCH_ALL_SINGLETONS_QUERY,
+          store.modify({
+            id: 'ROOT_QUERY',
+            fields: deleteFields('allSingletons'),
           });
-
-          if (data) {
-            data.allSingletons.results = [...data.allSingletons.results, schema];
-
-            store.writeQuery({ query: FETCH_ALL_SINGLETONS_QUERY, data });
-          }
         }
       },
     });

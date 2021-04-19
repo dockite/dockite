@@ -1,3 +1,4 @@
+export * from './getDocumentRevisionArgs';
 export * from './getRevisionsForDocumentArgs';
 export * from './getRevisionsForSchemaArgs';
 export * from './restoreDocumentRevisionArgs';
