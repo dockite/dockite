@@ -151,7 +151,7 @@ export const DocumentRevisionsPage = defineComponent({
             </div>
           </Portal>
 
-          <div>
+          <div v-loading={documentRevisions.loading.value || document.loading.value}>
             <el-table data={revisions.value}>
               <el-table-column prop="id" label="ID">
                 {{
@@ -192,8 +192,6 @@ export const DocumentRevisionsPage = defineComponent({
                     ),
                 }}
               </el-table-column>
-
-              <el-table-column prop="id" label="Actions" />
             </el-table>
 
             <div class="flex items-center justify-between pt-3">

@@ -43,15 +43,23 @@ export const WEBHOOK_SCOPES = [
   'internal:webhook:delete',
 ];
 
+export const LOCALE_SCOPES = [
+  'internal:locale:create',
+  'internal:locale:read',
+  'internal:locale:update',
+  'internal:locale:delete',
+];
+
 export const API_KEY_SCOPES = ['internal:apikey:create', 'internal:apikey:delete'];
 
 export const ALL_STATIC_SCOPES = [
-  ...GLOBAL_SCOPES,
   ...API_KEY_SCOPES,
   ...DOCUMENT_SCOPES,
-  ...SCHEMA_SCOPES,
-  ...ROLE_SCOPES,
-  ...USER_SCOPES,
+  ...GLOBAL_SCOPES,
+  ...LOCALE_SCOPES,
   ...RELEASE_SCOPES,
+  ...ROLE_SCOPES,
+  ...SCHEMA_SCOPES,
+  ...USER_SCOPES,
   ...WEBHOOK_SCOPES,
 ];

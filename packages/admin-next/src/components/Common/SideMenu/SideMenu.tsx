@@ -289,11 +289,21 @@ export const SideMenu = defineComponent({
                     <router-link to="/settings/account">Account</router-link>
                   </el-menu-item>
 
-                  <el-menu-item index="/settings/locales">
-                    <i class="el-icon-map-location" />
+                  <RenderIfComponent condition={can('intenral:locale:read')}>
+                    <el-menu-item index="/settings/locales">
+                      <i class="el-icon-map-location" />
 
-                    <router-link to="/settings/locales">Locales</router-link>
-                  </el-menu-item>
+                      <router-link to="/settings/locales">Locales</router-link>
+                    </el-menu-item>
+                  </RenderIfComponent>
+
+                  <RenderIfComponent condition={can('internal:webhook:read')}>
+                    <el-menu-item index="/settings/webhooks">
+                      <i class="el-icon-connection" />
+
+                      <router-link to="/settings/webhooks">Webhooks</router-link>
+                    </el-menu-item>
+                  </RenderIfComponent>
                 </el-menu-item-group>
               );
             },

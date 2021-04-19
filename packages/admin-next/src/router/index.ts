@@ -203,6 +203,16 @@ export const Router = createRouter({
       meta: { layout: 'Dashboard' },
     },
     {
+      path: '/settings/webhooks',
+      component: () => import('../pages/Settings/Webhooks'),
+      meta: { layout: 'Dashboard' },
+    },
+    {
+      path: '/settings/webhooks/create',
+      component: () => import('../pages/Settings/Webhooks/Create'),
+      meta: { layout: 'Dashboard' },
+    },
+    {
       path: '/settings/locales',
       component: () => import('../pages/Settings/Locales'),
       meta: { layout: 'Dashboard' },

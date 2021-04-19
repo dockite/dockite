@@ -7,6 +7,7 @@ import { DocumentRevision } from '@dockite/database';
 
 import { getDocumentById } from '~/common/api';
 import { getDocumentRevision } from '~/common/api/documentRevisions';
+import { RenderIfComponent } from '~/components/Common/RenderIf';
 import { useState } from '~/hooks';
 import { loadScript, stableJSONStringify } from '~/utils';
 
@@ -42,13 +43,15 @@ export const DocumentComparePage = defineComponent({
 
     const highlightRevision = ref(false);
 
+    const isComparingAgainstCurrent = computed(
+      () =>
+        !route.query.source ||
+        (typeof route.query.source === 'string' && route.query.source.toLowerCase() === 'current'),
+    );
+
     const source = usePromise(() => {
-      if (
-        route.query.source &&
-        typeof route.query.source === 'string' &&
-        route.query.source.toLowerCase() !== 'current'
-      ) {
-        return getDocumentRevision(route.params.documentId as string, route.query.source);
+      if (!isComparingAgainstCurrent.value) {
+        return getDocumentRevision(route.params.documentId as string, route.query.source as string);
       }
 
       return getDocumentById({
@@ -75,6 +78,15 @@ export const DocumentComparePage = defineComponent({
     const sourceData = computed(() => stableJSONStringify(source.result.value?.data));
 
     const againstData = computed(() => stableJSONStringify(against.result.value?.data));
+
+    const handleCompareAgainstCurrent = (): void => {
+      router.push({
+        query: {
+          ...route.query,
+          source: 'current',
+        },
+      });
+    };
 
     watch(
       [sourceData, againstData],
@@ -118,6 +130,19 @@ export const DocumentComparePage = defineComponent({
         }
       },
       { immediate: true },
+    );
+
+    watch(
+      () => route.query,
+      (value, oldValue) => {
+        if (value.source !== oldValue.source) {
+          source.exec();
+        }
+
+        if (value.against !== oldValue.against) {
+          against.exec();
+        }
+      },
     );
 
     return () => {
@@ -173,17 +198,25 @@ export const DocumentComparePage = defineComponent({
               Go Back
             </el-button>
 
-            <el-button
-              type="primary"
-              onMouseover={() => {
-                highlightRevision.value = true;
-              }}
-              onMouseout={() => {
-                highlightRevision.value = false;
-              }}
-            >
-              Restore Revision
-            </el-button>
+            <RenderIfComponent condition={isComparingAgainstCurrent.value}>
+              <el-button
+                type="primary"
+                onMouseover={() => {
+                  highlightRevision.value = true;
+                }}
+                onMouseout={() => {
+                  highlightRevision.value = false;
+                }}
+              >
+                Restore Revision
+              </el-button>
+            </RenderIfComponent>
+
+            <RenderIfComponent condition={!isComparingAgainstCurrent.value}>
+              <el-button type="primary" onClick={handleCompareAgainstCurrent}>
+                Compare against current
+              </el-button>
+            </RenderIfComponent>
           </div>
         </div>
       );

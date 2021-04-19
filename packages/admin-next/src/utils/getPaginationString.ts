@@ -12,15 +12,13 @@ export const getPaginationString = (paginationDetails: FindManyResult<any>): str
 
   const { currentPage, totalItems, results } = paginationDetails;
 
-  const itemCount = results.length;
-
   let startingItem = (currentPage - 1) * DOCKITE_PAGINATION_PER_PAGE + 1;
 
   // We apply a Math.min here to handle edge cases where there are 0 results
   // or pagination is completely borked
-  startingItem = Math.min(startingItem, itemCount);
+  startingItem = Math.min(startingItem, totalItems);
 
-  const endingItem = Math.max(0, startingItem + (itemCount - 1));
+  const endingItem = Math.max(0, startingItem + (results.length - 1));
 
   return `Displaying documents ${startingItem} to ${endingItem} of ${totalItems}`;
 };

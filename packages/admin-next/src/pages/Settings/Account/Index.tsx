@@ -3,7 +3,7 @@ import { defineComponent, ref } from 'vue';
 import { usePromiseLazy } from 'vue-composable';
 
 import { createApiKey, deleteApiKey } from '~/common/api';
-import { ApiKeyComponent } from '~/components/Account/Settings/ApiKey/ApiKey';
+import { ApiKeyComponent } from '~/components/Account/Settings/ApiKey';
 import { RenderIfComponent } from '~/components/Common/RenderIf';
 import { useAuth, useCan } from '~/hooks';
 
