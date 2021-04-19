@@ -1,6 +1,7 @@
+import CodeMirror from 'codemirror';
 import { ElMessage } from 'element-plus';
 import { Portal } from 'portal-vue';
-import { computed, defineComponent, ref } from 'vue';
+import { computed, defineComponent, ref, watch } from 'vue';
 import { usePromise, usePromiseLazy } from 'vue-composable';
 
 import { Webhook } from '@dockite/database';
@@ -14,6 +15,23 @@ import {
   MAX_32_BIT_INT,
 } from '~/common/constants';
 import { logE } from '~/common/logger';
+import { RenderIfComponent } from '~/components/Common/RenderIf';
+
+import 'codemirror-graphql/mode';
+
+import 'codemirror/addon/dialog/dialog';
+import 'codemirror/addon/display/autorefresh';
+import 'codemirror/addon/edit/closebrackets';
+import 'codemirror/addon/edit/matchbrackets';
+import 'codemirror/addon/lint/json-lint';
+import 'codemirror/addon/lint/lint';
+import 'codemirror/addon/search/search';
+
+import 'codemirror/lib/codemirror.css';
+
+import 'codemirror/theme/nord.css';
+import 'codemirror/addon/dialog/dialog.css';
+import 'codemirror/addon/lint/lint.css';
 
 export type BaseWebhook = Pick<Webhook, 'name' | 'method' | 'url' | 'options'>;
 
@@ -27,8 +45,16 @@ export const CreateWebhookPage = defineComponent({
       url: '',
       options: {
         listeners: [],
+        query: '',
+        constraints: [],
       },
     });
+
+    const performGraphQLQuery = ref(false);
+
+    const textarea = ref<HTMLTextAreaElement | null>(null);
+
+    const editor = ref<CodeMirror.Editor | null>(null);
 
     const schemas = usePromise(() => fetchAllSchemas(MAX_32_BIT_INT));
 
@@ -76,6 +102,28 @@ export const CreateWebhookPage = defineComponent({
       return listeners;
     });
 
+    watch(performGraphQLQuery, value => {
+      if (value && textarea.value) {
+        editor.value = CodeMirror.fromTextArea(textarea.value, {
+          mode: 'graphql',
+          theme: 'nord',
+
+          autoCloseBrackets: true,
+          autoRefresh: true,
+          gutters: ['CodeMirror-lint-markers', 'CodeMirror-linenumbers'],
+          lineNumbers: true,
+          lineWrapping: true,
+          lint: true,
+          matchBrackets: true,
+          tabSize: 2,
+        });
+
+        editor.value.on('change', cm => {
+          webhook.value.options.query = cm.getValue();
+        });
+      }
+    });
+
     return () => {
       return (
         <>
@@ -119,6 +167,20 @@ export const CreateWebhookPage = defineComponent({
                   ))}
                 </el-select>
               </el-form-item>
+
+              <RenderIfComponent condition={webhook.value.method !== 'GET'}>
+                <el-form-item label="Perform GraphQL Query?">
+                  <el-switch v-model={performGraphQLQuery.value} />
+                </el-form-item>
+              </RenderIfComponent>
+
+              <RenderIfComponent
+                condition={webhook.value.method !== 'GET' && performGraphQLQuery.value}
+              >
+                <el-form-item prop="options.query" label="GraphQL Query to Execute">
+                  <textarea ref={textarea} />
+                </el-form-item>
+              </RenderIfComponent>
             </el-form>
           </div>
         </>

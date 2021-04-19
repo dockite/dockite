@@ -71,7 +71,9 @@ export const AllWebhooksPage = defineComponent({
               <el-table-column prop="id" label="ID">
                 {{
                   default: ({ row }: WebhookTableColumnDefaultScopedSlot) => (
-                    <span class="font-mono truncate">{row.id}</span>
+                    <router-link to={`/settings/webhooks/${row.id}`} class="font-mono truncate">
+                      {row.id}
+                    </router-link>
                   ),
                 }}
               </el-table-column>
@@ -80,9 +82,29 @@ export const AllWebhooksPage = defineComponent({
 
               <el-table-column prop="method" label="Method" />
 
-              <el-table-column prop="createdAt" label="Created At" />
+              <el-table-column prop="updatedAt" label="Updated" />
 
-              <el-table-column prop="updatedAt" label="Updated At" />
+              <el-table-column prop="createdAt" label="Created" />
+
+              <el-table-column label="Actions">
+                {{
+                  default: ({ row }: WebhookTableColumnDefaultScopedSlot) => (
+                    <div class="flex items-center -mx-2">
+                      <div class="px-2">
+                        <router-link to={`/settings/webhooks/${row.id}/edit`}>
+                          <i class="el-icon-edit-outline" />
+                        </router-link>
+                      </div>
+
+                      <div class="px-2">
+                        <router-link to={`/settings/webhooks/${row.id}/delete`}>
+                          <i class="el-icon-delete" />
+                        </router-link>
+                      </div>
+                    </div>
+                  ),
+                }}
+              </el-table-column>
             </el-table>
 
             <div class="flex items-center justify-between pt-3">

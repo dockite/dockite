@@ -14,6 +14,7 @@
     "@sentry/browser": "^5.29.2",
     "@sentry/tracing": "^5.29.2",
     "codemirror": "^5.59.4",
+    "codemirror-graphql": "^1.0.1",
     "cosmiconfig": "^6.0.0",
     "element-plus": "^1.0.2-beta.32",
     "graphql": "^15.5.0",
