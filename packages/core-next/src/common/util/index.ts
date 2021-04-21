@@ -7,3 +7,5 @@ export * from './importModule';
 export * from './isInternalAuth';
 export * from './pathToColumn';
 export * from './timing';
+export * from './unsafeStringToNativeType';
+export * from './meetsObjectConstraints';
