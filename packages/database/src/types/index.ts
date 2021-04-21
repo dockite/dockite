@@ -1,4 +1,1 @@
-export enum SchemaType {
-  DEFAULT = 'DEFAULT',
-  SINGLETON = 'SINGLETON',
-}
+export * from './schema';

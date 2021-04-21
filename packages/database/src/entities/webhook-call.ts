@@ -11,14 +11,6 @@ import {
 
 import { Webhook } from './webhook';
 
-type JSONValue = string | number | boolean | null | JSONObject | JSONArray;
-
-interface JSONObject {
-  [x: string]: JSONValue;
-}
-// eslint-disable-next-line
-interface JSONArray extends Array<JSONValue> { }
-
 @Entity()
 @ObjectType()
 export class WebhookCall {
@@ -36,11 +28,11 @@ export class WebhookCall {
 
   @Column('jsonb', { default: {}, nullable: true })
   @GraphQLField(_type => GraphQLJSON)
-  public request!: JSONObject; // eslint-disable-line
+  public request!: Record<string, any>; // eslint-disable-line
 
   @Column('jsonb', { nullable: true })
   @GraphQLField(_type => GraphQLJSON)
-  public response!: JSONObject; // eslint-disable-line
+  public response!: Record<string, any>; // eslint-disable-line
 
   @CreateDateColumn()
   @GraphQLField(_type => Date)

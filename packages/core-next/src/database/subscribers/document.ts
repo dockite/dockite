@@ -8,6 +8,10 @@ import {
 } from 'typeorm';
 
 import { Document } from '@dockite/database';
+import { getScopeResourceById } from '@dockite/manager';
+import { WebhookAction } from '@dockite/types';
+
+import { fireWebhooks } from '../../webhooks';
 
 import { triggerExternalSubscriberEvent } from './util';
 
@@ -16,51 +20,83 @@ import { triggerExternalSubscriberEvent } from './util';
  */
 @EventSubscriber()
 export class DocumentSubscriber implements EntitySubscriberInterface {
+  public listenTo(): typeof Document {
+    return Document;
+  }
+
   public async beforeInsert(event: InsertEvent<Document>): Promise<void> {
-    // We never want to trigger subscribers if we don't have an entity to work with
     if (event.entity) {
-      // eslint-disable-next-line prettier/prettier
       await triggerExternalSubscriberEvent('beforeDocumentCreate', event.entity);
     }
   }
 
   public async afterInsert(event: InsertEvent<Document>): Promise<void> {
-    // We never want to trigger subscribers if we don't have an entity to work with
     if (event.entity) {
-      // eslint-disable-next-line prettier/prettier
+      await Promise.all([
+        fireWebhooks(event.entity, WebhookAction.DocumentCreate),
+        fireWebhooks(
+          event.entity,
+          `document:${getScopeResourceById(event.entity.schemaId) ?? 'unknown'}:create`,
+        ),
+      ]);
+
       await triggerExternalSubscriberEvent('afterDocumentCreate', event.entity);
     }
   }
 
   public async beforeUpdate(event: UpdateEvent<Document>): Promise<void> {
-    // We never want to trigger subscribers if we don't have an entity to work with
     if (event.entity) {
-      // eslint-disable-next-line prettier/prettier
-      await triggerExternalSubscriberEvent('beforeDocumentUpdate', event.entity, event.databaseEntity);
+      await triggerExternalSubscriberEvent(
+        'beforeDocumentUpdate',
+        event.entity,
+        event.databaseEntity,
+      );
     }
   }
 
   public async afterUpdate(event: UpdateEvent<Document>): Promise<void> {
-    // We never want to trigger subscribers if we don't have an entity to work with
     if (event.entity) {
-      // eslint-disable-next-line prettier/prettier
-      await triggerExternalSubscriberEvent('afterDocumentUpdate', event.entity, event.databaseEntity);
+      await Promise.all([
+        fireWebhooks(event.entity, WebhookAction.DocumentUpdate),
+        fireWebhooks(
+          event.entity,
+          `document:${getScopeResourceById(event.entity.schemaId) ?? 'unknown'}:update`,
+        ),
+      ]);
+
+      await triggerExternalSubscriberEvent(
+        'afterDocumentUpdate',
+        event.entity,
+        event.databaseEntity,
+      );
     }
   }
 
   public async beforeRemove(event: RemoveEvent<Document>): Promise<void> {
-    // We never want to trigger subscribers if we don't have an entity to work with
     if (event.entity) {
-      // eslint-disable-next-line prettier/prettier
-      await triggerExternalSubscriberEvent('beforeDocumentDelete', event.entity, event.databaseEntity);
+      await triggerExternalSubscriberEvent(
+        'beforeDocumentDelete',
+        event.entity,
+        event.databaseEntity,
+      );
     }
   }
 
   public async afterRemove(event: RemoveEvent<Document>): Promise<void> {
-    // We never want to trigger subscribers if we don't have an entity to work with
     if (event.entity) {
-      // eslint-disable-next-line prettier/prettier
-      await triggerExternalSubscriberEvent('afterDocumentDelete', event.entity, event.databaseEntity);
+      await Promise.all([
+        fireWebhooks(event.entity, WebhookAction.DocumentDelete),
+        fireWebhooks(
+          event.entity,
+          `document:${getScopeResourceById(event.entity.schemaId) ?? 'unknown'}:delete`,
+        ),
+      ]);
+
+      await triggerExternalSubscriberEvent(
+        'afterDocumentDelete',
+        event.entity,
+        event.databaseEntity,
+      );
     }
   }
 }

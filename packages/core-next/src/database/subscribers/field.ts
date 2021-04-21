@@ -16,10 +16,13 @@ import { triggerExternalSubscriberEvent } from './util';
  */
 @EventSubscriber()
 export class FieldSubscriber implements EntitySubscriberInterface {
+  public listenTo(): typeof Field {
+    return Field;
+  }
+
   public async beforeInsert(event: InsertEvent<Field>): Promise<void> {
     // We never want to trigger subscribers if we don't have an entity to work with
     if (event.entity) {
-      // eslint-disable-next-line prettier/prettier
       await triggerExternalSubscriberEvent('beforeFieldCreate', event.entity);
     }
   }
@@ -27,7 +30,6 @@ export class FieldSubscriber implements EntitySubscriberInterface {
   public async afterInsert(event: InsertEvent<Field>): Promise<void> {
     // We never want to trigger subscribers if we don't have an entity to work with
     if (event.entity) {
-      // eslint-disable-next-line prettier/prettier
       await triggerExternalSubscriberEvent('afterFieldCreate', event.entity);
     }
   }
@@ -35,7 +37,6 @@ export class FieldSubscriber implements EntitySubscriberInterface {
   public async beforeUpdate(event: UpdateEvent<Field>): Promise<void> {
     // We never want to trigger subscribers if we don't have an entity to work with
     if (event.entity) {
-      // eslint-disable-next-line prettier/prettier
       await triggerExternalSubscriberEvent('beforeFieldUpdate', event.entity, event.databaseEntity);
     }
   }
@@ -43,7 +44,6 @@ export class FieldSubscriber implements EntitySubscriberInterface {
   public async afterUpdate(event: UpdateEvent<Field>): Promise<void> {
     // We never want to trigger subscribers if we don't have an entity to work with
     if (event.entity) {
-      // eslint-disable-next-line prettier/prettier
       await triggerExternalSubscriberEvent('afterFieldUpdate', event.entity, event.databaseEntity);
     }
   }
@@ -51,7 +51,6 @@ export class FieldSubscriber implements EntitySubscriberInterface {
   public async beforeRemove(event: RemoveEvent<Field>): Promise<void> {
     // We never want to trigger subscribers if we don't have an entity to work with
     if (event.entity) {
-      // eslint-disable-next-line prettier/prettier
       await triggerExternalSubscriberEvent('beforeFieldDelete', event.entity, event.databaseEntity);
     }
   }
@@ -59,7 +58,6 @@ export class FieldSubscriber implements EntitySubscriberInterface {
   public async afterRemove(event: RemoveEvent<Field>): Promise<void> {
     // We never want to trigger subscribers if we don't have an entity to work with
     if (event.entity) {
-      // eslint-disable-next-line prettier/prettier
       await triggerExternalSubscriberEvent('afterFieldDelete', event.entity, event.databaseEntity);
     }
   }

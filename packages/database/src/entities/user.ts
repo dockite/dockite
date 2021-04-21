@@ -10,7 +10,7 @@ import {
   AfterLoad,
   Index,
 } from 'typeorm';
-import { flatMap } from 'lodash';
+import flatMap from 'lodash/flatMap';
 
 import { Role } from './role';
 

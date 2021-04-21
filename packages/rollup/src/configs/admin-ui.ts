@@ -11,6 +11,7 @@ import { OutputOptions, RollupOptions } from 'rollup';
 import copy from 'rollup-plugin-copy';
 import serve from 'rollup-plugin-serve';
 import { terser } from 'rollup-plugin-terser';
+import visualizer from 'rollup-plugin-visualizer';
 
 import { getAdminHtmlTemplate, isDevelopmentMode } from '../utils';
 
@@ -48,6 +49,12 @@ export const getAdminUiRollupConfiguration = (
         entryFileNames: 'main-[hash].js',
         chunkFileNames: 'chunk-[hash].js',
         format: 'es',
+        plugins: [
+          visualizer({
+            filename: 'stats.es.html',
+            template: 'sunburst',
+          }),
+        ],
       },
     ],
 
@@ -59,6 +66,8 @@ export const getAdminUiRollupConfiguration = (
       alias({
         entries: [
           { find: '~/', replacement: path.resolve(cwd, './src/') },
+          { find: 'type-graphql', replacement: 'type-graphql/dist/browser-shim.js' },
+          { find: 'typeorm', replacement: 'typeorm/typeorm-model-shim.js' },
           // { find: '@/', replacement: path.resolve(cwd, './src/') },
         ],
         customResolver,

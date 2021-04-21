@@ -5,7 +5,7 @@ import { useRoute, useRouter } from 'vue-router';
 
 import { WebhookTableColumnDefaultScopedSlot } from './types';
 
-import { fetchAllWebhooksWithPagination } from '~/common/api/webhooks';
+import { fetchAllWebhooksWithPagination } from '~/common/api/webhook';
 import {
   DASHBOARD_HEADER_PORTAL_ACTIONS,
   DASHBOARD_HEADER_PORTAL_TITLE,
@@ -68,7 +68,7 @@ export const AllWebhooksPage = defineComponent({
 
           <div v-loading={webhooks.loading.value}>
             <el-table data={webhooks.result.value?.results ?? []}>
-              <el-table-column prop="id" label="ID">
+              <el-table-column label="ID" prop="id">
                 {{
                   default: ({ row }: WebhookTableColumnDefaultScopedSlot) => (
                     <router-link to={`/settings/webhooks/${row.id}`} class="font-mono truncate">
@@ -78,13 +78,25 @@ export const AllWebhooksPage = defineComponent({
                 }}
               </el-table-column>
 
-              <el-table-column prop="name" label="Name" />
+              <el-table-column label="Name" prop="name" />
 
-              <el-table-column prop="method" label="Method" />
+              <el-table-column label="Method" prop="method" />
 
-              <el-table-column prop="updatedAt" label="Updated" />
+              <el-table-column label="Created" prop="createdAt" width="150">
+                {{
+                  default: ({ row }: WebhookTableColumnDefaultScopedSlot) => (
+                    <span>{new Date(row.createdAt).toLocaleString()}</span>
+                  ),
+                }}
+              </el-table-column>
 
-              <el-table-column prop="createdAt" label="Created" />
+              <el-table-column label="Updated" prop="updatedAt" width="150">
+                {{
+                  default: ({ row }: WebhookTableColumnDefaultScopedSlot) => (
+                    <span>{new Date(row.updatedAt).toLocaleString()}</span>
+                  ),
+                }}
+              </el-table-column>
 
               <el-table-column label="Actions">
                 {{

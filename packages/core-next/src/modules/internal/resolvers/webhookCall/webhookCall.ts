@@ -61,6 +61,9 @@ export class WebhookCallResolver {
         where: {
           webhookId,
         },
+        order: {
+          executedAt: 'DESC',
+        },
         take: perPage,
         skip: (page - 1) * perPage,
       });

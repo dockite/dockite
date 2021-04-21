@@ -3,13 +3,13 @@ export const createWebhookFormRules = {
     {
       required: true,
       trigger: 'blur',
-      description: 'Name is required',
+      message: 'Name is required',
     },
     {
       type: 'string',
       min: 5,
       trigger: 'blur',
-      description: 'Name must be at least 5 characters',
+      message: 'Name must be at least 5 characters',
     },
   ],
 
@@ -17,7 +17,7 @@ export const createWebhookFormRules = {
     {
       required: true,
       trigger: 'blur',
-      description: 'Method is required',
+      message: 'Method is required',
     },
     {
       type: 'string',

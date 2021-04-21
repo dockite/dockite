@@ -40,7 +40,11 @@ export const LayoutManager = defineComponent({
     });
 
     return () => {
-      return h(layout.value, props.Component);
+      if (layout.value) {
+        return h(layout.value, props.Component);
+      }
+
+      return null;
     };
   },
 });

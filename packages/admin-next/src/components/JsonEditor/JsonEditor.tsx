@@ -23,6 +23,7 @@ import './JsonEditor.scss';
 
 export interface JsonEditorComponentProps {
   modelValue: string;
+  readonly: boolean;
   minHeight: string;
 }
 
@@ -32,6 +33,11 @@ export const JsonEditorComponent = defineComponent({
   props: {
     modelValue: {
       type: String as PropType<JsonEditorComponentProps['modelValue']>,
+    },
+
+    readonly: {
+      type: Boolean as PropType<JsonEditorComponentProps['readonly']>,
+      default: true,
     },
 
     minHeight: {
@@ -76,6 +82,8 @@ export const JsonEditorComponent = defineComponent({
         editor.value = CodeMirror.fromTextArea(textarea.value, {
           mode: 'application/json',
           theme: 'nord',
+
+          readOnly: props.readonly,
 
           autoCloseBrackets: true,
           autoRefresh: true,

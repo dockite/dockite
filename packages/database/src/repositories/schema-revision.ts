@@ -1,4 +1,5 @@
-import { cloneDeep, omit } from 'lodash';
+import cloneDeep from 'lodash/cloneDeep';
+import omit from 'lodash/omit';
 import { EntityRepository, getRepository, Repository } from 'typeorm';
 
 import { Field, Schema, SchemaRevision } from '../entities';

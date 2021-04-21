@@ -46,6 +46,7 @@ export const afterRemove = async (entity: Document): Promise<void> => {
 
 @EventSubscriber()
 export class DocumentSubscriber implements EntitySubscriberInterface {
+  // eslint-disable-next-line @typescript-eslint/ban-types
   public listeners: Promise<Record<string, Function>[]>;
 
   constructor() {

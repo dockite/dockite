@@ -16,10 +16,13 @@ import { triggerExternalSubscriberEvent } from './util';
  */
 @EventSubscriber()
 export class SchemaSubscriber implements EntitySubscriberInterface {
+  public listenTo(): typeof Schema {
+    return Schema;
+  }
+
   public async beforeInsert(event: InsertEvent<Schema>): Promise<void> {
     // We never want to trigger subscribers if we don't have an entity to work with
     if (event.entity) {
-      // eslint-disable-next-line prettier/prettier
       await triggerExternalSubscriberEvent('beforeSchemaCreate', event.entity);
     }
   }
@@ -27,7 +30,6 @@ export class SchemaSubscriber implements EntitySubscriberInterface {
   public async afterInsert(event: InsertEvent<Schema>): Promise<void> {
     // We never want to trigger subscribers if we don't have an entity to work with
     if (event.entity) {
-      // eslint-disable-next-line prettier/prettier
       await triggerExternalSubscriberEvent('afterSchemaCreate', event.entity);
     }
   }
@@ -35,15 +37,17 @@ export class SchemaSubscriber implements EntitySubscriberInterface {
   public async beforeUpdate(event: UpdateEvent<Schema>): Promise<void> {
     // We never want to trigger subscribers if we don't have an entity to work with
     if (event.entity) {
-      // eslint-disable-next-line prettier/prettier
-      await triggerExternalSubscriberEvent('beforeSchemaUpdate', event.entity, event.databaseEntity);
+      await triggerExternalSubscriberEvent(
+        'beforeSchemaUpdate',
+        event.entity,
+        event.databaseEntity,
+      );
     }
   }
 
   public async afterUpdate(event: UpdateEvent<Schema>): Promise<void> {
     // We never want to trigger subscribers if we don't have an entity to work with
     if (event.entity) {
-      // eslint-disable-next-line prettier/prettier
       await triggerExternalSubscriberEvent('afterSchemaUpdate', event.entity, event.databaseEntity);
     }
   }
@@ -51,15 +55,17 @@ export class SchemaSubscriber implements EntitySubscriberInterface {
   public async beforeRemove(event: RemoveEvent<Schema>): Promise<void> {
     // We never want to trigger subscribers if we don't have an entity to work with
     if (event.entity) {
-      // eslint-disable-next-line prettier/prettier
-      await triggerExternalSubscriberEvent('beforeSchemaDelete', event.entity, event.databaseEntity);
+      await triggerExternalSubscriberEvent(
+        'beforeSchemaDelete',
+        event.entity,
+        event.databaseEntity,
+      );
     }
   }
 
   public async afterRemove(event: RemoveEvent<Schema>): Promise<void> {
     // We never want to trigger subscribers if we don't have an entity to work with
     if (event.entity) {
-      // eslint-disable-next-line prettier/prettier
       await triggerExternalSubscriberEvent('afterSchemaDelete', event.entity, event.databaseEntity);
     }
   }

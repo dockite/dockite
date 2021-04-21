@@ -3,8 +3,8 @@ import { defineComponent, ref } from 'vue';
 import { usePromiseLazy } from 'vue-composable';
 
 import { createApiKey, deleteApiKey } from '~/common/api';
-import { ApiKeyComponent } from '~/components/Account/Settings/ApiKey';
 import { RenderIfComponent } from '~/components/Common/RenderIf';
+import { ApiKeyComponent } from '~/components/Settings/Account/ApiKey';
 import { useAuth, useCan } from '~/hooks';
 
 export const AccountPage = defineComponent({

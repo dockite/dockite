@@ -1,7 +1,6 @@
 /* eslint-disable class-methods-use-this */
 import debug from 'debug';
 import { cloneDeep, groupBy, merge, uniq } from 'lodash';
-import { doc } from 'prettier';
 import { Arg, Args, Ctx, Mutation, Query, Resolver } from 'type-graphql';
 import { getRepository, In, IsNull, Not, Repository } from 'typeorm';
 

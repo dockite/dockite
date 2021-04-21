@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "main": "lib/index.js",
   "module": "lib/index.esm.js",
-  "module": "lib/index.esm.js",
   "license": "MIT",
   "scripts": {
     "build": "rollup -c && cp -r ./extra ./lib/",

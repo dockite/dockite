@@ -202,6 +202,10 @@ export const Router = createRouter({
       component: () => import('../pages/Settings/Account'),
       meta: { layout: 'Dashboard' },
     },
+
+    /**
+     * Webhooks
+     */
     {
       path: '/settings/webhooks',
       component: () => import('../pages/Settings/Webhooks'),
@@ -212,6 +216,20 @@ export const Router = createRouter({
       component: () => import('../pages/Settings/Webhooks/Create'),
       meta: { layout: 'Dashboard' },
     },
+    {
+      path: '/settings/webhooks/:webhookId',
+      component: () => import('../pages/Settings/Webhooks/_Id'),
+      meta: { layout: 'Dashboard' },
+    },
+    {
+      path: '/settings/webhooks/:webhookId/edit',
+      component: () => import('../pages/Settings/Webhooks/_Id/Edit'),
+      meta: { layout: 'Dashboard' },
+    },
+
+    /**
+     * Locales
+     */
     {
       path: '/settings/locales',
       component: () => import('../pages/Settings/Locales'),
