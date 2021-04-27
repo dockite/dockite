@@ -290,12 +290,12 @@ import {
   Constraint,
   PossibleConstraints,
 } from '@dockite/where-builder';
-import { debounce, get } from 'lodash';
+import { cloneDeep, debounce, get, groupBy, uniq } from 'lodash';
 import { Field } from '@dockite/database';
 
 import { DockiteFieldReferenceEntity, FieldToDisplayItem } from '../types';
 
-import { SEARCH_DOCUMENTS_QUERY } from './graphql-queries';
+import { GET_SCHEMA_QUERY, SEARCH_DOCUMENTS_QUERY } from './graphql-queries';
 import FilterInput from './components/filter-input.vue';
 
 const FIELD_UNDEFINED = 'FIELD:UNDEFINED';
@@ -566,7 +566,7 @@ export default class ReferenceFieldInputComponent extends Vue {
       const { schemaIds } = this.fieldConfig.settings;
       const { page, term, perPage } = this;
 
-      const { data } = await this.$apolloClient.query({
+      const { data: searchData } = await this.$apolloClient.query({
         query: SEARCH_DOCUMENTS_QUERY,
         variables: {
           schemaIds,
@@ -578,10 +578,33 @@ export default class ReferenceFieldInputComponent extends Vue {
         fetchPolicy: 'network-only',
       });
 
-      this.documents = data.searchDocuments.results;
-      this.totalPages = data.searchDocuments.totalPages;
-      this.totalItems = data.searchDocuments.totalItems;
-      this.page = data.searchDocuments.currentPage;
+      const schemasWithFields = await Promise.all(
+        uniq(searchData.searchDocuments.results.map((doc: Document) => doc.schemaId)).map(
+          async schemaId => {
+            return this.$apolloClient
+              .query({
+                query: GET_SCHEMA_QUERY,
+                variables: {
+                  id: schemaId,
+                },
+                fetchPolicy: 'network-only',
+              })
+              .then(result => result.data.getSchema);
+          },
+        ),
+      );
+
+      const groupedSchemasWithFields = groupBy(schemasWithFields, schema => schema.id);
+
+      this.documents = cloneDeep(searchData.searchDocuments.results).map((doc: Document) => {
+        return { ...doc, schema: groupedSchemasWithFields[doc.schemaId] };
+      });
+
+      this.totalPages = searchData.searchDocuments.totalPages;
+
+      this.totalItems = searchData.searchDocuments.totalItems;
+
+      this.page = searchData.searchDocuments.currentPage;
     } catch (e) {
       console.log(e);
 

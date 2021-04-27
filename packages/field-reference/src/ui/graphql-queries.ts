@@ -40,29 +40,36 @@ export const SEARCH_DOCUMENTS_QUERY = gql`
       results {
         id
         data
+        schemaId
         updatedAt
-        schema {
-          id
-          name
-          title
-          type
-          groups
-          settings
-          createdAt
-          updatedAt
-          fields {
-            id
-            name
-            title
-            description
-            type
-            settings
-          }
-        }
+        createdAt
       }
       totalItems
       totalPages
       currentPage
+    }
+  }
+`;
+
+export const GET_SCHEMA_QUERY = gql`
+  query GetSchemaWithFields($id: String!) {
+    getSchema(id: $id) {
+      id
+      name
+      title
+      type
+      groups
+      settings
+      fields {
+        id
+        name
+        title
+        description
+        type
+        settings
+      }
+      createdAt
+      updatedAt
     }
   }
 `;
