@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.6](https://github.com/dockite/dockite/compare/@dockite/field-reference@0.4.0-alpha.5...@dockite/field-reference@0.4.0-alpha.6) (2021-04-27)
+
+
+### Bug Fixes
+
+* **field-reference:** reduce network reponse sizes ([cb35b33](https://github.com/dockite/dockite/commit/cb35b33defdf81a817e0b5594af66765cd132424))
+
+
+
+
+
 # [0.4.0-alpha.5](https://github.com/dockite/dockite/compare/@dockite/field-reference@0.4.0-alpha.4...@dockite/field-reference@0.4.0-alpha.5) (2021-04-13)
 
 **Note:** Version bump only for package @dockite/field-reference
