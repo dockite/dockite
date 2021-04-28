@@ -4,8 +4,9 @@
       v-model="fieldData"
       :multiple="settings.multiple"
       style="width: 100%"
+      :clearable="!settings.required"
       filterable
-      default-first-option
+      :default-first-option="!settings.required"
     >
       <el-option
         v-for="option in settings.options"
