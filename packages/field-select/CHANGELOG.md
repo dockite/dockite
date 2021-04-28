@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.5](https://github.com/dockite/dockite/compare/@dockite/field-select@0.4.0-alpha.4...@dockite/field-select@0.4.0-alpha.5) (2021-04-28)
+
+
+### Bug Fixes
+
+* **field-select:** allow for empty values when not required ([4590b38](https://github.com/dockite/dockite/commit/4590b38236bd527045b46e91e58c690a90af8947))
+
+
+
+
+
 # [0.4.0-alpha.4](https://github.com/dockite/dockite/compare/@dockite/field-select@0.4.0-alpha.3...@dockite/field-select@0.4.0-alpha.4) (2021-04-13)
 
 **Note:** Version bump only for package @dockite/field-select
