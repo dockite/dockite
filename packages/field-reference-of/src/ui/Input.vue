@@ -93,22 +93,18 @@ export default class ReferenceOfFieldInputComponent extends Vue {
   public totalPages = 1;
 
   public async fetchReferenceOfDocuments(): Promise<void> {
+    const documentId = this.$route.params.id;
+    const { fieldName } = this.fieldConfig.settings;
+
     const { data } = await this.$apolloClient.query<{ referenceOfDocuments: ManyReferences }>({
       query: gql`
-        query FindReferenceOfDocuments(
-          $documentId: String!
+        query FindDocuments(
           $schemaId: String!
-          $fieldName: String!
           $page: Int! = 1
           $perPage: Int! = 20
+          $where: WhereBuilderInput!
         ) {
-          referenceOfDocuments: resolveReferenceOf(
-            documentId: $documentId
-            schemaId: $schemaId
-            fieldName: $fieldName
-            page: $page
-            perPage: $perPage
-          ) {
+          findDocuments(schemaId: $schemaId, page: $page, perPage: $perPage, where: $where) {
             results {
               id
               data
@@ -126,17 +122,24 @@ export default class ReferenceOfFieldInputComponent extends Vue {
         }
       `,
       variables: {
-        documentId: this.$route.params.id,
         schemaId: this.fieldConfig.settings.schemaId,
-        fieldName: this.fieldConfig.settings.fieldName,
         page: this.page,
         perPage: this.perPage,
+        where: {
+          AND: [
+            {
+              name: fieldName,
+              operator: '$ilike',
+              value: `"${documentId}"`,
+            },
+          ],
+        },
       },
     });
 
-    this.referenceOfDocuments = data.referenceOfDocuments.results;
-    this.totalItems = data.referenceOfDocuments.totalItems;
-    this.totalPages = data.referenceOfDocuments.totalPages;
+    this.referenceOfDocuments = data.findDocuments.results;
+    this.totalItems = data.findDocuments.totalItems;
+    this.totalPages = data.findDocuments.totalPages;
   }
 
   @Watch('page')

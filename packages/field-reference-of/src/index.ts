@@ -111,7 +111,7 @@ export class DockiteFieldReferenceOf extends DockiteField {
       .createQueryBuilder('document')
       .leftJoinAndSelect('document.schema', 'schema')
       .andWhere('schema.id = :schemaId', { schemaId })
-      .andWhere("document.data -> :field ->> 'id' = :documentId", {
+      .andWhere(`document.data ->> :field LIKE '%":documentId"%'`, {
         field: fieldName,
         documentId: data.id,
       })
