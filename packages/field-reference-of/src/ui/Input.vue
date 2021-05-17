@@ -96,7 +96,7 @@ export default class ReferenceOfFieldInputComponent extends Vue {
     const documentId = this.$route.params.id;
     const { fieldName } = this.fieldConfig.settings;
 
-    const { data } = await this.$apolloClient.query<{ referenceOfDocuments: ManyReferences }>({
+    const { data } = await this.$apolloClient.query<{ findDocuments: ManyReferences }>({
       query: gql`
         query FindDocuments(
           $schemaId: String!
