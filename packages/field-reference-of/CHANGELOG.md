@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.5](https://github.com/dockite/dockite/compare/@dockite/field-reference-of@0.4.0-alpha.4...@dockite/field-reference-of@0.4.0-alpha.5) (2021-05-18)
+
+
+### Bug Fixes
+
+* **field-reference-of:** update invalid graphql query ([5396181](https://github.com/dockite/dockite/commit/539618140a7cf6e73102e34e2fb0fafd1271524a))
+
+
+
+
+
 # [0.4.0-alpha.4](https://github.com/dockite/dockite/compare/@dockite/field-reference-of@0.4.0-alpha.3...@dockite/field-reference-of@0.4.0-alpha.4) (2021-05-18)
 
 
