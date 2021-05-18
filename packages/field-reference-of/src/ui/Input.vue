@@ -102,7 +102,7 @@ export default class ReferenceOfFieldInputComponent extends Vue {
           $schemaId: String!
           $page: Int! = 1
           $perPage: Int! = 20
-          $where: WhereBuilderInput!
+          $where: WhereBuilderInputType!
         ) {
           findDocuments(schemaId: $schemaId, page: $page, perPage: $perPage, where: $where) {
             results {
