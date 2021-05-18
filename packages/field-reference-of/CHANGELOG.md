@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.4](https://github.com/dockite/dockite/compare/@dockite/field-reference-of@0.4.0-alpha.3...@dockite/field-reference-of@0.4.0-alpha.4) (2021-05-18)
+
+
+### Bug Fixes
+
+* **field-reference-of:** loosen document query ([b18a650](https://github.com/dockite/dockite/commit/b18a6509c508f406b20d0950471a1b358f86d05c))
+* **field-reference-of:** resolve type error ([aa16d84](https://github.com/dockite/dockite/commit/aa16d84904470955028ab4603cd38d2a571d62d0))
+
+
+
+
+
 # [0.4.0-alpha.3](https://github.com/dockite/dockite/compare/@dockite/field-reference-of@0.4.0-alpha.2...@dockite/field-reference-of@0.4.0-alpha.3) (2021-04-13)
 
 **Note:** Version bump only for package @dockite/field-reference-of
