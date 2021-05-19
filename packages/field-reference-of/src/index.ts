@@ -111,9 +111,9 @@ export class DockiteFieldReferenceOf extends DockiteField {
       .createQueryBuilder('document')
       .leftJoinAndSelect('document.schema', 'schema')
       .andWhere('schema.id = :schemaId', { schemaId })
-      .andWhere(`document.data ->> :field LIKE '%":documentId"%'`, {
+      .andWhere(`document.data ->> :field LIKE :documentIdLike`, {
         field: fieldName,
-        documentId: data.id,
+        documentIdLike: `%"${data.id}"%`,
       })
       .take(perPage)
       .offset((page - 1) * perPage);
