@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.6](https://github.com/dockite/dockite/compare/@dockite/field-reference-of@0.4.0-alpha.5...@dockite/field-reference-of@0.4.0-alpha.6) (2021-05-19)
+
+
+### Bug Fixes
+
+* **field-reference-of:** resolve query error ([ad5e152](https://github.com/dockite/dockite/commit/ad5e152b232f62630cb65e479659c08f46c8c416))
+
+
+
+
+
 # [0.4.0-alpha.5](https://github.com/dockite/dockite/compare/@dockite/field-reference-of@0.4.0-alpha.4...@dockite/field-reference-of@0.4.0-alpha.5) (2021-05-18)
 
 
