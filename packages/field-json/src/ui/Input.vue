@@ -28,8 +28,17 @@ import { codemirror as CodeMirror } from 'vue-codemirror';
 import { Component, Prop, Vue } from 'vue-property-decorator';
 
 import 'codemirror/mode/javascript/javascript';
+
+import 'codemirror/addon/dialog/dialog';
+import 'codemirror/addon/display/autorefresh';
+import 'codemirror/addon/edit/closebrackets';
+import 'codemirror/addon/edit/matchbrackets';
+import 'codemirror/addon/search/search';
+
 import 'codemirror/lib/codemirror.css';
+
 import 'codemirror/theme/nord.css';
+import 'codemirror/addon/dialog/dialog.css';
 
 @Component({
   name: 'JSONFieldInputComponent',
@@ -53,13 +62,16 @@ export default class JSONFieldInputComponent extends Vue {
   public rules: object[] = [];
 
   public codeMirrorOptions: object = {
-    line: true,
-    lineNumbers: true,
-    lineWrapping: false,
     mode: 'application/json',
-    styleActiveLine: true,
-    tabSize: 2,
     theme: 'nord',
+
+    autoCloseBrackets: true,
+    autoRefresh: true,
+    gutters: ['CodeMirror-lint-markers', 'CodeMirror-linenumbers'],
+    lineNumbers: true,
+    lineWrapping: true,
+    matchBrackets: true,
+    tabSize: 2,
   };
 
   get fieldData(): string {
