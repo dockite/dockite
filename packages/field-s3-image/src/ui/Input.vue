@@ -357,6 +357,7 @@ export default class S3ImageFieldInputComponent extends Vue {
       await axios.put(presignedUrl, file, {
         headers: {
           'Content-Type': file.type,
+          'Cache-Control': 'max-age: 31536000',
         },
       });
 
