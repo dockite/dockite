@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.2.0-alpha.4](https://github.com/dockite/dockite/compare/@dockite/field-media-manager@0.2.0-alpha.3...@dockite/field-media-manager@0.2.0-alpha.4) (2021-05-20)
+
+
+### Bug Fixes
+
+* **field-media-manger,field-s3-image:** add cache-control ([e563c51](https://github.com/dockite/dockite/commit/e563c5179daf2830a8731fbf6ad5f7a7435c055e))
+
+
+
+
+
 # [0.2.0-alpha.3](https://github.com/dockite/dockite/compare/@dockite/field-media-manager@0.2.0-alpha.2...@dockite/field-media-manager@0.2.0-alpha.3) (2021-04-13)
 
 **Note:** Version bump only for package @dockite/field-media-manager

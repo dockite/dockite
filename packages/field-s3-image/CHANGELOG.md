@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.7](https://github.com/dockite/dockite/compare/@dockite/field-s3-image@0.4.0-alpha.6...@dockite/field-s3-image@0.4.0-alpha.7) (2021-05-20)
+
+
+### Bug Fixes
+
+* **field-media-manger,field-s3-image:** add cache-control ([e563c51](https://github.com/dockite/dockite/commit/e563c5179daf2830a8731fbf6ad5f7a7435c055e))
+
+
+
+
+
 # [0.4.0-alpha.6](https://github.com/dockite/dockite/compare/@dockite/field-s3-image@0.4.0-alpha.5...@dockite/field-s3-image@0.4.0-alpha.6) (2021-04-13)
 
 **Note:** Version bump only for package @dockite/field-s3-image

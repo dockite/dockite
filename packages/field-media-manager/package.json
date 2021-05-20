@@ -1,6 +1,6 @@
 {
   "name": "@dockite/field-media-manager",
-  "version": "0.2.0-alpha.3",
+  "version": "0.2.0-alpha.4",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
