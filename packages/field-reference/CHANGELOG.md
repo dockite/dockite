@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.7](https://github.com/dockite/dockite/compare/@dockite/field-reference@0.4.0-alpha.6...@dockite/field-reference@0.4.0-alpha.7) (2021-05-23)
+
+
+### Bug Fixes
+
+* **field-reference:** use keyBy instead of groupBy ([7cb31aa](https://github.com/dockite/dockite/commit/7cb31aa1d166ffdab59468f68e5ccebaf05d88a3))
+
+
+
+
+
 # [0.4.0-alpha.6](https://github.com/dockite/dockite/compare/@dockite/field-reference@0.4.0-alpha.5...@dockite/field-reference@0.4.0-alpha.6) (2021-04-27)
 
 
