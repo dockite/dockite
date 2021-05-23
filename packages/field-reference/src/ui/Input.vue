@@ -290,7 +290,7 @@ import {
   Constraint,
   PossibleConstraints,
 } from '@dockite/where-builder';
-import { cloneDeep, debounce, get, groupBy, uniq } from 'lodash';
+import { cloneDeep, debounce, get, keyBy, uniq } from 'lodash';
 import { Field } from '@dockite/database';
 
 import { DockiteFieldReferenceEntity, FieldToDisplayItem } from '../types';
@@ -594,7 +594,7 @@ export default class ReferenceFieldInputComponent extends Vue {
         ),
       );
 
-      const groupedSchemasWithFields = groupBy(schemasWithFields, schema => schema.id);
+      const groupedSchemasWithFields = keyBy(schemasWithFields, schema => schema.id);
 
       this.documents = cloneDeep(searchData.searchDocuments.results).map((doc: Document) => {
         return { ...doc, schema: groupedSchemasWithFields[doc.schemaId] };
