@@ -33,6 +33,7 @@
       :visible="dialogVisible"
       :destroy-on-close="true"
       title="Select a Document"
+      append-to-body
       @close="dialogVisible = false"
     >
       <el-row type="flex" justify="space-between" class="pb-3">
