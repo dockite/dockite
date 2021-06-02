@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.8](https://github.com/dockite/dockite/compare/@dockite/field-reference@0.4.0-alpha.7...@dockite/field-reference@0.4.0-alpha.8) (2021-06-02)
+
+
+### Bug Fixes
+
+* **field-reference:** update modal ([ed478fc](https://github.com/dockite/dockite/commit/ed478fc0607df258d6e09f96089c218ca041586e))
+
+
+
+
+
 # [0.4.0-alpha.7](https://github.com/dockite/dockite/compare/@dockite/field-reference@0.4.0-alpha.6...@dockite/field-reference@0.4.0-alpha.7) (2021-05-23)
 
 
