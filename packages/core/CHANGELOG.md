@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.5.0-alpha.5](https://github.com/dockite/dockite/compare/@dockite/core@0.5.0-alpha.4...@dockite/core@0.5.0-alpha.5) (2021-06-21)
+
+
+### Bug Fixes
+
+* **core:** users can't restore document revisions ([003418f](https://github.com/dockite/dockite/commit/003418fca11340fa3dffe15aea486e9e66fc55de))
+
+
+
+
+
 # [0.5.0-alpha.4](https://github.com/dockite/dockite/compare/@dockite/core@0.5.0-alpha.3...@dockite/core@0.5.0-alpha.4) (2021-04-13)
 
 **Note:** Version bump only for package @dockite/core
