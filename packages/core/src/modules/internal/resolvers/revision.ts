@@ -186,6 +186,7 @@ export class RevisionResolver {
   @Authorized('internal:document:update', {
     lookAhead: true,
     entity: Document,
+    resourceType: 'schema',
     entityIdArg: 'documentId',
     fieldsOrArgsToPeek: 'schemaId',
   })
