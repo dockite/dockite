@@ -83,7 +83,7 @@ export class SchemaImportRepository extends Repository<Schema> {
     const savedSchema = await schemaRepository.save(newSchema);
 
     if (differenceBy(schemaFields, fieldsToBeImported).length > 0) {
-      await this.handleReviseAllDocuments(savedSchema.id);
+      await this.handleReviseAllDocuments(savedSchema.id, userId);
     }
 
     await Promise.all([
@@ -109,7 +109,7 @@ export class SchemaImportRepository extends Repository<Schema> {
       .execute();
   }
 
-  private async handleReviseAllDocuments(schemaId: string): Promise<void> {
+  private async handleReviseAllDocuments(schemaId: string, userId: string): Promise<void> {
     const documentRepository = getRepository(Document);
     const revisionRepository = getRepository(DocumentRevision);
 
@@ -117,7 +117,7 @@ export class SchemaImportRepository extends Repository<Schema> {
     await getManager().query(
       `
         INSERT INTO ${revisionRepository.metadata.tableName} ("documentId", "data", "userId", "schemaId")
-        SELECT d."id", d."data", d."userId", d."schemaId"
+        SELECT d."id", d."data", '${userId}' AS "userId", d."schemaId"
         FROM ${documentRepository.metadata.tableName} d
         WHERE d."schemaId" = $1
         `,

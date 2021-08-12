@@ -24,7 +24,7 @@ export class SchemaRevisionRepository extends Repository<Schema> {
     const newRevision = revisionRepository.create({
       schemaId: schema.id,
       data: cloneDeep(schema) as Record<string, any>,
-      userId: schema.userId ?? '',
+      userId: userId ?? '',
     });
 
     const revisionFields: Field[] = revision.data.fields;
