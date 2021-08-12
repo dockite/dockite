@@ -1,6 +1,6 @@
 {
   "name": "@dockite/field-reference-of",
-  "version": "0.4.0-alpha.6",
+  "version": "0.4.0-alpha.7",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
@@ -12,10 +12,10 @@
     "lib"
   ],
   "dependencies": {
-    "@dockite/database": "^0.4.1-alpha.3",
+    "@dockite/database": "^0.4.1-alpha.4",
     "@dockite/field": "^0.4.0-alpha.0",
     "@dockite/types": "^0.3.0",
-    "@dockite/where-builder": "^0.2.1-alpha.4",
+    "@dockite/where-builder": "^0.2.1-alpha.5",
     "apollo-client": "^2.6.10",
     "graphql": "^15.1.0",
     "graphql-tag": "^2.10.3",

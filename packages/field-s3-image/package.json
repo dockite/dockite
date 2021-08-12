@@ -1,6 +1,6 @@
 {
   "name": "@dockite/field-s3-image",
-  "version": "0.4.0-alpha.7",
+  "version": "0.4.0-alpha.8",
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
@@ -12,7 +12,7 @@
     "lib"
   ],
   "dependencies": {
-    "@dockite/database": "^0.4.1-alpha.3",
+    "@dockite/database": "^0.4.1-alpha.4",
     "@dockite/field": "^0.4.0-alpha.0",
     "@dockite/types": "^0.3.0",
     "apollo-client": "^2.6.10",
