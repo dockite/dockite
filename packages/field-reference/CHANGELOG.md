@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.10](https://github.com/dockite/dockite/compare/@dockite/field-reference@0.4.0-alpha.9...@dockite/field-reference@0.4.0-alpha.10) (2021-10-14)
+
+
+### Bug Fixes
+
+* **field-reference:** avoid recursion ([ea31495](https://github.com/dockite/dockite/commit/ea314958818e570a458b107a31bab531f4b8db95))
+
+
+
+
+
 # [0.4.0-alpha.9](https://github.com/dockite/dockite/compare/@dockite/field-reference@0.4.0-alpha.8...@dockite/field-reference@0.4.0-alpha.9) (2021-08-12)
 
 **Note:** Version bump only for package @dockite/field-reference
