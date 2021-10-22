@@ -36,10 +36,10 @@
       append-to-body
       @close="dialogVisible = false"
     >
-      <el-row type="flex" justify="space-between" class="pb-3">
+      <!-- <el-row type="flex" justify="space-between" class="pb-3">
         <span />
         <el-input v-model="term" style="max-width: 400px;" placeholder="Search term" />
-      </el-row>
+      </el-row> -->
       <div v-loading="loading > 0 && dialogVisible" class="border rounded px-1 pt-1">
         <el-table
           class="flex flex-col dockite-table--reference-selection"
