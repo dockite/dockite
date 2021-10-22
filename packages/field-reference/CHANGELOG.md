@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.11](https://github.com/dockite/dockite/compare/@dockite/field-reference@0.4.0-alpha.10...@dockite/field-reference@0.4.0-alpha.11) (2021-10-22)
+
+
+### Bug Fixes
+
+* **field-reference:** remove search term due to poor performance ([405ef4c](https://github.com/dockite/dockite/commit/405ef4cafbad4f353ce43f0c03c94e8f2c59a7e6))
+
+
+
+
+
 # [0.4.0-alpha.10](https://github.com/dockite/dockite/compare/@dockite/field-reference@0.4.0-alpha.9...@dockite/field-reference@0.4.0-alpha.10) (2021-10-14)
 
 
