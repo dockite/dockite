@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0-alpha.7](https://github.com/dockite/dockite/compare/@dockite/field-datetime@0.4.0-alpha.6...@dockite/field-datetime@0.4.0-alpha.7) (2021-11-03)
+
+
+### Bug Fixes
+
+* **field-datetime:** update date format ([db5df8e](https://github.com/dockite/dockite/commit/db5df8efc820ed172a76b03ca1c24396dc7a2f00))
+
+
+
+
+
 # [0.4.0-alpha.6](https://github.com/dockite/dockite/compare/@dockite/field-datetime@0.4.0-alpha.5...@dockite/field-datetime@0.4.0-alpha.6) (2021-08-12)
 
 **Note:** Version bump only for package @dockite/field-datetime
