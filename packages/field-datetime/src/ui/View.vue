@@ -1,7 +1,7 @@
 <template>
   <div>
     <span v-if="date">
-      {{ format(date, 'Pp') }}
+      {{ format(date, 'yyyy-MM-dd HH:mm:ss OOOO') }}
     </span>
     <i v-else>
       N/A
