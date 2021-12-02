@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.1-alpha.6](https://github.com/dockite/dockite/compare/@dockite/field-slug@0.2.1-alpha.5...@dockite/field-slug@0.2.1-alpha.6) (2021-12-02)
+
+
+### Bug Fixes
+
+* **field-slug:** remove any non alphanumeric or underscore characters ([1f3c915](https://github.com/dockite/dockite/commit/1f3c91541708b4c05b4ca735c469948e02deb22f))
+
+
+
+
+
 ## [0.2.1-alpha.5](https://github.com/dockite/dockite/compare/@dockite/field-slug@0.2.1-alpha.4...@dockite/field-slug@0.2.1-alpha.5) (2021-08-12)
 
 **Note:** Version bump only for package @dockite/field-slug
