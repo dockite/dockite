@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.1-alpha.7](https://github.com/dockite/dockite/compare/@dockite/field-slug@0.2.1-alpha.6...@dockite/field-slug@0.2.1-alpha.7) (2021-12-02)
+
+
+### Bug Fixes
+
+* **field-slug:** update slugify regex ([2d449a7](https://github.com/dockite/dockite/commit/2d449a7430c586205c6c29cb751e1d190bed19e5))
+
+
+
+
+
 ## [0.2.1-alpha.6](https://github.com/dockite/dockite/compare/@dockite/field-slug@0.2.1-alpha.5...@dockite/field-slug@0.2.1-alpha.6) (2021-12-02)
 
 
