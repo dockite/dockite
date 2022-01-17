@@ -75,6 +75,7 @@
         :page-count="totalPages"
         :pager-count="5"
         layout="prev, pager, next"
+        @current-change="handlePageChange"
       />
     </div>
   </fragment>
@@ -122,8 +123,21 @@ export default class AllUsersPage extends Vue {
     return this.allUsers.totalPages;
   }
 
-  public fetchAllUsers(): void {
-    this.$store.dispatch(`${data.namespace}/fetchAllUsers`);
+  public async fetchAllUsers(page: number = 1): Promise<void> {
+    try {
+      this.loading += 1;
+
+      await this.$store.dispatch(`${data.namespace}/fetchAllUsers`, { page });
+    } catch (_) {
+      this.$message({
+        message: 'An error occurred whilst fetching users, please try again later.',
+        type: 'error',
+      });
+    } finally {
+      this.$nextTick(() => {
+        this.loading -= 1;
+      });
+    }
   }
 
   public cellValueFromNow(_row: never, _column: never, cellValue: string, _index: never): string {
@@ -168,6 +182,10 @@ export default class AllUsersPage extends Vue {
         this.loading -= 1;
       });
     }
+  }
+
+  public handlePageChange(newPage: number): void {
+    this.fetchAllUsers(newPage);
   }
 
   mounted(): void {
