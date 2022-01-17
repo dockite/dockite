@@ -25,6 +25,9 @@ import slugify from 'slugify';
 import { SlugFieldSettings, DockiteFieldSlugEntity } from '../types';
 import { REMOVE_REGEX } from '../constants';
 
+// Remove the charMap to avoid unexpected replacements of symbols
+slugify.extend({});
+
 @Component({
   name: 'SlugFieldInputComponent',
 })

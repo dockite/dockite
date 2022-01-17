@@ -8,6 +8,9 @@ import slugify from 'slugify';
 import { REMOVE_REGEX } from './constants';
 import { SlugFieldSettings } from './types';
 
+// Remove the charMap to avoid unexpected replacements of symbols
+slugify.extend({});
+
 const DockiteFieldSlugType = new GraphQLScalarType({
   ...GraphQLString.toConfig(),
   name: 'DockiteFieldSlug',
