@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.5.0-alpha.12](https://github.com/dockite/dockite/compare/@dockite/admin@0.5.0-alpha.11...@dockite/admin@0.5.0-alpha.12) (2022-01-18)
+
+
+### Bug Fixes
+
+* **admin:** add users pagination ([c62ebb9](https://github.com/dockite/dockite/commit/c62ebb9f6a9229583142cb49457e36dccc1131e1))
+
+
+
+
+
 # [0.5.0-alpha.11](https://github.com/dockite/dockite/compare/@dockite/admin@0.5.0-alpha.10...@dockite/admin@0.5.0-alpha.11) (2021-08-12)
 
 **Note:** Version bump only for package @dockite/admin

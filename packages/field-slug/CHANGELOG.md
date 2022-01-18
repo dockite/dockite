@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.1-alpha.8](https://github.com/dockite/dockite/compare/@dockite/field-slug@0.2.1-alpha.7...@dockite/field-slug@0.2.1-alpha.8) (2022-01-18)
+
+
+### Bug Fixes
+
+* **field-slug:** remove unexpected charMap behaviour ([22d3f29](https://github.com/dockite/dockite/commit/22d3f29133bb02aa9bdc435a4d4b73d6bcdaa961))
+
+
+
+
+
 ## [0.2.1-alpha.7](https://github.com/dockite/dockite/compare/@dockite/field-slug@0.2.1-alpha.6...@dockite/field-slug@0.2.1-alpha.7) (2021-12-02)
 
 
