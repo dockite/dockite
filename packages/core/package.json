@@ -37,7 +37,7 @@
     "flatted": "^3.0.2",
     "graphql": "^15.1.0",
     "graphql-type-json": "^0.3.1",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "lodash": "^4.17.15",
     "nodemailer": "^6.4.10",
     "pg": "8.3.3",
