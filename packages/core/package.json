@@ -26,7 +26,7 @@
     "apollo-server-express": "^2.15.1",
     "axios": "^0.19.2",
     "bcrypt": "^4.0.0",
-    "class-validator": "^0.12.2",
+    "class-validator": "^0.14.0",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
     "cosmiconfig": "^6.0.0",
